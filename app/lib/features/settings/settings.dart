@@ -14,7 +14,7 @@ String get defaultServerUrl => kIsWeb ? Uri.base.origin : '';
 
 class Settings {
   const Settings({
-    this.serverUrl = '',
+    this.serverUrl = 'https://ucsc-campus-router.onrender.com',
     this.useLocation = true,
     this.remindersOn = false,
     this.remindLeadMinutes = 5,
