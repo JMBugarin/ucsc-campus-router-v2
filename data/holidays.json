@@ -1,0 +1,7 @@
+{
+  "term": "Fall 2026",
+  "term_start": "2026-09-24",
+  "term_end": "2026-12-04",
+  "note": "Term dates and the no-class days inside the term. A starting point only: check against the official UCSC academic calendar and edit as needed.",
+  "holidays": ["2026-11-11", "2026-11-26", "2026-11-27"]
+}

@@ -1,0 +1,49 @@
+{
+  "meetings": [
+    {
+      "course": "XYZ 10",
+      "title": "Sample Calculus",
+      "section": "01A",
+      "component": "Discussion",
+      "class_nbr": "20001",
+      "days": [
+        0
+      ],
+      "start": "08:00",
+      "end": "09:05",
+      "location": "Cowell Acad 113",
+      "start_date": "2026-09-24",
+      "end_date": "2026-12-04"
+    },
+    {
+      "course": "XYZ 10",
+      "title": "Sample Calculus",
+      "section": "01",
+      "component": "Lecture",
+      "class_nbr": "20002",
+      "days": [
+        0,
+        2,
+        4
+      ],
+      "start": "14:40",
+      "end": "15:45",
+      "location": "Kresge Acad 3201",
+      "start_date": "2026-09-24",
+      "end_date": "2026-12-04"
+    }
+  ],
+  "notes": [],
+  "locations": [
+    {
+      "kind": "building",
+      "building_name": "Cowell College Academic Building",
+      "room_known": true
+    },
+    {
+      "kind": "building",
+      "building_name": "Kresge College Academic Building",
+      "room_known": true
+    }
+  ]
+}

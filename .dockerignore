@@ -1,0 +1,16 @@
+# Not part of the server image. Local build output is excluded on purpose: the engine is
+# rebuilt inside the image, and a binary built in WSL may not run on the image's libc.
+.git
+.github
+.venv
+.claude
+**/__pycache__
+engine/route
+engine/build
+server/vendor
+server/test_*.py
+server/ocr_fixtures.py
+web/_dev
+data-pipeline/cache
+app
+docs

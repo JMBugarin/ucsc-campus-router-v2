@@ -1,0 +1,11 @@
+# Render blueprint: runs the Dockerfile as a web service (see docs/hosting.md).
+# Untested template: Render's options change, so check their current docs for the plan names.
+services:
+  - type: web
+    name: ucsc-campus-router
+    runtime: docker
+    plan: free              # the free plan sleeps when idle, so the first request after a pause is slow
+    healthCheckPath: /healthz
+    envVars:
+      - key: TRUST_PROXY    # Render forwards the real client address in X-Forwarded-For
+        value: "1"

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UCSC Campus Router</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>UCSC Campus Router</h1>
+    <p>Type your class location and leave "From" blank to route from where you are now, or click two points on a map. Both algorithms route the same trip, so you can see how much less of the campus A* has to search.</p>
+  </header>
+
+  <section class="controls">
+    <form id="lookup">
+      <label>From (blank = my location) <input id="from-room" list="room-names" placeholder="My location, or e.g. McHenry Lib 1340" autocomplete="off"></label>
+      <label>To class <input id="to-room" list="room-names" placeholder="e.g. Kresge Acad 3201" autocomplete="off"></label>
+      <button type="submit">Route to class</button>
+    </form>
+    <div class="buttons">
+      <button id="play" type="button" disabled>Replay search</button>
+      <button id="reset" type="button">Clear</button>
+    </div>
+  </section>
+  <p id="status" role="status">Loading…</p>
+
+  <section class="schedule">
+    <article class="card" id="today">
+      <h2>Today</h2>
+      <p id="today-summary" class="today-summary">Add your classes to see what is next.</p>
+      <p id="leave-banner" class="leave-banner" role="alert" hidden></p>
+      <div id="today-walk" class="today-walk" hidden></div>
+      <ol id="today-list" class="today-list"></ol>
+      <div class="buttons">
+        <button id="route-next" type="button" disabled>Route to next class</button>
+        <label class="inline"><input id="use-location" type="checkbox"> Use my location for walking times</label>
+      </div>
+      <div class="reminder">
+        <label class="inline"><input id="remind-on" type="checkbox"> Remind me when it's time to leave</label>
+        <label class="inline">Heads-up
+          <select id="remind-lead">
+            <option value="0">none</option>
+            <option value="5" selected>5 min before</option>
+            <option value="10">10 min before</option>
+          </select>
+        </label>
+        <p class="hint">Reminders are notifications from your browser, so this page has to stay open (a background tab is fine). Allow notifications when asked. They need a walking time, so turn on "Use my location" or have a class just before.</p>
+      </div>
+    </article>
+
+    <article class="card" id="my-schedule">
+      <h2>My schedule</h2>
+      <details id="photo-import">
+        <summary>Photo or screenshot</summary>
+        <p class="hint">Choose a screenshot of your MyUCSC Class Schedule page (or a clear, straight-on photo of it), then read it. Check the classes it finds against your picture.</p>
+        <input id="photo-file" type="file" accept="image/*">
+        <button id="ocr-btn" type="button" disabled>Read it on this device</button>
+        <p class="hint">This reads the text inside your browser, so the picture never leaves your computer and no account is needed. The first time, it downloads a text reader of about 10 MB.</p>
+        <details id="claude-photo">
+          <summary>Or read it with Claude (needs an API key)</summary>
+          <p class="hint">Sends the picture to Anthropic's Claude API when you press the button; it is not stored. It is more forgiving of photos than the on-device reader.</p>
+          <p class="hint error" id="photo-reason" hidden></p>
+          <button id="photo-btn" type="button" disabled>Read it with Claude</button>
+        </details>
+      </details>
+      <details id="calendar-import">
+        <summary>Calendar file (.ics)</summary>
+        <p class="hint">Import classes from a calendar you exported from Google Calendar, Apple Calendar, Canvas or similar. Weekly classes, their end dates and skipped days are understood; anything it can't represent is listed rather than guessed. The file is read in your browser and only its text is sent to this app's own server.</p>
+        <input id="ics-file" type="file" accept=".ics,text/calendar">
+        <button id="ics-btn" type="button" disabled>Import calendar file</button>
+      </details>
+      <details id="import" open>
+        <summary>Paste from MyUCSC</summary>
+        <p class="hint">In MyUCSC open Enrollment, then Class Schedule. Select the whole page, copy, and paste it here. Instructor names are not kept.</p>
+        <textarea id="paste" rows="4" placeholder="Paste your Class Schedule page here" spellcheck="false"></textarea>
+        <button id="import-btn" type="button">Import classes</button>
+      </details>
+      <details id="manual">
+        <summary>Add a class by hand</summary>
+        <form id="manual-form">
+          <label>Course <input id="m-course" placeholder="ABC 20" required maxlength="40"></label>
+          <label>Type
+            <select id="m-component">
+              <option>Lecture</option><option>Discussion</option><option>Lab</option>
+              <option>Seminar</option><option>Event</option>
+            </select>
+          </label>
+          <label>Location <input id="m-location" list="room-names" placeholder="Thim Lecture 003" required maxlength="80" autocomplete="off"></label>
+          <fieldset id="m-days">
+            <legend>Days</legend>
+            <label><input type="checkbox" value="0">Mo</label><label><input type="checkbox" value="1">Tu</label>
+            <label><input type="checkbox" value="2">We</label><label><input type="checkbox" value="3">Th</label>
+            <label><input type="checkbox" value="4">Fr</label><label><input type="checkbox" value="5">Sa</label>
+            <label><input type="checkbox" value="6">Su</label>
+          </fieldset>
+          <label>Starts <input id="m-start" type="time" required></label>
+          <label>Ends <input id="m-end" type="time" required></label>
+          <label class="inline"><input id="m-once" type="checkbox"> One-time event</label>
+          <label>From <input id="m-from" type="date" required></label>
+          <label id="m-to-label">Until <input id="m-to" type="date" required></label>
+          <button type="submit">Add class</button>
+        </form>
+      </details>
+      <p id="schedule-message" class="hint" role="status"></p>
+      <ul id="meeting-list" class="meeting-list"></ul>
+      <button id="clear-schedule" type="button" hidden>Remove all classes</button>
+    </article>
+  </section>
+
+  <datalist id="room-names"></datalist>
+
+  <main>
+    <article class="panel">
+      <h2><span class="swatch dijkstra"></span>Dijkstra</h2>
+      <div id="map-dijkstra" class="map"></div>
+      <dl id="stats-dijkstra" class="stats"></dl>
+    </article>
+    <article class="panel">
+      <h2><span class="swatch astar"></span>A*</h2>
+      <div id="map-astar" class="map"></div>
+      <dl id="stats-astar" class="stats"></dl>
+    </article>
+  </main>
+
+  <footer>
+    Dots are the nodes each algorithm settled; the dark line is the route. Walk time assumes 1.3 m/s.
+    Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js"></script>
+  <script src="schedule.js"></script>
+</body>
+</html>

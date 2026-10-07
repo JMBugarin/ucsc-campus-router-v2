@@ -1,0 +1,4 @@
+{
+  "error": "Too many requests. Please slow down and try again shortly.",
+  "retry_after": 12
+}

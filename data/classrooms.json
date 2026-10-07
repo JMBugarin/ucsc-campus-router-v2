@@ -1,0 +1,875 @@
+{
+  "source": "https://classrooms.ucsc.edu/seating-capacity/150/",
+  "rooms": [
+    {
+      "slug": "clu001",
+      "ais_display_name": "ClassroomUnit 001",
+      "facility_id": "CL 001",
+      "ppdo_code": "7301-0001",
+      "lat": 36.9978719,
+      "lon": -122.0570354,
+      "level_id": "MAIN.7301.L1",
+      "map_building_name": "Classroom Unit 1"
+    },
+    {
+      "slug": "clu002",
+      "ais_display_name": "ClassroomUnit 002",
+      "facility_id": "CL 002",
+      "ppdo_code": "7301-0002",
+      "lat": 36.9979453,
+      "lon": -122.0567682,
+      "level_id": "MAIN.7301.L2",
+      "map_building_name": "Classroom Unit 1"
+    },
+    {
+      "slug": "cow113",
+      "ais_display_name": "Cowell Acad 113",
+      "facility_id": "1A 113",
+      "ppdo_code": "7130-0113",
+      "lat": 36.9973273,
+      "lon": -122.0537424,
+      "level_id": "MAIN.7130.L1",
+      "map_building_name": "Cowell College Academic Building"
+    },
+    {
+      "slug": "cow131",
+      "ais_display_name": "Cowell Clrm 131",
+      "facility_id": "1B 131",
+      "ppdo_code": "7132-0131",
+      "lat": 36.9972061,
+      "lon": -122.0537191,
+      "level_id": "MAIN.7132.L1",
+      "map_building_name": "Cowell College Classroom Building"
+    },
+    {
+      "slug": "cow134",
+      "ais_display_name": "Cowell Com 134",
+      "facility_id": "1C 134",
+      "ppdo_code": "7134-0134",
+      "lat": 36.9973587,
+      "lon": -122.0530428,
+      "level_id": "MAIN.7134.L1",
+      "map_building_name": "Cowell College Commons"
+    },
+    {
+      "slug": "cow216",
+      "ais_display_name": "Cowell Acad 216",
+      "facility_id": "1A 216",
+      "ppdo_code": "7130-0216",
+      "lat": 36.9973023,
+      "lon": -122.0537418,
+      "level_id": "MAIN.7130.L2",
+      "map_building_name": "Cowell College Academic Building"
+    },
+    {
+      "slug": "cow222",
+      "ais_display_name": "Cowell Acad 222",
+      "facility_id": "1A 222",
+      "ppdo_code": "7130-0222",
+      "lat": 36.9973588,
+      "lon": -122.0536512,
+      "level_id": "MAIN.7130.L2",
+      "map_building_name": "Cowell College Academic Building"
+    },
+    {
+      "slug": "cow223",
+      "ais_display_name": "Cowell Acad 223",
+      "facility_id": "1A 223",
+      "ppdo_code": "7130-0223",
+      "lat": 36.99736,
+      "lon": -122.0535604,
+      "level_id": "MAIN.7130.L2",
+      "map_building_name": "Cowell College Academic Building"
+    },
+    {
+      "slug": "crn104",
+      "ais_display_name": "Crown Clrm 104",
+      "facility_id": "3A 104",
+      "ppdo_code": "7155-0104",
+      "lat": 37.0000355,
+      "lon": -122.0547409,
+      "level_id": "MAIN.7155.L1",
+      "map_building_name": "Crown College Classroom Building"
+    },
+    {
+      "slug": "crn105",
+      "ais_display_name": "Crown Clrm 105",
+      "facility_id": "3A 105",
+      "ppdo_code": "7155-0105",
+      "lat": 36.9999811,
+      "lon": -122.0547387,
+      "level_id": "MAIN.7155.L1",
+      "map_building_name": "Crown College Classroom Building"
+    },
+    {
+      "slug": "crn201",
+      "ais_display_name": "Crown Clrm 201",
+      "facility_id": "3A 201",
+      "ppdo_code": "7155-0201",
+      "lat": 37.0000903,
+      "lon": -122.0547421,
+      "level_id": "MAIN.7155.L2",
+      "map_building_name": "Crown College Classroom Building"
+    },
+    {
+      "slug": "crn202",
+      "ais_display_name": "Crown Clrm 202",
+      "facility_id": "3A 202",
+      "ppdo_code": "7155-0202",
+      "lat": 37.0000358,
+      "lon": -122.0547311,
+      "level_id": "MAIN.7155.L2",
+      "map_building_name": "Crown College Classroom Building"
+    },
+    {
+      "slug": "crn203",
+      "ais_display_name": "Crown Clrm 203",
+      "facility_id": "3A 203",
+      "ppdo_code": "7155-0203",
+      "lat": 36.999981,
+      "lon": -122.0547288,
+      "level_id": "MAIN.7155.L2",
+      "map_building_name": "Crown College Classroom Building"
+    },
+    {
+      "slug": "crn208",
+      "ais_display_name": "Crown Clrm 208",
+      "facility_id": "3A 208",
+      "ppdo_code": "7155-0208",
+      "lat": 37.0000743,
+      "lon": -122.0548366,
+      "level_id": "MAIN.7155.L2",
+      "map_building_name": "Crown College Classroom Building"
+    },
+    {
+      "slug": "ems206",
+      "ais_display_name": "Earth&Marine B206",
+      "facility_id": "NE B206",
+      "ppdo_code": "7775-B0206",
+      "lat": 36.9980317,
+      "lon": -122.0601041,
+      "level_id": "MAIN.7775.L2",
+      "map_building_name": "Earth & Marine Sciences"
+    },
+    {
+      "slug": "ems210",
+      "ais_display_name": "Earth&Marine B210",
+      "facility_id": "NE B210",
+      "ppdo_code": "7775-B0210",
+      "lat": 36.9980302,
+      "lon": -122.0599474,
+      "level_id": "MAIN.7775.L2",
+      "map_building_name": "Earth & Marine Sciences"
+    },
+    {
+      "slug": "ems214",
+      "ais_display_name": "Earth&Marine B214",
+      "facility_id": "NE B214",
+      "ppdo_code": "7775-B0214",
+      "lat": 36.9980315,
+      "lon": -122.0597934,
+      "level_id": "MAIN.7775.L2",
+      "map_building_name": "Earth & Marine Sciences"
+    },
+    {
+      "slug": "eng101",
+      "ais_display_name": "J Bask Aud 101",
+      "facility_id": "EL 101",
+      "ppdo_code": "7942-0101",
+      "lat": 37.0002137,
+      "lon": -122.0623619,
+      "level_id": "MAIN.7942.L1",
+      "map_building_name": "Jack Baskin Engineering Auditorium"
+    },
+    {
+      "slug": "eng152",
+      "ais_display_name": "J Baskin Engr 152",
+      "facility_id": "JB 152",
+      "ppdo_code": "7194-0152",
+      "lat": 37.0004301,
+      "lon": -122.0632849,
+      "level_id": "MAIN.7194.L1",
+      "map_building_name": "Jack Baskin Engineering Building"
+    },
+    {
+      "slug": "eng156",
+      "ais_display_name": "J Baskin Engr 156",
+      "facility_id": "JB 156",
+      "ppdo_code": "7194-0156",
+      "lat": 37.0004344,
+      "lon": -122.0631921,
+      "level_id": "MAIN.7194.L1",
+      "map_building_name": "Jack Baskin Engineering Building"
+    },
+    {
+      "slug": "eng165",
+      "ais_display_name": "J Baskin Engr 165",
+      "facility_id": "JB 165",
+      "ppdo_code": "7194-0165",
+      "lat": 37.0005733,
+      "lon": -122.0628931,
+      "level_id": "MAIN.7194.L1",
+      "map_building_name": "Jack Baskin Engineering Building"
+    },
+    {
+      "slug": "eng169",
+      "ais_display_name": "J Baskin Engr 169",
+      "facility_id": "JB 169",
+      "ppdo_code": "7194-0169",
+      "lat": 37.0005809,
+      "lon": -122.0628178,
+      "level_id": "MAIN.7194.L1",
+      "map_building_name": "Jack Baskin Engineering Building"
+    },
+    {
+      "slug": "eng192",
+      "ais_display_name": "Engineer 2 192",
+      "facility_id": "E2 192",
+      "ppdo_code": "7940-0192",
+      "lat": 37.0009126,
+      "lon": -122.0628219,
+      "level_id": "MAIN.7940.L1",
+      "map_building_name": "Engineering Building 2"
+    },
+    {
+      "slug": "eng194",
+      "ais_display_name": "Engineer 2 194",
+      "facility_id": "E2 194",
+      "ppdo_code": "7940-0194",
+      "lat": 37.0009233,
+      "lon": -122.0627058,
+      "level_id": "MAIN.7940.L1",
+      "map_building_name": "Engineering Building 2"
+    },
+    {
+      "slug": "eng372",
+      "ais_display_name": "J Baskin Engr 372",
+      "facility_id": "JB 372",
+      "ppdo_code": "7194-0372",
+      "lat": 37.0005185,
+      "lon": -122.0627854,
+      "level_id": "MAIN.7194.L3",
+      "map_building_name": "Jack Baskin Engineering Building"
+    },
+    {
+      "slug": "hum206",
+      "ais_display_name": "Humn Lecture Hall",
+      "facility_id": "HL 206",
+      "ppdo_code": "7711-0206",
+      "lat": 36.9983957,
+      "lon": -122.0544679,
+      "level_id": "MAIN.7711.L2",
+      "map_building_name": "Humanities Auditorium"
+    },
+    {
+      "slug": "hum250",
+      "ais_display_name": "Hum & Soc Sci 250",
+      "facility_id": "HU 250",
+      "ppdo_code": "7710-0250",
+      "lat": 36.9983268,
+      "lon": -122.0547804,
+      "level_id": "MAIN.7710.L2",
+      "map_building_name": "Humanities & Social Sciences Building"
+    },
+    {
+      "slug": "hum350",
+      "ais_display_name": "Hum & Soc Sci 350",
+      "facility_id": "HU 350",
+      "ppdo_code": "7710-0350",
+      "lat": 36.9983269,
+      "lon": -122.0547807,
+      "level_id": "MAIN.7710.L3",
+      "map_building_name": "Humanities & Social Sciences Building"
+    },
+    {
+      "slug": "krs3101",
+      "ais_display_name": "Kresge Acad 3101",
+      "facility_id": "6A 3101",
+      "ppdo_code": "7874-3101",
+      "lat": 36.9987945,
+      "lon": -122.0662966,
+      "level_id": "MAIN.7874.L1",
+      "map_building_name": "Kresge College Academic Center"
+    },
+    {
+      "slug": "krs3105",
+      "ais_display_name": "Kresge Acad 3105",
+      "facility_id": "6A 3105",
+      "ppdo_code": "7874-3105",
+      "lat": 36.9990159,
+      "lon": -122.066293,
+      "level_id": "MAIN.7874.L1",
+      "map_building_name": "Kresge College Academic Center"
+    },
+    {
+      "slug": "krs3201",
+      "ais_display_name": "Kresge Acad 3201",
+      "facility_id": "6A 3201",
+      "ppdo_code": "7874-3201",
+      "lat": 36.998907,
+      "lon": -122.0659499,
+      "level_id": "MAIN.7874.L2",
+      "map_building_name": "Kresge College Academic Center"
+    },
+    {
+      "slug": "krs3301",
+      "ais_display_name": "Kresge Acad 3301",
+      "facility_id": "6A 3301",
+      "ppdo_code": "7874-3301",
+      "lat": 36.9991765,
+      "lon": -122.0661311,
+      "level_id": "MAIN.7874.L3",
+      "map_building_name": "Kresge College Academic Center"
+    },
+    {
+      "slug": "mch1340",
+      "ais_display_name": "McHenry Lib 1340",
+      "facility_id": "ML 1340",
+      "ppdo_code": "7145-1340",
+      "lat": 36.9955003,
+      "lon": -122.058966,
+      "level_id": "MAIN.7145.L3",
+      "map_building_name": "McHenry Library"
+    },
+    {
+      "slug": "mch1350",
+      "ais_display_name": "McHenry Lib 1350",
+      "facility_id": "ML 1350",
+      "ppdo_code": "7145-1350",
+      "lat": 36.9954723,
+      "lon": -122.0588186,
+      "level_id": "MAIN.7145.L3",
+      "map_building_name": "McHenry Library"
+    },
+    {
+      "slug": "mer002",
+      "ais_display_name": "Merrill Acad 002",
+      "facility_id": "4A 002",
+      "ppdo_code": "7189-0002",
+      "lat": 36.9995716,
+      "lon": -122.0532869,
+      "level_id": "MAIN.7189.L0",
+      "map_building_name": "Merrill College Academic Building"
+    },
+    {
+      "slug": "mer003",
+      "ais_display_name": "Merrill Acad 003",
+      "facility_id": "4A 003",
+      "ppdo_code": "7189-0003",
+      "lat": 36.9995161,
+      "lon": -122.053295,
+      "level_id": "MAIN.7189.L0",
+      "map_building_name": "Merrill College Academic Building"
+    },
+    {
+      "slug": "mer102",
+      "ais_display_name": "Merrill Acad 102",
+      "facility_id": "4A 102",
+      "ppdo_code": "7189-0102",
+      "lat": 36.9995425,
+      "lon": -122.053279,
+      "level_id": "MAIN.7189.L1",
+      "map_building_name": "Merrill College Academic Building"
+    },
+    {
+      "slug": "mer130",
+      "ais_display_name": "Merrill Acad 130",
+      "facility_id": "4A 130",
+      "ppdo_code": "7189-0130",
+      "lat": 36.9997251,
+      "lon": -122.0535836,
+      "level_id": "MAIN.7189.L1",
+      "map_building_name": "Merrill College Academic Building"
+    },
+    {
+      "slug": "mer132",
+      "ais_display_name": "Merrill Acad 132",
+      "facility_id": "4A 132",
+      "ppdo_code": "7189-0132",
+      "lat": 36.9997804,
+      "lon": -122.0535808,
+      "level_id": "MAIN.7189.L1",
+      "map_building_name": "Merrill College Academic Building"
+    },
+    {
+      "slug": "nsa101",
+      "ais_display_name": "N. Sci Annex 101",
+      "facility_id": "NA 101",
+      "ppdo_code": "7180-0101",
+      "lat": 36.9985585,
+      "lon": -122.0610863,
+      "level_id": "MAIN.7180.L1",
+      "map_building_name": "Nat Sci 2 Annex"
+    },
+    {
+      "slug": "nsa102",
+      "ais_display_name": "N. Sci Annex 102",
+      "facility_id": "NA 102",
+      "ppdo_code": "7180-0102",
+      "lat": 36.9984565,
+      "lon": -122.0611187,
+      "level_id": "MAIN.7180.L1",
+      "map_building_name": "Nat Sci 2 Annex"
+    },
+    {
+      "slug": "nsa103",
+      "ais_display_name": "N. Sci Annex 103",
+      "facility_id": "NA 103",
+      "ppdo_code": "7180-0103",
+      "lat": 36.9984579,
+      "lon": -122.0610472,
+      "level_id": "MAIN.7180.L1",
+      "map_building_name": "Nat Sci 2 Annex"
+    },
+    {
+      "slug": "oak101",
+      "ais_display_name": "Oakes Acad 101",
+      "facility_id": "7A 101",
+      "ppdo_code": "7416-0101",
+      "lat": 36.9899483,
+      "lon": -122.0627299,
+      "level_id": "MAIN.7416.L1",
+      "map_building_name": "Oakes College Academic Building"
+    },
+    {
+      "slug": "oak102",
+      "ais_display_name": "Oakes Acad 102",
+      "facility_id": "7A 102",
+      "ppdo_code": "7416-0102",
+      "lat": 36.9898857,
+      "lon": -122.0627457,
+      "level_id": "MAIN.7416.L1",
+      "map_building_name": "Oakes College Academic Building"
+    },
+    {
+      "slug": "oak103",
+      "ais_display_name": "Oakes Acad 103",
+      "facility_id": "7A 103",
+      "ppdo_code": "7416-0103",
+      "lat": 36.9898309,
+      "lon": -122.0627511,
+      "level_id": "MAIN.7416.L1",
+      "map_building_name": "Oakes College Academic Building"
+    },
+    {
+      "slug": "oak105",
+      "ais_display_name": "Oakes Acad 105",
+      "facility_id": "7A 105",
+      "ppdo_code": "7416-0105",
+      "lat": 36.9896214,
+      "lon": -122.0627451,
+      "level_id": "MAIN.7416.L1",
+      "map_building_name": "Oakes College Academic Building"
+    },
+    {
+      "slug": "oak106",
+      "ais_display_name": "Oakes Acad 106",
+      "facility_id": "7A 106",
+      "ppdo_code": "7416-0106",
+      "lat": 36.989658,
+      "lon": -122.0628494,
+      "level_id": "MAIN.7416.L1",
+      "map_building_name": "Oakes College Academic Building"
+    },
+    {
+      "slug": "oak222",
+      "ais_display_name": "Oakes Acad 222",
+      "facility_id": "7A 222",
+      "ppdo_code": "7416-0222",
+      "lat": 36.9896404,
+      "lon": -122.0628484,
+      "level_id": "MAIN.7416.L2",
+      "map_building_name": "Oakes College Academic Building"
+    },
+    {
+      "slug": "pam110",
+      "ais_display_name": "Media Theater M110",
+      "facility_id": "TM M110",
+      "ppdo_code": "7924-M0110",
+      "lat": 36.9952065,
+      "lon": -122.0616425,
+      "level_id": "MAIN.7924.L1",
+      "map_building_name": "Theater Arts M Media Theater"
+    },
+    {
+      "slug": "por144",
+      "ais_display_name": "Porter Acad 144",
+      "facility_id": "5A 144",
+      "ppdo_code": "7306-0144",
+      "lat": 36.9940187,
+      "lon": -122.0654098,
+      "level_id": "MAIN.7306.L1",
+      "map_building_name": "Porter College Academic"
+    },
+    {
+      "slug": "por148",
+      "ais_display_name": "Porter Acad 148",
+      "facility_id": "5A 148",
+      "ppdo_code": "7306-0148",
+      "lat": 36.9939215,
+      "lon": -122.0654337,
+      "level_id": "MAIN.7306.L1",
+      "map_building_name": "Porter College Academic"
+    },
+    {
+      "slug": "por241",
+      "ais_display_name": "Porter Acad 241",
+      "facility_id": "5A 241",
+      "ppdo_code": "7306-0241",
+      "lat": 36.9941221,
+      "lon": -122.0652922,
+      "level_id": "MAIN.7306.L2",
+      "map_building_name": "Porter College Academic"
+    },
+    {
+      "slug": "por246",
+      "ais_display_name": "Porter Acad 246",
+      "facility_id": "5A 246",
+      "ppdo_code": "7306-0246",
+      "lat": 36.9939846,
+      "lon": -122.0653234,
+      "level_id": "MAIN.7306.L2",
+      "map_building_name": "Porter College Academic"
+    },
+    {
+      "slug": "por249",
+      "ais_display_name": "Porter Acad 249",
+      "facility_id": "5A 249",
+      "ppdo_code": "7306-0249",
+      "lat": 36.993924,
+      "lon": -122.0653369,
+      "level_id": "MAIN.7306.L2",
+      "map_building_name": "Porter College Academic"
+    },
+    {
+      "slug": "por250",
+      "ais_display_name": "Porter Acad 250",
+      "facility_id": "5A 250",
+      "ppdo_code": "7306-0250",
+      "lat": 36.9938631,
+      "lon": -122.0653504,
+      "level_id": "MAIN.7306.L2",
+      "map_building_name": "Porter College Academic"
+    },
+    {
+      "slug": "psb110",
+      "ais_display_name": "PhysSciences 110",
+      "facility_id": "PS 110",
+      "ppdo_code": "7919-0110",
+      "lat": 36.9993223,
+      "lon": -122.0616155,
+      "level_id": "MAIN.7919.L1",
+      "map_building_name": "Physical Sciences Building"
+    },
+    {
+      "slug": "psb114",
+      "ais_display_name": "PhysSciences 114",
+      "facility_id": "PS 114",
+      "ppdo_code": "7919-0114",
+      "lat": 36.9994367,
+      "lon": -122.0616103,
+      "level_id": "MAIN.7919.L1",
+      "map_building_name": "Physical Sciences Building"
+    },
+    {
+      "slug": "psb130",
+      "ais_display_name": "PhysSciences 130",
+      "facility_id": "PS 130",
+      "ppdo_code": "7919-0130",
+      "lat": 36.999507,
+      "lon": -122.0618489,
+      "level_id": "MAIN.7919.L1",
+      "map_building_name": "Physical Sciences Building"
+    },
+    {
+      "slug": "psb136",
+      "ais_display_name": "PhysSciences 136",
+      "facility_id": "PS 136",
+      "ppdo_code": "7919-0136",
+      "lat": 36.9995061,
+      "lon": -122.0619372,
+      "level_id": "MAIN.7919.L1",
+      "map_building_name": "Physical Sciences Building"
+    },
+    {
+      "slug": "psb140",
+      "ais_display_name": "PhysSciences 140",
+      "facility_id": "PS 140",
+      "ppdo_code": "7919-0140",
+      "lat": 36.9995054,
+      "lon": -122.0620135,
+      "level_id": "MAIN.7919.L1",
+      "map_building_name": "Physical Sciences Building"
+    },
+    {
+      "slug": "rcc240",
+      "ais_display_name": "R Carson Acad 240",
+      "facility_id": "8A 240",
+      "ppdo_code": "7766-0240",
+      "lat": 36.9919246,
+      "lon": -122.0642997,
+      "level_id": "MAIN.7766.L2",
+      "map_building_name": "Rachel Carson College Academic Building"
+    },
+    {
+      "slug": "rcc242",
+      "ais_display_name": "R Carson Acad 242",
+      "facility_id": "8A 242",
+      "ppdo_code": "7766-0242",
+      "lat": 36.9919241,
+      "lon": -122.0644218,
+      "level_id": "MAIN.7766.L2",
+      "map_building_name": "Rachel Carson College Academic Building"
+    },
+    {
+      "slug": "rcc250",
+      "ais_display_name": "R Carson Acad 250",
+      "facility_id": "8B 250",
+      "ppdo_code": "7756-0250",
+      "lat": 36.9920301,
+      "lon": -122.0648938,
+      "level_id": "MAIN.7756.L2",
+      "map_building_name": "Rachel Carson College Kitchen"
+    },
+    {
+      "slug": "rcc252",
+      "ais_display_name": "R Carson Acad 252",
+      "facility_id": "8B 252",
+      "ppdo_code": "7756-0252",
+      "lat": 36.992046,
+      "lon": -122.064981,
+      "level_id": "MAIN.7756.L2",
+      "map_building_name": "Rachel Carson College Kitchen"
+    },
+    {
+      "slug": "sc206",
+      "ais_display_name": "Sci & Engr Library 206",
+      "facility_id": "SC 206",
+      "ppdo_code": "7782-0206",
+      "lat": 36.9991527,
+      "lon": -122.0609624,
+      "level_id": "MAIN.7782.L2",
+      "map_building_name": "Science and Engineering Library"
+    },
+    {
+      "slug": "ss1110",
+      "ais_display_name": "Soc Sci 1 110",
+      "facility_id": "9A 110",
+      "ppdo_code": "7920-0110",
+      "lat": 37.0019931,
+      "lon": -122.057944,
+      "level_id": "MAIN.7920.L1",
+      "map_building_name": "Social Sciences 1"
+    },
+    {
+      "slug": "ss1145",
+      "ais_display_name": "Soc Sci 1 145",
+      "facility_id": "9A 145",
+      "ppdo_code": "7920-0145",
+      "lat": 37.0024799,
+      "lon": -122.0580274,
+      "level_id": "MAIN.7920.L1",
+      "map_building_name": "Social Sciences 1"
+    },
+    {
+      "slug": "ss1149",
+      "ais_display_name": "Soc Sci 1 149",
+      "facility_id": "9A 149",
+      "ppdo_code": "7920-0149",
+      "lat": 37.0024165,
+      "lon": -122.0580116,
+      "level_id": "MAIN.7920.L1",
+      "map_building_name": "Social Sciences 1"
+    },
+    {
+      "slug": "ss1153",
+      "ais_display_name": "Soc Sci 1 153",
+      "facility_id": "9A 153",
+      "ppdo_code": "7920-0153",
+      "lat": 37.0023492,
+      "lon": -122.0579932,
+      "level_id": "MAIN.7920.L1",
+      "map_building_name": "Social Sciences 1"
+    },
+    {
+      "slug": "ss1161",
+      "ais_display_name": "Soc Sci 1 161",
+      "facility_id": "9A 161",
+      "ppdo_code": "7920-0161",
+      "lat": 37.0022793,
+      "lon": -122.0579727,
+      "level_id": "MAIN.7920.L1",
+      "map_building_name": "Social Sciences 1"
+    },
+    {
+      "slug": "ss2071",
+      "ais_display_name": "Soc Sci 2 071",
+      "facility_id": "S2 071",
+      "ppdo_code": "7921-0071",
+      "lat": 37.0015271,
+      "lon": -122.0588435,
+      "level_id": "MAIN.7921.L0",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "ss2075",
+      "ais_display_name": "Soc Sci 2 075",
+      "facility_id": "S2 075",
+      "ppdo_code": "7921-0075",
+      "lat": 37.0016225,
+      "lon": -122.0589262,
+      "level_id": "MAIN.7921.L0",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "ss2137",
+      "ais_display_name": "Soc Sci 2 137",
+      "facility_id": "S2 137",
+      "ppdo_code": "7921-0137",
+      "lat": 37.0018421,
+      "lon": -122.0588131,
+      "level_id": "MAIN.7921.L1",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "ss2141",
+      "ais_display_name": "Soc Sci 2 141",
+      "facility_id": "S2 141",
+      "ppdo_code": "7921-0141",
+      "lat": 37.0017911,
+      "lon": -122.0587867,
+      "level_id": "MAIN.7921.L1",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "ss2159",
+      "ais_display_name": "Soc Sci 2 159",
+      "facility_id": "S2 159",
+      "ppdo_code": "7921-0159",
+      "lat": 37.0015833,
+      "lon": -122.0586278,
+      "level_id": "MAIN.7921.L1",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "ss2165",
+      "ais_display_name": "Soc Sci 2 165",
+      "facility_id": "S2 165",
+      "ppdo_code": "7921-0165",
+      "lat": 37.0015504,
+      "lon": -122.0586964,
+      "level_id": "MAIN.7921.L1",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "ss2167",
+      "ais_display_name": "Soc Sci 2 167",
+      "facility_id": "S2 167",
+      "ppdo_code": "7921-0167",
+      "lat": 37.0015167,
+      "lon": -122.0587664,
+      "level_id": "MAIN.7921.L1",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "ss2171",
+      "ais_display_name": "Soc Sci 2 171",
+      "facility_id": "S2 171",
+      "ppdo_code": "7921-0171",
+      "lat": 37.0014834,
+      "lon": -122.0588349,
+      "level_id": "MAIN.7921.L1",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "ss2179",
+      "ais_display_name": "Soc Sci 2 179",
+      "facility_id": "S2 179",
+      "ppdo_code": "7921-0179",
+      "lat": 37.0015612,
+      "lon": -122.0588813,
+      "level_id": "MAIN.7921.L1",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "ss2363",
+      "ais_display_name": "Soc Sci 2 363",
+      "facility_id": "S2 363",
+      "ppdo_code": "7921-0363",
+      "lat": 37.0015135,
+      "lon": -122.0587171,
+      "level_id": "MAIN.7921.L3",
+      "map_building_name": "Social Sciences 2"
+    },
+    {
+      "slug": "stv150",
+      "ais_display_name": "Steven Acad 150",
+      "facility_id": "2A 150",
+      "ppdo_code": "7143-0150",
+      "lat": 36.9972153,
+      "lon": -122.0517158,
+      "level_id": "MAIN.7143.L1",
+      "map_building_name": "Stevenson College Academic Building"
+    },
+    {
+      "slug": "stv151",
+      "ais_display_name": "Steven Acad 151",
+      "facility_id": "2A 151",
+      "ppdo_code": "7143-0151",
+      "lat": 36.9973317,
+      "lon": -122.0516921,
+      "level_id": "MAIN.7143.L1",
+      "map_building_name": "Stevenson College Academic Building"
+    },
+    {
+      "slug": "stv152",
+      "ais_display_name": "Steven Acad 152",
+      "facility_id": "2A 152",
+      "ppdo_code": "7143-0152",
+      "lat": 36.9973287,
+      "lon": -122.0517536,
+      "level_id": "MAIN.7143.L1",
+      "map_building_name": "Stevenson College Academic Building"
+    },
+    {
+      "slug": "stv175",
+      "ais_display_name": "Steven Acad 175",
+      "facility_id": "2A 175",
+      "ppdo_code": "7143-0175",
+      "lat": 36.9969967,
+      "lon": -122.0516972,
+      "level_id": "MAIN.7143.L1",
+      "map_building_name": "Stevenson College Academic Building"
+    },
+    {
+      "slug": "thi001",
+      "ais_display_name": "Thim Lecture 001",
+      "facility_id": "TL 001",
+      "ppdo_code": "7117-0001",
+      "lat": 36.9979258,
+      "lon": -122.0613113,
+      "level_id": "MAIN.7117.L1",
+      "map_building_name": "Thimann Lecture Hall"
+    },
+    {
+      "slug": "thi003",
+      "ais_display_name": "Thim Lecture 003",
+      "facility_id": "TL 003",
+      "ppdo_code": "7117-0003",
+      "lat": 36.9981184,
+      "lon": -122.0613151,
+      "level_id": "MAIN.7117.L1",
+      "map_building_name": "Thimann Lecture Hall"
+    },
+    {
+      "slug": "thi101",
+      "ais_display_name": "Thimann Lab 101",
+      "facility_id": "TH 101",
+      "ppdo_code": "3410-0101",
+      "lat": 36.9980438,
+      "lon": -122.0616329,
+      "level_id": "MAIN.7116.L1",
+      "map_building_name": "Thimann Laboratories"
+    }
+  ]
+}

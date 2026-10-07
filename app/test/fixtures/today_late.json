@@ -1,0 +1,77 @@
+{
+  "now": "2026-10-12T14:30:00-07:00",
+  "state": "between_classes",
+  "reason": null,
+  "current": null,
+  "next": {
+    "course": "XYZ 10",
+    "title": "Sample Calculus",
+    "section": "01",
+    "component": "Lecture",
+    "location": "Kresge Acad 3201",
+    "start": "2026-10-12T14:40:00-07:00",
+    "end": "2026-10-12T15:45:00-07:00",
+    "starts_in_min": 10.0,
+    "minutes_left": 75.0,
+    "is_today": true
+  },
+  "walk": {
+    "minutes": 12,
+    "meters": 921.8,
+    "from": "here"
+  },
+  "free_min": -2.0,
+  "status": "late",
+  "leave_by": "2026-10-12T14:28:00-07:00",
+  "today": [
+    {
+      "course": "XYZ 10",
+      "title": "Sample Calculus",
+      "section": "01A",
+      "component": "Discussion",
+      "location": "Cowell Acad 113",
+      "start": "2026-10-12T08:00:00-07:00",
+      "end": "2026-10-12T09:05:00-07:00"
+    },
+    {
+      "course": "XYZ 10",
+      "title": "Sample Calculus",
+      "section": "01",
+      "component": "Lecture",
+      "location": "Kresge Acad 3201",
+      "start": "2026-10-12T14:40:00-07:00",
+      "end": "2026-10-12T15:45:00-07:00",
+      "gap_min": 335.0,
+      "walk_min": 23,
+      "free_min": 312.0,
+      "status": "ok"
+    },
+    {
+      "course": "ABC 20",
+      "title": "Sample Systems",
+      "section": "01",
+      "component": "Lecture",
+      "location": "Thim Lecture 003",
+      "start": "2026-10-12T16:00:00-07:00",
+      "end": "2026-10-12T17:05:00-07:00",
+      "gap_min": 15.0,
+      "walk_min": 9,
+      "free_min": 6.0,
+      "status": "ok"
+    }
+  ],
+  "notes": [],
+  "reminders": [
+    {
+      "stage": "late",
+      "key": "2026-10-12T14:40:00-07:00|leave",
+      "in_seconds": 0.0,
+      "title": "Leave now, you're running late for XYZ 10 Lecture",
+      "body": "Kresge Acad 3201: about 12 min on foot. Class starts at 2:40 PM."
+    }
+  ],
+  "banner": {
+    "text": "Leave now for XYZ 10 Lecture: it is a 12 min walk and class starts at 2:40 PM.",
+    "late": true
+  }
+}

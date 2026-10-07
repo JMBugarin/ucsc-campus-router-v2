@@ -1,0 +1,7 @@
+from,to,length_m,is_stairs,highway
+0,1,12.00,0,footway
+1,0,12.00,0,footway
+1,2,10.00,1,steps
+2,1,10.00,1,steps
+2,3,12.00,0,path
+3,0,8.50,0,

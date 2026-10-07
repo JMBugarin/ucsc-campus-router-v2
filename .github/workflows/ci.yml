@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  engine:
+    name: C engine
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install valgrind
+        run: sudo apt-get update && sudo apt-get install -y valgrind
+      - name: Build (-Wall -Wextra -Werror)
+        run: make -C engine route
+      - name: Unit tests (AddressSanitizer + UBSan)
+        run: make -C engine test
+      - name: Unit tests (valgrind)
+        run: make -C engine valgrind
+      - name: End-to-end smoke test
+        run: make -C engine smoke
+      - name: Install the optional Claude SDK (photo import tests use a fake client)
+        run: python3 -m pip install -r server/requirements.txt
+      - name: Web server tests (real engine, real graph)
+        run: python3 -m unittest discover -s server -v
+      - name: Benchmark (Dijkstra vs A*)
+        run: make -C engine bench
+
+  pipeline:
+    name: Python data pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: data-pipeline/requirements.txt
+      - name: Install pinned dependencies
+        run: pip install -r data-pipeline/requirements.txt
+      - name: Pipeline script imports and parses its arguments
+        run: python data-pipeline/build_graph.py --help
+      - name: Check exported graph files
+        run: python -m unittest discover -s data-pipeline/tests -v
+
+  app:
+    name: Flutter app
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+  container:
+    name: Server container image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: docker build -t ucsc-router .
+      - name: Start it and check it answers (real engine inside the image)
+        run: |
+          docker run -d --name router -p 8000:8000 ucsc-router
+          for i in $(seq 1 40); do curl -fs http://127.0.0.1:8000/healthz && break; sleep 1; done
+          curl -fs http://127.0.0.1:8000/healthz
+          curl -fs http://127.0.0.1:8000/api/meta | grep -q '"nodes"'
+          curl -fs "http://127.0.0.1:8000/api/route_to_room?start=36.9998,-122.0628&room=Kresge+Acad+3201" | grep -q '"astar"'
+          curl -fs -X POST -H 'Content-Type: application/json' -d '{"meetings": []}' http://127.0.0.1:8000/api/today | grep -q '"state"'
+          curl -fs http://127.0.0.1:8000/ | grep -qi '<html'
+      - name: Queries (which hold locations) must not be in the logs
+        run: |
+          docker logs router 2>&1 | grep -q "/api/route_to_room"
+          ! docker logs router 2>&1 | grep -q "36.9998"
+      - name: Show the logs if anything failed
+        if: failure()
+        run: docker logs router

@@ -1,0 +1,91 @@
+{
+  "now": "2026-10-12T15:00:00-07:00",
+  "state": "in_class",
+  "reason": null,
+  "current": {
+    "course": "XYZ 10",
+    "title": "Sample Calculus",
+    "section": "01",
+    "component": "Lecture",
+    "location": "Kresge Acad 3201",
+    "start": "2026-10-12T14:40:00-07:00",
+    "end": "2026-10-12T15:45:00-07:00",
+    "starts_in_min": -20.0,
+    "minutes_left": 45.0
+  },
+  "next": {
+    "course": "ABC 20",
+    "title": "Sample Systems",
+    "section": "01",
+    "component": "Lecture",
+    "location": "Thim Lecture 003",
+    "start": "2026-10-12T16:00:00-07:00",
+    "end": "2026-10-12T17:05:00-07:00",
+    "starts_in_min": 60.0,
+    "minutes_left": 125.0,
+    "is_today": true
+  },
+  "walk": {
+    "minutes": 9,
+    "meters": 657.5,
+    "from": "current_class"
+  },
+  "free_min": 6.0,
+  "status": "ok",
+  "leave_by": "2026-10-12T15:51:00-07:00",
+  "today": [
+    {
+      "course": "XYZ 10",
+      "title": "Sample Calculus",
+      "section": "01A",
+      "component": "Discussion",
+      "location": "Cowell Acad 113",
+      "start": "2026-10-12T08:00:00-07:00",
+      "end": "2026-10-12T09:05:00-07:00"
+    },
+    {
+      "course": "XYZ 10",
+      "title": "Sample Calculus",
+      "section": "01",
+      "component": "Lecture",
+      "location": "Kresge Acad 3201",
+      "start": "2026-10-12T14:40:00-07:00",
+      "end": "2026-10-12T15:45:00-07:00",
+      "gap_min": 335.0,
+      "walk_min": 23,
+      "free_min": 312.0,
+      "status": "ok"
+    },
+    {
+      "course": "ABC 20",
+      "title": "Sample Systems",
+      "section": "01",
+      "component": "Lecture",
+      "location": "Thim Lecture 003",
+      "start": "2026-10-12T16:00:00-07:00",
+      "end": "2026-10-12T17:05:00-07:00",
+      "gap_min": 15.0,
+      "walk_min": 9,
+      "free_min": 6.0,
+      "status": "ok"
+    }
+  ],
+  "notes": [],
+  "reminders": [
+    {
+      "stage": "heads-up",
+      "key": "2026-10-12T16:00:00-07:00|heads-up",
+      "in_seconds": 2760.0,
+      "title": "Leave in 5 min for ABC 20 Lecture",
+      "body": "Thim Lecture 003: about 9 min on foot. Class starts at 4:00 PM."
+    },
+    {
+      "stage": "leave",
+      "key": "2026-10-12T16:00:00-07:00|leave",
+      "in_seconds": 3060.0,
+      "title": "Time to leave for ABC 20 Lecture",
+      "body": "Thim Lecture 003: about 9 min on foot. Class starts at 4:00 PM."
+    }
+  ],
+  "banner": null
+}

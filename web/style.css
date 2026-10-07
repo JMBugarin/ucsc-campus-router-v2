@@ -1,0 +1,202 @@
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #1c2430;
+  --muted: #5d6877;
+  --line: #d9dee5;
+  --accent: #1f6feb;
+  --dijkstra: #d9822b;
+  --astar: #1b9e8a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161c;
+    --card: #1b212a;
+    --text: #e7ebf0;
+    --muted: #9aa5b4;
+    --line: #2d3641;
+    --accent: #5aa2ff;
+    --dijkstra: #f0a04b;
+    --astar: #3cc7b0;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0 16px 24px;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+header, .controls, #status, .schedule, main, footer { max-width: 1200px; margin-left: auto; margin-right: auto; }
+
+h1 { margin: 20px 0 4px; font-size: 24px; }
+header p { margin: 0 0 14px; color: var(--muted); max-width: 70ch; }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  align-items: end;
+  justify-content: space-between;
+}
+
+#lookup { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; }
+label { display: flex; flex-direction: column; font-size: 13px; color: var(--muted); gap: 3px; }
+
+input {
+  width: 210px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+}
+
+button {
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+button[type="submit"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+button:disabled { opacity: 0.5; cursor: default; }
+.buttons { display: flex; gap: 8px; }
+
+#status { margin-top: 10px; min-height: 1.5em; color: var(--muted); }
+#status.error { color: #d1453b; }
+
+main { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  min-width: 0;
+}
+
+.panel h2 { margin: 0 0 8px; font-size: 17px; display: flex; align-items: center; gap: 8px; }
+.swatch { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.swatch.dijkstra { background: var(--dijkstra); }
+.swatch.astar { background: var(--astar); }
+
+.map { height: 480px; border-radius: 6px; border: 1px solid var(--line); }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 10px 0 0;
+}
+.stats div { min-width: 0; }
+.stats dt { font-size: 12px; color: var(--muted); }
+.stats dd { margin: 0; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+footer { margin-top: 14px; font-size: 13px; color: var(--muted); }
+footer a { color: var(--accent); }
+
+@media (max-width: 800px) {
+  main { grid-template-columns: 1fr; }
+  .map { height: 340px; }
+  input { width: 100%; }
+  #lookup, label { width: 100%; }
+}
+
+/* ---- schedule and today ---- */
+
+.schedule {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 14px;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  min-width: 0;
+}
+.card h2 { margin: 0 0 8px; font-size: 17px; }
+
+.today-summary { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
+.today-walk { margin: 0 0 10px; color: var(--text); }
+.today-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+.today-list li { padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; }
+.today-list li.now { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.today-list li.next { border-color: var(--astar); }
+.today-list .when { font-variant-numeric: tabular-nums; color: var(--muted); }
+.today-list .gap { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+
+.chip {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+.chip.ok { background: #2da44e; }
+.chip.tight { background: #b7791f; }
+.chip.late { background: #d1453b; }
+
+.leave-banner {
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #b7791f;
+  color: #fff;
+  font-weight: 700;
+}
+.leave-banner.late { background: #d1453b; }
+.reminder { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
+.reminder .hint { flex-basis: 100%; margin: 0; }
+.reminder select { width: auto; padding: 4px 8px; }
+
+.hint { margin: 6px 0; font-size: 13px; color: var(--muted); }
+.hint.error { color: #d1453b; }
+
+details { margin-bottom: 8px; }
+summary { cursor: pointer; font-weight: 600; margin-bottom: 6px; }
+
+textarea, select, input[type="time"], input[type="date"] {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+textarea { resize: vertical; font-size: 13px; margin-bottom: 8px; }
+
+#manual-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+#manual-form input:not([type="checkbox"]) { width: 100%; }
+#manual-form button, #m-days, #manual-form label.inline { grid-column: 1 / -1; }
+#m-days { display: flex; flex-wrap: wrap; gap: 4px 12px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; margin: 0; }
+#m-days legend { font-size: 13px; color: var(--muted); padding: 0 4px; }
+#m-days label { flex-direction: row; align-items: center; gap: 4px; color: var(--text); }
+label.inline { flex-direction: row; align-items: center; gap: 6px; }
+label.inline input { width: auto; }
+
+.meeting-list { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 4px; }
+.meeting-list li { display: flex; flex-wrap: wrap; gap: 0 4px; align-items: baseline; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 14px; }
+.meeting-list li.problem { border-color: #b7791f; }
+.meeting-list small { color: var(--muted); }
+.meeting-list .remove { margin-left: auto; padding: 0 8px; line-height: 1.4; }
+
+@media (max-width: 800px) {
+  .schedule { grid-template-columns: 1fr; }
+  #manual-form { grid-template-columns: 1fr; }
+}
