@@ -12,7 +12,7 @@ API
                                            Dijkstra and A* results for the same trip,
                                            including the nodes each one explored
     GET /api/resolve?q=Baskin+Engr+152     building, room and entrances for a schedule string
-    GET /api/route_to_room?start=LAT,LON&room=Kresge+Acad+3201
+    GET /api/route_to_room?start=LAT,LON&room=Kresge+Acad+3201[&algo=astar][&explored=0]
                                            route from a point (e.g. your location) to a class:
                                            picks the building door that gives the shortest total
                                            trip, then returns both algorithms for that route
@@ -448,7 +448,13 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                 return
             entrance, walk_m, indoor_m = chosen
             end = (entrance["lat"], entrance["lon"])
-            payload = {a: run_engine(engine, graph_dir, a, start, end) for a in ALGORITHMS}
+            # The web demo wants both algorithms and the explored nodes; the phone app only
+            # needs one path, so it can ask for less (?algo=astar&explored=0).
+            algos = ALGORITHMS if "algo" not in query else [query["algo"][0]]
+            if any(a not in ALGORITHMS for a in algos):
+                raise BadRequest("algo must be one of: " + ", ".join(ALGORITHMS))
+            with_explored = query.get("explored", ["1"])[0] != "0"
+            payload = {a: run_engine(engine, graph_dir, a, start, end, explored=with_explored) for a in algos}
             payload["room"] = {
                 **resolution_dict(res),
                 "building_name": campus.buildings[res.building_id]["name"],

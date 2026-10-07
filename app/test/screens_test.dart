@@ -261,9 +261,38 @@ void main() {
 
     testWidgets('the location switch is remembered', (tester) async {
       await openSettings(tester);
-      await tester.tap(find.byType(Switch));
+      final location = find.widgetWithText(SwitchListTile, 'Use my location');
+      await tester.tap(location);
       await tester.pumpAndSettle();
-      expect(tester.widget<Switch>(find.byType(Switch)).value, isFalse);
+      expect(tester.widget<SwitchListTile>(location).value, isFalse);
+    });
+
+    testWidgets('reminders turn on only once notifications are allowed', (tester) async {
+      final rig = await openSettings(tester);
+      final reminders = find.widgetWithText(SwitchListTile, 'Leave-now reminders');
+
+      rig.scheduler.allowed = false;
+      await tester.tap(reminders);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(reminders).value, isFalse);
+      expect(find.textContaining('Notifications are blocked'), findsOneWidget);
+
+      rig.scheduler.allowed = true;
+      await tester.tap(reminders);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(reminders).value, isTrue);
+      expect(find.textContaining('Notifications are blocked'), findsNothing);
+    });
+
+    testWidgets('a test notification can be sent once reminders are on', (tester) async {
+      final rig = await openSettings(tester);
+      expect(find.text('Send a test notification'), findsNothing);
+
+      await tester.tap(find.widgetWithText(SwitchListTile, 'Leave-now reminders'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Send a test notification'));
+      await tester.pumpAndSettle();
+      expect(rig.scheduler.shown, ['test']);
     });
   });
 }

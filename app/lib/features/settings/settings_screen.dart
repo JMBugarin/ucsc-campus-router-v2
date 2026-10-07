@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/api_client.dart';
 import '../../core/server_url.dart';
+import '../reminders/reminder_scheduler.dart';
+import '../today/today_models.dart';
 import 'settings.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -22,6 +24,31 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   void dispose() {
     _url.dispose();
     super.dispose();
+  }
+
+  String? _reminderMessage;
+
+  Future<void> _setReminders(bool on) async {
+    if (on) {
+      final allowed = await ref.read(reminderSchedulerProvider).requestPermission();
+      if (!mounted) return;
+      if (!allowed) {
+        setState(() => _reminderMessage = "Notifications are blocked for this app. Allow them in the phone's settings.");
+        return;
+      }
+    }
+    setState(() => _reminderMessage = null);
+    await ref.read(settingsProvider.notifier).setRemindersOn(on);
+  }
+
+  Future<void> _sendTest() async {
+    await ref.read(reminderSchedulerProvider).show(const Reminder(
+          stage: 'leave',
+          key: 'test',
+          inSeconds: 0,
+          title: 'Time to leave (test)',
+          body: 'This is what a leave-now reminder looks like.',
+        ));
   }
 
   Future<void> _saveAndTest() async {
@@ -110,6 +137,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             value: settings.useLocation,
             onChanged: controller.setUseLocation,
           ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Leave-now reminders'),
+            subtitle: const Text(
+              'A notification when it is time to leave for your next class today, even if the app is '
+              'closed. They are planned each time the app opens or refreshes, so open it once a day.',
+            ),
+            value: settings.remindersOn,
+            onChanged: _setReminders,
+          ),
+          if (_reminderMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(_reminderMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            ),
+          if (settings.remindersOn)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: _sendTest,
+                icon: const Icon(Icons.notifications_active_outlined),
+                label: const Text('Send a test notification'),
+              ),
+            ),
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: const Text('Heads-up before leaving'),

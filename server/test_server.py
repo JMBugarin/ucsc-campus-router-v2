@@ -115,6 +115,17 @@ class TestApi(unittest.TestCase):
         self.assertGreaterEqual(room["indoor_m"], 0)
         self.assertEqual(room["floor"], room["room_point"]["level"])
 
+    def test_route_to_room_can_return_one_light_path(self):
+        status, body = self.get(f"/api/route_to_room?start={START}&room=Kresge+Acad+3201&algo=astar&explored=0")
+        self.assertEqual(status, 200)
+        self.assertEqual(set(body), {"astar", "room"})
+        self.assertTrue(body["astar"]["found"])
+        self.assertGreater(len(body["astar"]["path"]), 1)
+        self.assertNotIn("explored", body["astar"])
+        status, full = self.get(f"/api/route_to_room?start={START}&room=Kresge+Acad+3201")
+        self.assertIn("explored", full["astar"])
+        self.assertEqual(self.get(f"/api/route_to_room?start={START}&room=Kresge+Acad+3201&algo=bogus")[0], 400)
+
     def test_route_to_room_picks_the_shorter_door(self):
         """A building with many doors: moving the start changes which door is best, and
         the chosen door is never worse than any other door's walk + indoor distance."""
