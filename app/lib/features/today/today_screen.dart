@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app.dart';
 import '../../core/api_client.dart';
 import '../../core/format.dart';
+import '../route/route_screen.dart';
 import '../settings/settings.dart';
 import 'today_controller.dart';
 import 'today_models.dart';
@@ -79,14 +80,25 @@ class _TodayBody extends ConsumerWidget {
     }
 
     final walk = walkText(analysis);
-    final notes = [if (data.locationProblem != null) data.locationProblem!, ...analysis.notes];
+    final notes = [
+      if (data.locationProblem != null) data.locationProblem!,
+      if (data.reminderProblem != null) data.reminderProblem!,
+      ...analysis.notes,
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(todaySummary(analysis), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
         if (analysis.banner != null) _Banner(banner: analysis.banner!),
-        if (walk != null) _WalkCard(status: walk.status, text: walk.text),
+        if (walk != null)
+          _WalkCard(
+            status: walk.status,
+            text: walk.text,
+            onRoute: analysis.next == null
+                ? null
+                : () => openRoute(context, room: analysis.next!.location, title: analysis.next!.location),
+          ),
         for (final note in notes)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -126,10 +138,11 @@ class StatusChip extends StatelessWidget {
 }
 
 class _WalkCard extends StatelessWidget {
-  const _WalkCard({required this.status, required this.text});
+  const _WalkCard({required this.status, required this.text, this.onRoute});
 
   final String status;
   final String text;
+  final VoidCallback? onRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +154,20 @@ class _WalkCard extends StatelessWidget {
           children: [
             StatusChip(status: status),
             const SizedBox(width: 10),
-            Expanded(child: Text(text)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(text),
+                  if (onRoute != null)
+                    TextButton.icon(
+                      onPressed: onRoute,
+                      icon: const Icon(Icons.map_outlined),
+                      label: const Text('Show route'),
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -222,7 +248,17 @@ class _TimelineTile extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(classTime.label, style: Theme.of(context).textTheme.titleMedium),
-            Text(classTime.location),
+            Row(
+              children: [
+                Expanded(child: Text(classTime.location)),
+                if (classTime.location.isNotEmpty)
+                  IconButton(
+                    tooltip: 'Route to ${classTime.label}',
+                    icon: const Icon(Icons.map_outlined),
+                    onPressed: () => openRoute(context, room: classTime.location, title: classTime.location),
+                  ),
+              ],
+            ),
           ],
         ),
       ),

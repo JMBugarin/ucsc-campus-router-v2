@@ -7,6 +7,10 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ucsc_router/app.dart';
 import 'package:ucsc_router/features/location/location_service.dart';
+import 'package:ucsc_router/features/reminders/reminder_scheduler.dart';
+import 'package:ucsc_router/features/route/route_plan.dart';
+import 'package:ucsc_router/features/route/route_repository.dart';
+import 'package:ucsc_router/features/route/route_screen.dart';
 import 'package:ucsc_router/features/schedule/meeting.dart';
 import 'package:ucsc_router/features/schedule/schedule_repository.dart';
 import 'package:ucsc_router/features/schedule/schedule_screen.dart';
@@ -86,7 +90,7 @@ class FakeTodayRepository implements TodayRepository {
   FakeTodayRepository(this.answer);
 
   Object answer; // an Analysis, or an exception to throw
-  final requests = <({List<Meeting> meetings, GeoPoint? here, int lead})>[];
+  final requests = <({List<Meeting> meetings, GeoPoint? here, int lead, List<String> reminded})>[];
 
   @override
   Future<Analysis> today({
@@ -95,7 +99,7 @@ class FakeTodayRepository implements TodayRepository {
     int remindLeadMinutes = 5,
     List<String> reminded = const [],
   }) async {
-    requests.add((meetings: meetings, here: here, lead: remindLeadMinutes));
+    requests.add((meetings: meetings, here: here, lead: remindLeadMinutes, reminded: reminded));
     final a = answer;
     if (a is Analysis) return a;
     throw a;
@@ -115,6 +119,53 @@ class FakeLocationService implements LocationService {
   }
 }
 
+/// Records what would have been shown or scheduled on the phone.
+class FakeReminderScheduler implements ReminderScheduler {
+  bool allowed = true;
+  bool failing = false;
+  final shown = <String>[];
+  final scheduled = <String, DateTime>{};
+  final cancelled = <String>[];
+
+  void _check() {
+    if (failing) throw StateError('notifications are broken');
+  }
+
+  @override
+  Future<bool> requestPermission() async => allowed;
+
+  @override
+  Future<void> show(Reminder reminder) async {
+    _check();
+    shown.add(reminder.key);
+  }
+
+  @override
+  Future<void> schedule(Reminder reminder, DateTime at) async {
+    _check();
+    scheduled[reminder.key] = at;
+  }
+
+  @override
+  Future<void> cancel(String key) async {
+    cancelled.add(key);
+    scheduled.remove(key);
+  }
+}
+
+class FakeRouteRepository implements RouteRepository {
+  Object answer = RoutePlan.fromJson(fixture('route_to_room'), start: const GeoPoint(36.9998, -122.0628));
+  final requests = <({GeoPoint from, String room})>[];
+
+  @override
+  Future<RoutePlan> toRoom({required GeoPoint from, required String room}) async {
+    requests.add((from: from, room: room));
+    final a = answer;
+    if (a is RoutePlan) return a;
+    throw a;
+  }
+}
+
 /// Everything a screen test needs, with the fakes exposed so tests can look at them.
 class TestRig {
   TestRig({
@@ -122,15 +173,20 @@ class TestRig {
     Object? analysis,
     String serverUrl = 'https://router.example',
     bool useLocation = true,
+    bool remindersOn = false,
   })  : schedule = FakeScheduleRepository(stored: stored),
         today = FakeTodayRepository(analysis ?? Analysis.fromJson(fixture('today_before_class'))),
-        location = FakeLocationService() {
-    SharedPreferences.setMockInitialValues({'server_url': serverUrl, 'use_location': useLocation});
+        location = FakeLocationService(),
+        scheduler = FakeReminderScheduler(),
+        route = FakeRouteRepository() {
+    SharedPreferences.setMockInitialValues({'server_url': serverUrl, 'use_location': useLocation, 'reminders_on': remindersOn});
   }
 
   final FakeScheduleRepository schedule;
   final FakeTodayRepository today;
   final FakeLocationService location;
+  final FakeReminderScheduler scheduler;
+  final FakeRouteRepository route;
   String? pickedCalendarText;
 
   Future<List<Override>> overrides() async {
@@ -140,6 +196,9 @@ class TestRig {
       scheduleRepositoryProvider.overrideWithValue(schedule),
       todayRepositoryProvider.overrideWithValue(today),
       locationServiceProvider.overrideWithValue(location),
+      reminderSchedulerProvider.overrideWithValue(scheduler),
+      routeRepositoryProvider.overrideWithValue(route),
+      showMapTilesProvider.overrideWithValue(false),
       todayRefreshIntervalProvider.overrideWithValue(null), // no timers left running after a test
       calendarFilePickerProvider.overrideWithValue(() async => pickedCalendarText),
     ];

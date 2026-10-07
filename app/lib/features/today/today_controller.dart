@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../location/location_service.dart';
+import '../reminders/reminder_sync.dart';
 import '../schedule/meeting.dart';
 import '../schedule/schedule_controller.dart';
 import '../settings/settings.dart';
@@ -11,13 +12,16 @@ import 'today_repository.dart';
 
 /// What the Today screen shows.
 class TodayData {
-  const TodayData({this.analysis, this.locationProblem});
+  const TodayData({this.analysis, this.locationProblem, this.reminderProblem});
 
   /// Null when there are no classes yet.
   final Analysis? analysis;
 
   /// Why the phone's location could not be used (shown beside the result), if that happened.
   final String? locationProblem;
+
+  /// Why reminders could not be set up on the phone, if that happened.
+  final String? reminderProblem;
 
   bool get hasSchedule => analysis != null;
 }
@@ -63,7 +67,11 @@ class TodayController extends AsyncNotifier<TodayData> {
   }
 
   Future<TodayData> _compute(List<Meeting> meetings, Settings settings) async {
-    if (meetings.isEmpty) return const TodayData();
+    final sync = ref.read(reminderSyncProvider);
+    if (meetings.isEmpty) {
+      await _cancelReminders(sync);
+      return const TodayData();
+    }
 
     GeoPoint? here;
     String? problem;
@@ -82,12 +90,35 @@ class TodayController extends AsyncNotifier<TodayData> {
       }
     }
 
+    final now = _now();
     final analysis = await ref.read(todayRepositoryProvider).today(
           meetings: meetings,
           here: here,
           remindLeadMinutes: settings.remindLeadMinutes,
+          reminded: settings.remindersOn ? sync.firedKeys(now) : const [],
         );
-    return TodayData(analysis: analysis, locationProblem: problem);
+
+    String? reminderProblem;
+    try {
+      if (settings.remindersOn) {
+        await sync.apply(analysis.reminders, now);
+      } else {
+        await _cancelReminders(sync);
+      }
+    } on Object {
+      // A notification problem must not hide the schedule.
+      reminderProblem = "Couldn't set up leave-now reminders on this phone.";
+    }
+    return TodayData(analysis: analysis, locationProblem: problem, reminderProblem: reminderProblem);
+  }
+
+  Future<void> _cancelReminders(ReminderSync sync) async {
+    if (!sync.hasAny) return;
+    try {
+      await sync.clear(_now());
+    } on Object {
+      // nothing useful to do; the reminders would just not be cancelled
+    }
   }
 }
 
