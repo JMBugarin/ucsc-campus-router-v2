@@ -233,6 +233,27 @@ Pipeline (a venv at `.venv/`; from `data-pipeline/`):
 - `python room_parser.py "Baskin Engr 152"` try the parser
 - `python -m unittest discover tests` sanity-check graph files, building data and the parser
 
+### Simulator checks
+
+Integration tests live in `app/integration_test/` and run in the iOS Simulator against a local server. The first four steps are one-time per session:
+
+```bash
+make -C engine route && python3 server/server.py &          # the local server on 127.0.0.1:8000
+xcrun simctl boot <iPhone id>                               # from: xcrun simctl list devices available
+xcrun simctl location <id> set 36.9995,-122.0630            # a point on campus
+scripts/sim_screenshots.sh docs/screenshots &               # optional: saves the screenshots the tests ask for
+cd app
+flutter build ios --simulator --debug --target integration_test/online_test.dart \
+  --dart-define=SERVER_URL=http://127.0.0.1:8000 --dart-define=SHOT_DIR=$PWD/../docs/screenshots
+xcrun simctl install <id> build/ios/iphonesimulator/Runner.app
+xcrun simctl privacy <id> grant location com.jmbugarin.ucscRouter
+flutter drive --driver=test_driver/integration_test.dart --target=integration_test/online_test.dart -d <id> \
+  --use-application-binary=build/ios/iphonesimulator/Runner.app \
+  --dart-define=SERVER_URL=http://127.0.0.1:8000 --dart-define=SHOT_DIR=$PWD/../docs/screenshots
+```
+
+For `offline_test.dart` build and run the same way with `SERVER_URL=http://127.0.0.1:1` (nothing listens there). The permission is granted after installing the prebuilt app because `flutter test` reinstalls the app and loses the grant, which leaves the system prompt over the screen. `binding.takeScreenshot` returned blank images after the first one here, so screenshots are taken by the host script with `xcrun simctl io`. Notification permission cannot be granted with `simctl privacy`, so reminders are not covered. The tests check widget text, not pixels; look at the screenshots for layout.
+
 ### Conventions
 - Node ids are 0..N-1 in file order; the CSV format is the contract between pipeline and engine.
 - `graph_build` lengthens any edge shorter than the straight line between its endpoints (CSV rounding is 0.01 m; more than 1 m is rejected as corrupt). This keeps the haversine heuristic admissible and consistent. Do not remove it.

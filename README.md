@@ -8,13 +8,15 @@ Many UCSC classrooms (Baskin Engineering, Thimann Labs, and more) don't appear i
 - **Today**: import your class schedule and see what's now and next, how long the walk is, whether you have time, and when to leave. Works offline from saved walk times.
 - **Schedule**: paste your MyUCSC schedule, import a calendar (`.ics`) file, or add classes by hand. It stays on your phone.
 
-<!-- Screenshots: add your own captures to docs/screenshots/ and link them here.
-     Suggested: map search, route screen, Today with a walk card, schedule import. -->
-_Screenshots: to come._
+| Map search | Route | Today, offline | Day picker |
+|---|---|---|---|
+| <img src="docs/screenshots/02-map-search-be-152-results.png" width="200" alt="Searching BE 152 on the map"> | <img src="docs/screenshots/04-map-search-kresge-3201-route.png" width="200" alt="A walking route to Kresge 3201"> | <img src="docs/screenshots/08-today-offline.png" width="200" alt="Today with the server unreachable"> | <img src="docs/screenshots/07-today-next-day.png" width="200" alt="Tomorrow's classes"> |
+
+_Captured in the iOS Simulator (iPhone 17) with the simulator's location set to campus; not a real device. Map tiles are OpenStreetMap's public ones because no tile key was set._ More in [docs/screenshots](docs/screenshots).
 
 ## Status
 
-As of October 2026. The routing engine, server, data pipeline and Android/iOS app code are working and tested (hundreds of automated tests across C, Python and Dart, run in CI). The app is covered by widget tests and the iOS build compiles for the simulator, but on-device behaviour (layout, GPS, notifications) was **not checked** in the latest round of changes. Photo import (screenshot to schedule) is experimental and unverified against real input, see [developer notes](docs/developer-notes.md#photo-import).
+As of October 2026. The routing engine, server, data pipeline and Android/iOS app code are working and tested (hundreds of automated tests across C, Python and Dart, run in CI). The app is covered by widget tests and by integration tests that run in the iOS Simulator ([how](docs/developer-notes.md#simulator-checks)). It has **not been run on a physical device**, so real GPS accuracy and notification timing are unverified, and notifications were not exercised in the simulator either. Photo import (screenshot to schedule) is experimental and unverified against real input, see [developer notes](docs/developer-notes.md#photo-import).
 
 | Area | State |
 |---|---|
