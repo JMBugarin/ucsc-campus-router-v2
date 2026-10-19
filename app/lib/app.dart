@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/map/map_screen.dart';
 import 'features/schedule/schedule_screen.dart';
 import 'features/settings/settings_screen.dart';
+import 'features/today/today_controller.dart';
 import 'features/today/today_screen.dart';
 
 /// Which tab is showing. Screens change it to send you somewhere (for example "set up the server").
@@ -46,11 +47,31 @@ class UcscRouterApp extends StatelessWidget {
   }
 }
 
-class HomeShell extends ConsumerWidget {
+class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeShell> createState() => _HomeShellState();
+}
+
+class _HomeShellState extends ConsumerState<HomeShell> {
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    // A new day, or a long time in the background, means yesterday's reminder plan is stale.
+    _lifecycle = AppLifecycleListener(onResume: () => ref.read(todayProvider.notifier).refresh(quiet: true));
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final index = ref.watch(selectedTabProvider);
     const screens = [MapScreen(), TodayScreen(), ScheduleScreen(), SettingsScreen()];
     return Scaffold(

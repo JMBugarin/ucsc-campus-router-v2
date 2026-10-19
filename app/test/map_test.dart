@@ -88,6 +88,23 @@ void main() {
       expect(find.textContaining("nearest door"), findsOneWidget);
     });
 
+    testWidgets('coming back to the app replans the day', (tester) async {
+      final rig = TestRig(stored: [meeting()], startTab: tabMap, remindersOn: true);
+      await open(tester, rig);
+      await tester.tap(find.text('Today'));
+      await tester.pumpAndSettle();
+      final before = rig.today.requests.length;
+
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(rig.today.requests.length, before + 1);
+    });
+
     testWidgets('a class on Today still opens its route', (tester) async {
       final rig = TestRig(stored: [meeting()], startTab: tabMap);
       await open(tester, rig);

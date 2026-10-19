@@ -43,6 +43,18 @@ void main() {
       expect(scheduler.shown, isEmpty);
     });
 
+    test('a whole day of reminders is scheduled, and dropping one class cancels only its own', () async {
+      final plan = remindersIn('today_reminders_all_day');
+      expect(plan.length, 6);
+      await sync.apply(plan, now);
+      expect(scheduler.scheduled.keys, plan.map((r) => r.key));
+
+      final withoutMiddle = plan.where((r) => !r.key.contains('T11:00')).toList();
+      await sync.apply(withoutMiddle, now);
+      expect(scheduler.cancelled, plan.where((r) => r.key.contains('T11:00')).map((r) => r.key));
+      expect(scheduler.scheduled.keys, withoutMiddle.map((r) => r.key));
+    });
+
     test('a late reminder is shown straight away, once', () async {
       final plan = remindersIn('today_late');
       await sync.apply(plan, now);
