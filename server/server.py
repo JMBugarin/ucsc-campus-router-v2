@@ -150,15 +150,10 @@ def best_entrance(engine, graph_dir, start, entrances, room_point=None):
 
 
 def load_calendar(path):
-    """(holidays, term) from data/holidays.json; a missing file means no holidays, no term."""
+    """The terms listed in data/holidays.json; a missing file means none."""
     if not path.exists():
-        return frozenset(), None
-    data = json.loads(path.read_text(encoding="utf-8"))
-    holidays = frozenset(date.fromisoformat(d) for d in data.get("holidays", []))
-    term = None
-    if data.get("term_start") and data.get("term_end"):
-        term = {"name": data.get("term", ""), "start": data["term_start"], "end": data["term_end"]}
-    return holidays, term
+        return []
+    return timetable.parse_terms(json.loads(path.read_text(encoding="utf-8")).get("terms"))
 
 
 def load_room_names(path):
@@ -219,7 +214,11 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
     meta = json.loads((graph_dir / "meta.json").read_text(encoding="utf-8"))
     bbox = tuple(meta["bbox_west_south_east_north"])
     campus = load_campus(ROOT / "data")
-    holidays, term = load_calendar(ROOT / "data" / "holidays.json")
+    terms = load_calendar(ROOT / "data" / "holidays.json")
+    holidays = timetable.holidays_of(terms)
+
+    def current_term():
+        return timetable.term_for(terms, datetime.now(timetable.TZ).date())
     room_names = load_room_names(ROOT / "data" / "classrooms.json")
     read_photo = photo_reader or photo.read_schedule_image  # tests pass a fake reader
     resolution_fields = ("raw", "kind", "building_id", "room", "entrances", "floor", "note",
@@ -300,7 +299,7 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                     self.send_json(200, {"ok": True})
                 elif url.path == "/api/meta":
                     self.send_json(200, {"bbox": bbox, "nodes": meta["nodes"], "edges": meta["edges"],
-                                         "term": term})
+                                         "term": current_term(), "terms": terms})
                 elif url.path == "/api/rooms":
                     self.send_json(200, {"rooms": room_names})
                 elif url.path == "/api/capabilities":
@@ -380,7 +379,7 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                 self.send_json(500, {"error": f"engine failed: {e}"})
 
         def schedule_ics(self, body):
-            meetings, notes = ics.parse_ics(body.get("text"), term)
+            meetings, notes = ics.parse_ics(body.get("text"), current_term())
             self.send_json(200, {"meetings": meetings, "notes": notes, "source": "ics",
                                  "locations": describe_locations(meetings)})
 
@@ -409,7 +408,7 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                 raise photo.PhotoError(403, PHOTO_OFF_PUBLIC)
             image, media_type = photo.check_image(body.get("image"), body.get("media_type"))
             extraction = read_photo(image, media_type)
-            meetings, notes = timetable.meetings_from_extraction(extraction, term)
+            meetings, notes = timetable.meetings_from_extraction(extraction, current_term())
             self.send_json(200, {"meetings": meetings, "notes": notes, "source": "photo",
                                  "locations": describe_locations(meetings)})
 

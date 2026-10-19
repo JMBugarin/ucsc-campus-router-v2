@@ -295,6 +295,57 @@ class TestSkipDates(unittest.TestCase):
         self.assertEqual(today["next"]["start"][:10], "2026-10-19")  # skips straight to the next week
 
 
+class TestTerms(unittest.TestCase):
+    TERMS = sch.parse_terms([
+        {"name": "Winter 2027", "start": "2027-01-04", "end": "2027-03-12", "holidays": ["2027-01-18"]},
+        {"name": "Fall 2026", "start": "2026-09-24", "end": "2026-12-04", "holidays": ["2026-11-11", "2026-11-11"]},
+    ])
+
+    def name(self, d):
+        return sch.term_for(self.TERMS, d)["name"]
+
+    def test_terms_are_sorted_and_checked(self):
+        self.assertEqual([t["name"] for t in self.TERMS], ["Fall 2026", "Winter 2027"])
+        self.assertEqual(self.TERMS[0]["holidays"], ["2026-11-11"])
+        with self.assertRaises(sch.ScheduleError):
+            sch.parse_terms([{"name": "Backwards", "start": "2026-12-04", "end": "2026-09-24"}])
+        with self.assertRaises(sch.ScheduleError):
+            sch.parse_terms([{"name": "No dates"}])
+        self.assertEqual(sch.parse_terms(None), [])
+
+    def test_the_term_boundary(self):
+        self.assertEqual(self.name(date(2026, 9, 24)), "Fall 2026")
+        self.assertEqual(self.name(date(2026, 12, 4)), "Fall 2026")
+        self.assertEqual(self.name(date(2026, 12, 5)), "Winter 2027")  # the break points at the next term
+        self.assertEqual(self.name(date(2027, 1, 3)), "Winter 2027")
+        self.assertEqual(self.name(date(2027, 1, 4)), "Winter 2027")
+        self.assertEqual(self.name(date(2027, 3, 12)), "Winter 2027")
+        self.assertEqual(self.name(date(2027, 6, 1)), "Winter 2027")  # after the last term
+        self.assertEqual(self.name(date(2026, 1, 1)), "Fall 2026")
+        self.assertIsNone(sch.term_for([], date(2026, 10, 1)))
+
+    def test_holidays_from_every_term_apply(self):
+        holidays = sch.holidays_of(self.TERMS)
+        self.assertEqual(holidays, {date(2026, 11, 11), date(2027, 1, 18)})
+        mwf = {"course": "W 1", "days": [0, 2, 4], "start": "10:00", "end": "11:00", "location": "",
+               "start_date": "2027-01-04", "end_date": "2027-03-12"}
+        self.assertTrue(sch.occurs_on(mwf, date(2027, 1, 20), holidays))
+        self.assertFalse(sch.occurs_on(mwf, date(2027, 1, 18), holidays))  # MLK Day, a Monday in Winter
+
+    def test_analyze_in_the_second_term(self):
+        mwf = {"course": "W 1", "title": "", "section": "01", "component": "Lecture", "days": [0, 2, 4],
+               "start": "10:00", "end": "11:00", "location": "Online", "start_date": "2027-01-04",
+               "end_date": "2027-03-12"}
+        holidays = sch.holidays_of(self.TERMS)
+        out = sch.analyze([mwf], at(2027, 1, 20, 9, 0), holidays)
+        self.assertEqual((out["state"], out["next"]["course"]), ("before_classes", "W 1"))
+        out = sch.analyze([mwf], at(2027, 1, 18, 9, 0), holidays)
+        self.assertEqual((out["state"], out["reason"], out["next"]["start"][:10]),
+                         ("no_classes_today", "holiday", "2027-01-20"))
+        out = sch.analyze([mwf], at(2026, 11, 10, 9, 0), holidays)
+        self.assertEqual((out["reason"], out["next"]["start"][:10]), ("before_term", "2027-01-04"))
+
+
 class TestOccurrences(unittest.TestCase):
     def setUp(self):
         self.mwf = meeting("A", [0, 2, 4], "14:40", "15:45", "Kresge Acad 3201")

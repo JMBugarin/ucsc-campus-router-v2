@@ -101,7 +101,7 @@ Open **My schedule** and either paste your MyUCSC Class Schedule page (Enrollmen
 - every class today with a verdict on each transition between them: **OK**, **Tight** (under 5 minutes to spare) or **Late** (the walk is longer than the gap);
 - sensible messages for weekends, holidays, before and after the term, and when the next class is tomorrow.
 
-"Route to next class" sends the next class to the map. The server is stateless: your schedule is saved only in your browser (`localStorage`), instructor names are dropped on import, and the server just checks it and times the walks. Walking time is distance at 1.3 m/s (plus the straight-line distance from the door to the room), rounded up to whole minutes. `data/holidays.json` lists the term dates and no-class days (Veterans Day and Thanksgiving for Fall 2026); it is a starting point, so check it against the official UCSC academic calendar.
+"Route to next class" sends the next class to the map. The server is stateless: your schedule is saved only in your browser (`localStorage`), instructor names are dropped on import, and the server just checks it and times the walks. Walking time is distance at 1.3 m/s (plus the straight-line distance from the door to the room), rounded up to whole minutes. `data/holidays.json` lists each term's dates and no-class days (Fall 2026 and Winter 2027 so far); it is a starting point, so check it against the official UCSC academic calendar.
 
 ### Leave-now reminders
 
@@ -266,7 +266,7 @@ Pipeline (Windows venv at `.venv/`; from `data-pipeline/`):
 
 ### Known gaps
 - Schedule input is paste or manual only. A pasted schedule must contain the `Days & Times` and date columns as MyUCSC prints them; rows it can't read are reported, not dropped silently.
-- Holidays are only the ones listed in `data/holidays.json` (Fall 2026). Add the next term's file when it starts.
+- Holidays are only the ones listed in `data/holidays.json` (Fall 2026, Winter 2027; Winter's dates come from the registrar calendar and are unchecked against the PDF, which lists Presidents' Day that the HTML page omits). Add each new term as another entry in `terms`.
 - The web demo needs internet (OSM tiles, Leaflet from unpkg). The `route` binary is Linux-only here, so the server runs in WSL; the browser on Windows reaches it via localhost.
 - `elev_m` is empty in the exported nodes.
 - Nearest-node is a linear scan; add a grid index if the graph grows.
