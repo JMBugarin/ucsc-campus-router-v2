@@ -1,7 +1,24 @@
 {
-  "term": "Fall 2026",
-  "term_start": "2026-09-24",
-  "term_end": "2026-12-04",
-  "note": "Term dates and the no-class days inside the term. A starting point only: check against the official UCSC academic calendar and edit as needed.",
-  "holidays": ["2026-11-11", "2026-11-26", "2026-11-27"]
+ "note": "Term dates and the no-class days inside each term. A starting point only: check against the official UCSC academic calendar (registrar.ucsc.edu/calendars-resources/academic-calendar) and edit as needed. Add the next term as another entry.",
+ "terms": [
+  {
+   "name": "Fall 2026",
+   "start": "2026-09-24",
+   "end": "2026-12-04",
+   "holidays": [
+    "2026-11-11",
+    "2026-11-26",
+    "2026-11-27"
+   ]
+  },
+  {
+   "name": "Winter 2027",
+   "start": "2027-01-04",
+   "end": "2027-03-12",
+   "holidays": [
+    "2027-01-18",
+    "2027-02-15"
+   ]
+  }
+ ]
 }

@@ -221,6 +221,35 @@ def meetings_from_extraction(data, term=None):
     return meetings, notes
 
 
+# ---- terms ---------------------------------------------------------------
+
+def parse_terms(raw):
+    """Validate the `terms` list from data/holidays.json: [{name, start, end, holidays}], sorted by start."""
+    terms = []
+    for t in raw or []:
+        term = {"name": t.get("name", ""), "start": _day(t.get("start"), "start"), "end": _day(t.get("end"), "end"),
+                "holidays": sorted({_day(d, "holidays") for d in t.get("holidays", [])})}
+        if term["end"] < term["start"]:
+            raise ScheduleError(f"term {term['name']!r} ends before it starts")
+        terms.append(term)
+    return sorted(terms, key=lambda t: t["start"])
+
+
+def term_for(terms, day):
+    """The term containing `day`; otherwise the next one to start, otherwise the last; None if there are none."""
+    if not terms:
+        return None
+    iso = day.isoformat()
+    for t in terms:
+        if t["start"] <= iso <= t["end"]:
+            return t
+    return next((t for t in terms if t["start"] > iso), terms[-1])
+
+
+def holidays_of(terms):
+    return frozenset(date.fromisoformat(d) for t in terms for d in t["holidays"])
+
+
 # ---- what happens on a given day ----------------------------------------
 
 def occurs_on(meeting, day, holidays=frozenset()):
