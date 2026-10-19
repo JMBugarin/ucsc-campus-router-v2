@@ -18,13 +18,13 @@ import csv
 import json
 from pathlib import Path
 
-import osmnx as ox
-
 # Core UCSC campus plus a small margin: (west, south, east, north).
 DEFAULT_BBOX = (-122.0700, 36.9860, -122.0460, 37.0030)
 
 
 def fetch_graph(bbox):
+    import osmnx as ox
+
     ox.settings.cache_folder = str(Path(__file__).parent / "cache")
     graph = ox.graph_from_bbox(bbox, network_type="walk", simplify=True)
     # Keep only the part of the network where every node can reach every other,

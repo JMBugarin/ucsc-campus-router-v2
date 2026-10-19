@@ -31,11 +31,6 @@ import math
 import sys
 from pathlib import Path
 
-import geopandas as gpd
-import osmnx as ox
-from shapely.geometry import Point
-from shapely.ops import nearest_points
-
 from build_graph import DEFAULT_BBOX
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,6 +42,8 @@ GOOD_ENTRANCES = {"yes", "main"}
 
 
 def fetch(bbox):
+    import osmnx as ox
+
     ox.settings.cache_folder = str(Path(__file__).parent / "cache")
     buildings = ox.features_from_bbox(bbox, tags={"building": True})
     buildings = buildings[buildings.geom_type.isin(["Polygon", "MultiPolygon"])]
@@ -86,6 +83,9 @@ def official_names(classrooms, facility_ids):
 
 
 def footprint_at_points(footprints, fp, utm, points):
+    import geopandas as gpd
+    from shapely.geometry import Point
+
     """The (non-roof) OSM footprint under these room points, or None."""
     pts = gpd.GeoSeries([Point(p["lon"], p["lat"]) for p in points.values()], crs=4326).to_crs(utm)
     centroid = pts.union_all().centroid
@@ -112,6 +112,8 @@ def nearest_node(nodes, lat, lon):
 
 
 def to_latlon(point_utm, utm_crs):
+    import geopandas as gpd
+
     p = gpd.GeoSeries([point_utm], crs=utm_crs).to_crs(4326).iloc[0]
     return round(p.y, 7), round(p.x, 7)
 
@@ -123,6 +125,10 @@ def main():
     ap.add_argument("--classrooms", type=Path, default=ROOT / "data" / "classrooms.json")
     ap.add_argument("--out", type=Path, default=ROOT / "data" / "buildings.json")
     args = ap.parse_args()
+
+    import geopandas as gpd
+    from shapely.geometry import Point
+    from shapely.ops import nearest_points
 
     sources = json.loads(args.sources.read_text(encoding="utf-8"))["buildings"]
     classrooms = json.loads(args.classrooms.read_text(encoding="utf-8"))["rooms"]
