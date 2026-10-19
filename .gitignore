@@ -24,4 +24,5 @@ web/_dev/
 # Autonomy loop state
 .claude/.loop_count
 .claude/loop-active
+.claude/settings.local.json
 BLOCKERS.md
