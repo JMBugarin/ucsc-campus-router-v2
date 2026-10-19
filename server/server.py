@@ -446,6 +446,7 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                 remind = {"lead_min": lead, "sent": sent}
             result = timetable.analyze(meetings, now, holidays, make_walker(engine, graph_dir, campus), here, remind)
             result["notes"] = notes + result["notes"]
+            result["holidays"] = sorted(d.isoformat() for d in holidays)  # so a phone can work offline
             self.send_json(200, result)
 
         def route_to(self, query, bbox):

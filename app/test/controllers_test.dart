@@ -162,13 +162,42 @@ void main() {
       addTearDown(container.dispose);
       await container.read(todayProvider.future);
 
-      rig.today.answer = const ApiException('The server is taking a long time.', kind: ApiErrorKind.timeout);
+      rig.today.answer = const ApiException('The server said no.', kind: ApiErrorKind.rejected);
       await container.read(todayProvider.notifier).refresh(quiet: true);
       expect(container.read(todayProvider).hasValue, isTrue);
       expect(container.read(todayProvider).hasError, isFalse);
 
       await container.read(todayProvider.notifier).refresh();
       expect(container.read(todayProvider).hasError, isTrue);
+    });
+
+    test('with the server unreachable the day is worked out on the phone from saved walk times', () async {
+      final rig = TestRig(stored: [meeting()]);
+      final container = await rig.container();
+      addTearDown(container.dispose);
+      final online = await container.read(todayProvider.future);
+      expect(online.offline, isFalse);
+
+      for (final kind in [ApiErrorKind.offline, ApiErrorKind.timeout, ApiErrorKind.server]) {
+        rig.today.answer = ApiException('down', kind: kind);
+        await container.read(todayProvider.notifier).refresh();
+        final data = container.read(todayProvider).requireValue;
+        expect(data.offline, isTrue, reason: '$kind');
+        expect(data.analysis, isNotNull);
+        expect(data.analysis!.reminders, isEmpty);
+      }
+    });
+
+    test('rate limiting and a bad address are still errors, not offline mode', () async {
+      final rig = TestRig(stored: [meeting()]);
+      final container = await rig.container();
+      addTearDown(container.dispose);
+      await container.read(todayProvider.future);
+      for (final kind in [ApiErrorKind.rateLimited, ApiErrorKind.notConfigured, ApiErrorKind.rejected]) {
+        rig.today.answer = ApiException('no', kind: kind);
+        await container.read(todayProvider.notifier).refresh();
+        expect(container.read(todayProvider).hasError, isTrue, reason: '$kind');
+      }
     });
 
     test('changing the schedule recomputes the day', () async {

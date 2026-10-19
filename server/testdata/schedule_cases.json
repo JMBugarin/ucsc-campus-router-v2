@@ -1,0 +1,775 @@
+{
+ "note": "Shared by server/test_schedule_cases.py and app/test/offline_analysis_test.py's Dart twin. Walk times are looked up by 'origin>destination' ('*' = the student's own location).",
+ "holidays": [
+  "2026-11-11",
+  "2026-11-26",
+  "2026-11-27"
+ ],
+ "here": [
+  36.9998,
+  -122.0628
+ ],
+ "walks": {
+  "Kresge Acad 3201>Soc Sci 2 075": 12,
+  "Soc Sci 2 075>Kresge Acad 3201": 12,
+  "*>Soc Sci 2 075": 15,
+  "*>Kresge Acad 3201": 8
+ },
+ "meetings": {
+  "A": {
+   "course": "A 1",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [
+    0,
+    2,
+    4
+   ],
+   "start": "09:00",
+   "end": "10:00",
+   "location": "Kresge Acad 3201",
+   "start_date": "2026-09-24",
+   "end_date": "2026-12-04"
+  },
+  "B": {
+   "course": "B 2",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [
+    0,
+    2,
+    4
+   ],
+   "start": "11:00",
+   "end": "12:00",
+   "location": "Soc Sci 2 075",
+   "start_date": "2026-09-24",
+   "end_date": "2026-12-04"
+  },
+  "C": {
+   "course": "C 3",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [
+    0,
+    2,
+    4
+   ],
+   "start": "14:40",
+   "end": "15:45",
+   "location": "Kresge Acad 3201",
+   "start_date": "2026-09-24",
+   "end_date": "2026-12-04"
+  },
+  "D": {
+   "course": "D 4",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [
+    1,
+    3
+   ],
+   "start": "10:00",
+   "end": "11:00",
+   "location": "Online",
+   "start_date": "2026-09-24",
+   "end_date": "2026-12-04"
+  },
+  "E": {
+   "course": "E 5",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [],
+   "start": "13:00",
+   "end": "14:00",
+   "location": "Kresge Acad 3201",
+   "start_date": "2026-11-11",
+   "end_date": "2026-11-11"
+  },
+  "F": {
+   "course": "F 6",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [
+    0
+   ],
+   "start": "08:00",
+   "end": "09:00",
+   "location": "Kresge Acad 3201",
+   "start_date": "2026-09-24",
+   "end_date": "2026-12-04",
+   "skip_dates": [
+    "2026-10-19"
+   ]
+  },
+  "G": {
+   "course": "G 7",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [
+    0,
+    2,
+    4
+   ],
+   "start": "10:10",
+   "end": "11:00",
+   "location": "Soc Sci 2 075",
+   "start_date": "2026-09-24",
+   "end_date": "2026-12-04"
+  },
+  "H": {
+   "course": "H 8",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [
+    0,
+    2,
+    4
+   ],
+   "start": "10:15",
+   "end": "11:00",
+   "location": "Soc Sci 2 075",
+   "start_date": "2026-09-24",
+   "end_date": "2026-12-04"
+  },
+  "I": {
+   "course": "I 9",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [],
+   "start": "09:00",
+   "end": "10:00",
+   "location": "Kresge Acad 3201",
+   "start_date": "2026-11-01",
+   "end_date": "2026-11-01"
+  },
+  "I2": {
+   "course": "I 10",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [],
+   "start": "09:00",
+   "end": "10:00",
+   "location": "Kresge Acad 3201",
+   "start_date": "2026-03-08",
+   "end_date": "2026-03-08"
+  },
+  "J": {
+   "course": "J 11",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [
+    0
+   ],
+   "start": "09:00",
+   "end": "10:00",
+   "location": "Kresge Acad 3201",
+   "start_date": "2027-01-04",
+   "end_date": "2027-03-12"
+  },
+  "K": {
+   "course": "K 12",
+   "title": "",
+   "section": "01",
+   "component": "Lecture",
+   "class_nbr": "",
+   "days": [
+    0
+   ],
+   "start": "09:00",
+   "end": "10:00",
+   "location": "Kresge Acad 3201",
+   "start_date": "2026-09-24",
+   "end_date": "2026-12-04",
+   "skip_dates": [
+    "2026-10-12",
+    "2026-10-19",
+    "2026-10-26",
+    "2026-11-02",
+    "2026-11-09"
+   ]
+  }
+ },
+ "cases": [
+  {
+   "name": "before the first class, with a location",
+   "now": "2026-10-12T08:00:00-07:00",
+   "meetings": [
+    "A",
+    "B",
+    "C"
+   ],
+   "here": true,
+   "expect": {
+    "state": "before_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-10-12T09:00:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 60.0,
+    "today_starts": [
+     "2026-10-12T09:00:00-07:00",
+     "2026-10-12T11:00:00-07:00",
+     "2026-10-12T14:40:00-07:00"
+    ],
+    "walk_minutes": 8,
+    "walk_from": "here",
+    "free_min": 52.0,
+    "status": "ok",
+    "leave_by": "2026-10-12T08:52:00-07:00",
+    "transitions": [
+     {
+      "walk_min": 12,
+      "free_min": 48.0,
+      "status": "ok"
+     },
+     {
+      "walk_min": 12,
+      "free_min": 148.0,
+      "status": "ok"
+     }
+    ]
+   }
+  },
+  {
+   "name": "in the first class",
+   "now": "2026-10-12T09:30:00-07:00",
+   "meetings": [
+    "A",
+    "B",
+    "C"
+   ],
+   "here": false,
+   "expect": {
+    "state": "in_class",
+    "reason": null,
+    "current_start": "2026-10-12T09:00:00-07:00",
+    "next_start": "2026-10-12T11:00:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 90.0,
+    "today_starts": [
+     "2026-10-12T09:00:00-07:00",
+     "2026-10-12T11:00:00-07:00",
+     "2026-10-12T14:40:00-07:00"
+    ],
+    "walk_minutes": 12,
+    "walk_from": "current_class",
+    "free_min": 48.0,
+    "status": "ok",
+    "leave_by": "2026-10-12T10:48:00-07:00",
+    "transitions": [
+     {
+      "walk_min": 12,
+      "free_min": 48.0,
+      "status": "ok"
+     },
+     {
+      "walk_min": 12,
+      "free_min": 148.0,
+      "status": "ok"
+     }
+    ]
+   }
+  },
+  {
+   "name": "between classes, no location",
+   "now": "2026-10-12T10:15:00-07:00",
+   "meetings": [
+    "A",
+    "B",
+    "C"
+   ],
+   "here": false,
+   "expect": {
+    "state": "between_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-10-12T11:00:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 45.0,
+    "today_starts": [
+     "2026-10-12T09:00:00-07:00",
+     "2026-10-12T11:00:00-07:00",
+     "2026-10-12T14:40:00-07:00"
+    ],
+    "walk_minutes": 12,
+    "walk_from": "previous_class",
+    "free_min": 33.0,
+    "status": "ok",
+    "leave_by": "2026-10-12T10:48:00-07:00",
+    "transitions": [
+     {
+      "walk_min": 12,
+      "free_min": 48.0,
+      "status": "ok"
+     },
+     {
+      "walk_min": 12,
+      "free_min": 148.0,
+      "status": "ok"
+     }
+    ]
+   }
+  },
+  {
+   "name": "between classes, location known",
+   "now": "2026-10-12T10:15:00-07:00",
+   "meetings": [
+    "A",
+    "B",
+    "C"
+   ],
+   "here": true,
+   "expect": {
+    "state": "between_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-10-12T11:00:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 45.0,
+    "today_starts": [
+     "2026-10-12T09:00:00-07:00",
+     "2026-10-12T11:00:00-07:00",
+     "2026-10-12T14:40:00-07:00"
+    ],
+    "walk_minutes": 15,
+    "walk_from": "here",
+    "free_min": 30.0,
+    "status": "ok",
+    "leave_by": "2026-10-12T10:45:00-07:00",
+    "transitions": [
+     {
+      "walk_min": 12,
+      "free_min": 48.0,
+      "status": "ok"
+     },
+     {
+      "walk_min": 12,
+      "free_min": 148.0,
+      "status": "ok"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a walk longer than the gap is late",
+   "now": "2026-10-12T09:55:00-07:00",
+   "meetings": [
+    "A",
+    "G"
+   ],
+   "here": false,
+   "expect": {
+    "state": "in_class",
+    "reason": null,
+    "current_start": "2026-10-12T09:00:00-07:00",
+    "next_start": "2026-10-12T10:10:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 15.0,
+    "today_starts": [
+     "2026-10-12T09:00:00-07:00",
+     "2026-10-12T10:10:00-07:00"
+    ],
+    "walk_minutes": 12,
+    "walk_from": "current_class",
+    "free_min": -2.0,
+    "status": "late",
+    "leave_by": "2026-10-12T09:58:00-07:00",
+    "transitions": [
+     {
+      "walk_min": 12,
+      "free_min": -2.0,
+      "status": "late"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a walk just inside the gap is tight",
+   "now": "2026-10-12T09:55:00-07:00",
+   "meetings": [
+    "A",
+    "H"
+   ],
+   "here": false,
+   "expect": {
+    "state": "in_class",
+    "reason": null,
+    "current_start": "2026-10-12T09:00:00-07:00",
+    "next_start": "2026-10-12T10:15:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 20.0,
+    "today_starts": [
+     "2026-10-12T09:00:00-07:00",
+     "2026-10-12T10:15:00-07:00"
+    ],
+    "walk_minutes": 12,
+    "walk_from": "current_class",
+    "free_min": 3.0,
+    "status": "tight",
+    "leave_by": "2026-10-12T10:03:00-07:00",
+    "transitions": [
+     {
+      "walk_min": 12,
+      "free_min": 3.0,
+      "status": "tight"
+     }
+    ]
+   }
+  },
+  {
+   "name": "done for the day",
+   "now": "2026-10-12T16:00:00-07:00",
+   "meetings": [
+    "A",
+    "B",
+    "C"
+   ],
+   "here": true,
+   "expect": {
+    "state": "done_for_today",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-10-14T09:00:00-07:00",
+    "next_is_today": false,
+    "starts_in_min": 2460.0,
+    "today_starts": [
+     "2026-10-12T09:00:00-07:00",
+     "2026-10-12T11:00:00-07:00",
+     "2026-10-12T14:40:00-07:00"
+    ],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": [
+     {
+      "walk_min": 12,
+      "free_min": 48.0,
+      "status": "ok"
+     },
+     {
+      "walk_min": 12,
+      "free_min": 148.0,
+      "status": "ok"
+     }
+    ]
+   }
+  },
+  {
+   "name": "weekend",
+   "now": "2026-10-17T12:00:00-07:00",
+   "meetings": [
+    "A",
+    "B",
+    "C",
+    "F"
+   ],
+   "here": false,
+   "expect": {
+    "state": "no_classes_today",
+    "reason": "weekend",
+    "current_start": null,
+    "next_start": "2026-10-19T09:00:00-07:00",
+    "next_is_today": false,
+    "starts_in_min": 2700.0,
+    "today_starts": [],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "holiday",
+   "now": "2026-11-11T08:00:00-08:00",
+   "meetings": [
+    "A",
+    "B",
+    "C"
+   ],
+   "here": false,
+   "expect": {
+    "state": "no_classes_today",
+    "reason": "holiday",
+    "current_start": null,
+    "next_start": "2026-11-13T09:00:00-08:00",
+    "next_is_today": false,
+    "starts_in_min": 2940.0,
+    "today_starts": [],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "before the term starts",
+   "now": "2026-09-01T10:00:00-07:00",
+   "meetings": [
+    "A"
+   ],
+   "here": false,
+   "expect": {
+    "state": "no_classes_today",
+    "reason": "before_term",
+    "current_start": null,
+    "next_start": "2026-09-25T09:00:00-07:00",
+    "next_is_today": false,
+    "starts_in_min": 34500.0,
+    "today_starts": [],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "after the term ends",
+   "now": "2026-12-10T10:00:00-08:00",
+   "meetings": [
+    "A"
+   ],
+   "here": false,
+   "expect": {
+    "state": "no_classes_today",
+    "reason": "after_term",
+    "current_start": null,
+    "next_start": null,
+    "next_is_today": null,
+    "starts_in_min": null,
+    "today_starts": [],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "a one-off event runs on a holiday",
+   "now": "2026-11-11T12:00:00-08:00",
+   "meetings": [
+    "E",
+    "A"
+   ],
+   "here": false,
+   "expect": {
+    "state": "before_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-11-11T13:00:00-08:00",
+    "next_is_today": true,
+    "starts_in_min": 60.0,
+    "today_starts": [
+     "2026-11-11T13:00:00-08:00"
+    ],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "a skipped date is left out",
+   "now": "2026-10-19T07:00:00-07:00",
+   "meetings": [
+    "F",
+    "A"
+   ],
+   "here": false,
+   "expect": {
+    "state": "before_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-10-19T09:00:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 120.0,
+    "today_starts": [
+     "2026-10-19T09:00:00-07:00"
+    ],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "an online class has no walk",
+   "now": "2026-10-13T09:00:00-07:00",
+   "meetings": [
+    "D",
+    "A"
+   ],
+   "here": false,
+   "expect": {
+    "state": "before_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-10-13T10:00:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 60.0,
+    "today_starts": [
+     "2026-10-13T10:00:00-07:00"
+    ],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "the clocks go back",
+   "now": "2026-11-01T08:30:00-08:00",
+   "meetings": [
+    "I"
+   ],
+   "here": false,
+   "expect": {
+    "state": "before_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-11-01T09:00:00-08:00",
+    "next_is_today": true,
+    "starts_in_min": 30.0,
+    "today_starts": [
+     "2026-11-01T09:00:00-08:00"
+    ],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "the clocks go forward",
+   "now": "2026-03-08T08:30:00-07:00",
+   "meetings": [
+    "I2"
+   ],
+   "here": false,
+   "expect": {
+    "state": "before_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-03-08T09:00:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 30.0,
+    "today_starts": [
+     "2026-03-08T09:00:00-07:00"
+    ],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "no classes at all",
+   "now": "2026-10-12T10:00:00-07:00",
+   "meetings": [],
+   "here": false,
+   "expect": {
+    "state": "no_classes_today",
+    "reason": "no_schedule",
+    "current_start": null,
+    "next_start": null,
+    "next_is_today": null,
+    "starts_in_min": null,
+    "today_starts": [],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "a later term's first day is where the search starts",
+   "now": "2026-12-05T10:00:00-08:00",
+   "meetings": [
+    "J"
+   ],
+   "here": false,
+   "expect": {
+    "state": "no_classes_today",
+    "reason": "before_term",
+    "current_start": null,
+    "next_start": "2027-01-04T09:00:00-08:00",
+    "next_is_today": false,
+    "starts_in_min": 43140.0,
+    "today_starts": [],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "a class more than three weeks away is not looked for",
+   "now": "2026-10-11T10:00:00-07:00",
+   "meetings": [
+    "K"
+   ],
+   "here": false,
+   "expect": {
+    "state": "no_classes_today",
+    "reason": "weekend",
+    "current_start": null,
+    "next_start": null,
+    "next_is_today": null,
+    "starts_in_min": null,
+    "today_starts": [],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  }
+ ]
+}

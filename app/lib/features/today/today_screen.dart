@@ -82,6 +82,7 @@ class _TodayBody extends ConsumerWidget {
 
     final walk = walkText(analysis);
     final notes = [
+      if (data.offline) "Can't reach the server, so this is worked out on your phone. Pull down to try again.",
       if (data.locationProblem != null) data.locationProblem!,
       if (data.reminderProblem != null) data.reminderProblem!,
       ...analysis.notes,
