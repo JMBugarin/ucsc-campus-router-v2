@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../../core/api_client.dart';
 import '../location/location_service.dart';
+import 'destination.dart';
 import 'route_plan.dart';
 import 'route_repository.dart';
 
@@ -13,28 +14,27 @@ final showMapTilesProvider = Provider<bool>((ref) => true);
 
 LatLng _latLng(GeoPoint p) => LatLng(p.lat, p.lon);
 
-/// Opens the map for the walk to [room].
-void openRoute(BuildContext context, {required String room, required String title}) {
-  Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => RouteScreen(room: room, title: title)));
+/// Opens the map for the walk to [destination].
+void openRoute(BuildContext context, {required Destination destination}) {
+  Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => RouteScreen(destination: destination)));
 }
 
 class RouteScreen extends ConsumerWidget {
-  const RouteScreen({super.key, required this.room, required this.title});
+  const RouteScreen({super.key, required this.destination});
 
-  final String room;
-  final String title;
+  final Destination destination;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final route = ref.watch(routeProvider(room));
+    final route = ref.watch(routeProvider(destination));
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(destination.label),
         actions: [
           IconButton(
             tooltip: 'Find the route again',
             icon: const Icon(Icons.refresh),
-            onPressed: () => ref.invalidate(routeProvider(room)),
+            onPressed: () => ref.invalidate(routeProvider(destination)),
           ),
         ],
       ),
@@ -51,7 +51,7 @@ class RouteScreen extends ConsumerWidget {
             RouteProblem(:final message) => message,
             _ => 'Something went wrong. Try again.',
           },
-          onRetry: () => ref.invalidate(routeProvider(room)),
+          onRetry: () => ref.invalidate(routeProvider(destination)),
         ),
         data: (plan) => _RouteView(plan: plan),
       ),

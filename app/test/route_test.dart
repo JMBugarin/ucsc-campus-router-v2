@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:ucsc_router/core/api_client.dart';
 import 'package:ucsc_router/features/location/location_service.dart';
+import 'package:ucsc_router/features/route/destination.dart';
 import 'package:ucsc_router/features/route/route_plan.dart';
+import 'package:ucsc_router/features/route/route_repository.dart';
 import 'package:ucsc_router/features/today/today_models.dart';
 
 import 'helpers.dart';
@@ -18,6 +24,37 @@ Future<void> open(WidgetTester tester, TestRig rig) async {
 }
 
 void main() {
+  group('Destination', () {
+    test('a room and a dropped pin ask the server differently, and compare by value', () {
+      expect(const RoomDestination('Kresge Acad 3201').query, {'room': 'Kresge Acad 3201'});
+      expect(const PointDestination(GeoPoint(36.99, -122.06), name: 'Library').query,
+          {'to': '36.99,-122.06', 'name': 'Library'});
+      expect(const PointDestination(GeoPoint(36.99, -122.06)).query, {'to': '36.99,-122.06'});
+      expect(const PointDestination(GeoPoint(36.99, -122.06)).label, 'Dropped pin');
+      expect(const RoomDestination('A 1'), const RoomDestination('A 1'));
+      expect(const RoomDestination('A 1'), isNot(const RoomDestination('A 2')));
+    });
+
+    test('the repository sends the destination to /api/route_to', () async {
+      final seen = <Uri>[];
+      final api = ApiClient(
+        baseUrl: 'https://example.com',
+        client: MockClient((request) async {
+          seen.add(request.url);
+          return http.Response(jsonEncode(fixture('route_to_room')), 200);
+        }),
+      );
+      final repo = ApiRouteRepository(api);
+      await repo.to(from: here, destination: const PointDestination(GeoPoint(36.99, -122.06)));
+      await repo.to(from: here, destination: const RoomDestination('Kresge Acad 3201'));
+      expect(seen.map((u) => u.path).toSet(), {'/api/route_to'});
+      expect(seen[0].queryParameters['to'], '36.99,-122.06');
+      expect(seen[0].queryParameters.containsKey('room'), isFalse);
+      expect(seen[1].queryParameters['room'], 'Kresge Acad 3201');
+      expect(seen[1].queryParameters['start'], '36.9998,-122.0628');
+    });
+  });
+
   group('RoutePlan', () {
     test('is read from a real server answer', () {
       final plan = RoutePlan.fromJson(fixture('route_to_room'), start: here);
@@ -51,7 +88,7 @@ void main() {
       await tester.tap(find.text('Show route'));
       await tester.pumpAndSettle();
 
-      expect(rig.route.requests.single.room, 'Kresge Acad 3201');
+      expect(rig.route.requests.single.destination, const RoomDestination('Kresge Acad 3201'));
       expect(rig.route.requests.single.from, const GeoPoint(36.9998, -122.0628));
       expect(find.textContaining('min on foot'), findsOneWidget);
       expect(find.textContaining('Kresge College Academic Building'), findsOneWidget);
@@ -65,7 +102,7 @@ void main() {
 
       await tester.tap(find.byTooltip('Route to XYZ 10 Lecture').first);
       await tester.pumpAndSettle();
-      expect(rig.route.requests.single.room, 'Kresge Acad 3201');
+      expect(rig.route.requests.single.destination, const RoomDestination('Kresge Acad 3201'));
     });
 
     testWidgets("the server's reason is shown when there is no walk (online class)", (tester) async {

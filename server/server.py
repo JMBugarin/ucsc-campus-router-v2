@@ -12,10 +12,12 @@ API
                                            Dijkstra and A* results for the same trip,
                                            including the nodes each one explored
     GET /api/resolve?q=Baskin+Engr+152     building, room and entrances for a schedule string
-    GET /api/route_to_room?start=LAT,LON&room=Kresge+Acad+3201[&algo=astar][&explored=0]
-                                           route from a point (e.g. your location) to a class:
-                                           picks the building door that gives the shortest total
-                                           trip, then returns both algorithms for that route
+    GET /api/route_to?start=LAT,LON&room=Kresge+Acad+3201[&algo=astar][&explored=0]
+    GET /api/route_to?start=LAT,LON&to=LAT,LON[&name=Library][&algo=astar][&explored=0]
+                                           route from a point (e.g. your location) to a room or to
+                                           a coordinate. For a room it picks the building door that
+                                           gives the shortest total trip. Needs no schedule.
+                                           /api/route_to_room is the same endpoint under its old name
     POST /api/schedule/parse   {"text": "..."}       read a schedule pasted from MyUCSC
     POST /api/schedule/clean   {"meetings": [...]}   validate meetings (manual entry, saved ones)
     GET  /healthz                            "ok" for a hosting platform's health check
@@ -310,8 +312,8 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                                          for a in ALGORITHMS})
                 elif url.path == "/api/resolve":
                     self.send_json(200, resolution_dict(campus.resolve(query.get("q", [""])[0])))
-                elif url.path == "/api/route_to_room":
-                    self.route_to_room(query, bbox)
+                elif url.path in ("/api/route_to", "/api/route_to_room"):
+                    self.route_to(query, bbox)
                 elif url.path.startswith("/api/"):
                     self.send_json(404, {"error": "unknown endpoint"})
                 else:
@@ -428,22 +430,29 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
             result["notes"] = notes + result["notes"]
             self.send_json(200, result)
 
-        def route_to_room(self, query, bbox):
+        def route_to(self, query, bbox):
             start = parse_point(query.get("start", [""])[0], bbox)
-            text = query.get("room", [""])[0]
-            if not text.strip() or len(text) > 100:
-                raise BadRequest("room must be a schedule location such as 'Kresge Acad 3201'")
-            res = campus.resolve(text)
-            if res.kind != "building":
-                reason = {"online": "that class is online, so there is nowhere to walk",
-                          "tba": "that class has no room yet",
-                          "unknown": "I don't recognise that location"}[res.kind]
-                self.send_json(422, {"error": reason, "kind": res.kind, "candidates": res.candidates,
-                                     "candidate_names": resolution_dict(res)["candidate_names"]})
-                return
-            chosen = best_entrance(engine, graph_dir, start, res.entrances, res.room_point)
+            if query.get("to"):
+                target = parse_point(query["to"][0], bbox)
+                name = " ".join(query.get("name", [""])[0].split())[:80]
+                res = None
+                entrances, room_point = [{"lat": target[0], "lon": target[1], "kind": "point"}], None
+            else:
+                text = query.get("room", [""])[0]
+                if not text.strip() or len(text) > 100:
+                    raise BadRequest("room must be a schedule location such as 'Kresge Acad 3201', or give to=LAT,LON")
+                res = campus.resolve(text)
+                if res.kind != "building":
+                    reason = {"online": "that class is online, so there is nowhere to walk",
+                              "tba": "that class has no room yet",
+                              "unknown": "I don't recognise that location"}[res.kind]
+                    self.send_json(422, {"error": reason, "kind": res.kind, "candidates": res.candidates,
+                                         "candidate_names": resolution_dict(res)["candidate_names"]})
+                    return
+                entrances, room_point = res.entrances, res.room_point
+            chosen = best_entrance(engine, graph_dir, start, entrances, room_point)
             if chosen is None:
-                self.send_json(422, {"error": "no walkable route from there to that building",
+                self.send_json(422, {"error": "no walkable route from there to that place",
                                      "kind": "unreachable", "candidates": []})
                 return
             entrance, walk_m, indoor_m = chosen
@@ -455,9 +464,10 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                 raise BadRequest("algo must be one of: " + ", ".join(ALGORITHMS))
             with_explored = query.get("explored", ["1"])[0] != "0"
             payload = {a: run_engine(engine, graph_dir, a, start, end, explored=with_explored) for a in algos}
+            described = (resolution_dict(res) | {"building_name": campus.buildings[res.building_id]["name"]}
+                         if res else {"kind": "point", "building_name": name})
             payload["room"] = {
-                **resolution_dict(res),
-                "building_name": campus.buildings[res.building_id]["name"],
+                **described,
                 "entrance": entrance,
                 "walk_m": round(walk_m, 1),
                 "indoor_m": round(indoor_m, 1),

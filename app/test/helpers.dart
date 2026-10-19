@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ucsc_router/app.dart';
 import 'package:ucsc_router/features/location/location_service.dart';
 import 'package:ucsc_router/features/reminders/reminder_scheduler.dart';
+import 'package:ucsc_router/features/route/destination.dart';
 import 'package:ucsc_router/features/route/route_plan.dart';
 import 'package:ucsc_router/features/route/route_repository.dart';
 import 'package:ucsc_router/features/route/route_screen.dart';
@@ -155,11 +156,11 @@ class FakeReminderScheduler implements ReminderScheduler {
 
 class FakeRouteRepository implements RouteRepository {
   Object answer = RoutePlan.fromJson(fixture('route_to_room'), start: const GeoPoint(36.9998, -122.0628));
-  final requests = <({GeoPoint from, String room})>[];
+  final requests = <({GeoPoint from, Destination destination})>[];
 
   @override
-  Future<RoutePlan> toRoom({required GeoPoint from, required String room}) async {
-    requests.add((from: from, room: room));
+  Future<RoutePlan> to({required GeoPoint from, required Destination destination}) async {
+    requests.add((from: from, destination: destination));
     final a = answer;
     if (a is RoutePlan) return a;
     throw a;
