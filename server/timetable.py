@@ -346,54 +346,86 @@ def _clock12(moment):
     return f"{moment.hour % 12 or 12}:{moment.minute:02d} {'AM' if moment.hour < 12 else 'PM'}"
 
 
-def plan_reminders(out, now, lead_min, sent=()):
-    """When to tell the student to leave for their next class, from an analysis made by analyze().
-
-    Returns (reminders, banner). `reminders` are notifications still to come, each with the
-    seconds from now to show it; `banner` is a message for the page itself, or None.
-
-    A heads-up (lead_min minutes before leaving; none if lead_min is 0) whose time has passed is
-    dropped. A "leave now" whose time has passed while the class has not started is returned
-    once, as "late", to be shown straight away. `sent` holds keys already shown, so nothing
-    repeats. Needs a walk to time, so there is nothing for a class tomorrow or an unknown room.
-    """
-    nxt, walk = out["next"], out["walk"]
-    if not nxt or not nxt["is_today"] or not walk or not out["leave_by"]:
-        return [], None
-    start = datetime.fromisoformat(nxt["start"])
-    leave = datetime.fromisoformat(out["leave_by"])
-    if now >= start:
-        return [], None
-
-    name = " ".join(x for x in (nxt["course"], nxt["component"]) if x)
-    details = f"{nxt['location']}: about {walk['minutes']} min on foot. Class starts at {_clock12(start)}."
-    titles = {"heads-up": f"Leave in {lead_min} min for {name}", "leave": f"Time to leave for {name}",
-              "late": f"Leave now, you're running late for {name}"}
+def _stage_reminders(item, now, lead_min, sent, allow_late):
+    """The heads-up and "leave now" reminders still to come for one class."""
+    start, leave = item["start"], item["leave"]
+    details = f"{item['location']}: about {item['minutes']} min on foot. Class starts at {_clock12(start)}."
+    titles = {"heads-up": f"Leave in {lead_min} min for {item['name']}",
+              "leave": f"Time to leave for {item['name']}",
+              "late": f"Leave now, you're running late for {item['name']}"}
     stages = [("heads-up", leave - timedelta(minutes=lead_min))] if lead_min > 0 else []
     stages.append(("leave", leave))
-
     reminders = []
     for stage, at in stages:
-        key = f"{nxt['start']}|{stage}"
+        key = f"{start.isoformat()}|{stage}"
         if key in sent:
             continue
         seconds = (at - now).total_seconds()
         if seconds >= 0:
             reminders.append({"stage": stage, "key": key, "in_seconds": round(seconds, 1),
                               "title": titles[stage], "body": details})
-        elif stage == "leave":
+        elif stage == "leave" and allow_late:
             reminders.append({"stage": "late", "key": key, "in_seconds": 0.0,
                               "title": titles["late"], "body": details})
+    return reminders
+
+
+def plan_reminders(out, now, lead_min, sent=()):
+    """When to tell the student to leave for each class still to come today, from an analysis made by analyze().
+
+    Returns (reminders, banner). `reminders` are notifications still to come, each with the
+    seconds from now to show it, in time order; `banner` is a message for the page itself about
+    the next class, or None.
+
+    A heads-up (lead_min minutes before leaving; none if lead_min is 0) whose time has passed is
+    dropped. For the next class, a "leave now" whose time has passed while the class has not
+    started is returned once, as "late", to be shown straight away. A later class is walked to
+    from the one before it, so it is never reminded before that one ends. `sent` holds keys
+    already shown, so nothing repeats. Needs a walk to time, so there is nothing for a class
+    tomorrow, an online class or an unknown room.
+    """
+    nxt, walk = out["next"], out["walk"]
+    if not nxt or not nxt["is_today"]:
+        return [], None
+    first_start = datetime.fromisoformat(nxt["start"])
+    if now >= first_start:
+        return [], None
+
+    def name_of(c):
+        return " ".join(x for x in (c["course"], c["component"]) if x)
+
+    items = []
+    if walk and out["leave_by"]:
+        items.append({"name": name_of(nxt), "location": nxt["location"], "start": first_start,
+                      "leave": datetime.fromisoformat(out["leave_by"]), "minutes": walk["minutes"], "late_ok": True})
+    later = [t for t in out["today"] if datetime.fromisoformat(t["start"]) > first_start]
+    for t in later:
+        if "walk_min" not in t:
+            continue
+        before = [p for p in out["today"] if datetime.fromisoformat(p["start"]) < datetime.fromisoformat(t["start"])]
+        free_from = max(datetime.fromisoformat(p["end"]) for p in before)
+        start = datetime.fromisoformat(t["start"])
+        leave = max(start - timedelta(minutes=t["walk_min"]), free_from)
+        items.append({"name": name_of(t), "location": t["location"], "start": start, "leave": leave,
+                      "minutes": t["walk_min"], "late_ok": False})
+
+    reminders = []
+    for item in items:
+        reminders += _stage_reminders(item, now, lead_min, sent, item["late_ok"])
+    reminders.sort(key=lambda r: r["in_seconds"])
 
     banner = None
-    if now >= leave - timedelta(minutes=max(lead_min, 5)):
-        if now >= leave:
-            text = f"Leave now for {name}: it is a {walk['minutes']} min walk and class starts at {_clock12(start)}."
-        else:
-            minutes_left = math.ceil((leave - now).total_seconds() / 60)
-            text = (f"Leave in {minutes_left} min for {name} "
-                    f"({walk['minutes']} min walk, class at {_clock12(start)}).")
-        banner = {"text": text, "late": now >= leave and out["status"] == "late"}
+    if items and items[0]["late_ok"]:
+        leave, minutes = items[0]["leave"], items[0]["minutes"]
+        name = items[0]["name"]
+        if now >= leave - timedelta(minutes=max(lead_min, 5)):
+            if now >= leave:
+                text = f"Leave now for {name}: it is a {minutes} min walk and class starts at {_clock12(first_start)}."
+            else:
+                minutes_left = math.ceil((leave - now).total_seconds() / 60)
+                text = (f"Leave in {minutes_left} min for {name} "
+                        f"({minutes} min walk, class at {_clock12(first_start)}).")
+            banner = {"text": text, "late": now >= leave and out["status"] == "late"}
     return reminders, banner
 
 
@@ -452,9 +484,6 @@ def analyze(meetings, now, holidays=frozenset(), walker=None, here=None, remind=
         elif out["next"]["is_today"] and nxt[2]["location"]:
             out["notes"].append("I can't work out the walk to that class (online, TBA, or an unknown room).")
 
-    if remind is not None:
-        out["reminders"], out["banner"] = plan_reminders(out, now, remind["lead_min"], set(remind["sent"]))
-
     for i, occ in enumerate(today):
         item = _occ_dict(occ)
         if i > 0:
@@ -467,4 +496,7 @@ def analyze(meetings, now, holidays=frozenset(), walker=None, here=None, remind=
                 item["free_min"] = round(gap - walk["minutes"], 1)
             item["status"] = _spare_status(item.get("free_min"))
         out["today"].append(item)
+
+    if remind is not None:
+        out["reminders"], out["banner"] = plan_reminders(out, now, remind["lead_min"], set(remind["sent"]))
     return out

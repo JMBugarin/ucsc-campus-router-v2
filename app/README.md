@@ -11,7 +11,7 @@ Your classes, the walk to each, and when to leave. It is a thin client for the p
 - **Leave-now reminders** (Settings): the phone schedules Android notifications from the server's reminder plan, so they appear even when the app is closed.
 
 ### How reminders work, and their limits
-The server decides when to remind (`plan_reminders`); the app schedules those times with Android and remembers which have fired. The plan is made when the app opens or refreshes, for your **next class today**, using the walk from where you were then. So: open the app once in the morning and the reminders for the next class are set; later classes are planned after the next refresh. If you never open the app, nothing new is planned. Turning on exact alarms makes them arrive on time; without that permission Android may delay them a few minutes.
+The server decides when to remind (`plan_reminders`); the app schedules those times with Android and remembers which have fired. The plan is made when the app opens, comes back to the foreground or refreshes, and covers **every class still to come today** (each walked to from the one before it, never earlier than that class ends). It is replaced whenever the schedule changes. So: open the app once in the morning and the whole day is set; open it again the next morning for the next day. If you never open the app, nothing new is planned. Turning on exact alarms makes them arrive on time; without that permission Android may delay them a few minutes.
 
 ### Map tiles
 Tiles come from OpenStreetMap's public tile server, which is fine for a personal or demo app but not for heavy use (see their tile usage policy). Swap the `urlTemplate` in `route_screen.dart` for your own tile provider before wide release.

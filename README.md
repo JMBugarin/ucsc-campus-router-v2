@@ -108,7 +108,7 @@ Open **My schedule** and either paste your MyUCSC Class Schedule page (Enrollmen
 Tick **Remind me when it's time to leave** on the Today card. The page asks your browser for permission to show notifications, then tells you:
 
 - a **heads-up** 5 or 10 minutes before you need to leave (or none), and
-- **"Time to leave"** at the moment you should set off for your next class, using the real walk from where you are (or from the class you're in).
+- **"Time to leave"** at the moment you should set off, using the real walk from where you are (or from the class you're in). The server plans this for every class still to come today, not only the next one; a later class is walked to from the one before it.
 
 If you're already late, you get one "Leave now, you're running late" straight away, and never a repeat. An on-page banner counts down the last few minutes too. The rules (`timetable.plan_reminders`) live on the server and are covered by tests; the page only arms timers and shows what the server planned, which keeps the logic in one place for the mobile app to reuse. Reminders are browser notifications, so **this page has to stay open** (a background tab is fine; a closed browser is not). They need a walking time, so there is nothing to remind about for an online class, an unknown room, or a class tomorrow. Reminders that work with the app closed need push notifications from a server, which is part of the mobile app.
 

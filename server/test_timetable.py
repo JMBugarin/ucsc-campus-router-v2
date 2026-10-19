@@ -270,6 +270,68 @@ class TestReminders(unittest.TestCase):
         self.assertNotIn("banner", plain)
 
 
+class TestRemindersForTheWholeDay(unittest.TestCase):
+    """Classes at 9:00-10:00, 11:00-12:00 and 14:40-15:45, each a 12 minute walk from the one before."""
+
+    def setUp(self):
+        self.schedule = [meeting("A 1", [0], "09:00", "10:00", "Kresge Acad 3201"),
+                         meeting("B 2", [0], "11:00", "12:00", "Soc Sci 2 075"),
+                         meeting("C 3", [0], "14:40", "15:45", "Kresge Acad 3201")]
+
+    def plan(self, when, lead=5, sent=(), schedule=None, walk_m=900):
+        walker = lambda origin, destination: {"meters": walk_m, "indoor_m": 0.0}  # noqa: E731
+        return sch.analyze(schedule or self.schedule, when, frozenset(), walker, (37.0, -122.06),
+                           {"lead_min": lead, "sent": list(sent)})["reminders"]
+
+    def test_every_class_still_to_come_gets_reminders_in_time_order(self):
+        reminders = self.plan(at(2026, 10, 12, 8, 0))
+        self.assertEqual([r["stage"] for r in reminders], ["heads-up", "leave"] * 3)
+        self.assertEqual([r["in_seconds"] for r in reminders],
+                         sorted(r["in_seconds"] for r in reminders))
+        self.assertEqual([r["title"] for r in reminders[1::2]],
+                         ["Time to leave for A 1 Lecture", "Time to leave for B 2 Lecture", "Time to leave for C 3 Lecture"])
+        self.assertEqual(len({r["key"] for r in reminders}), 6)
+        self.assertEqual(reminders[3]["in_seconds"], (10 * 60 + 48 - 8 * 60) * 60.0)  # leave 10:48 for 11:00
+
+    def test_classes_that_are_over_or_have_started_are_left_out(self):
+        reminders = self.plan(at(2026, 10, 12, 10, 30))
+        self.assertEqual([r["title"] for r in reminders if r["stage"] == "leave"],
+                         ["Time to leave for B 2 Lecture", "Time to leave for C 3 Lecture"])
+        reminders = self.plan(at(2026, 10, 12, 11, 30))
+        self.assertEqual([r["title"] for r in reminders if r["stage"] == "leave"], ["Time to leave for C 3 Lecture"])
+        self.assertEqual(self.plan(at(2026, 10, 12, 15, 0)), [])
+
+    def test_a_later_class_is_never_reminded_before_the_one_before_it_ends(self):
+        tight = [meeting("A 1", [0], "09:00", "10:00", "Kresge Acad 3201"),
+                 meeting("B 2", [0], "10:05", "11:00", "Soc Sci 2 075")]  # 12 minute walk, 5 minute gap
+        reminders = self.plan(at(2026, 10, 12, 8, 0), schedule=tight)
+        leave_b = [r for r in reminders if r["title"] == "Time to leave for B 2 Lecture"][0]
+        self.assertEqual(leave_b["in_seconds"], 120 * 60.0)  # 10:00, when A ends, not 9:53
+        self.assertNotIn("late", [r["stage"] for r in reminders])
+
+    def test_a_later_class_is_not_reported_late_up_front(self):
+        reminders = self.plan(at(2026, 10, 12, 10, 59))
+        self.assertEqual([r["stage"] for r in reminders if "C 3" in r["title"]], ["heads-up", "leave"])
+
+    def test_shown_keys_are_skipped_per_class(self):
+        first = self.plan(at(2026, 10, 12, 8, 0))
+        sent = [r["key"] for r in first if "B 2" in r["title"]]
+        again = self.plan(at(2026, 10, 12, 8, 0), sent=sent)
+        self.assertEqual(len(again), 4)
+        self.assertFalse(any("B 2" in r["title"] for r in again))
+
+    def test_classes_without_a_walk_are_skipped_and_others_still_planned(self):
+        mixed = [meeting("A 1", [0], "09:00", "10:00", "Kresge Acad 3201"),
+                 meeting("B 2", [0], "11:00", "12:00", "Online"),
+                 meeting("C 3", [0], "14:40", "15:45", "Kresge Acad 3201")]
+        walker = lambda origin, destination: None if "Online" in (origin[-1], destination) else {  # noqa: E731
+            "meters": 900, "indoor_m": 0.0}
+        out = sch.analyze(mixed, at(2026, 10, 12, 8, 0), frozenset(), walker, (37.0, -122.06),
+                          {"lead_min": 5, "sent": []})
+        titles = [r["title"] for r in out["reminders"] if r["stage"] == "leave"]
+        self.assertEqual(titles, ["Time to leave for A 1 Lecture"])  # C 3 follows an online class, so no walk is known
+
+
 class TestSkipDates(unittest.TestCase):
     def base(self, **changes):
         return {**meeting("A", [0], "14:40", "15:45", "Kresge Acad 3201"), **changes}
