@@ -38,6 +38,16 @@ class TestGraphFiles(unittest.TestCase):
         for e in self.edges:
             self.assertGreater(float(e["length_m"]), 0)
 
+    def test_every_node_has_a_plausible_elevation(self):
+        for n in self.nodes:
+            self.assertNotEqual(n["elev_m"], "", n["id"])
+            self.assertTrue(50 < float(n["elev_m"]) < 400, n["id"])
+
+    def test_grades_are_mostly_walkable(self):
+        elev = [float(n["elev_m"]) for n in self.nodes]
+        steep = sum(abs(elev[int(e["to"])] - elev[int(e["from"])]) / float(e["length_m"]) > 0.3 for e in self.edges)
+        self.assertLess(steep / len(self.edges), 0.02)
+
     def test_stairs_flag_is_boolean(self):
         for e in self.edges:
             self.assertIn(e["is_stairs"], ("0", "1"))

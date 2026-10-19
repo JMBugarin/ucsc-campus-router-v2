@@ -1,7 +1,7 @@
 /* route: shortest walking route on the UCSC graph.
  *
  *   route <graph_dir> <start_lat> <start_lon> <end_lat> <end_lon>
- *         [--algo dijkstra|astar] [--json [--explored]]
+ *         [--algo dijkstra|astar] [--avoid-stairs] [--json [--explored]]
  *   route <graph_dir> --bench [N] [--seed S]
  */
 #include <math.h>
@@ -18,7 +18,7 @@ static void usage(void)
 {
     fprintf(stderr,
             "usage: route <graph_dir> <start_lat> <start_lon> <end_lat> <end_lon>\n"
-            "             [--algo dijkstra|astar] [--json [--explored]]\n"
+            "             [--algo dijkstra|astar] [--avoid-stairs] [--json [--explored]]\n"
             "       route <graph_dir> --bench [N] [--seed S]\n");
 }
 
@@ -48,7 +48,8 @@ static void print_text(Algo algo, const SearchResult *r, int32_t s, int32_t e, d
         printf("result:          no path\n");
         return;
     }
-    printf("distance:        %.1f m\n", r->cost_m);
+    printf("distance:        %.1f m\n", r->length_m);
+    printf("effective:       %.1f m (grade-adjusted; %.1f m of stairs)\n", r->effective_m, r->stairs_m);
     printf("path nodes:      %d\n", r->path_len);
     printf("nodes explored:  %ld\n", r->nodes_explored);
     printf("heap pushes:     %ld\n", r->heap_pushes);
@@ -61,8 +62,9 @@ static void print_json(const Graph *g, Algo algo, const SearchResult *r, int32_t
     printf("{\"algorithm\":\"%s\",\"found\":%s,", algo_name(algo), r->found ? "true" : "false");
     printf("\"start_node\":%d,\"end_node\":%d,", s, e);
     printf("\"start_snap_m\":%.2f,\"end_snap_m\":%.2f,", sd, ed);
-    printf("\"distance_m\":%.2f,\"nodes_explored\":%ld,\"heap_pushes\":%ld,\"time_us\":%.0f,",
-           r->found ? r->cost_m : 0.0, r->nodes_explored, r->heap_pushes, r->time_us);
+    printf("\"distance_m\":%.2f,\"effective_m\":%.2f,\"stairs_m\":%.2f,\"nodes_explored\":%ld,"
+           "\"heap_pushes\":%ld,\"time_us\":%.0f,",
+           r->length_m, r->effective_m, r->stairs_m, r->nodes_explored, r->heap_pushes, r->time_us);
     printf("\"path\":[");
     for (int32_t i = 0; i < r->path_len; i++)
         printf("%s[%.7f,%.7f]", i ? "," : "", g->lat[r->path[i]], g->lon[r->path[i]]);
@@ -81,7 +83,7 @@ static int run_query(const Graph *g, int argc, char **argv)
 {
     double c[4];
     Algo algo = ALGO_ASTAR;
-    bool json = false, explored = false;
+    bool json = false, explored = false, avoid_stairs = false;
 
     if (argc < 6) {
         usage();
@@ -96,6 +98,8 @@ static int run_query(const Graph *g, int argc, char **argv)
     for (int i = 6; i < argc; i++) {
         if (strcmp(argv[i], "--json") == 0) {
             json = true;
+        } else if (strcmp(argv[i], "--avoid-stairs") == 0) {
+            avoid_stairs = true;
         } else if (strcmp(argv[i], "--explored") == 0) {
             explored = true;
         } else if (strcmp(argv[i], "--algo") == 0 && i + 1 < argc) {
@@ -123,7 +127,8 @@ static int run_query(const Graph *g, int argc, char **argv)
     int32_t s = nearest_node(g, c[0], c[1], &sd);
     int32_t e = nearest_node(g, c[2], c[3], &ed);
     SearchResult r;
-    if (s < 0 || e < 0 || search_run_opts(g, algo, s, e, explored, &r) != 0) {
+    const SearchOpts opts = {.record_explored = explored, .avoid_stairs = avoid_stairs};
+    if (s < 0 || e < 0 || search_run_ex(g, algo, s, e, &opts, &r) != 0) {
         fprintf(stderr, "route: search failed\n");
         return 1;
     }

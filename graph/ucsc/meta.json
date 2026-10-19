@@ -7,5 +7,6 @@
   ],
   "nodes": 1960,
   "edges": 5188,
-  "source": "OpenStreetMap via osmnx"
+  "source": "OpenStreetMap via osmnx",
+  "elevation_source": "USGS 3DEP 10 m (ned10m) via OpenTopoData"
 }

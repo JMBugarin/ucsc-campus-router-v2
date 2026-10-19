@@ -22,9 +22,33 @@ static double now_us(void)
  * goal the heuristic is admissible, and because graph_build guarantees every
  * edge is at least as long as the straight line between its endpoints it is
  * also consistent, so a settled node never needs to be reopened. */
-int search_run_opts(const Graph *g, Algo algo, int32_t src, int32_t dst, bool record_explored,
-                    SearchResult *out)
+static double edge_cost(const Edge *e, bool avoid_stairs)
 {
+    return (avoid_stairs && (e->flags & EDGE_STAIRS)) ? e->cost_m * STAIRS_AVOID_FACTOR : e->cost_m;
+}
+
+/* Fills the path totals by re-reading the cheapest edge on each step. */
+static void path_totals(const Graph *g, bool avoid_stairs, SearchResult *out)
+{
+    for (int32_t k = 0; k + 1 < out->path_len; k++) {
+        int32_t u = out->path[k], v = out->path[k + 1];
+        const Edge *best = NULL;
+        for (int32_t i = g->offsets[u]; i < g->offsets[u + 1]; i++) {
+            const Edge *e = &g->edges[i];
+            if (e->to == v && (!best || edge_cost(e, avoid_stairs) < edge_cost(best, avoid_stairs)))
+                best = e;
+        }
+        out->length_m += best->length_m;
+        out->effective_m += best->cost_m;
+        if (best->flags & EDGE_STAIRS)
+            out->stairs_m += best->length_m;
+    }
+}
+
+int search_run_ex(const Graph *g, Algo algo, int32_t src, int32_t dst, const SearchOpts *opts,
+                  SearchResult *out)
+{
+    const bool record_explored = opts->record_explored, avoid_stairs = opts->avoid_stairs;
     memset(out, 0, sizeof *out);
     if (src < 0 || src >= g->n_nodes || dst < 0 || dst >= g->n_nodes)
         return -1;
@@ -77,7 +101,7 @@ int search_run_opts(const Graph *g, Algo algo, int32_t src, int32_t dst, bool re
             const Edge *e = &g->edges[i];
             if (settled[e->to])
                 continue;
-            double nd = dist[u] + e->length_m;
+            double nd = dist[u] + edge_cost(e, avoid_stairs);
             if (nd < dist[e->to]) {
                 dist[e->to] = nd;
                 prev[e->to] = u;
@@ -103,6 +127,7 @@ int search_run_opts(const Graph *g, Algo algo, int32_t src, int32_t dst, bool re
         }
         out->path_len = len;
         out->cost_m = dist[dst];
+        path_totals(g, avoid_stairs, out);
         out->found = true;
     }
     rc = 0;
@@ -123,6 +148,13 @@ void search_result_free(SearchResult *r)
     r->path = NULL;
     r->explored = NULL;
     r->path_len = 0;
+}
+
+int search_run_opts(const Graph *g, Algo algo, int32_t src, int32_t dst, bool record_explored,
+                    SearchResult *out)
+{
+    const SearchOpts opts = {.record_explored = record_explored};
+    return search_run_ex(g, algo, src, dst, &opts, out);
 }
 
 int search_run(const Graph *g, Algo algo, int32_t src, int32_t dst, SearchResult *out)

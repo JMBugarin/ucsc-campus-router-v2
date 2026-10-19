@@ -56,6 +56,15 @@ void main() {
   });
 
   group('RoutePlan', () {
+    test('minutes follow the climb-adjusted walk when the server sends it', () {
+      final flat = fixture('route_to_room');
+      final hilly = fixture('route_to_room');
+      (hilly['room'] as Map<String, dynamic>)['effective_m'] = ((flat['room'] as Map)['walk_m'] as num) * 2;
+      final a = RoutePlan.fromJson(flat, start: here), b = RoutePlan.fromJson(hilly, start: here);
+      expect(a.effectiveM, a.walkM);
+      expect(b.minutes, greaterThan(a.minutes));
+    });
+
     test('is read from a real server answer', () {
       final plan = RoutePlan.fromJson(fixture('route_to_room'), start: here);
       expect(plan.path.length, greaterThan(5));

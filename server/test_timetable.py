@@ -295,6 +295,18 @@ class TestSkipDates(unittest.TestCase):
         self.assertEqual(today["next"]["start"][:10], "2026-10-19")  # skips straight to the next week
 
 
+class TestWalkInfo(unittest.TestCase):
+    def test_minutes_come_from_effort_not_distance(self):
+        flat = sch._walk_info(lambda o, d: {"meters": 780.0, "indoor_m": 0.0}, ("room", "a"), "b")
+        hilly = sch._walk_info(lambda o, d: {"meters": 780.0, "indoor_m": 0.0, "effective_m": 1170.0}, ("room", "a"), "b")
+        self.assertEqual((flat["minutes"], flat["total_m"]), (10, 780.0))
+        self.assertEqual((hilly["minutes"], hilly["total_m"]), (15, 780.0))
+
+    def test_the_indoor_leg_counts_once(self):
+        walk = sch._walk_info(lambda o, d: {"meters": 100.0, "indoor_m": 30.0, "effective_m": 130.0}, ("room", "a"), "b")
+        self.assertEqual((walk["total_m"], walk["minutes"]), (130.0, 3))
+
+
 class TestTerms(unittest.TestCase):
     TERMS = sch.parse_terms([
         {"name": "Winter 2027", "start": "2027-01-04", "end": "2027-03-12", "holidays": ["2027-01-18"]},
