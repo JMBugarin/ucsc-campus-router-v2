@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app.dart';
 import '../../core/api_client.dart';
 import '../../core/format.dart';
+import '../route/destination.dart';
 import '../route/route_screen.dart';
 import '../settings/settings.dart';
 import 'today_controller.dart';
@@ -97,7 +98,7 @@ class _TodayBody extends ConsumerWidget {
             text: walk.text,
             onRoute: analysis.next == null
                 ? null
-                : () => openRoute(context, room: analysis.next!.location, title: analysis.next!.location),
+                : () => openRoute(context, destination: RoomDestination(analysis.next!.location)),
           ),
         for (final note in notes)
           Padding(
@@ -255,7 +256,7 @@ class _TimelineTile extends StatelessWidget {
                   IconButton(
                     tooltip: 'Route to ${classTime.label}',
                     icon: const Icon(Icons.map_outlined),
-                    onPressed: () => openRoute(context, room: classTime.location, title: classTime.location),
+                    onPressed: () => openRoute(context, destination: RoomDestination(classTime.location)),
                   ),
               ],
             ),

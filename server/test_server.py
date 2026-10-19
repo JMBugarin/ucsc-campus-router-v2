@@ -154,6 +154,22 @@ class TestApi(unittest.TestCase):
         self.assertEqual(self.get(f"/api/route_to_room?start={START}&room=")[0], 400)
         self.assertEqual(self.get("/api/route_to_room?start=1,2&room=Soc+Sci+2+075")[0], 400)
 
+    def test_route_to_a_coordinate_needs_no_schedule(self):
+        status, body = self.get(f"/api/route_to?start={START}&to={END}&name=Dropped+pin&algo=astar&explored=0")
+        self.assertEqual(status, 200)
+        place = body["room"]
+        self.assertEqual((place["kind"], place["building_name"]), ("point", "Dropped pin"))
+        self.assertTrue(body["astar"]["found"])
+        self.assertAlmostEqual(place["walk_m"], body["astar"]["distance_m"], delta=1.0)
+        self.assertEqual(place["indoor_m"], 0)
+        lat, lon = END.split(",")
+        self.assertEqual((place["entrance"]["lat"], place["entrance"]["lon"]), (float(lat), float(lon)))
+
+    def test_route_to_checks_its_destination(self):
+        self.assertEqual(self.get(f"/api/route_to?start={START}")[0], 400)
+        self.assertEqual(self.get(f"/api/route_to?start={START}&to=1,2")[0], 400)
+        self.assertEqual(self.get(f"/api/route_to?start={START}&room=Soc+Sci+2+075")[0], 200)
+
     def post(self, path, payload, raw=None):
         data = raw if raw is not None else json.dumps(payload).encode()
         req = urllib.request.Request(self.base + path, data=data, method="POST",
