@@ -290,8 +290,15 @@ class TestApi(unittest.TestCase):
         self.assertEqual(self.post("/api/today", None, raw=b"{not json")[0], 400)
         self.assertEqual(self.post("/api/today", None, raw=b"[1, 2]")[0], 400)
         self.assertEqual(self.post("/api/today", {"meetings": [], "now": "tomorrow-ish"})[0], 400)
-        self.assertEqual(self.post("/api/schedule/parse", {"text": "x" * 400_000})[0], 400)
         self.assertEqual(self.post("/api/nope", {})[0], 404)
+
+    def test_an_oversized_body_gets_its_error_not_a_reset(self):
+        for size in (400_000, 3_000_000, srv.PHOTO_MAX_BODY_BYTES + 1_000_000):
+            with self.subTest(size=size):
+                status, body = self.post("/api/schedule/parse", {"text": "x" * size})
+                self.assertEqual((status, body["error"]), (400, "that request is too large"))
+        status, body = self.post("/api/nope", {"text": "x" * 3_000_000})
+        self.assertEqual((status, body["error"]), (404, "unknown endpoint"))
 
     def test_today_plans_leave_reminders(self):
         meetings = [{"course": "XYZ 10", "days": [0, 2, 4], "start": "14:40", "end": "15:45",
@@ -446,13 +453,8 @@ class TestPhotoApi(unittest.TestCase):
         self.assertEqual(self.post({"image": "###", "media_type": "image/png"})[0], 400)
         self.assertEqual(self.post({"media_type": "image/png"})[0], 400)
         self.assertEqual(self.post({"image": base64.b64encode(b"hello").decode(), "media_type": "image/png"})[0], 400)
-        # An oversized body is refused from its Content-Length, before it is read; the client
-        # either gets the 400 or sees the connection close while it is still sending.
-        try:
-            status = self.post({"image": "A" * (srv.PHOTO_MAX_BODY_BYTES + 10), "media_type": "image/png"})[0]
-        except (urllib.error.URLError, ConnectionError):
-            status = 400
-        self.assertEqual(status, 400)
+        status, body = self.post({"image": "A" * (srv.PHOTO_MAX_BODY_BYTES + 10), "media_type": "image/png"})
+        self.assertEqual((status, body["error"]), (400, "that request is too large"))
         self.assertEqual(self.seen, [])
 
     def test_capabilities_with_a_reader(self):

@@ -46,6 +46,7 @@ import re
 import subprocess
 import sys
 import threading
+import time
 from datetime import date, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -70,6 +71,8 @@ MAX_BODY_BYTES = 300_000
 PHOTO_MAX_BODY_BYTES = 8_000_000  # a 5 MB image is about 6.7 MB as base64
 OCR_MAX_BODY_BYTES = 1_000_000  # a few thousand word boxes
 ICS_MAX_BODY_BYTES = 1_200_000  # a calendar file (limited to 1M characters inside)
+DRAIN_LIMIT_BYTES = 12_000_000  # a refused upload is read and dropped up to this size, so the client sees the refusal
+DRAIN_SECONDS = 10
 MARGIN_DEG = 0.002  # how far outside the graph's area a click may be
 ENGINE_TIMEOUT_S = 10
 ENGINE_SLOTS = threading.BoundedSemaphore(int(os.environ.get("ENGINE_CONCURRENCY", "4")))
@@ -348,15 +351,40 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                 raise BadRequest("send a JSON body") from None
             if length < 0 or length > limit:
                 raise BadRequest("that request is too large")
+            raw = self.rfile.read(length)
+            self.body_read = True
             try:
-                body = json.loads(self.rfile.read(length))
+                body = json.loads(raw)
             except (json.JSONDecodeError, UnicodeDecodeError):
                 raise BadRequest("the body is not valid JSON") from None
             if not isinstance(body, dict):
                 raise BadRequest("the body must be a JSON object")
             return body
 
+        def drain_body(self):
+            """Read and drop an upload that was refused unread. Closing with unread bytes resets the
+            connection, and the client would see that instead of our answer."""
+            if self.body_read:
+                return
+            deadline = time.monotonic() + DRAIN_SECONDS
+            try:
+                left = min(int(self.headers.get("Content-Length", "0")), DRAIN_LIMIT_BYTES)
+                while left > 0 and time.monotonic() < deadline:
+                    chunk = self.rfile.read(min(left, 65536))
+                    if not chunk:
+                        break
+                    left -= len(chunk)
+            except (ValueError, OSError):
+                pass
+
         def do_POST(self):
+            self.body_read = False
+            try:
+                self.handle_post()
+            finally:
+                self.drain_body()
+
+        def handle_post(self):
             url = urlparse(self.path)
             if self.throttled(url.path):
                 return
