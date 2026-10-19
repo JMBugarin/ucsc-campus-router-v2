@@ -9,6 +9,8 @@ import 'package:ucsc_router/app.dart';
 import 'package:ucsc_router/features/location/location_service.dart';
 import 'package:ucsc_router/features/reminders/reminder_scheduler.dart';
 import 'package:ucsc_router/features/route/destination.dart';
+import 'package:ucsc_router/features/search/place.dart';
+import 'package:ucsc_router/features/search/search_repository.dart';
 import 'package:ucsc_router/features/route/route_plan.dart';
 import 'package:ucsc_router/features/route/route_repository.dart';
 import 'package:ucsc_router/features/route/route_screen.dart';
@@ -167,6 +169,19 @@ class FakeRouteRepository implements RouteRepository {
   }
 }
 
+class FakeSearchRepository implements SearchRepository {
+  Object answer = <Place>[];
+  final queries = <String>[];
+
+  @override
+  Future<List<Place>> search(String query) async {
+    queries.add(query);
+    final a = answer;
+    if (a is List<Place>) return a;
+    throw a;
+  }
+}
+
 /// Everything a screen test needs, with the fakes exposed so tests can look at them.
 class TestRig {
   TestRig({
@@ -175,11 +190,13 @@ class TestRig {
     String serverUrl = 'https://router.example',
     bool useLocation = true,
     bool remindersOn = false,
+    this.startTab = tabToday,
   })  : schedule = FakeScheduleRepository(stored: stored),
         today = FakeTodayRepository(analysis ?? Analysis.fromJson(fixture('today_before_class'))),
         location = FakeLocationService(),
         scheduler = FakeReminderScheduler(),
-        route = FakeRouteRepository() {
+        route = FakeRouteRepository(),
+        search = FakeSearchRepository() {
     SharedPreferences.setMockInitialValues({'server_url': serverUrl, 'use_location': useLocation, 'reminders_on': remindersOn});
   }
 
@@ -188,6 +205,8 @@ class TestRig {
   final FakeLocationService location;
   final FakeReminderScheduler scheduler;
   final FakeRouteRepository route;
+  final FakeSearchRepository search;
+  final int startTab;
   String? pickedCalendarText;
 
   Future<List<Override>> overrides() async {
@@ -199,6 +218,8 @@ class TestRig {
       locationServiceProvider.overrideWithValue(location),
       reminderSchedulerProvider.overrideWithValue(scheduler),
       routeRepositoryProvider.overrideWithValue(route),
+      searchRepositoryProvider.overrideWithValue(search),
+      selectedTabProvider.overrideWith(() => SelectedTab(startTab)),
       showMapTilesProvider.overrideWithValue(false),
       todayRefreshIntervalProvider.overrideWithValue(null), // no timers left running after a test
       calendarFilePickerProvider.overrideWithValue(() async => pickedCalendarText),
