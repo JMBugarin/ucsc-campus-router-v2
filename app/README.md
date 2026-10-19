@@ -4,6 +4,7 @@ Your classes, the walk to each, and when to leave. It is a thin client for the p
 
 ## What it does
 - **Today**: what is happening now, the next class, the walk from where you are, free time, and a verdict on each gap between classes.
+- **Works offline**: when the server can't be reached, Today lists your classes, says what is now and next, and gives the walk times saved from the last time it could be reached (`WalkCache`). Reminders already set stay set. It uses a Dart copy of the server's timetable logic; both are tested against the same cases in `server/testdata/schedule_cases.json`. A class you have never seen a walk time for shows no walk until you are back online.
 - **Schedule**: paste from MyUCSC, import a calendar (.ics) file, or add a class by hand. Saved on the phone only; instructor names are never kept.
 - **Settings**: server address (with a connection test), whether to use your location, and how early the "leave soon" banner appears.
 

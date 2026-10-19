@@ -59,16 +59,28 @@ void main() {
       expect(find.textContaining('·  next'), findsOneWidget);
     });
 
+    testWidgets('with no connection it still lists the day and says it is working offline', (tester) async {
+      final rig = TestRig(stored: [meeting(days: [0, 1, 2, 3, 4, 5, 6])]);
+      rig.today.answer = const ApiException("Can't reach the server.", kind: ApiErrorKind.offline);
+      await open(tester, rig);
+
+      expect(find.textContaining("Can't reach the server, so this is worked out on your phone"), findsOneWidget);
+      expect(find.textContaining('XYZ 10 Lecture'), findsWidgets);
+      expect(find.text("Couldn't work out your day"), findsNothing);
+
+      rig.today.answer = Analysis.fromJson(fixture('today_before_class'));
+      await tester.tap(find.byTooltip('Refresh'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('worked out on your phone'), findsNothing);
+    });
+
     testWidgets('a failure says what happened and offers to retry', (tester) async {
       final rig = TestRig(stored: [meeting()]);
-      rig.today.answer = const ApiException(
-        "Can't reach the server. Check your connection and the server address in Settings.",
-        kind: ApiErrorKind.offline,
-      );
+      rig.today.answer = const ApiException('Too many requests. Please slow down.', kind: ApiErrorKind.rateLimited);
       await open(tester, rig);
 
       expect(find.text("Couldn't work out your day"), findsOneWidget);
-      expect(find.textContaining("Can't reach the server"), findsOneWidget);
+      expect(find.textContaining('Too many requests'), findsOneWidget);
 
       rig.today.answer = Analysis.fromJson(fixture('today_before_class'));
       await tester.tap(find.text('Try again'));

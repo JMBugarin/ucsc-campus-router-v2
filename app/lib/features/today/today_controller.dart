@@ -2,17 +2,20 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/api_client.dart';
 import '../location/location_service.dart';
 import '../reminders/reminder_sync.dart';
 import '../schedule/meeting.dart';
 import '../schedule/schedule_controller.dart';
 import '../settings/settings.dart';
+import 'offline_analysis.dart';
 import 'today_models.dart';
+import 'walk_cache.dart';
 import 'today_repository.dart';
 
 /// What the Today screen shows.
 class TodayData {
-  const TodayData({this.analysis, this.locationProblem, this.reminderProblem});
+  const TodayData({this.analysis, this.locationProblem, this.reminderProblem, this.offline = false});
 
   /// Null when there are no classes yet.
   final Analysis? analysis;
@@ -22,6 +25,10 @@ class TodayData {
 
   /// Why reminders could not be set up on the phone, if that happened.
   final String? reminderProblem;
+
+  /// True when the server could not be reached and this was worked out on the phone from the saved
+  /// schedule and the walk times saved from the last time it was reachable.
+  final bool offline;
 
   bool get hasSchedule => analysis != null;
 }
@@ -91,12 +98,34 @@ class TodayController extends AsyncNotifier<TodayData> {
     }
 
     final now = _now();
-    final analysis = await ref.read(todayRepositoryProvider).today(
+    final Analysis analysis;
+    try {
+      analysis = await ref.read(todayRepositoryProvider).today(
+            meetings: meetings,
+            here: here,
+            remindLeadMinutes: settings.remindLeadMinutes,
+            reminded: settings.remindersOn ? sync.firedKeys(now) : const [],
+          );
+    } on ApiException catch (error) {
+      final unreachable = error.kind == ApiErrorKind.offline ||
+          error.kind == ApiErrorKind.timeout ||
+          error.kind == ApiErrorKind.server;
+      if (!unreachable) rethrow;
+      final walks = ref.read(walkCacheProvider);
+      // Reminders already on the phone stay as they were; nothing new can be planned without the server.
+      return TodayData(
+        analysis: analyzeOffline(
           meetings: meetings,
-          here: here,
-          remindLeadMinutes: settings.remindLeadMinutes,
-          reminded: settings.remindersOn ? sync.firedKeys(now) : const [],
-        );
+          now: now,
+          holidays: walks.holidays,
+          walks: walks,
+          hasLocation: here != null,
+        ),
+        locationProblem: problem,
+        offline: true,
+      );
+    }
+    unawaited(ref.read(walkCacheProvider).remember(analysis));
 
     String? reminderProblem;
     try {

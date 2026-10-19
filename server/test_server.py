@@ -174,6 +174,13 @@ class TestApi(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("stairs_m", body["room"])
 
+    def test_today_lists_the_no_class_days_so_a_phone_can_work_offline(self):
+        status, body = self.post("/api/today", {"meetings": [], "now": "2026-10-12T10:00:00-07:00"})
+        self.assertEqual(status, 200)
+        self.assertIn("2026-11-11", body["holidays"])
+        self.assertIn("2027-01-18", body["holidays"])
+        self.assertEqual(body["holidays"], sorted(body["holidays"]))
+
     def test_search_finds_rooms_from_informal_queries(self):
         status, body = self.get("/api/search?q=BE+152")
         self.assertEqual(status, 200)

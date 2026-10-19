@@ -124,6 +124,7 @@ class Analysis {
     required this.notes,
     required this.reminders,
     this.banner,
+    this.holidays = const [],
   });
 
   final String now;
@@ -145,6 +146,9 @@ class Analysis {
   final List<String> notes;
   final List<Reminder> reminders;
   final LeaveBanner? banner;
+
+  /// No-class days (ISO dates) the server knows about, kept for working offline.
+  final List<String> holidays;
 
   factory Analysis.fromJson(Map<String, dynamic> json) {
     ClassTime? classTime(String key) {
@@ -168,6 +172,7 @@ class Analysis {
         for (final r in (json['reminders'] as List? ?? const [])) Reminder.fromJson(r as Map<String, dynamic>)
       ],
       banner: json['banner'] is Map<String, dynamic> ? LeaveBanner.fromJson(json['banner'] as Map<String, dynamic>) : null,
+      holidays: [for (final h in (json['holidays'] as List? ?? const [])) h as String],
     );
   }
 }
