@@ -6,6 +6,7 @@ import os
 import threading
 import unittest
 import urllib.error
+import urllib.parse
 import urllib.request
 from unittest import mock
 from pathlib import Path
@@ -153,6 +154,30 @@ class TestApi(unittest.TestCase):
         self.assertIn("Jack Baskin Engineering", body["candidate_names"])
         self.assertEqual(self.get(f"/api/route_to_room?start={START}&room=")[0], 400)
         self.assertEqual(self.get("/api/route_to_room?start=1,2&room=Soc+Sci+2+075")[0], 400)
+
+    def test_search_finds_rooms_from_informal_queries(self):
+        status, body = self.get("/api/search?q=BE+152")
+        self.assertEqual(status, 200)
+        top = body["results"][0]
+        self.assertEqual((top["building_id"], top["room"], top["room_known"]), ("baskin-engineering", "152", True))
+        self.assertEqual(set(top["point"]), {"lat", "lon"})
+        for q, building in (("Kresge 3201", "kresge-academic"), ("Cowell 113", "cowell-academic")):
+            self.assertEqual(self.get("/api/search?q=" + q.replace(" ", "+"))[1]["results"][0]["building_id"], building)
+        ids = {r["building_id"] for r in self.get("/api/search?q=Thimann+101&limit=3")[1]["results"]}
+        self.assertEqual(ids, {"thimann-labs", "thimann-lecture-hall"})
+
+    def test_a_search_result_can_be_routed_to_with_no_schedule(self):
+        result = self.get("/api/search?q=Kresge+3201")[1]["results"][0]
+        status, body = self.get(f"/api/route_to?start={START}&room={urllib.parse.quote(result['query'])}")
+        self.assertEqual((status, body["room"]["building_id"], body["room"]["room"]), (200, "kresge-academic", "3201"))
+
+    def test_search_checks_its_input(self):
+        self.assertEqual(self.get("/api/search?q=")[1], {"results": []})
+        self.assertEqual(self.get("/api/search")[1], {"results": []})
+        self.assertEqual(self.get("/api/search?q=" + "a" * 101)[0], 400)
+        self.assertEqual(self.get("/api/search?q=BE&limit=x")[0], 400)
+        self.assertEqual(len(self.get("/api/search?q=Cowell&limit=1")[1]["results"]), 1)
+        self.assertLessEqual(len(self.get("/api/search?q=Cowell&limit=999")[1]["results"]), 10)
 
     def test_route_to_a_coordinate_needs_no_schedule(self):
         status, body = self.get(f"/api/route_to?start={START}&to={END}&name=Dropped+pin&algo=astar&explored=0")

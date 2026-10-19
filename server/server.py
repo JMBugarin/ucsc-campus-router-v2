@@ -12,6 +12,9 @@ API
                                            Dijkstra and A* results for the same trip,
                                            including the nodes each one explored
     GET /api/resolve?q=Baskin+Engr+152     building, room and entrances for a schedule string
+    GET /api/search?q=BE+152[&limit=5]     ranked buildings and rooms for something a person typed
+                                           (abbreviations, partial names, typos); each result's "query"
+                                           can be passed to /api/route_to as room=
     GET /api/route_to?start=LAT,LON&room=Kresge+Acad+3201[&algo=astar][&explored=0]
     GET /api/route_to?start=LAT,LON&to=LAT,LON[&name=Library][&algo=astar][&explored=0]
                                            route from a point (e.g. your location) to a room or to
@@ -310,6 +313,15 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                     end = parse_point(query.get("end", [""])[0], bbox)
                     self.send_json(200, {a: run_engine(engine, graph_dir, a, start, end)
                                          for a in ALGORITHMS})
+                elif url.path == "/api/search":
+                    text = query.get("q", [""])[0]
+                    if len(text) > 100:
+                        raise BadRequest("q is too long")
+                    try:
+                        limit = int(query.get("limit", ["5"])[0])
+                    except ValueError:
+                        raise BadRequest("limit must be a whole number") from None
+                    self.send_json(200, {"results": campus.search(text, max(1, min(limit, 10)))})
                 elif url.path == "/api/resolve":
                     self.send_json(200, resolution_dict(campus.resolve(query.get("q", [""])[0])))
                 elif url.path in ("/api/route_to", "/api/route_to_room"):
