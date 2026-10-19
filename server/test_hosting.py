@@ -62,6 +62,19 @@ class TestHealthAndLimits(unittest.TestCase):
             with urllib.request.urlopen(s.base + "/", timeout=15) as r:
                 self.assertEqual(r.status, 200)
 
+    def test_a_throttled_upload_still_gets_its_429(self):
+        with Running(limits={"general": (1, 60), "heavy": (100, 60)}) as s:
+            def upload():
+                req = urllib.request.Request(s.base + "/api/schedule/parse", method="POST",
+                                             data=b'{"text": "' + b"x" * 2_000_000 + b'"}',
+                                             headers={"Content-Type": "application/json"})
+                try:
+                    return urllib.request.urlopen(req, timeout=15).status
+                except urllib.error.HTTPError as e:
+                    return e.code
+
+            self.assertEqual([upload(), upload()], [400, 429])
+
     def test_the_engine_endpoints_have_a_tighter_limit(self):
         with Running(limits={"general": (100, 60), "heavy": (2, 60)}) as s:
             # these are rejected as bad requests, but they still count against the limit
