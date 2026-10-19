@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../core/api_client.dart';
+import '../../core/tiles.dart';
 import '../route/destination.dart';
 import '../route/route_screen.dart';
 import '../search/place.dart';
@@ -73,11 +74,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           mapController: _map,
           options: const MapOptions(initialCenter: _campusCenter, initialZoom: 15),
           children: [
-            if (ref.watch(showMapTilesProvider))
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'io.github.jmbugarin.ucsc_router',
-              ),
+            const BaseMapLayer(),
             if (point != null)
               MarkerLayer(
                 markers: [
@@ -88,7 +85,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   ),
                 ],
               ),
-            const RichAttributionWidget(attributions: [TextSourceAttribution('© OpenStreetMap contributors')]),
+            const MapAttribution(),
           ],
         ),
         Padding(

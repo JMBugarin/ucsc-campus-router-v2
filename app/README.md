@@ -16,14 +16,14 @@ Your classes, the walk to each, and when to leave. It is a thin client for the p
 The server decides when to remind (`plan_reminders`); the app schedules those times with Android and remembers which have fired. The plan is made when the app opens, comes back to the foreground or refreshes, and covers **every class still to come today** (each walked to from the one before it, never earlier than that class ends). It is replaced whenever the schedule changes. So: open the app once in the morning and the whole day is set; open it again the next morning for the next day. If you never open the app, nothing new is planned. Turning on exact alarms makes them arrive on time; without that permission Android may delay them a few minutes.
 
 ### Map tiles
-Tiles come from OpenStreetMap's public tile server, which is fine for a personal or demo app but not for heavy use (see their tile usage policy). Swap the `urlTemplate` in `route_screen.dart` for your own tile provider before wide release.
+Without configuration the map uses OpenStreetMap's public tile server, which is fine for development but not for wide release (see their tile usage policy). For a real build use a hosted provider with your own key: copy `dart_defines.example.json` to `dart_defines.json` (git-ignored), set `TILE_PROVIDER` (`maptiler` or `stadia`) and `TILE_KEY`, and run with `--dart-define-from-file=dart_defines.json`. The key is compiled into the app, so restrict it to this app's bundle id in the provider's dashboard. The provider URLs and attributions are in `lib/core/tiles.dart`; they have not been tried against a live account, so check them against the provider's current docs when you set a key.
 
 ## Run it
 Run the app (the hosted server is used by default):
 
 ```bash
 flutter pub get
-flutter run          # on an emulator the dev machine is http://10.0.2.2:8000
+flutter run          # (add --dart-define-from-file=dart_defines.json for hosted map tiles) on an emulator the dev machine is http://10.0.2.2:8000
 ```
 
 A fresh install talks to the hosted server (`https://ucsc-campus-router.onrender.com`). To point a build at another server, pass it at build time; the Settings screen can still override it at run time:
