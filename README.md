@@ -101,7 +101,7 @@ Open **My schedule** and either paste your MyUCSC Class Schedule page (Enrollmen
 - every class today with a verdict on each transition between them: **OK**, **Tight** (under 5 minutes to spare) or **Late** (the walk is longer than the gap);
 - sensible messages for weekends, holidays, before and after the term, and when the next class is tomorrow.
 
-"Route to next class" sends the next class to the map. The server is stateless: your schedule is saved only in your browser (`localStorage`), instructor names are dropped on import, and the server just checks it and times the walks. Walking time is distance at 1.3 m/s (plus the straight-line distance from the door to the room), rounded up to whole minutes. `data/holidays.json` lists each term's dates and no-class days (Fall 2026 and Winter 2027 so far); it is a starting point, so check it against the official UCSC academic calendar.
+"Route to next class" sends the next class to the map. The server is stateless: your schedule is saved only in your browser (`localStorage`), instructor names are dropped on import, and the server just checks it and times the walks. Walking time is the climb-adjusted distance at 1.3 m/s (plus the straight-line distance from the door to the room), rounded up to whole minutes. Climbs and steep descents cost extra (Tobler's hiking function); gentle downhills are not credited as faster than flat. `/api/route` and `/api/route_to` accept `avoid_stairs=1`. `data/holidays.json` lists each term's dates and no-class days (Fall 2026 and Winter 2027 so far); it is a starting point, so check it against the official UCSC academic calendar.
 
 ### Leave-now reminders
 
@@ -180,6 +180,7 @@ The parser normalizes the text, treats online/TBA locations as non-physical, mat
 cd data-pipeline
 python -m venv ../.venv && ../.venv/bin/pip install -r requirements.txt   # Windows: ..\.venv\Scripts\...
 python build_graph.py --out ../graph/ucsc
+python fetch_elevation.py                     # fills elev_m (network; about 20 requests)
 ```
 
 This downloads from OpenStreetMap, so the result can change as the map is edited. The covered area is set by `DEFAULT_BBOX` in `build_graph.py`.
@@ -268,7 +269,7 @@ Pipeline (Windows venv at `.venv/`; from `data-pipeline/`):
 - Schedule input is paste or manual only. A pasted schedule must contain the `Days & Times` and date columns as MyUCSC prints them; rows it can't read are reported, not dropped silently.
 - Holidays are only the ones listed in `data/holidays.json` (Fall 2026, Winter 2027; Winter's dates come from the registrar calendar and are unchecked against the PDF, which lists Presidents' Day that the HTML page omits). Add each new term as another entry in `terms`.
 - The web demo needs internet (OSM tiles, Leaflet from unpkg). The `route` binary is Linux-only here, so the server runs in WSL; the browser on Windows reaches it via localhost.
-- `elev_m` is empty in the exported nodes.
+- Elevations are 10 m USGS 3DEP samples at graph nodes (about 10 m horizontal and a few meters vertical error), so short steep edges can get a noisy grade; slopes are capped at 30% in the cost.
 - Nearest-node is a linear scan; add a grid index if the graph grows.
 - Snapping goes to the nearest graph *node*, not the nearest point on an edge. Nodes are sparse (intersections/bends), so an entrance can snap up to ~26 m away (Social Sciences 2). Snap to edges to fix.
 - Graph covers a core-campus bounding box only (see `DEFAULT_BBOX` in `build_graph.py`).
@@ -282,6 +283,7 @@ The code is released under the [MIT License](LICENSE). The data below keeps its 
 
 | Data | Source | Status |
 |---|---|---|
+| Elevation of each graph node | [USGS 3DEP](https://www.usgs.gov/3d-elevation-program) 10 m data (`ned10m`) through the [OpenTopoData](https://www.opentopodata.org/) API, fetched once by `data-pipeline/fetch_elevation.py` and committed in `graph/ucsc/nodes.csv` | USGS data is public domain. |
 | Walking network and building footprints/entrances | [OpenStreetMap](https://www.openstreetmap.org/copyright) via osmnx, committed in `graph/ucsc/` and `data/buildings.json` | © OpenStreetMap contributors, [ODbL](https://opendatacommons.org/licenses/odbl/). Derived data must keep this attribution. |
 | Classroom names ("AIS Display Name") and facility ids | The public [UCSC classroom directory](https://classrooms.ucsc.edu/), read by `data-pipeline/fetch_classrooms.py` and committed as `data/classrooms.json` | Public web pages. No license or reuse terms were found or checked; this project is not affiliated with or endorsed by UCSC. |
 | Room coordinates and floor levels | The public classroom-points layer behind the [UCSC campus map](https://maps.ucsc.edu/) (UCSC Planning, Design & Construction), also in `data/classrooms.json` | Same as above: public, read-only, terms not checked. |

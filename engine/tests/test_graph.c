@@ -142,12 +142,33 @@ static void test_real_graph(void)
     graph_free(&g);
 }
 
+static void test_load_elevation(void)
+{
+    Graph g;
+    char err[256] = "";
+    CHECK(graph_load(&g, FIXTURE_DIR "/hilly", err, sizeof err) == 0);
+    CHECK(g.elev != NULL);
+    CHECK_NEAR(g.elev[1], 110.5, 1e-9);
+    CHECK(isnan(g.elev[2]));
+    const Edge *climb = &g.edges[g.offsets[0]];
+    CHECK(climb->cost_m > climb->length_m);
+    const Edge *unknown_end = &g.edges[g.offsets[1] + 1]; /* 1 -> 2, no elevation at 2 */
+    CHECK_NEAR(unknown_end->cost_m, unknown_end->length_m, 1e-12);
+    graph_free(&g);
+
+    CHECK(graph_load(&g, FIXTURE_DIR "/tiny", err, sizeof err) == 0);
+    CHECK(g.elev == NULL); /* no elevations in the file: costs are plain lengths */
+    CHECK_NEAR(g.edges[0].cost_m, g.edges[0].length_m, 1e-12);
+    graph_free(&g);
+}
+
 int main(void)
 {
     test_haversine();
     test_load_tiny();
     test_load_rejects_bad_input();
     test_build_directly();
+    test_load_elevation();
     test_real_graph();
     return TEST_RESULT();
 }

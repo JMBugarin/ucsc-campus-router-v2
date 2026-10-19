@@ -11,6 +11,7 @@ typedef struct {
     int32_t to;
     uint8_t flags; /* EDGE_* bits */
     double length_m;
+    double cost_m; /* length scaled by the climb (>= length_m); equals length_m without elevations */
 } Edge;
 
 /* Edge as read from a file or supplied by a test, before the CSR build. */
@@ -25,6 +26,7 @@ typedef struct {
 typedef struct {
     int32_t n_nodes, n_edges;
     double *lat, *lon;
+    double *elev;       /* meters per node (NaN where unknown), or NULL when no elevations were loaded */
     int32_t *offsets; /* n_nodes + 1 entries */
     Edge *edges;
     int32_t n_clamped;  /* edges lengthened to the straight-line distance */
@@ -38,6 +40,10 @@ typedef struct {
  * treated as corrupt data. Returns 0 on success, -1 with a message in err. */
 int graph_build(Graph *g, int32_t n_nodes, const double *lat, const double *lon,
                 const EdgeRec *edges, int32_t n_edges, char *err, size_t errlen);
+
+/* Copies per-node elevations (NaN for unknown) and sets each edge's cost_m from its grade.
+ * An edge with an unknown end keeps cost_m == length_m. Returns 0, or -1 on out of memory. */
+int graph_apply_elevation(Graph *g, const double *elev);
 
 /* Load <dir>/nodes.csv and <dir>/edges.csv (format written by
  * data-pipeline/build_graph.py). Returns 0 on success, -1 with a message. */

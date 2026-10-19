@@ -15,13 +15,13 @@
 
 static const Algo ALGOS[2] = {ALGO_DIJKSTRA, ALGO_ASTAR};
 
-/* Cheapest edge u -> v, or -1 if there is none. */
+/* Cost of the cheapest edge u -> v, or -1 if there is none. */
 static double edge_cost(const Graph *g, int32_t u, int32_t v)
 {
     double best = -1.0;
     for (int32_t i = g->offsets[u]; i < g->offsets[u + 1]; i++)
-        if (g->edges[i].to == v && (best < 0 || g->edges[i].length_m < best))
-            best = g->edges[i].length_m;
+        if (g->edges[i].to == v && (best < 0 || g->edges[i].cost_m < best))
+            best = g->edges[i].cost_m;
     return best;
 }
 
@@ -162,6 +162,110 @@ static void test_invalid_node_ids(void)
         CHECK(search_run(&g, ALGOS[a], -1, 2, &r) == -1);
         CHECK(search_run(&g, ALGOS[a], 0, 6, &r) == -1);
     }
+    graph_free(&g);
+}
+
+/* ---- elevation and stairs ---------------------------------------------- */
+
+/* Three nodes 100 m apart in a line; the middle one is 10 m higher (a 10% grade). */
+static void build_hill(Graph *g)
+{
+    char err[128];
+    double lat[3] = {37.0, 37.0 + 100.0 / 111195.0, 37.0 + 200.0 / 111195.0}, lon[3] = {-122.0, -122.0, -122.0};
+    EdgeRec edges[] = {{0, 1, 100.0, 0}, {1, 0, 100.0, 0}, {1, 2, 100.0, 0}, {2, 1, 100.0, 0}};
+    CHECK(graph_build(g, 3, lat, lon, edges, 4, err, sizeof err) == 0);
+    const double elev[3] = {100.0, 110.0, 100.0};
+    CHECK(graph_apply_elevation(g, elev) == 0);
+}
+
+static void test_grade_factor(void)
+{
+    CHECK_NEAR(grade_factor(0.0), 1.0, 1e-12);
+    CHECK_NEAR(grade_factor(-0.05), 1.0, 1e-12); /* a gentle downhill is not credited */
+    CHECK(grade_factor(0.10) > 1.3 && grade_factor(0.10) < 1.5);
+    CHECK(grade_factor(0.20) > grade_factor(0.10));
+    CHECK(grade_factor(-0.30) > 1.0); /* steep downhill is slow too */
+    CHECK_NEAR(grade_factor(5.0), grade_factor(SLOPE_CAP), 1e-12);
+    for (double s = -1.0; s <= 1.0; s += 0.01)
+        CHECK(grade_factor(s) >= 1.0);
+}
+
+static void test_uphill_costs_more_than_downhill(void)
+{
+    Graph g;
+    SearchResult up, down;
+    build_hill(&g);
+    CHECK(g.edges[g.offsets[0]].cost_m > g.edges[g.offsets[0]].length_m); /* 0 -> 1 climbs */
+    CHECK(g.edges[g.offsets[1]].cost_m >= g.edges[g.offsets[1]].length_m);
+    for (int a = 0; a < 2; a++) {
+        CHECK(search_run(&g, ALGOS[a], 0, 1, &up) == 0);
+        CHECK(search_run(&g, ALGOS[a], 1, 0, &down) == 0);
+        CHECK_NEAR(up.length_m, down.length_m, 1e-9);
+        CHECK_NEAR(up.length_m, 100.0, 1e-2);
+        CHECK(up.effective_m > 130.0 && up.effective_m < 150.0); /* 10% uphill */
+        CHECK_NEAR(down.effective_m, 100.0 * grade_factor(-0.10), 1e-2);
+        CHECK(up.effective_m > down.effective_m);
+        CHECK_NEAR(up.cost_m, up.effective_m, 1e-9);
+        search_result_free(&up);
+        search_result_free(&down);
+    }
+    graph_free(&g);
+}
+
+static void test_unknown_elevation_leaves_costs_alone(void)
+{
+    Graph g;
+    build_hill(&g);
+    const double partly[3] = {100.0, NAN, 100.0};
+    CHECK(graph_apply_elevation(&g, partly) == 0);
+    for (int32_t i = 0; i < g.n_edges; i++)
+        CHECK_NEAR(g.edges[i].cost_m, g.edges[i].length_m, 1e-12);
+    graph_free(&g);
+}
+
+/* A short stairs edge 0 -> 2 and a longer way round through 1. */
+static void build_stairs(Graph *g)
+{
+    char err[128];
+    double lat[3] = {37.0, 37.0004, 37.0}, lon[3] = {-122.0, -122.0003, -122.0006};
+    double direct = haversine_m(lat[0], lon[0], lat[2], lon[2]);
+    EdgeRec edges[] = {{0, 2, direct + 0.5, EDGE_STAIRS}, {0, 1, 60.0, 0}, {1, 2, 60.0, 0}};
+    CHECK(graph_build(g, 3, lat, lon, edges, 3, err, sizeof err) == 0);
+}
+
+static void test_avoid_stairs(void)
+{
+    Graph g;
+    build_stairs(&g);
+    for (int a = 0; a < 2; a++) {
+        SearchResult r;
+        SearchOpts normal = {0}, avoid = {.avoid_stairs = true};
+        CHECK(search_run_ex(&g, ALGOS[a], 0, 2, &normal, &r) == 0);
+        CHECK(r.found && r.path_len == 2 && r.stairs_m > 0.0);
+        search_result_free(&r);
+
+        CHECK(search_run_ex(&g, ALGOS[a], 0, 2, &avoid, &r) == 0);
+        CHECK(r.found && r.path_len == 3 && r.path[1] == 1);
+        CHECK_NEAR(r.stairs_m, 0.0, 1e-12);
+        CHECK_NEAR(r.length_m, 120.0, 1e-9);
+        CHECK_NEAR(r.effective_m, 120.0, 1e-9); /* the penalty is not part of the reported effort */
+        search_result_free(&r);
+    }
+    graph_free(&g);
+}
+
+static void test_avoid_stairs_still_uses_stairs_when_there_is_no_other_way(void)
+{
+    Graph g;
+    char err[128];
+    double lat[2] = {37.0, 37.0001}, lon[2] = {-122.0, -122.0};
+    EdgeRec edges[] = {{0, 1, 11.2, EDGE_STAIRS}};
+    CHECK(graph_build(&g, 2, lat, lon, edges, 1, err, sizeof err) == 0);
+    SearchResult r;
+    SearchOpts avoid = {.avoid_stairs = true};
+    CHECK(search_run_ex(&g, ALGO_ASTAR, 0, 1, &avoid, &r) == 0);
+    CHECK(r.found && r.stairs_m > 0.0);
+    search_result_free(&r);
     graph_free(&g);
 }
 
@@ -311,6 +415,11 @@ int main(void)
     test_unreachable();
     test_edges_are_directed();
     test_invalid_node_ids();
+    test_grade_factor();
+    test_uphill_costs_more_than_downhill();
+    test_unknown_elevation_leaves_costs_alone();
+    test_avoid_stairs();
+    test_avoid_stairs_still_uses_stairs_when_there_is_no_other_way();
     test_explored_order();
     test_random_graph();
     test_real_graph();

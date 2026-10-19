@@ -7,6 +7,7 @@ class RoutePlan {
     required this.path,
     required this.door,
     required this.walkM,
+    required this.effectiveM,
     required this.indoorM,
     required this.buildingName,
     required this.room,
@@ -22,6 +23,9 @@ class RoutePlan {
   final GeoPoint door;
   final double walkM;
 
+  /// The walk scaled for climbs (what the time is based on); equals [walkM] on an older server.
+  final double effectiveM;
+
   /// Straight-line distance from the door to the room itself (0 when the room's spot is unknown).
   final double indoorM;
   final String buildingName;
@@ -29,8 +33,8 @@ class RoutePlan {
   final String? floor;
   final String? note;
 
-  /// Same rule as the server's "Today" walk time (1.3 m/s, rounded up).
-  int get minutes => ((walkM + indoorM) / 1.3 / 60).ceil();
+  /// Same rule as the server's "Today" walk time (1.3 m/s on the climb-adjusted walk, rounded up).
+  int get minutes => ((effectiveM + indoorM) / 1.3 / 60).ceil();
 
   factory RoutePlan.fromJson(Map<String, dynamic> json, {required GeoPoint start}) {
     final astar = json['astar'] as Map<String, dynamic>;
@@ -47,6 +51,7 @@ class RoutePlan {
       ],
       door: GeoPoint((door['lat'] as num).toDouble(), (door['lon'] as num).toDouble()),
       walkM: (room['walk_m'] as num).toDouble(),
+      effectiveM: ((room['effective_m'] ?? room['walk_m']) as num).toDouble(),
       indoorM: (room['indoor_m'] as num).toDouble(),
       buildingName: (room['building_name'] as String?) ?? '',
       room: (room['room'] as String?) ?? '',

@@ -17,3 +17,14 @@ double haversine_m(double lat1, double lon1, double lat2, double lon2)
         a = 1.0;
     return 2.0 * EARTH_RADIUS_M * asin(sqrt(a));
 }
+
+double grade_factor(double slope)
+{
+    if (slope > SLOPE_CAP)
+        slope = SLOPE_CAP;
+    if (slope < -SLOPE_CAP)
+        slope = -SLOPE_CAP;
+    /* Tobler speed is 6*exp(-3.5*|s+0.05|); flat is s = 0. The ratio of the two speeds: */
+    double factor = exp(3.5 * fabs(slope + 0.05) - 3.5 * 0.05);
+    return factor < 1.0 ? 1.0 : factor;
+}

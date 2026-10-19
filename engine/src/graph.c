@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,6 +32,7 @@ void graph_free(Graph *g)
 {
     free(g->lat);
     free(g->lon);
+    free(g->elev);
     free(g->offsets);
     free(g->edges);
     memset(g, 0, sizeof *g);
@@ -101,8 +103,30 @@ int graph_build(Graph *g, int32_t n_nodes, const double *lat, const double *lon,
         out->to = e->to;
         out->flags = e->flags;
         out->length_m = len;
+        out->cost_m = len;
     }
     free(cursor);
+    return 0;
+}
+
+int graph_apply_elevation(Graph *g, const double *elev)
+{
+    double *copy = malloc((size_t)(g->n_nodes ? g->n_nodes : 1) * sizeof *copy);
+    if (!copy)
+        return -1;
+    memcpy(copy, elev, (size_t)g->n_nodes * sizeof *copy);
+    free(g->elev);
+    g->elev = copy;
+    for (int32_t u = 0; u < g->n_nodes; u++) {
+        for (int32_t i = g->offsets[u]; i < g->offsets[u + 1]; i++) {
+            Edge *e = &g->edges[i];
+            if (isnan(copy[u]) || isnan(copy[e->to])) {
+                e->cost_m = e->length_m;
+            } else {
+                e->cost_m = e->length_m * grade_factor((copy[e->to] - copy[u]) / e->length_m);
+            }
+        }
+    }
     return 0;
 }
 
@@ -201,7 +225,7 @@ static int parse_double(const char *s, double *out)
 }
 
 typedef struct {
-    double *lat, *lon;
+    double *lat, *lon, *elev;
     int32_t n, cap;
 } NodeVec;
 
@@ -243,15 +267,25 @@ static int load_nodes(const char *dir, NodeVec *nv, char *err, size_t errlen)
             double *b = realloc(nv->lon, (size_t)cap * sizeof *b);
             if (b)
                 nv->lon = b;
-            if (!a || !b) {
+            double *c = realloc(nv->elev, (size_t)cap * sizeof *c);
+            if (c)
+                nv->elev = c;
+            if (!a || !b || !c) {
                 set_err(err, errlen, "out of memory");
                 rc = -1;
                 break;
             }
             nv->cap = cap;
         }
+        double el = NAN;
+        if (f[4][0] != '\0' && parse_double(f[4], &el) != 0) {
+            set_err(err, errlen, "%s:%ld: bad elev_m", csv.path, csv.line);
+            rc = -1;
+            break;
+        }
         nv->lat[nv->n] = la;
         nv->lon[nv->n] = lo;
+        nv->elev[nv->n] = el;
         nv->n++;
     }
     csv_close(&csv);
@@ -307,9 +341,20 @@ int graph_load(Graph *g, const char *dir, char *err, size_t errlen)
     memset(g, 0, sizeof *g);
     if (load_nodes(dir, &nv, err, errlen) == 0 && load_edges(dir, &ev, err, errlen) == 0)
         rc = graph_build(g, nv.n, nv.lat, nv.lon, ev.v, ev.n, err, errlen);
+    if (rc == 0) {
+        bool any = false;
+        for (int32_t i = 0; i < nv.n; i++)
+            any = any || !isnan(nv.elev[i]);
+        if (any && graph_apply_elevation(g, nv.elev) != 0) {
+            set_err(err, errlen, "out of memory");
+            graph_free(g);
+            rc = -1;
+        }
+    }
 
     free(nv.lat);
     free(nv.lon);
+    free(nv.elev);
     free(ev.v);
     return rc;
 }

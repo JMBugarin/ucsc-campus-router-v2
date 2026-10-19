@@ -139,12 +139,12 @@ class TestApi(unittest.TestCase):
             status, body = self.get(f"/api/route_to_room?start={start}&room={room_q}")
             self.assertEqual(status, 200)
             chosen = body["room"]
-            chosen_total = chosen["walk_m"] + chosen["indoor_m"]
+            chosen_total = chosen["effective_m"] + chosen["indoor_m"]
             for e in base["entrances"]:
                 status, alt = self.get(
                     f"/api/route?start={start}&end={e['lat']},{e['lon']}")
                 indoor = srv.distance_m((e["lat"], e["lon"]), (point["lat"], point["lon"]))
-                self.assertLessEqual(chosen_total, alt["astar"]["distance_m"] + indoor + 1.0)
+                self.assertLessEqual(chosen_total, alt["astar"]["effective_m"] + indoor + 1.0)
 
     def test_route_to_room_errors(self):
         status, body = self.get(f"/api/route_to_room?start={START}&room=Online")
@@ -155,6 +155,24 @@ class TestApi(unittest.TestCase):
         self.assertIn("Jack Baskin Engineering", body["candidate_names"])
         self.assertEqual(self.get(f"/api/route_to_room?start={START}&room=")[0], 400)
         self.assertEqual(self.get("/api/route_to_room?start=1,2&room=Soc+Sci+2+075")[0], 400)
+
+    def test_uphill_takes_more_effort_than_downhill(self):
+        down = self.get(f"/api/route?start={START}&end={END}")[1]["astar"]
+        up = self.get(f"/api/route?start={END}&end={START}")[1]["astar"]
+        self.assertGreaterEqual(down["effective_m"], down["distance_m"])
+        self.assertGreater(up["effective_m"] / up["distance_m"], 1.1 * down["effective_m"] / down["distance_m"])
+
+    def test_avoid_stairs_changes_the_route_when_there_is_another_way(self):
+        # Chosen from the real graph: this trip uses stairs unless asked not to.
+        trip = "start=36.9995,-122.0630&end=36.9915,-122.0525"
+        normal = self.get(f"/api/route?{trip}")[1]["astar"]
+        avoided = self.get(f"/api/route?{trip}&avoid_stairs=1")[1]["astar"]
+        self.assertGreater(normal["stairs_m"], 0)
+        self.assertLess(avoided["stairs_m"], normal["stairs_m"])
+        self.assertGreaterEqual(avoided["distance_m"], normal["distance_m"])
+        status, body = self.get(f"/api/route_to?start={START}&room=Kresge+Acad+3201&avoid_stairs=1&algo=astar&explored=0")
+        self.assertEqual(status, 200)
+        self.assertIn("stairs_m", body["room"])
 
     def test_search_finds_rooms_from_informal_queries(self):
         status, body = self.get("/api/search?q=BE+152")

@@ -335,9 +335,11 @@ def _walk_info(walker, origin, destination):
     result = walker(origin, destination)
     if result is None:
         return None
-    meters = result["meters"] + result.get("indoor_m", 0.0)
+    indoor = result.get("indoor_m", 0.0)
+    meters = result["meters"] + indoor
+    effort = result.get("effective_m", result["meters"]) + indoor  # climbs make a walk take longer
     return {**result, "total_m": round(meters, 1),
-            "minutes": math.ceil(meters / WALK_SPEED_M_PER_S / 60.0)}
+            "minutes": math.ceil(effort / WALK_SPEED_M_PER_S / 60.0)}
 
 
 def _clock12(moment):

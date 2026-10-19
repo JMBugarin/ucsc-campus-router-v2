@@ -15,7 +15,7 @@ API
     GET /api/search?q=BE+152[&limit=5]     ranked buildings and rooms for something a person typed
                                            (abbreviations, partial names, typos); each result's "query"
                                            can be passed to /api/route_to as room=
-    GET /api/route_to?start=LAT,LON&room=Kresge+Acad+3201[&algo=astar][&explored=0]
+    GET /api/route_to?start=LAT,LON&room=Kresge+Acad+3201[&algo=astar][&explored=0][&avoid_stairs=1]
     GET /api/route_to?start=LAT,LON&to=LAT,LON[&name=Library][&algo=astar][&explored=0]
                                            route from a point (e.g. your location) to a room or to
                                            a coordinate. For a room it picks the building door that
@@ -111,12 +111,17 @@ def distance_m(a, b):
     return 2 * 6371009.0 * math.asin(math.sqrt(min(1.0, h)))
 
 
-def run_engine(engine, graph_dir, algo, start, end, explored=True):
-    """Run the C router once and return its JSON result (found may be false)."""
+def run_engine(engine, graph_dir, algo, start, end, explored=True, avoid_stairs=False):
+    """Run the C router once and return its JSON result (found may be false).
+
+    distance_m is the physical length; effective_m is the same walk scaled for climbs (what
+    walking time is based on); stairs_m is how much of it is stairs."""
     cmd = [str(engine), str(graph_dir), f"{start[0]:.7f}", f"{start[1]:.7f}",
            f"{end[0]:.7f}", f"{end[1]:.7f}", "--algo", algo, "--json"]
     if explored:
         cmd.append("--explored")
+    if avoid_stairs:
+        cmd.append("--avoid-stairs")
     with ENGINE_SLOTS:  # a busy server queues engine runs instead of starting dozens at once
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=ENGINE_TIMEOUT_S)
     if proc.returncode not in (0, 2):  # 2 means "no path", which still prints JSON
@@ -124,11 +129,11 @@ def run_engine(engine, graph_dir, algo, start, end, explored=True):
     return json.loads(proc.stdout)
 
 
-def best_entrance(engine, graph_dir, start, entrances, room_point=None):
-    """Pick the door with the shortest walk from start plus, when the room's own
-    point is known, the straight-line distance from that door to the room.
+def best_entrance(engine, graph_dir, start, entrances, room_point=None, avoid_stairs=False):
+    """Pick the door with the least effort from start: the climb-adjusted walk plus, when the
+    room's own point is known, the straight-line distance from that door to the room.
 
-    Returns (entrance, walk_m, indoor_m), or None if no door can be reached.
+    Returns (entrance, walk_m, indoor_m, effective_m, stairs_m), or None if no door can be reached.
     """
     best = None
     seen = set()
@@ -137,16 +142,17 @@ def best_entrance(engine, graph_dir, start, entrances, room_point=None):
         if key in seen:
             continue
         seen.add(key)
-        r = run_engine(engine, graph_dir, "astar", start, (e["lat"], e["lon"]), explored=False)
+        r = run_engine(engine, graph_dir, "astar", start, (e["lat"], e["lon"]), explored=False,
+                       avoid_stairs=avoid_stairs)
         if not r["found"]:
             continue
         indoor = 0.0
         if room_point:
             indoor = distance_m((e["lat"], e["lon"]), (room_point["lat"], room_point["lon"]))
-        total = r["distance_m"] + indoor
+        total = r["effective_m"] + indoor
         if best is None or total < best[0]:
-            best = (total, e, r["distance_m"], indoor)
-    return None if best is None else (best[1], best[2], best[3])
+            best = (total, e, r["distance_m"], indoor, r["effective_m"], r["stairs_m"])
+    return None if best is None else best[1:]
 
 
 def load_calendar(path):
@@ -167,8 +173,8 @@ def load_room_names(path):
 def make_walker(engine, graph_dir, campus):
     """A walker(origin, destination_text) for timetable.analyze, backed by the router.
 
-    origin is ("point", lat, lon) or ("room", text). Returns {"meters", "indoor_m"} for the
-    walk to the best door of the destination building, or None if there is no walk to
+    origin is ("point", lat, lon) or ("room", text). Returns {"meters", "indoor_m", "effective_m"}
+    for the walk to the best door of the destination building, or None if there is no walk to
     time (online, TBA, unknown room, or no route).
     """
     cache = {}
@@ -193,7 +199,7 @@ def make_walker(engine, graph_dir, campus):
             if start is not None and res.kind == "building" and res.entrances:
                 chosen = best_entrance(engine, graph_dir, start, res.entrances, res.room_point)
                 if chosen is not None:
-                    result = {"meters": chosen[1], "indoor_m": chosen[2]}
+                    result = {"meters": chosen[1], "indoor_m": chosen[2], "effective_m": chosen[3]}
             cache[key] = result
         return cache[key]
 
@@ -310,7 +316,8 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                 elif url.path == "/api/route":
                     start = parse_point(query.get("start", [""])[0], bbox)
                     end = parse_point(query.get("end", [""])[0], bbox)
-                    self.send_json(200, {a: run_engine(engine, graph_dir, a, start, end)
+                    stairs = query.get("avoid_stairs", ["0"])[0] == "1"
+                    self.send_json(200, {a: run_engine(engine, graph_dir, a, start, end, avoid_stairs=stairs)
                                          for a in ALGORITHMS})
                 elif url.path == "/api/search":
                     text = query.get("q", [""])[0]
@@ -461,12 +468,13 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                                          "candidate_names": resolution_dict(res)["candidate_names"]})
                     return
                 entrances, room_point = res.entrances, res.room_point
-            chosen = best_entrance(engine, graph_dir, start, entrances, room_point)
+            avoid_stairs = query.get("avoid_stairs", ["0"])[0] == "1"
+            chosen = best_entrance(engine, graph_dir, start, entrances, room_point, avoid_stairs)
             if chosen is None:
                 self.send_json(422, {"error": "no walkable route from there to that place",
                                      "kind": "unreachable", "candidates": []})
                 return
-            entrance, walk_m, indoor_m = chosen
+            entrance, walk_m, indoor_m, effective_m, stairs_m = chosen
             end = (entrance["lat"], entrance["lon"])
             # The web demo wants both algorithms and the explored nodes; the phone app only
             # needs one path, so it can ask for less (?algo=astar&explored=0).
@@ -474,13 +482,16 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
             if any(a not in ALGORITHMS for a in algos):
                 raise BadRequest("algo must be one of: " + ", ".join(ALGORITHMS))
             with_explored = query.get("explored", ["1"])[0] != "0"
-            payload = {a: run_engine(engine, graph_dir, a, start, end, explored=with_explored) for a in algos}
+            payload = {a: run_engine(engine, graph_dir, a, start, end, explored=with_explored, avoid_stairs=avoid_stairs)
+                       for a in algos}
             described = (resolution_dict(res) | {"building_name": campus.buildings[res.building_id]["name"]}
                          if res else {"kind": "point", "building_name": name})
             payload["room"] = {
                 **described,
                 "entrance": entrance,
                 "walk_m": round(walk_m, 1),
+                "effective_m": round(effective_m, 1),
+                "stairs_m": round(stairs_m, 1),
                 "indoor_m": round(indoor_m, 1),
             }
             self.send_json(200, payload)
