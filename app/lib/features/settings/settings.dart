@@ -9,8 +9,11 @@ final sharedPreferencesProvider = Provider<SharedPreferences>(
   (ref) => throw UnimplementedError('sharedPreferencesProvider must be overridden'),
 );
 
-/// On the web build (used for development) the app and server share an address.
-String get defaultServerUrl => kIsWeb ? Uri.base.origin : '';
+const _hostedServerUrl = String.fromEnvironment('SERVER_URL', defaultValue: 'https://ucsc-campus-router.onrender.com');
+
+/// The hosted server, or the `--dart-define=SERVER_URL=...` override. The web build (used for
+/// development) is served by the server itself, so it uses its own address.
+String get defaultServerUrl => kIsWeb ? Uri.base.origin : _hostedServerUrl;
 
 class Settings {
   const Settings({

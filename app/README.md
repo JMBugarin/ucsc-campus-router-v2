@@ -17,11 +17,17 @@ The server decides when to remind (`plan_reminders`); the app schedules those ti
 Tiles come from OpenStreetMap's public tile server, which is fine for a personal or demo app but not for heavy use (see their tile usage policy). Swap the `urlTemplate` in `route_screen.dart` for your own tile provider before wide release.
 
 ## Run it
-Start the server first (see the main README), then:
+Run the app (the hosted server is used by default):
 
 ```bash
 flutter pub get
 flutter run          # on an emulator the dev machine is http://10.0.2.2:8000
+```
+
+A fresh install talks to the hosted server (`https://ucsc-campus-router.onrender.com`). To point a build at another server, pass it at build time; the Settings screen can still override it at run time:
+
+```bash
+flutter run --dart-define=SERVER_URL=http://10.0.2.2:8000
 ```
 
 Plain `http` is allowed only in debug builds (for the dev machine). A release build needs an `https` server address, such as the hosted deployment in `docs/hosting.md`.
