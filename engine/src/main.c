@@ -198,7 +198,7 @@ static int run_bench(const Graph *g, unsigned long n_queries, unsigned long seed
     printf("Benchmark: %lu random queries, %d nodes, %d edges, seed %lu\n\n", n_queries,
            g->n_nodes, g->n_edges, seed);
     printf("%-10s %14s %14s %14s %16s\n", "algorithm", "avg explored", "avg pushes",
-           "avg time (us)", "avg path (m)");
+           "avg time (us)", "avg cost (m)");
     for (int a = 0; a < 2; a++) {
         double found = tot[a].found ? (double)tot[a].found : 1.0;
         printf("%-10s %14.1f %14.1f %14.1f %16.1f\n", algo_name(algos[a]), tot[a].explored / n,
