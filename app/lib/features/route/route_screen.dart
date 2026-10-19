@@ -4,13 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../core/api_client.dart';
+import '../../core/tiles.dart';
 import '../location/location_service.dart';
 import 'destination.dart';
 import 'route_plan.dart';
 import 'route_repository.dart';
-
-/// Whether to draw OpenStreetMap tiles. Tests turn this off so nothing touches the network.
-final showMapTilesProvider = Provider<bool>((ref) => true);
 
 LatLng _latLng(GeoPoint p) => LatLng(p.lat, p.lon);
 
@@ -107,11 +105,7 @@ class _RouteView extends ConsumerWidget {
               initialCameraFit: tiny ? null : CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(48)),
             ),
             children: [
-              if (ref.watch(showMapTilesProvider))
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'io.github.jmbugarin.ucsc_router',
-                ),
+              const BaseMapLayer(),
               PolylineLayer(
                 polylines: [
                   // The two short joins between the real start/door and the nearest path points.
@@ -145,9 +139,7 @@ class _RouteView extends ConsumerWidget {
                   ),
                 ],
               ),
-              const RichAttributionWidget(
-                attributions: [TextSourceAttribution('© OpenStreetMap contributors')],
-              ),
+              const MapAttribution(),
             ],
           ),
         ),
