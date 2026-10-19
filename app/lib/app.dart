@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'features/map/map_screen.dart';
 import 'features/schedule/schedule_screen.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/today/today_screen.dart';
 
 /// Which tab is showing. Screens change it to send you somewhere (for example "set up the server").
 class SelectedTab extends Notifier<int> {
+  SelectedTab([this.initial = tabMap]);
+
+  final int initial;
+
   @override
-  int build() => 0;
+  int build() => initial;
 
   void select(int index) => state = index;
 }
 
 final selectedTabProvider = NotifierProvider<SelectedTab, int>(SelectedTab.new);
 
-const tabToday = 0;
-const tabSchedule = 1;
-const tabSettings = 2;
+const tabMap = 0;
+const tabToday = 1;
+const tabSchedule = 2;
+const tabSettings = 3;
 
 // UC Santa Cruz blue and gold.
 const _ucscBlue = Color(0xFF003C6C);
@@ -46,13 +52,14 @@ class HomeShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final index = ref.watch(selectedTabProvider);
-    const screens = [TodayScreen(), ScheduleScreen(), SettingsScreen()];
+    const screens = [MapScreen(), TodayScreen(), ScheduleScreen(), SettingsScreen()];
     return Scaffold(
       body: SafeArea(child: IndexedStack(index: index, children: screens)),
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: ref.read(selectedTabProvider.notifier).select,
         destinations: const [
+          NavigationDestination(icon: Icon(Icons.map_outlined), selectedIcon: Icon(Icons.map), label: 'Map'),
           NavigationDestination(icon: Icon(Icons.today_outlined), selectedIcon: Icon(Icons.today), label: 'Today'),
           NavigationDestination(
               icon: Icon(Icons.calendar_month_outlined), selectedIcon: Icon(Icons.calendar_month), label: 'Schedule'),
