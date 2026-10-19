@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app.dart';
 import '../../core/api_client.dart';
 import '../../core/format.dart';
+import '../../core/pacific.dart';
 import '../route/destination.dart';
 import '../route/route_screen.dart';
+import '../schedule/schedule_controller.dart';
 import '../settings/settings.dart';
 import 'today_controller.dart';
 import 'today_models.dart';
@@ -81,6 +83,7 @@ class _TodayBody extends ConsumerWidget {
     }
 
     final walk = walkText(analysis);
+    final viewing = data.viewDay != null;
     final notes = [
       if (data.offline) "Can't reach the server, so this is worked out on your phone. Pull down to try again.",
       if (data.locationProblem != null) data.locationProblem!,
@@ -90,10 +93,11 @@ class _TodayBody extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(todaySummary(analysis), style: Theme.of(context).textTheme.titleLarge),
+        _DayBar(viewDay: data.viewDay),
+        Text(viewing ? dayViewSummary(analysis) : todaySummary(analysis), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
         if (analysis.banner != null) _Banner(banner: analysis.banner!),
-        if (walk != null)
+        if (walk != null && !viewing)
           _WalkCard(
             status: walk.status,
             text: walk.text,
@@ -110,9 +114,65 @@ class _TodayBody extends ConsumerWidget {
           const SizedBox(height: 8),
           Text("Today's classes", style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          for (final t in analysis.today) _TimelineTile(classTime: t, analysis: analysis),
+          for (final t in analysis.today) _TimelineTile(classTime: t, analysis: viewing ? null : analysis),
         ],
       ],
+    );
+  }
+}
+
+/// Steps through the days of the schedule; a tap on the date opens a calendar.
+class _DayBar extends ConsumerWidget {
+  const _DayBar({required this.viewDay});
+
+  final DateTime? viewDay;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final meetings = ref.watch(scheduleProvider).value ?? const [];
+    final nowPacific = pacificTime(DateTime.now());
+    final today = DateTime.utc(nowPacific.year, nowPacific.month, nowPacific.day);
+    final shown = viewDay ?? today;
+    var first = today, last = today;
+    for (final m in meetings) {
+      final s = DateTime.tryParse('${m.startDate}T00:00:00Z'), e = DateTime.tryParse('${m.endDate}T00:00:00Z');
+      if (s != null && s.isBefore(first)) first = s;
+      if (e != null && e.isAfter(last)) last = e;
+    }
+    final controller = ref.read(viewedDayProvider.notifier);
+    DateTime step(int days) => DateTime.utc(shown.year, shown.month, shown.day + days);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: 'Previous day',
+            icon: const Icon(Icons.chevron_left),
+            onPressed: shown.isAfter(first) ? () => controller.show(step(-1)) : null,
+          ),
+          Expanded(
+            child: TextButton(
+              onPressed: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: shown,
+                  firstDate: first,
+                  lastDate: last,
+                );
+                if (picked != null) controller.show(picked);
+              },
+              child: Text(viewDay == null ? 'Today, ${dayLabel(today)}' : dayLabel(shown)),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Next day',
+            icon: const Icon(Icons.chevron_right),
+            onPressed: shown.isBefore(last) ? () => controller.show(step(1)) : null,
+          ),
+          if (viewDay != null) TextButton(onPressed: controller.backToToday, child: const Text('Today')),
+        ],
+      ),
     );
   }
 }
@@ -210,12 +270,14 @@ class _TimelineTile extends StatelessWidget {
   const _TimelineTile({required this.classTime, required this.analysis});
 
   final ClassTime classTime;
-  final Analysis analysis;
+
+  /// Null when another day is shown, where nothing is "now" or "next".
+  final Analysis? analysis;
 
   @override
   Widget build(BuildContext context) {
-    final isNow = analysis.current?.start == classTime.start;
-    final isNext = analysis.next?.isToday == true && analysis.next?.start == classTime.start;
+    final isNow = analysis?.current?.start == classTime.start;
+    final isNext = analysis?.next?.isToday == true && analysis?.next?.start == classTime.start;
     final scheme = Theme.of(context).colorScheme;
     final transition = transitionText(classTime);
     return Card(

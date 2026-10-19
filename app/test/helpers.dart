@@ -93,7 +93,7 @@ class FakeTodayRepository implements TodayRepository {
   FakeTodayRepository(this.answer);
 
   Object answer; // an Analysis, or an exception to throw
-  final requests = <({List<Meeting> meetings, GeoPoint? here, int lead, List<String> reminded})>[];
+  final requests = <({List<Meeting> meetings, GeoPoint? here, int lead, List<String> reminded, DateTime? at})>[];
 
   @override
   Future<Analysis> today({
@@ -101,8 +101,9 @@ class FakeTodayRepository implements TodayRepository {
     GeoPoint? here,
     int remindLeadMinutes = 5,
     List<String> reminded = const [],
+    DateTime? at,
   }) async {
-    requests.add((meetings: meetings, here: here, lead: remindLeadMinutes, reminded: reminded));
+    requests.add((meetings: meetings, here: here, lead: remindLeadMinutes, reminded: reminded, at: at));
     final a = answer;
     if (a is Analysis) return a;
     throw a;

@@ -200,6 +200,38 @@ void main() {
       }
     });
 
+    test('another day is asked for by its date, and leaves location and reminders alone', () async {
+      final rig = TestRig(stored: [meeting()], remindersOn: true);
+      final container = await rig.container();
+      addTearDown(container.dispose);
+      await container.read(todayProvider.future);
+      final plannedBefore = rig.scheduler.scheduled.length;
+      final locationsBefore = rig.location.calls;
+
+      final soon = DateTime.now().add(const Duration(days: 3));
+      container.read(viewedDayProvider.notifier).show(soon);
+      final data = await container.read(todayProvider.future);
+
+      expect(data.viewDay, isNotNull);
+      final request = rig.today.requests.last;
+      expect(request.at, isNotNull);
+      expect(request.here, isNull);
+      expect(rig.location.calls, locationsBefore);
+      expect(rig.scheduler.scheduled.length, plannedBefore);
+      expect(rig.scheduler.cancelled, isEmpty);
+
+      container.read(viewedDayProvider.notifier).backToToday();
+      expect((await container.read(todayProvider.future)).viewDay, isNull);
+    });
+
+    test('picking today goes back to today rather than a fixed date', () async {
+      final rig = TestRig(stored: [meeting()]);
+      final container = await rig.container();
+      addTearDown(container.dispose);
+      container.read(viewedDayProvider.notifier).show(DateTime.now());
+      expect(container.read(viewedDayProvider), isNull);
+    });
+
     test('changing the schedule recomputes the day', () async {
       final rig = TestRig(stored: [meeting()]);
       final container = await rig.container();

@@ -81,3 +81,16 @@ String walkOrigin(String from) => switch (from) {
     text: '${durationText(t.gapMin!)} between classes, ${t.walkMin} min walk. ${spare.text}',
   );
 }
+
+const _weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/// `Mon, Oct 12`.
+String dayLabel(DateTime day) => '${_weekdays[day.weekday - 1]}, ${_months[day.month - 1]} ${day.day}';
+
+/// The headline when the day picker shows a day other than today.
+String dayViewSummary(Analysis a) {
+  if (a.today.isEmpty) return _noClassesReasons[a.reason] ?? _noClassesReasons['no_classes']!;
+  final n = a.today.length;
+  return '$n ${n == 1 ? 'class' : 'classes'}, ${clockFromIso(a.today.first.start)} to ${clockFromIso(a.today.last.end)}.';
+}

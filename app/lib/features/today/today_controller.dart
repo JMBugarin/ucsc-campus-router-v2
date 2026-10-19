@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/api_client.dart';
+import '../../core/pacific.dart';
+import 'package:timezone/timezone.dart' as tz;
 import '../location/location_service.dart';
 import '../reminders/reminder_sync.dart';
 import '../schedule/meeting.dart';
@@ -15,7 +17,10 @@ import 'today_repository.dart';
 
 /// What the Today screen shows.
 class TodayData {
-  const TodayData({this.analysis, this.locationProblem, this.reminderProblem, this.offline = false});
+  const TodayData({this.analysis, this.locationProblem, this.reminderProblem, this.offline = false, this.viewDay});
+
+  /// Set when the day picker is showing a day other than today.
+  final DateTime? viewDay;
 
   /// Null when there are no classes yet.
   final Analysis? analysis;
@@ -33,6 +38,22 @@ class TodayData {
   bool get hasSchedule => analysis != null;
 }
 
+/// The day the day picker is showing; null means today (whatever today is when you look).
+class ViewedDay extends Notifier<DateTime?> {
+  @override
+  DateTime? build() => null;
+
+  void show(DateTime day) {
+    final picked = DateTime.utc(day.year, day.month, day.day);
+    final now = pacificTime(DateTime.now());
+    state = isoDate(picked) == isoDate(now) ? null : picked;
+  }
+
+  void backToToday() => state = null;
+}
+
+final viewedDayProvider = NotifierProvider<ViewedDay, DateTime?>(ViewedDay.new);
+
 /// How often Today refreshes itself while it is open. Tests turn this off.
 final todayRefreshIntervalProvider = Provider<Duration?>((ref) => const Duration(minutes: 1));
 
@@ -49,13 +70,14 @@ class TodayController extends AsyncNotifier<TodayData> {
   Future<TodayData> build() async {
     final meetings = await ref.watch(scheduleProvider.future);
     final settings = ref.watch(settingsProvider);
+    final viewDay = ref.watch(viewedDayProvider);
 
     _timer?.cancel();
     final interval = ref.read(todayRefreshIntervalProvider);
     if (interval != null) _timer = Timer.periodic(interval, (_) => refresh(quiet: true));
     ref.onDispose(() => _timer?.cancel());
 
-    return _compute(meetings, settings);
+    return _compute(meetings, settings, viewDay);
   }
 
   /// Recomputes now. A [quiet] refresh (the timer) keeps showing the last answer if it fails,
@@ -65,7 +87,7 @@ class TodayController extends AsyncNotifier<TodayData> {
     final settings = ref.read(settingsProvider);
     AsyncValue<TodayData> result;
     try {
-      result = AsyncData(await _compute(meetings, settings));
+      result = AsyncData(await _compute(meetings, settings, ref.read(viewedDayProvider)));
     } catch (error, stackTrace) {
       result = AsyncError(error, stackTrace);
     }
@@ -73,8 +95,9 @@ class TodayController extends AsyncNotifier<TodayData> {
     state = result;
   }
 
-  Future<TodayData> _compute(List<Meeting> meetings, Settings settings) async {
+  Future<TodayData> _compute(List<Meeting> meetings, Settings settings, DateTime? viewDay) async {
     final sync = ref.read(reminderSyncProvider);
+    if (viewDay != null) return _computeDay(meetings, viewDay);
     if (meetings.isEmpty) {
       await _cancelReminders(sync);
       return const TodayData();
@@ -139,6 +162,26 @@ class TodayController extends AsyncNotifier<TodayData> {
       reminderProblem = "Couldn't set up leave-now reminders on this phone.";
     }
     return TodayData(analysis: analysis, locationProblem: problem, reminderProblem: reminderProblem);
+  }
+
+  /// Another day's classes. It never touches the phone's location or reminders, which are about now.
+  Future<TodayData> _computeDay(List<Meeting> meetings, DateTime day) async {
+    if (meetings.isEmpty) return TodayData(viewDay: day);
+    final at = tz.TZDateTime(pacific, day.year, day.month, day.day, 0, 1);
+    Analysis analysis;
+    var offline = false;
+    try {
+      analysis = await ref.read(todayRepositoryProvider).today(meetings: meetings, at: at);
+    } on ApiException catch (error) {
+      final unreachable = error.kind == ApiErrorKind.offline ||
+          error.kind == ApiErrorKind.timeout ||
+          error.kind == ApiErrorKind.server;
+      if (!unreachable) rethrow;
+      final walks = ref.read(walkCacheProvider);
+      analysis = analyzeOffline(meetings: meetings, now: at, holidays: walks.holidays, walks: walks, hasLocation: false);
+      offline = true;
+    }
+    return TodayData(analysis: analysis, offline: offline, viewDay: day);
   }
 
   Future<void> _cancelReminders(ReminderSync sync) async {
