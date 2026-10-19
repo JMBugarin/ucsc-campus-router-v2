@@ -20,3 +20,8 @@ server/vendor/
 
 # Temporary local test images (never commit a real schedule)
 web/_dev/
+
+# Autonomy loop state
+.claude/.loop_count
+.claude/loop-active
+BLOCKERS.md
