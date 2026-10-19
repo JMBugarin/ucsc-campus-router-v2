@@ -123,6 +123,67 @@ class TestResolve(unittest.TestCase):
         self.assertEqual(normalize("Hum. Lecture-Hall"), "hum lecture hall")
 
 
+class TestSearch(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.campus = load_campus()
+
+    def top(self, query, n=1):
+        return [(r["building_id"], r["room"]) for r in self.campus.search(query, n)]
+
+    def test_the_four_review_examples(self):
+        self.assertEqual(self.top("Kresge 3201"), [("kresge-academic", "3201")])
+        self.assertEqual(self.top("Cowell 113"), [("cowell-academic", "113")])
+        self.assertEqual(self.top("BE 152"), [("baskin-engineering", "152")])
+        thimann = {b for b, _ in self.top("Thimann 101", 3)}
+        self.assertEqual(thimann, {"thimann-labs", "thimann-lecture-hall"})
+
+    def test_every_result_routes_back_to_itself(self):
+        for q in ("Thimann 101", "Cowell 113", "BE 152", "Cowell 131", "e2 180", "porter", "3201"):
+            for r in self.campus.search(q, 5):
+                resolved = self.campus.resolve(r["query"])
+                self.assertEqual((resolved.kind, resolved.building_id, resolved.room),
+                                 ("building", r["building_id"], r["room"]), (q, r))
+
+    def test_informal_forms_and_typos(self):
+        self.assertEqual(self.top("baskin engineering 152"), [("baskin-engineering", "152")])
+        self.assertEqual(self.top("Baskin Enginering 152"), [("baskin-engineering", "152")])
+        self.assertEqual(self.top("  ROOM  Soc Sci 2 075 "), [("social-sciences-2", "075")])
+        self.assertEqual(self.top("Earth & Marine B206"), [("earth-marine-sciences", "B206")])
+        self.assertEqual(self.top("e2 180"), [("engineering-2", "180")])
+        self.assertEqual(self.top("3201"), [("kresge-academic", "3201")])
+
+    def test_a_building_alone_is_a_result_without_a_room(self):
+        top = self.campus.search("porter")[0]
+        self.assertEqual((top["building_id"], top["room"], top["kind"]), ("porter-academic", None, "building"))
+        self.assertEqual(self.campus.search("McHenry")[0]["building_id"], "mchenry-library")
+
+    def test_ambiguous_names_return_ranked_candidates(self):
+        results = self.campus.search("Cowell", 5)
+        self.assertGreaterEqual(len({r["building_id"] for r in results}), 2)
+        scores = [r["score"] for r in results]
+        self.assertEqual(scores, sorted(scores, reverse=True))
+
+    def test_listed_rooms_outrank_unlisted_and_misreads_are_offered_as_corrections(self):
+        known, unknown = self.campus.search("Thimann Lecture 003", 3), self.campus.search("Thimann Lecture 999", 3)
+        self.assertTrue(known[0]["room_known"])
+        self.assertIs(unknown[0]["room_known"], False)
+        fixed = [r for r in self.campus.search("Baskin Eng 15", 5) if r.get("corrected_from") == "15"]
+        self.assertIn("152", [r["room"] for r in fixed])
+        self.assertGreater(self.campus.search("Baskin Eng 152")[0]["score"], fixed[0]["score"])
+
+    def test_a_number_in_the_name_must_match(self):
+        self.assertNotIn("social-sciences-2", [b for b, _ in self.top("Soc Sci 1 110", 5)][:1])
+        self.assertEqual(self.top("Soc Sci 1 110"), [("social-sciences-1", "110")])
+
+    def test_nonsense_and_empty_queries_find_nothing(self):
+        for q in ("", "   ", "zzzzzz", "!!!", None):
+            self.assertEqual(self.campus.search(q), [])
+
+    def test_limit_is_respected(self):
+        self.assertLessEqual(len(self.campus.search("Cowell", 2)), 2)
+
+
 class TestOverridesAndAliases(unittest.TestCase):
     def setUp(self):
         door = {"lat": 37.0, "lon": -122.06, "kind": "door", "source": "osm"}

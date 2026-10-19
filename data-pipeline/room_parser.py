@@ -26,6 +26,7 @@ ONLINE = {"online", "remote", "remote instruction", "zoom", "asynchronous", "asy
           "online asynchronous", "online synchronous"}
 TBA = {"", "tba", "tbd", "to be announced", "no room", "none"}
 ROOM_WORDS = {"room", "rm"}
+MIN_SEARCH_SCORE = 0.5
 
 
 def normalize(text):
@@ -58,8 +59,13 @@ class Resolution:
 
 
 class Campus:
-    def __init__(self, buildings, overrides=None):
+    def __init__(self, buildings, overrides=None, search_aliases=None):
         self.buildings = {b["id"]: b for b in buildings}
+        self._search_names = {
+            b["id"]: sorted({tuple(normalize(a).split()) for a in
+                             [b["name"], b.get("osm_name") or "", *b.get("aliases", []),
+                              *(search_aliases or {}).get(b["id"], [])] if normalize(a)})
+            for b in buildings}
         if len(self.buildings) != len(buildings):
             raise ValueError("duplicate building ids")
         self.overrides = overrides or {}
@@ -163,6 +169,101 @@ class Campus:
         return Resolution(raw, "building", building_id, room, entrances, floor, note, room_known,
                           room_point)
 
+    def search(self, query, limit=5):
+        """Rank buildings and rooms for a typed query ("BE 152", "kresge 3201", "Thimann 101").
+
+        The query is split into a building name and an optional single room token. Names match
+        an alias exactly, as a word-by-word prefix ("kresge"), or approximately (a typo; a number
+        in the name must still match). Rooms the building lists rank above ones it does not, and
+        a room one edit away from a listed room is offered as a correction.
+        Each result: building_id, building_name, room, room_known, floor, point, query (a
+        schedule-style string that resolve() maps back to this result), label, score, kind.
+        """
+        tokens = normalize(query or "").split()
+        if tokens and tokens[0] in ROOM_WORDS and len(tokens) > 1:
+            tokens = tokens[1:]
+        if not tokens:
+            return []
+        found = {}
+
+        def offer(building_id, room, score, corrected_from=None):
+            key = (building_id, room)
+            if score >= MIN_SEARCH_SCORE and found.get(key, (0,))[0] < score:
+                found[key] = (score, corrected_from)
+
+        for k in range(1, len(tokens) + 1):
+            room_tokens = tokens[k:]
+            if len(room_tokens) > 1 or (room_tokens and not any(c.isdigit() for c in room_tokens[0])):
+                continue
+            room = room_tokens[0].upper() if room_tokens else None
+            for building_id, name_score in self._match_names(tokens[:k]).items():
+                known = self.buildings[building_id].get("known_rooms")
+                if room is None:
+                    offer(building_id, None, name_score)
+                elif known and room in known:
+                    offer(building_id, room, min(1.0, name_score + 0.1))
+                else:
+                    offer(building_id, room, name_score * (0.9 if known else 0.95))
+                    for fixed in [r for r in known or [] if _one_edit_apart(r, room)]:
+                        offer(building_id, fixed, name_score * 0.95, corrected_from=room)
+        if not found and len(tokens) == 1 and any(c.isdigit() for c in tokens[0]):
+            for building_id, building in self.buildings.items():
+                if tokens[0].upper() in building.get("known_rooms", []):
+                    offer(building_id, tokens[0].upper(), 0.6)
+
+        ranked = sorted(found.items(), key=lambda kv: (-kv[1][0], self.buildings[kv[0][0]]["name"], kv[0][1] or ""))
+        return [self._search_result(b, r, score, was) for (b, r), (score, was) in ranked[:limit]]
+
+    def _match_names(self, name_tokens):
+        """{building_id: score} for buildings whose names fit these tokens."""
+        scores = {}
+        n = len(name_tokens)
+        joined = " ".join(name_tokens)
+        for building_id, names in self._search_names.items():
+            for alias in names:
+                if alias == tuple(name_tokens):
+                    score = 1.0
+                elif n < len(alias) and all(t == alias[i] or (len(t) >= 3 and alias[i].startswith(t)) for i, t in enumerate(name_tokens)):
+                    score = 0.9 - 0.03 * (len(alias) - n)
+                else:
+                    score = 0.0
+                    head = alias[:n]
+                    if len(head) == n and all((t == a) if any(c.isdigit() for c in t + a) else True
+                                              for t, a in zip(name_tokens, head)):
+                        ratio = difflib.SequenceMatcher(None, joined, " ".join(head)).ratio()
+                        if ratio >= 0.8:
+                            score = 0.8 * ratio
+                scores[building_id] = max(scores.get(building_id, 0.0), score)
+        return {b: s for b, s in scores.items() if s > 0}
+
+    def _search_result(self, building_id, room, score, corrected_from):
+        building = self.buildings[building_id]
+        known = building.get("known_rooms")
+        point = building.get("room_points", {}).get(room) if room else None
+        spot = point or building.get("centroid")
+        query = building["name"] if room is None else None
+        for alias in [building["name"], *building.get("aliases", [])] if room else ():
+            text = f"{alias} {room}"
+            resolved = self.resolve(text)
+            if resolved.building_id == building_id and resolved.room == room:
+                query = text
+                break
+        result = {
+            "building_id": building_id,
+            "building_name": building["name"],
+            "room": room,
+            "room_known": (room in known) if (known and room) else None,
+            "floor": point.get("level") if point else None,
+            "point": {"lat": spot["lat"], "lon": spot["lon"]} if spot else None,
+            "query": query or building["name"],
+            "label": f"{building['name']} {room}" if room else building["name"],
+            "score": round(score, 3),
+            "kind": "room" if room else "building",
+        }
+        if corrected_from:
+            result["corrected_from"] = corrected_from
+        return result
+
     def _suggest(self, tokens):
         scored = []
         for key, building_id in self._index.items():
@@ -183,7 +284,9 @@ def load_campus(data_dir=ROOT / "data"):
     rooms = data_dir / "rooms.json"
     if rooms.exists():
         overrides = json.loads(rooms.read_text(encoding="utf-8")).get("overrides", {})
-    return Campus(buildings, overrides)
+    aliases_file = data_dir / "search_aliases.json"
+    search_aliases = json.loads(aliases_file.read_text(encoding="utf-8")) if aliases_file.exists() else {}
+    return Campus(buildings, overrides, search_aliases)
 
 
 if __name__ == "__main__":
