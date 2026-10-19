@@ -274,6 +274,17 @@ Pipeline (Windows venv at `.venv/`; from `data-pipeline/`):
 - Graph covers a core-campus bounding box only (see `DEFAULT_BBOX` in `build_graph.py`).
 - CI does not re-run the OSM download (network flake); it checks the committed graph instead.
 
-## Data and license
+## License
 
-Map data © OpenStreetMap contributors, available under the [ODbL](https://www.openstreetmap.org/copyright).
+The code is released under the [MIT License](LICENSE). The data below keeps its own terms and is not covered by that license.
+
+## Data sources
+
+| Data | Source | Status |
+|---|---|---|
+| Walking network and building footprints/entrances | [OpenStreetMap](https://www.openstreetmap.org/copyright) via osmnx, committed in `graph/ucsc/` and `data/buildings.json` | © OpenStreetMap contributors, [ODbL](https://opendatacommons.org/licenses/odbl/). Derived data must keep this attribution. |
+| Classroom names ("AIS Display Name") and facility ids | The public [UCSC classroom directory](https://classrooms.ucsc.edu/), read by `data-pipeline/fetch_classrooms.py` and committed as `data/classrooms.json` | Public web pages. No license or reuse terms were found or checked; this project is not affiliated with or endorsed by UCSC. |
+| Room coordinates and floor levels | The public classroom-points layer behind the [UCSC campus map](https://maps.ucsc.edu/) (UCSC Planning, Design & Construction), also in `data/classrooms.json` | Same as above: public, read-only, terms not checked. |
+| Hand-edited names, aliases and term dates | `data/building_sources.json`, `data/holidays.json` | Written for this project. Check term dates against the official UCSC academic calendar. |
+
+If you are a UCSC data owner and want something changed or removed, open an issue.
