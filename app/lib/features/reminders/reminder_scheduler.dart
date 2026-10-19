@@ -39,18 +39,33 @@ class LocalNotificationScheduler implements ReminderScheduler {
       importance: Importance.high,
       priority: Priority.high,
     ),
+    iOS: DarwinNotificationDetails(),
   );
 
+  // iOS permissions are requested in requestPermission(), not at startup.
   Future<void> _init() => _ready ??= _plugin
-      .initialize(settings: const InitializationSettings(android: AndroidInitializationSettings('@mipmap/ic_launcher')))
+      .initialize(
+        settings: const InitializationSettings(
+          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          iOS: DarwinInitializationSettings(
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+          ),
+        ),
+      )
       .then((_) {});
 
   AndroidFlutterLocalNotificationsPlugin? get _android =>
       _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
+  IOSFlutterLocalNotificationsPlugin? get _ios =>
+      _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+
   @override
   Future<bool> requestPermission() async {
     await _init();
+    if (_ios != null) return await _ios!.requestPermissions(alert: true, sound: true) ?? false;
     final allowed = await _android?.requestNotificationsPermission() ?? false;
     // Exact alarms keep "leave now" on time. Android may open its settings page for this; if it is
     // refused, reminders still work but can arrive a few minutes late.
