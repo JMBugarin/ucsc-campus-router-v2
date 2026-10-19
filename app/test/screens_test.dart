@@ -74,6 +74,35 @@ void main() {
       expect(find.textContaining('worked out on your phone'), findsNothing);
     });
 
+    testWidgets('the day picker shows another day and goes back to today', (tester) async {
+      final always = Meeting(
+        course: 'XYZ 10',
+        component: 'Lecture',
+        days: const [0, 1, 2, 3, 4, 5, 6],
+        start: '14:40',
+        end: '15:45',
+        location: 'Kresge Acad 3201',
+        startDate: '2000-01-01',
+        endDate: '2100-01-01',
+      );
+      final rig = TestRig(stored: [always]);
+      await open(tester, rig);
+      expect(find.textContaining('Today, '), findsOneWidget);
+      expect(find.text('Show route'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Next day'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Today, '), findsNothing);
+      expect(find.text('Show route'), findsNothing, reason: 'there is no walk to talk about on another day');
+      expect(find.textContaining(' to '), findsWidgets);
+      expect(rig.today.requests.last.at, isNotNull);
+
+      await tester.tap(find.widgetWithText(TextButton, 'Today'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Today, '), findsOneWidget);
+      expect(rig.today.requests.last.at, isNull);
+    });
+
     testWidgets('a failure says what happened and offers to retry', (tester) async {
       final rig = TestRig(stored: [meeting()]);
       rig.today.answer = const ApiException('Too many requests. Please slow down.', kind: ApiErrorKind.rateLimited);
