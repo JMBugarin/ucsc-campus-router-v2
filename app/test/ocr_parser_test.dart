@@ -174,6 +174,57 @@ void main() {
       expect(briefs(parse(page)).first, contains('Cowell Acad 113'));
       expect(parse(page).rows.every((r) => RegExp(r'\d').hasMatch(r.location)), isTrue);
     });
+
+    group('with a heading the phone did not read', () {
+      test('an Instructor heading that is missing is taken from the other tables, so names stay out of the rooms', () {
+        final page = myUcscPage(sampleCourses, headings: {(1, 'Instructor'): ''});
+        final result = parse(page);
+        expect(briefs(result), clean);
+        expect(result.rows.where((r) => r.needsReview), isEmpty);
+      });
+
+      test('a Room heading read as another word is taken from the other tables', () {
+        for (final read in ['Koom', 'Rcom', '']) {
+          final result = parse(myUcscPage(sampleCourses, headings: {(0, 'Room'): read}));
+          expect(briefs(result), clean, reason: 'read as "$read"');
+          expect(result.rows.where((r) => r.needsReview), isEmpty, reason: 'read as "$read"');
+        }
+      });
+
+      test('a Room heading read as another word is found between the times and the instructor, with one table', () {
+        final one = sampleCourses.take(1).toList();
+        final result = parse(myUcscPage(one, headings: {(0, 'Room'): 'Koom'}));
+        expect(briefs(result), briefs(parse(myUcscPage(one))));
+        expect(result.rows.map((r) => r.location), ['Cowell Acad 113', 'Kresge Acad 3201']);
+      });
+
+      test('Days & Times read with the ampersand stuck to Days is still the days and times column', () {
+        final result = parse(myUcscPage(sampleCourses, headings: {(0, 'Days'): 'Days&', (0, '&'): ''}));
+        expect(briefs(result), clean);
+        expect(result.rows.where((r) => r.needsReview), isEmpty);
+      });
+
+      test('a menu word beside the first row is not taken for part of the heading', () {
+        final page = myUcscPage(sampleCourses)..line(35, 551, 'Class');
+        final result = parse(page);
+        expect(briefs(result), clean);
+        expect(result.rows.where((r) => r.needsReview), isEmpty);
+      });
+
+      test('a table laid out differently does not take columns from it', () {
+        final page = myUcscPage(sampleCourses.take(1).toList());
+        final below = 1500.0;
+        page
+          ..line(40, below, 'Course')
+          ..line(250, below, 'Days')
+          ..line(400, below, 'Time')
+          ..line(700, below, 'Location')
+          ..cells(below + 50, {40: 'ART 20', 250: 'TuTh', 400: '9:50AM - 11:25AM', 700: 'BE 152'});
+        final result = parse(page);
+        expect(briefs(result).last, 'ART 20 |  | [1, 3] | 09:50-11:25 | BE 152');
+        expect(result.rows, hasLength(3));
+      });
+    });
   });
 
   group('days, times and rooms in the forms schedules use', () {

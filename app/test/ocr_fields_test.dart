@@ -185,6 +185,29 @@ void main() {
     });
   });
 
+  group('days misread', () {
+    test('a word one letter off a short day name, in a list of day names, is that day, and is guessed', () {
+      final m = findDays('Mon, Wea, Fri 3:20 - 4:55 PM')!;
+      expect(m.days, [0, 2, 4]);
+      expect(m.certainty, Certainty.guessed);
+      expect(days('Tue, Thu'), [1, 3]);
+      expect(findDays('Tue, Thu')?.certainty, Certainty.exact);
+      expect(days('Mon, Wed, Fri'), [0, 2, 4]);
+    });
+
+    test('that guess is only made beside day names, so codes are read as before', () {
+      expect(days('MoWer'), [0, 2, 4], reason: 'We and a lost F, as before');
+      expect(findDays('MoWer')?.certainty, Certainty.guessed);
+      expect(days('Wea'), [2, 5], reason: 'on its own it is a We and a lost S');
+    });
+
+    test('a bullet stuck to a day is not part of the day', () {
+      expect(days('W\u2022 1:20pm-2:25pm'), [2]);
+      expect(days('MWF \u2022 12:00pm'), [0, 2, 4]);
+      expect(days('TuTh\u2022'), [1, 3]);
+    });
+  });
+
   group('courses, sections and components', () {
     test('course codes', () {
       expect(findCourse('ART 20')?.code, 'ART 20');
@@ -197,6 +220,17 @@ void main() {
       expect(findCourse('Lecture CSE 101 Algorithms')?.code, 'CSE 101');
       expect(findCourse('Introduction to Syntax'), isNull);
       expect(findCourse('1:20pm'), isNull);
+    });
+
+    test('a course number ending in the letter O is the number with a zero, as no course number ends in O', () {
+      final m = findCourse('HIS 2O')!;
+      expect(m.code, 'HIS 20');
+      expect(m.certainty, Certainty.repaired);
+      expect(findCourse('CSE 1OO')?.code, 'CSE 100');
+      expect(findCourse('HIS2O Introduction')?.code, 'HIS 20');
+      expect(findCourse('MATH 19A')?.certainty, Certainty.exact);
+      expect(findCourse('ART 20')?.certainty, Certainty.exact);
+      expect(findCourse('BME 160L')?.code, 'BME 160L');
     });
 
     test('a trailing capital I read for a 1 is guessed', () {
@@ -261,6 +295,20 @@ void main() {
       expect(cleanRoom('Location:   Kresge Acad 3201,'), 'Kresge Acad 3201');
       expect(cleanRoom('  Soc Sci 2    075 '), 'Soc Sci 2 075');
       expect(cleanRoom('Oakes Acad 222'), 'Oakes Acad 222', reason: 'a building that starts with O is not a pin');
+    });
+
+    test('a capital I between letters in a room is the lowercase l it was read for', () {
+      expect(cleanRoom('Crown CIrm 105'), 'Crown Clrm 105');
+      expect(cleanRoom('Cowell CIrm 131'), 'Cowell Clrm 131');
+      for (final room in [
+        'Crown Clrm 105',
+        'Kresge Acad 3201',
+        'McHenry Lib 1350',
+        'Hum & Soc Sci 250',
+        'Info Desk 1',
+      ]) {
+        expect(cleanRoom(room), room, reason: room);
+      }
     });
 
     test('what could be a room', () {

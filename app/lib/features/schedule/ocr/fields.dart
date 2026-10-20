@@ -255,7 +255,19 @@ const _lostFirstLetter = {'o': 0, 'e': 2, 'h': 3, 'r': 4, 'a': 5};
   return (days, certainty);
 }
 
-final _wordSpan = RegExp(r'[^\s,/&]+');
+const _shortDayNames = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+/// A three letter word that is one letter off exactly one short day name (`Wea` for `Wed`).
+(List<int>, Certainty)? _misreadShortName(String word) {
+  if (word.length != 3 || _dayNames.containsKey(word)) return null;
+  final near = [
+    for (var d = 0; d < 7; d++)
+      if (editDistance(word, _shortDayNames[d]) == 1) d,
+  ];
+  return near.length == 1 ? (near, Certainty.guessed) : null;
+}
+
+final _wordSpan = RegExp(r'[^\s,/&\u2022\u00b7\u25cf\u25cb\u25e6\u25aa\u25ab\u25a0\u25a1|]+');
 final _dayJoiner = RegExp(r'^(?:\s|,|/|&|and)*$', caseSensitive: false);
 
 /// The group of weekdays in [text] that is nearest to character [near] (the first if [near] is null): `MWF`,
@@ -266,6 +278,7 @@ DaysMatch? findDays(String text, {int? near}) {
   int? to;
   var days = <int>[];
   var certainty = Certainty.exact;
+  var namedStyle = false;
   void close() {
     if (from != null && days.isNotEmpty && days.toSet().length == days.length) {
       groups.add(DaysMatch(List.of(days)..sort(), certainty, from!, to!));
@@ -273,12 +286,16 @@ DaysMatch? findDays(String text, {int? near}) {
     from = null;
     days = [];
     certainty = Certainty.exact;
+    namedStyle = false;
   }
 
   for (final m in _wordSpan.allMatches(text)) {
     final word = m.group(0)!;
     if (from != null && word.toLowerCase() == 'and') continue;
-    final parsed = _dayWord(word);
+    final bare = word.replaceAll(RegExp(r'[.,;:]+$'), '').toLowerCase();
+    // in a list of day names a word one letter off a short name is that name (`Mon, Wea, Fri`), not two codes
+    final parsed = (from != null && namedStyle ? _misreadShortName(bare) : null) ?? _dayWord(word);
+    if (_dayNames.containsKey(bare)) namedStyle = true;
     if (parsed == null) {
       close();
       continue;
@@ -308,12 +325,25 @@ class CourseMatch {
 }
 
 final _courseCode = RegExp(r'(?<![A-Za-z0-9])([A-Z][A-Z&]{1,4})\s?([0-9]{1,3}[A-Z]{0,2})(?![A-Za-z0-9])');
+final _numberEndingInO = RegExp(r'^([0-9]{1,2})(O{1,2})$');
 final _courseCodeMisread = RegExp(r'^\s*([A-Z]{2,5}?)\s?([OIl]{1,3})(?![A-Za-z0-9])');
 
 /// The first course code in [text] (`CSE 101`, `MATH 19A`, `BME 160L`).
 CourseMatch? findCourse(String text) {
   final m = _courseCode.firstMatch(text);
-  if (m != null) return CourseMatch('${m.group(1)} ${m.group(2)}', Certainty.exact, m.start, m.end);
+  if (m != null) {
+    // no course number ends in the letter O, so `2O` is `20`
+    final zeros = _numberEndingInO.firstMatch(m.group(2)!);
+    if (zeros != null) {
+      return CourseMatch(
+        '${m.group(1)} ${zeros.group(1)}${'0' * zeros.group(2)!.length}',
+        Certainty.repaired,
+        m.start,
+        m.end,
+      );
+    }
+    return CourseMatch('${m.group(1)} ${m.group(2)}', Certainty.exact, m.start, m.end);
+  }
   // `BIOLI`: a capital I read at the end is really the digit 1, as in `BIOL 1`
   final misread = _courseCodeMisread.firstMatch(text);
   final number = misread == null ? null : int.tryParse(fixDigits(misread.group(2)!));
@@ -448,9 +478,15 @@ List<String> findDates(String text) {
 final _glyph = RegExp(r'^(?:[•·●○◦▪▫■□*@>▶►|]+|[OQ0@])\s+(?=[A-Za-z0-9])');
 final _label = RegExp(r'^(?:room|rm|location|loc|where|building)\s*:\s*', caseSensitive: false);
 
+final _lostL = RegExp(r'(?<=[A-Za-z])I(?=[a-z])');
+final _lostLInWord = RegExp(r'\b(?:Cirm|Bidg)\b');
+
 /// A room as written on the page, without the pin or bullet drawn before it or a label such as `Room:`.
 String cleanRoom(String text) {
-  var room = normalizeText(text.replaceAll('\u2016', ' '));
+  // an I between letters is an l the phone could not tell from it: `CIrm` is `Clrm`, and `Bidg` is `Bldg`
+  var room = normalizeText(
+    text.replaceAll('\u2016', ' '),
+  ).replaceAll(_lostL, 'l').replaceAllMapped(_lostLInWord, (m) => m.group(0) == 'Cirm' ? 'Clrm' : 'Bldg');
   room = room.replaceFirst(_glyph, '').replaceFirst(_label, '');
   room = room.replaceAll(RegExp(r'[\s,;:|.\-]+$'), '').trim();
   return room.startsWith('(') && room.endsWith(')') ? room.substring(1, room.length - 1).trim() : room;

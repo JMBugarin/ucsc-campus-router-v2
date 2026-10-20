@@ -44,6 +44,8 @@ ParsedRow? buildRow(RawRow raw) {
     issues.add(RowIssue.noCourse);
   } else if (course.certainty == Certainty.guessed || raw.guessedCourse) {
     issues.add(RowIssue.guessedCourse);
+  } else if (course.certainty == Certainty.repaired) {
+    issues.add(RowIssue.correctedText);
   }
   if (range == null && daysMatch == null && course == null) return null;
 
