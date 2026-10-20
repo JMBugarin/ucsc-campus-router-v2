@@ -21,9 +21,12 @@ void main() {
       expect(stadia.attribution, allOf(contains('Stadia'), contains('OpenStreetMap')));
     });
 
-    test('an unknown provider with a key falls back rather than sending the key somewhere', () {
-      final source = tileSourceFor('someone-else', 'secret');
-      expect(source.urlTemplate, isNot(contains('secret')));
+    test('a key with no provider, or an unknown one, falls back rather than sending the key somewhere', () {
+      for (final provider in ['', 'someone-else']) {
+        final source = tileSourceFor(provider, 'secret');
+        expect(source.urlTemplate, startsWith('https://tile.openstreetmap.org/'), reason: 'provider "$provider"');
+        expect('${source.urlTemplate} ${source.attribution}', isNot(contains('secret')));
+      }
     });
   });
 }
