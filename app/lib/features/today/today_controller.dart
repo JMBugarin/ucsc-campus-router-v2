@@ -6,6 +6,9 @@ import '../../core/api_client.dart';
 import '../../core/clock.dart';
 import '../../core/pacific.dart';
 import 'package:timezone/timezone.dart' as tz;
+import '../arrive/arrival.dart';
+import '../arrive/entry_walks.dart';
+import '../campus/campus_area.dart';
 import '../location/location_service.dart';
 import '../reminders/reminder_planner.dart';
 import '../reminders/reminder_sync.dart';
@@ -28,7 +31,21 @@ class TodayData {
     this.updating = false,
     this.savedNote,
     this.viewDay,
+    this.place,
+    this.arrivals = const [],
+    this.tripProblem,
   });
+
+  /// Where the student is relative to campus, when the phone's location is known.
+  final Whereabouts? place;
+
+  /// For a student who is off campus: when to be at an entry point for each class still to come today.
+  final List<Arrival> arrivals;
+
+  /// Why the trip to campus could not be planned, if the student is off campus and that failed.
+  final String? tripProblem;
+
+  bool get offCampus => place != null && place != Whereabouts.onCampus;
 
   /// Set when the day picker is showing a day other than today.
   final DateTime? viewDay;
@@ -115,6 +132,9 @@ final viewedDayProvider = NotifierProvider<ViewedDay, DateTime?>(ViewedDay.new);
 /// How often Today refreshes itself while it is open. Tests turn this off.
 final todayRefreshIntervalProvider = Provider<Duration?>((ref) => const Duration(minutes: 1));
 
+/// Classes planned for in one go when the student is off campus.
+const maxTripClasses = 8;
+
 /// How long a GPS fix is reused instead of asking the phone again (saves battery).
 const locationReuse = Duration(minutes: 2);
 
@@ -195,11 +215,14 @@ class TodayController extends AsyncNotifier<TodayData> {
     }
 
     final now = _now();
+    final place = here == null ? null : whereIs(here);
+    final away = place != null && place != Whereabouts.onCampus;
     final Analysis analysis;
     try {
+      // A location off campus stays on the phone: the server only plans the walk from campus.
       analysis = await ref.read(todayRepositoryProvider).today(
             meetings: meetings,
-            here: here,
+            here: away ? null : here,
             remindLeadMinutes: settings.remindLeadMinutes,
             reminded: settings.remindersOn ? sync.firedKeys(now) : const [],
           );
@@ -209,21 +232,27 @@ class TodayController extends AsyncNotifier<TodayData> {
           error.kind == ApiErrorKind.server;
       if (!unreachable) rethrow;
       // Reminders already on the phone stay as they were; nothing new can be planned without the server.
+      final offlineAnalysis = analyzeOffline(
+        meetings: meetings,
+        now: now,
+        holidays: walks.holidays,
+        walks: walks,
+        hasLocation: here != null && !away,
+      );
+      final trip = away ? await _planTrip(offlineAnalysis, here, now) : null;
       return TodayData(
-        analysis: analyzeOffline(
-          meetings: meetings,
-          now: now,
-          holidays: walks.holidays,
-          walks: walks,
-          hasLocation: here != null,
-        ),
+        analysis: offlineAnalysis,
         locationProblem: problem,
         offline: true,
         savedNote: _savedNote(walks, now),
+        place: place,
+        arrivals: trip?.arrivals ?? const [],
+        tripProblem: trip?.problem,
       );
     }
     await walks.remember(analysis);
 
+    final trip = away ? await _planTrip(analysis, here, now) : null;
     String? reminderProblem;
     try {
       if (settings.remindersOn) {
@@ -236,7 +265,10 @@ class TodayController extends AsyncNotifier<TodayData> {
           leadMinutes: settings.remindLeadMinutes,
           sent: sync.firedKeys(now).toSet(),
         );
-        await sync.apply(mergeReminderPlans(server: analysis.reminders, ahead: ahead), now);
+        final today = trip == null || trip.arrivals.isEmpty
+            ? analysis.reminders
+            : arrivalReminders(trip.arrivals, now, sent: sync.firedKeys(now).toSet(), leadMinutes: settings.remindLeadMinutes);
+        await sync.apply(mergeReminderPlans(server: today, ahead: ahead), now);
         unawaited(_learnUpcomingWalks(meetings));
       } else {
         await _cancelReminders(sync);
@@ -245,7 +277,50 @@ class TodayController extends AsyncNotifier<TodayData> {
       // A notification problem must not hide the schedule.
       reminderProblem = "Couldn't set up leave-now reminders on this phone.";
     }
-    return TodayData(analysis: analysis, locationProblem: problem, reminderProblem: reminderProblem);
+    return TodayData(
+      analysis: analysis,
+      locationProblem: problem,
+      reminderProblem: reminderProblem,
+      place: place,
+      arrivals: trip?.arrivals ?? const [],
+      tripProblem: trip?.problem,
+    );
+  }
+
+  /// When to be at an entry point for each class still to come today, for a student who is off campus.
+  /// Only room names go to the server; where the student is stays on the phone.
+  Future<({List<Arrival> arrivals, String? problem})> _planTrip(Analysis analysis, GeoPoint? here, DateTime now) async {
+    final service = ref.read(entryWalksServiceProvider);
+    final chosen = ref.read(entryChoiceProvider);
+    final coming = [
+      for (final c in analysis.today)
+        if (c.location.isNotEmpty && DateTime.parse(c.start).isAfter(now)) c,
+    ].take(maxTripClasses).toList();
+
+    final answers = <String, EntryWalks>{};
+    String? problem;
+    await Future.wait([
+      for (final room in {for (final c in coming) c.location})
+        service.forRoom(room).then((walks) => answers[room] = walks).catchError((Object error) {
+          if (error is ApiException && error.kind == ApiErrorKind.rejected) {
+            return EntryWalks.none; // online, no room yet or unknown: nothing to be early for
+          }
+          problem ??= switch (error) {
+            EntryWalksUnavailable() => error.message,
+            ApiException() => error.message,
+            _ => "Couldn't plan your trip to campus.",
+          };
+          return EntryWalks.none;
+        }),
+    ]);
+
+    return (
+      arrivals: [
+        for (final c in coming)
+          if (answers[c.location] case final walks?) planArrival(classTime: c, walks: walks, here: here, chosenId: chosen),
+      ],
+      problem: problem,
+    );
   }
 
   final _asked = <String>{};

@@ -1,0 +1,80 @@
+{
+  "room": {
+    "building_name": "Kresge College Academic Building",
+    "room": "3201",
+    "floor": "L2",
+    "room_known": true
+  },
+  "entry_points": [
+    {
+      "id": "kerr-hall-bus-stop",
+      "name": "Kerr Hall bus stop",
+      "type": "bus_stop",
+      "lat": 36.9968651,
+      "lon": -122.0635781,
+      "minutes": 10,
+      "walk_m": 739.6,
+      "stairs_m": 136.8
+    },
+    {
+      "id": "kresge-college-bus-stop",
+      "name": "Kresge College bus stop",
+      "type": "bus_stop",
+      "lat": 36.9991748,
+      "lon": -122.0645533,
+      "minutes": 11,
+      "walk_m": 769.2,
+      "stairs_m": 163.4
+    },
+    {
+      "id": "core-west-parking",
+      "name": "Core West parking structure",
+      "type": "parking",
+      "lat": 36.9991152,
+      "lon": -122.063643,
+      "minutes": 12,
+      "walk_m": 852.5,
+      "stairs_m": 163.4
+    },
+    {
+      "id": "science-hill-bus-stop",
+      "name": "Science Hill bus stop",
+      "type": "bus_stop",
+      "lat": 36.9999131,
+      "lon": -122.0623883,
+      "minutes": 13,
+      "walk_m": 973.3,
+      "stairs_m": 163.4
+    },
+    {
+      "id": "porter-college-bus-stop",
+      "name": "Porter College bus stop",
+      "type": "bus_stop",
+      "lat": 36.9929959,
+      "lon": -122.0652316,
+      "minutes": 14,
+      "walk_m": 988.3,
+      "stairs_m": 68.7
+    },
+    {
+      "id": "east-field-house-bus-stop",
+      "name": "East Field House bus stop",
+      "type": "bus_stop",
+      "lat": 36.9942678,
+      "lon": -122.055533,
+      "minutes": 26,
+      "walk_m": 1868.7,
+      "stairs_m": 284.4
+    },
+    {
+      "id": "east-remote-bus-stop",
+      "name": "East Remote bus stop",
+      "type": "bus_stop",
+      "lat": 36.9913678,
+      "lon": -122.054707,
+      "minutes": 32,
+      "walk_m": 2268.1,
+      "stairs_m": 284.4
+    }
+  ]
+}
