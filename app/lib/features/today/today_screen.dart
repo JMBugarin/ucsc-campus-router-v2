@@ -7,6 +7,8 @@ import '../../core/clock.dart';
 import '../../core/format.dart';
 import '../../core/pacific.dart';
 import '../../core/waking_note.dart';
+import '../arrive/arrival.dart';
+import '../campus/campus_area.dart';
 import '../route/destination.dart';
 import '../route/route_screen.dart';
 import '../schedule/schedule_controller.dart';
@@ -105,10 +107,12 @@ class _TodayBody extends ConsumerWidget {
 
     final walk = walkText(analysis, saved: data.fromSaved);
     final viewing = data.viewDay != null;
+    final trip = !viewing && data.offCampus && data.arrivals.isNotEmpty;
     final notes = [
       if (data.locationProblem != null) data.locationProblem!,
       if (data.reminderProblem != null) data.reminderProblem!,
-      if (!viewing) ...analysis.notes, // another day has no "next class" to walk to, so no walk to explain
+      if (!viewing && data.offCampus && data.tripProblem != null) data.tripProblem!,
+      if (!viewing && !trip) ...analysis.notes, // another day has no "next class" to walk to; a trip plan replaces the walk
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,8 +121,9 @@ class _TodayBody extends ConsumerWidget {
         _DayBar(viewDay: data.viewDay),
         Text(viewing ? dayViewSummary(analysis) : todaySummary(analysis), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
-        if (analysis.banner != null) _Banner(banner: analysis.banner!),
-        if (walk != null && !viewing)
+        if (trip) _TripCard(data: data),
+        if (analysis.banner != null && !trip) _Banner(banner: analysis.banner!),
+        if (walk != null && !viewing && !trip)
           _WalkCard(
             status: walk.status,
             text: walk.text,
@@ -135,7 +140,12 @@ class _TodayBody extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(viewing ? 'Classes on ${dayLabel(data.viewDay!)}' : "Today's classes", style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          for (final t in analysis.today) _TimelineTile(classTime: t, analysis: viewing ? null : analysis),
+          for (final t in analysis.today)
+            _TimelineTile(
+              classTime: t,
+              analysis: viewing ? null : analysis,
+              arrival: viewing ? null : data.arrivals.where((a) => a.classTime.start == t.start).firstOrNull,
+            ),
         ],
       ],
     );
@@ -305,6 +315,46 @@ class _WalkCard extends StatelessWidget {
   }
 }
 
+/// For a student who is not on campus: when to be at an entry point, from the walk on campus to the class.
+class _TripCard extends StatelessWidget {
+  const _TripCard({required this.data});
+
+  final TodayData data;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final next = data.arrivals.first;
+    final far = data.place == Whereabouts.far;
+    return Semantics(
+      container: true,
+      child: Card(
+        color: theme.colorScheme.primaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                far ? "You're far from campus" : "You're not on campus yet",
+                style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onPrimaryContainer),
+              ),
+              const SizedBox(height: 4),
+              Text(next.headline, style: theme.textTheme.titleLarge?.copyWith(color: theme.colorScheme.onPrimaryContainer)),
+              const SizedBox(height: 4),
+              Text(
+                'For ${next.classTime.label} at ${clockFromIso(next.classTime.start)} in ${next.classTime.location}: '
+                '${next.walkMinutes} min on foot from there, plus ${next.bufferMinutes} min to spare.',
+                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _Banner extends StatelessWidget {
   const _Banner({required this.banner});
 
@@ -335,9 +385,12 @@ class _Banner extends StatelessWidget {
 }
 
 class _TimelineTile extends ConsumerWidget {
-  const _TimelineTile({required this.classTime, required this.analysis});
+  const _TimelineTile({required this.classTime, required this.analysis, this.arrival});
 
   final ClassTime classTime;
+
+  /// For a student off campus: when to be at an entry point for this class.
+  final Arrival? arrival;
 
   /// Null when another day is shown, where nothing is "now" or "next".
   final Analysis? analysis;
@@ -400,6 +453,11 @@ class _TimelineTile extends ConsumerWidget {
             ),
             const SizedBox(height: 2),
             Text(classTime.label, style: Theme.of(context).textTheme.titleMedium),
+            if (arrival != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(arrival!.headline, style: Theme.of(context).textTheme.bodyMedium),
+              ),
             Row(
               children: [
                 Expanded(child: Text(classTime.location)),

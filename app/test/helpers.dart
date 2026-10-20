@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ucsc_router/app.dart';
 import 'package:ucsc_router/core/clock.dart';
 import 'package:ucsc_router/core/tiles.dart';
+import 'package:ucsc_router/features/arrive/entry_walks.dart';
 import 'package:ucsc_router/features/location/location_service.dart';
 import 'package:ucsc_router/features/reminders/reminder_scheduler.dart';
 import 'package:ucsc_router/features/route/destination.dart';
@@ -194,6 +195,22 @@ class FakeRouteRepository implements RouteRepository {
   }
 }
 
+class FakeEntryWalksRepository implements EntryWalksRepository {
+  Object answer = EntryWalks.fromJson(fixture('entry_walks'));
+
+  /// What each room gets instead of [answer], an [EntryWalks] or an exception to throw.
+  final byRoom = <String, Object>{};
+  final requests = <String>[];
+
+  @override
+  Future<EntryWalks> to(String room) async {
+    requests.add(room);
+    final a = byRoom[room] ?? answer;
+    if (a is EntryWalks) return a;
+    throw a;
+  }
+}
+
 class FakeSearchRepository implements SearchRepository {
   Object answer = <Place>[];
   final queries = <String>[];
@@ -274,6 +291,7 @@ class TestRig {
         location = FakeLocationService(),
         scheduler = FakeReminderScheduler(),
         route = FakeRouteRepository(),
+        entryWalks = FakeEntryWalksRepository(),
         search = FakeSearchRepository(),
         picker = FakePicturePicker(),
         recognizer = FakeTextRecognizer() {
@@ -290,6 +308,7 @@ class TestRig {
   final FakeLocationService location;
   final FakeReminderScheduler scheduler;
   final FakeRouteRepository route;
+  final FakeEntryWalksRepository entryWalks;
   final FakeSearchRepository search;
   final FakePicturePicker picker;
   final FakeTextRecognizer recognizer;
@@ -322,6 +341,7 @@ class TestRig {
       locationServiceProvider.overrideWithValue(location),
       reminderSchedulerProvider.overrideWithValue(scheduler),
       routeRepositoryProvider.overrideWithValue(route),
+      entryWalksRepositoryProvider.overrideWithValue(entryWalks),
       searchRepositoryProvider.overrideWithValue(search),
       selectedTabProvider.overrideWith(() => SelectedTab(startTab)),
       showMapTilesProvider.overrideWithValue(false),
