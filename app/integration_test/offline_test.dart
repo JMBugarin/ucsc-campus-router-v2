@@ -20,5 +20,12 @@ void main() {
     if (around.startsToday) await waitFor(tester, find.textContaining('Saved walk time to Kresge Acad 3201: about 8 min'));
     expect(find.text("Couldn't work out your day"), findsNothing);
     await shot(binding, tester, '08-today-offline');
+
+    await tester.tap(find.byTooltip('Week'));
+    await tester.pumpAndSettle();
+    expect(find.text('Week'), findsOneWidget);
+    expect(find.textContaining('Today, '), findsOneWidget);
+    expect(find.textContaining('No-class days are not saved yet'), findsOneWidget, reason: 'the saved walk times carry no holiday dates');
+    await shot(binding, tester, '11-week-view-offline');
   });
 }
