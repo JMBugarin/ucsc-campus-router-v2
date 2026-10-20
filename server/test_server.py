@@ -1,8 +1,6 @@
 """Tests for the demo server (run from the repo root: python3 -m unittest discover -s server)."""
 
-import base64
 import json
-import os
 import subprocess
 import threading
 import unittest
@@ -375,7 +373,7 @@ class TestApi(unittest.TestCase):
         self.assertEqual(self.post("/api/nope", {})[0], 404)
 
     def test_an_oversized_body_gets_its_error_not_a_reset(self):
-        for size in (400_000, 3_000_000, srv.PHOTO_MAX_BODY_BYTES + 1_000_000):
+        for size in (400_000, 3_000_000, srv.DRAIN_LIMIT_BYTES - 1_000_000):
             with self.subTest(size=size):
                 status, body = self.post("/api/schedule/parse", {"text": "x" * size})
                 self.assertEqual((status, body["error"]), (400, "that request is too large"))
@@ -493,115 +491,6 @@ class TestApi(unittest.TestCase):
             self.assertEqual(r.status, 200)
             self.assertIn(b"<html", r.read().lower())
         self.assertEqual(self.get("/..%2fREADME.md")[0], 404)
-
-
-PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
-EXTRACTION = {
-    "classes": [
-        {"course": "XYZ 10", "title": "", "section": "01", "component": "Lecture", "class_nbr": "",
-         "days": ["Mo", "We", "Fr"], "start": "14:40", "end": "15:45", "location": "Kresge Acad 3201",
-         "start_date": "2026-09-24", "end_date": "2026-12-04", "status": "Enrolled"},
-        {"course": "OLD 1", "title": "", "section": "01", "component": "Lecture", "class_nbr": "",
-         "days": ["Tu"], "start": "09:00", "end": "10:00", "location": "Soc Sci 2 075",
-         "start_date": "", "end_date": "", "status": "Dropped"},
-        {"course": "NEW 2", "title": "", "section": "01", "component": "Lecture", "class_nbr": "",
-         "days": ["Th"], "start": "11:00", "end": "12:15", "location": "Nowhere Hall 9",
-         "start_date": "", "end_date": "", "status": "Enrolled"},
-    ],
-    "notes": ["The last row is blurry"],
-}
-
-
-@unittest.skipUnless(ENGINE.exists(), "engine not built: make -C engine route")
-class TestPhotoApi(unittest.TestCase):
-    """The photo endpoint with a fake reader standing in for the Claude API."""
-
-    @classmethod
-    def setUpClass(cls):
-        cls.seen = []
-
-        def fake_reader(image, media_type):
-            cls.seen.append((image, media_type))
-            return EXTRACTION
-
-        cls.httpd = srv.make_server("127.0.0.1", 0, ENGINE, GRAPH, ROOT / "web", photo_reader=fake_reader,
-                                    limits=NO_LIMITS)
-        cls.base = f"http://127.0.0.1:{cls.httpd.server_address[1]}"
-        threading.Thread(target=cls.httpd.serve_forever, daemon=True).start()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.httpd.shutdown()
-        cls.httpd.server_close()
-
-    def post(self, payload):
-        req = urllib.request.Request(self.base + "/api/schedule/photo", data=json.dumps(payload).encode(),
-                                     method="POST", headers={"Content-Type": "application/json"})
-        try:
-            with urllib.request.urlopen(req, timeout=30) as r:
-                return r.status, json.loads(r.read())
-        except urllib.error.HTTPError as e:
-            return e.code, json.loads(e.read())
-
-    def test_photo_becomes_validated_meetings(self):
-        self.seen.clear()
-        data = base64.b64encode(PNG).decode()
-        status, body = self.post({"image": data, "media_type": "image/png"})
-        self.assertEqual(status, 200)
-        self.assertEqual(self.seen, [(PNG, "image/png")])
-        self.assertEqual(body["source"], "photo")
-        # the dropped course is left out; the room the app doesn't know is kept but flagged
-        self.assertEqual([m["course"] for m in body["meetings"]], ["XYZ 10", "NEW 2"])
-        self.assertEqual([loc["kind"] for loc in body["locations"]], ["building", "unknown"])
-        # a row with no dates takes the term's dates
-        self.assertEqual(body["meetings"][1]["start_date"], "2026-09-24")
-        text = " ".join(body["notes"])
-        self.assertIn("From the photo: The last row is blurry", text)
-        self.assertIn("OLD 1 (dropped)", text)
-
-    def test_bad_uploads_are_rejected_before_the_reader_runs(self):
-        self.seen.clear()
-        good = base64.b64encode(PNG).decode()
-        self.assertEqual(self.post({"image": good, "media_type": "application/pdf"})[0], 400)
-        self.assertEqual(self.post({"image": "###", "media_type": "image/png"})[0], 400)
-        self.assertEqual(self.post({"media_type": "image/png"})[0], 400)
-        self.assertEqual(self.post({"image": base64.b64encode(b"hello").decode(), "media_type": "image/png"})[0], 400)
-        status, body = self.post({"image": "A" * (srv.PHOTO_MAX_BODY_BYTES + 10), "media_type": "image/png"})
-        self.assertEqual((status, body["error"]), (400, "that request is too large"))
-        self.assertEqual(self.seen, [])
-
-    def test_capabilities_with_a_reader(self):
-        with urllib.request.urlopen(self.base + "/api/capabilities", timeout=15) as r:
-            caps = json.loads(r.read())
-        self.assertTrue(caps["photo"]["ready"])
-
-
-@unittest.skipUnless(ENGINE.exists(), "engine not built: make -C engine route")
-class TestPhotoNotConfigured(unittest.TestCase):
-    """With no API key the rest of the app works and the photo option says what is missing."""
-
-    def test_clear_message_when_there_is_no_key(self):
-        with mock.patch.dict(os.environ, {}, clear=False):
-            for name in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"):
-                os.environ.pop(name, None)
-            httpd = srv.make_server("127.0.0.1", 0, ENGINE, GRAPH, ROOT / "web", limits=NO_LIMITS)
-            base = f"http://127.0.0.1:{httpd.server_address[1]}"
-            threading.Thread(target=httpd.serve_forever, daemon=True).start()
-            try:
-                with urllib.request.urlopen(base + "/api/capabilities", timeout=15) as r:
-                    photo_caps = json.loads(r.read())["photo"]
-                self.assertFalse(photo_caps["ready"])
-                self.assertTrue(photo_caps["reason"])
-                req = urllib.request.Request(
-                    base + "/api/schedule/photo", method="POST", headers={"Content-Type": "application/json"},
-                    data=json.dumps({"image": base64.b64encode(PNG).decode(), "media_type": "image/png"}).encode())
-                with self.assertRaises(urllib.error.HTTPError) as ctx:
-                    urllib.request.urlopen(req, timeout=15)
-                self.assertEqual(ctx.exception.code, 501)
-                self.assertIn("error", json.loads(ctx.exception.read()))
-            finally:
-                httpd.shutdown()
-                httpd.server_close()
 
 
 if __name__ == "__main__":

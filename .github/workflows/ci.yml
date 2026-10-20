@@ -20,8 +20,6 @@ jobs:
         run: make -C engine valgrind
       - name: End-to-end smoke test
         run: make -C engine smoke
-      - name: Install the optional Claude SDK (photo import tests use a fake client)
-        run: python3 -m pip install -r server/requirements.txt
       - name: Web server tests (real engine, real graph)
         run: python3 -m unittest discover -s server -v
       - name: Benchmark (Dijkstra vs A*)

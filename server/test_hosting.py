@@ -92,21 +92,6 @@ class TestHealthAndLimits(unittest.TestCase):
             other = s.get("/api/meta", spoof(2))[0]
             self.assertEqual((first, other), ([200, 200, 429], 200))  # each real client has its own count
 
-    def test_claude_photo_can_be_switched_off_for_a_public_server(self):
-        fake = lambda image, media_type: {"classes": [], "notes": []}  # noqa: E731
-        with Running(photo_reader=fake, photo_enabled=False) as s:
-            caps = s.get("/api/capabilities")[1]["photo"]
-            self.assertFalse(caps["ready"])
-            self.assertIn("public server", caps["reason"])
-            req = urllib.request.Request(
-                s.base + "/api/schedule/photo", method="POST", headers={"Content-Type": "application/json"},
-                data=json.dumps({"image": "iVBORw0KGgo=", "media_type": "image/png"}).encode())
-            with self.assertRaises(urllib.error.HTTPError) as ctx:
-                urllib.request.urlopen(req, timeout=15)
-            self.assertEqual(ctx.exception.code, 403)
-        with Running(photo_reader=fake) as s:                       # on by default, as on a laptop
-            self.assertTrue(s.get("/api/capabilities")[1]["photo"]["ready"])
-
     def test_slow_connections_are_dropped(self):
         with Running() as s:
             self.assertEqual(s.httpd.RequestHandlerClass.timeout, srv.SLOW_CLIENT_TIMEOUT_S)

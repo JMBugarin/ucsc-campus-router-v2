@@ -180,47 +180,6 @@ def parse_pasted(text, campus):
     return meetings, notes
 
 
-def meetings_from_extraction(data, term=None):
-    """Turn a schedule transcribed from an image into validated meetings.
-
-    `data` is {"classes": [...], "notes": [...]} as produced by photo.py. Anything that
-    is not a plain enrolled class, or fails validation, is reported in notes and left out,
-    so a misread row never silently becomes a wrong class. `term` ({"start", "end"}) fills in
-    dates the image did not show.
-    """
-    notes = [f"From the photo: {n}" for n in data.get("notes", []) if isinstance(n, str) and n.strip()]
-    meetings, used_term = [], False
-    for row in data.get("classes", [])[:MAX_MEETINGS]:
-        if not isinstance(row, dict):
-            continue
-        name = " ".join(str(row.get("course") or "A class").split())
-        status = " ".join(str(row.get("status") or "enrolled").split()).lower()
-        if status != "enrolled":
-            notes.append(f"Skipped {name} ({status}).")
-            continue
-        try:
-            days = [DAY_CODES.index(d) for d in row.get("days") or []]
-        except ValueError:
-            notes.append(f"Couldn't read the days for {name}.")
-            continue
-        start_date, end_date = row.get("start_date") or "", row.get("end_date") or ""
-        if (not start_date or not end_date) and term:
-            start_date, end_date, used_term = term["start"], term["end"], True
-        try:
-            meetings.append(clean_meeting({
-                "course": name, "title": row.get("title"), "section": row.get("section"),
-                "component": row.get("component"), "class_nbr": row.get("class_nbr"),
-                "days": days, "start": row.get("start"), "end": row.get("end"),
-                "location": row.get("location"), "start_date": start_date, "end_date": end_date}))
-        except ScheduleError as e:
-            notes.append(f"Couldn't use {name} {row.get('component') or ''}".rstrip() + f": {e}.")
-    if used_term:
-        notes.append("Some classes showed no dates, so I used the term dates.")
-    if not meetings and not notes:
-        notes.append("I couldn't find any classes in that image.")
-    return meetings, notes
-
-
 # ---- terms ---------------------------------------------------------------
 
 def parse_terms(raw):
