@@ -301,6 +301,54 @@ class TestApi(unittest.TestCase):
         self.assertEqual(self.get(f"/api/route_to?start={START}&to=1,2")[0], 400)
         self.assertEqual(self.get(f"/api/route_to?start={START}&room=Soc+Sci+2+075")[0], 200)
 
+    def test_entry_walks_lists_each_entry_point_shortest_first(self):
+        status, body = self.get("/api/entry_walks?room=Kresge+Acad+3201")
+        self.assertEqual(status, 200)
+        self.assertEqual((body["room"]["building_name"], body["room"]["room"]), ("Kresge College Academic Building", "3201"))
+        walks = body["entry_points"]
+        known = {p["id"] for p in json.loads((ROOT / "data" / "entry_points.json").read_text())["entry_points"]}
+        self.assertGreater(len(walks), 5)
+        self.assertTrue({w["id"] for w in walks} <= known)
+        self.assertEqual([w["minutes"] for w in walks], sorted(w["minutes"] for w in walks))
+        for w in walks:
+            self.assertEqual(set(w), {"id", "name", "type", "lat", "lon", "minutes", "walk_m", "stairs_m"})
+            self.assertIsInstance(w["minutes"], int)
+            self.assertGreaterEqual(w["minutes"], 1)
+            self.assertGreater(w["walk_m"], 0)
+
+    def test_entry_walks_match_the_walk_between_two_points(self):
+        _, body = self.get("/api/entry_walks?room=Kresge+Acad+3201")
+        nearest = body["entry_points"][0]
+        _, route = self.get(f"/api/route_to?start={nearest['lat']},{nearest['lon']}&room=Kresge+Acad+3201"
+                            "&algo=astar&explored=0")
+        self.assertAlmostEqual(nearest["walk_m"], route["room"]["walk_m"] + route["room"]["indoor_m"], delta=1.0)
+        self.assertEqual(nearest["minutes"], srv.timetable.walk_minutes(
+            route["room"]["effective_m"] + route["room"]["indoor_m"]))
+
+    def test_entry_walks_never_use_a_start_point(self):
+        plain = self.get("/api/entry_walks?room=Kresge+Acad+3201")
+        with_start = self.get("/api/entry_walks?room=Kresge+Acad+3201&start=36.9,-122.0&here=36.9,-122.0")
+        self.assertEqual(plain, with_start)
+
+    def test_entry_walks_can_avoid_stairs(self):
+        status, body = self.get("/api/entry_walks?room=Kresge+Acad+3201&avoid_stairs=1")
+        self.assertEqual(status, 200)
+        self.assertGreater(len(body["entry_points"]), 5)
+
+    def test_entry_walks_errors(self):
+        self.assertEqual(self.get("/api/entry_walks")[0], 400)
+        self.assertEqual(self.get("/api/entry_walks?room=" + "x" * 101)[0], 400)
+        status, body = self.get("/api/entry_walks?room=Online")
+        self.assertEqual((status, body["kind"]), (422, "online"))
+        status, body = self.get("/api/entry_walks?room=Baskin+Enginering+9")
+        self.assertEqual((status, body["kind"]), (422, "unknown"))
+
+    def test_entry_walks_share_the_heavy_rate_limit(self):
+        self.assertIn("/api/entry_walks", srv.HEAVY_PATHS)
+
+    def test_a_missing_entry_point_file_means_none(self):
+        self.assertEqual(srv.load_entry_points(ROOT / "data" / "nope.json"), [])
+
     def post(self, path, payload, raw=None):
         data = raw if raw is not None else json.dumps(payload).encode()
         req = urllib.request.Request(self.base + path, data=data, method="POST",
