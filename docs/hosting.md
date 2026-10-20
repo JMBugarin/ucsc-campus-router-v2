@@ -21,6 +21,7 @@ The mobile app (and the web page) talk to one server: Python plus the C routing 
 
 Notes:
 - The free plan **sleeps after a period with no traffic**, so the first request after a pause can take up to a minute. The app pings `/healthz` when it opens and when it comes back to the foreground, explains a wait of more than a few seconds ("the server may be waking up"), and repeats a timed-out or 502/503/504 request. A paid plan stays awake.
+- The server remembers each door-to-door walk it times (up to 20,000, least recently used first), so a phone that refreshes every minute from the same spot costs the engine nothing after the first answer. This only takes effect once you deploy this version.
 - Render passes the real client address in `X-Forwarded-For`; `render.yaml` sets `TRUST_PROXY=1` so the rate limits count each student separately. Only set `TRUST_PROXY` behind a proxy you trust, otherwise anyone can pretend to be someone else.
 - `render.yaml` was written from Render's documented format but **has not been run**. If the blueprint is rejected, create a "Web Service" by hand instead: runtime Docker, health check path `/healthz`, environment variable `TRUST_PROXY=1`.
 
