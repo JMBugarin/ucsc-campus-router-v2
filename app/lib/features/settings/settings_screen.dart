@@ -143,8 +143,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             contentPadding: EdgeInsets.zero,
             title: const Text('Leave-now reminders'),
             subtitle: const Text(
-              'A notification when it is time to leave for your next class today, even if the app is '
-              'closed. They are planned each time the app opens or refreshes, so open it once a day.',
+              'A notification when it is time to leave for each class over the next week, even if the app is '
+              'closed. They are planned whenever the app opens, from the walk times it has saved, so open it '
+              'at least once a week.',
             ),
             value: settings.remindersOn,
             onChanged: _setReminders,
