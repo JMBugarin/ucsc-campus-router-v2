@@ -198,6 +198,19 @@ void main() {
         expect(result.rows.map((r) => r.location), ['Cowell Acad 113', 'Kresge Acad 3201']);
       });
 
+      test('Days & Times read with the ampersand stuck to Days is still the days and times column', () {
+        final result = parse(myUcscPage(sampleCourses, headings: {(0, 'Days'): 'Days&', (0, '&'): ''}));
+        expect(briefs(result), clean);
+        expect(result.rows.where((r) => r.needsReview), isEmpty);
+      });
+
+      test('a menu word beside the first row is not taken for part of the heading', () {
+        final page = myUcscPage(sampleCourses)..line(35, 551, 'Class');
+        final result = parse(page);
+        expect(briefs(result), clean);
+        expect(result.rows.where((r) => r.needsReview), isEmpty);
+      });
+
       test('a table laid out differently does not take columns from it', () {
         final page = myUcscPage(sampleCourses.take(1).toList());
         final below = 1500.0;

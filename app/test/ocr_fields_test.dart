@@ -185,6 +185,29 @@ void main() {
     });
   });
 
+  group('days misread', () {
+    test('a word one letter off a short day name, in a list of day names, is that day, and is guessed', () {
+      final m = findDays('Mon, Wea, Fri 3:20 - 4:55 PM')!;
+      expect(m.days, [0, 2, 4]);
+      expect(m.certainty, Certainty.guessed);
+      expect(days('Tue, Thu'), [1, 3]);
+      expect(findDays('Tue, Thu')?.certainty, Certainty.exact);
+      expect(days('Mon, Wed, Fri'), [0, 2, 4]);
+    });
+
+    test('that guess is only made beside day names, so codes are read as before', () {
+      expect(days('MoWer'), [0, 2, 4], reason: 'We and a lost F, as before');
+      expect(findDays('MoWer')?.certainty, Certainty.guessed);
+      expect(days('Wea'), [2, 5], reason: 'on its own it is a We and a lost S');
+    });
+
+    test('a bullet stuck to a day is not part of the day', () {
+      expect(days('W\u2022 1:20pm-2:25pm'), [2]);
+      expect(days('MWF \u2022 12:00pm'), [0, 2, 4]);
+      expect(days('TuTh\u2022'), [1, 3]);
+    });
+  });
+
   group('courses, sections and components', () {
     test('course codes', () {
       expect(findCourse('ART 20')?.code, 'ART 20');

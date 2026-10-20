@@ -66,9 +66,12 @@ List<_Column> _columnsOf(List<Token> tokens, double h) {
     final w = words[i];
     ColumnKind? kind;
     var consumed = 0;
-    if (_is(w, 'days') || w == 'day') {
+    if (w == 'days&times' || w == 'day&time') {
+      kind = ColumnKind.daysTimes;
+    } else if (_is(w, 'days') || w == 'day' || w == 'days&' || w == 'day&') {
+      // `Days & Times` is often read with the ampersand stuck to the first word
       var j = i + 1;
-      if (at(j) == '&' || at(j) == 'and') j++;
+      if (!w.endsWith('&') && (at(j) == '&' || at(j) == 'and')) j++;
       final next = at(j);
       if (next != null && (_is(next, 'times') || next == 'time')) {
         kind = ColumnKind.daysTimes;
@@ -161,6 +164,14 @@ void _borrowColumns(List<_Band> bands, double h) {
 
 const _timingKinds = {ColumnKind.days, ColumnKind.times, ColumnKind.daysTimes, ColumnKind.start};
 
+double _leftmostHeading(VisualLine line) {
+  final lefts = [
+    for (final t in line.tokens)
+      if (_isHeaderWord(_word(t))) t.left,
+  ];
+  return lefts.isEmpty ? double.infinity : lefts.reduce(math.min);
+}
+
 List<_Band> _findBands(List<VisualLine> lines, double h) {
   bool marked(VisualLine l) => l.tokens.any((t) => _isHeaderWord(_word(t)));
   final bands = <_Band>[];
@@ -171,7 +182,12 @@ List<_Band> _findBands(List<VisualLine> lines, double h) {
       continue;
     }
     var j = i;
+    // a heading's second line sits under the first, so a line with a heading word further left is a menu beside the
+    // table (`Class Schedule`, `Edit a Class`), not part of the heading
+    var left = _leftmostHeading(lines[i]);
     while (j + 1 < lines.length && marked(lines[j + 1]) && lines[j + 1].top - lines[j].bottom <= 0.6 * h) {
+      if (_leftmostHeading(lines[j + 1]) < left - 2 * h) break;
+      left = math.min(left, _leftmostHeading(lines[j + 1]));
       j++;
     }
     final group = lines.sublist(i, j + 1);
