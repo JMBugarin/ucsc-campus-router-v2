@@ -150,6 +150,7 @@ class TodayController extends AsyncNotifier<TodayData> {
     final meetings = await ref.watch(scheduleProvider.future);
     final settings = ref.watch(settingsProvider);
     final viewDay = ref.watch(viewedDayProvider);
+    ref.watch(entryChoiceProvider); // another entry point means another time to be there
 
     _timer?.cancel();
     final interval = ref.read(todayRefreshIntervalProvider);

@@ -9,6 +9,7 @@ import 'package:ucsc_router/app.dart';
 import 'package:ucsc_router/core/clock.dart';
 import 'package:ucsc_router/core/tiles.dart';
 import 'package:ucsc_router/features/arrive/entry_walks.dart';
+import 'package:ucsc_router/features/handoff/handoff.dart';
 import 'package:ucsc_router/features/location/location_service.dart';
 import 'package:ucsc_router/features/reminders/reminder_scheduler.dart';
 import 'package:ucsc_router/features/route/destination.dart';
@@ -211,6 +212,24 @@ class FakeEntryWalksRepository implements EntryWalksRepository {
   }
 }
 
+/// Stands in for the system's link opening: [installed] holds the app schemes that "are installed".
+class FakeLinkLauncher implements LinkLauncher {
+  final installed = <String>{'transit'};
+
+  /// Schemes whose links fail to open even though they can be opened.
+  final failing = <String>{};
+  final opened = <Uri>[];
+
+  @override
+  Future<bool> canOpen(Uri uri) async => installed.contains(uri.scheme);
+
+  @override
+  Future<bool> open(Uri uri) async {
+    opened.add(uri);
+    return !failing.contains(uri.scheme);
+  }
+}
+
 class FakeSearchRepository implements SearchRepository {
   Object answer = <Place>[];
   final queries = <String>[];
@@ -292,6 +311,7 @@ class TestRig {
         scheduler = FakeReminderScheduler(),
         route = FakeRouteRepository(),
         entryWalks = FakeEntryWalksRepository(),
+        links = FakeLinkLauncher(),
         search = FakeSearchRepository(),
         picker = FakePicturePicker(),
         recognizer = FakeTextRecognizer() {
@@ -309,6 +329,7 @@ class TestRig {
   final FakeReminderScheduler scheduler;
   final FakeRouteRepository route;
   final FakeEntryWalksRepository entryWalks;
+  final FakeLinkLauncher links;
   final FakeSearchRepository search;
   final FakePicturePicker picker;
   final FakeTextRecognizer recognizer;
@@ -342,6 +363,7 @@ class TestRig {
       reminderSchedulerProvider.overrideWithValue(scheduler),
       routeRepositoryProvider.overrideWithValue(route),
       entryWalksRepositoryProvider.overrideWithValue(entryWalks),
+      linkLauncherProvider.overrideWithValue(links),
       searchRepositoryProvider.overrideWithValue(search),
       selectedTabProvider.overrideWith(() => SelectedTab(startTab)),
       showMapTilesProvider.overrideWithValue(false),

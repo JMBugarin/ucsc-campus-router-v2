@@ -28,6 +28,10 @@
 	<string>Your location is used to route you to your next class and tell you when to leave.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Only used if you point the app at a campus router server on your own network.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>transit</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

@@ -9,6 +9,7 @@ import '../../core/pacific.dart';
 import '../../core/waking_note.dart';
 import '../arrive/arrival.dart';
 import '../campus/campus_area.dart';
+import '../handoff/trip_actions.dart';
 import '../route/destination.dart';
 import '../route/route_screen.dart';
 import '../schedule/schedule_controller.dart';
@@ -346,6 +347,13 @@ class _TripCard extends StatelessWidget {
                 'For ${next.classTime.label} at ${clockFromIso(next.classTime.start)} in ${next.classTime.location}: '
                 '${next.walkMinutes} min on foot from there, plus ${next.bufferMinutes} min to spare.',
                 style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
+              ),
+              const SizedBox(height: 8),
+              TripActions(
+                entry: next.entry,
+                options: next.options,
+                roomLabel: next.classTime.location,
+                far: far,
               ),
             ],
           ),
