@@ -48,7 +48,6 @@ UCSC classroom directory + campus map ──► data/       ▼
 | `data-pipeline/`, `graph/`, `data/` | How the campus graph and building/room data are built, and the committed results. |
 | `web/` | A browser demo that shows Dijkstra and A* side by side. |
 | `docs/` | [Developer notes](docs/developer-notes.md), [hosting](docs/hosting.md). |
-| `REVIEW.md` | An honest review of the project's weaknesses and the fixes made. |
 
 ## Run it (macOS)
 
