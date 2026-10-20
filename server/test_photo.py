@@ -170,7 +170,7 @@ class TestReadScheduleImage(unittest.TestCase):
 
 @unittest.skipIf(anthropic is None, "the anthropic package is not installed")
 class TestOnTheWire(unittest.TestCase):
-    """The real SDK client talking to a stand-in for api.anthropic.com, so the request that would be sent and
+    """The real SDK client talking to a stand-in for the API, so the request that would be sent and
     the way the answer is read are exercised without a key and without spending anything."""
 
     def sdk_client(self, handler):
