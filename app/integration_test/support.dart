@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ucsc_router/core/pacific.dart';
 import 'package:ucsc_router/main.dart' as app;
 
 /// Where screenshots go. Pass `--dart-define=SHOT_DIR=/absolute/path` to keep them.
@@ -76,6 +77,37 @@ String savedSchedule() => jsonEncode([
         'end_date': '2030-12-31',
       }
     ]);
+
+/// Two classes placed around now on the campus clock: one that ended 30 minutes ago in Soc Sci 2 075 and
+/// XYZ 10, which starts in 30 minutes, so "next class" is later today at whatever time the test runs.
+/// Within an hour and a half of midnight that is not possible, and [startsToday] is false.
+({String json, bool startsToday}) savedScheduleAroundNow() {
+  final now = pacificTime(DateTime.now());
+  final classes = [
+    (course: 'XYZ 5', room: 'Soc Sci 2 075', start: now.subtract(const Duration(minutes: 90))),
+    (course: 'XYZ 10', room: 'Kresge Acad 3201', start: now.add(const Duration(minutes: 30))),
+  ];
+  String clock(DateTime t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+  final meetings = [
+    for (final c in classes)
+      {
+        'course': c.course,
+        'title': 'Sample',
+        'section': '01',
+        'component': 'Lecture',
+        'class_nbr': '10002',
+        'days': [0, 1, 2, 3, 4, 5, 6],
+        'start': clock(c.start),
+        'end': clock(c.start.add(const Duration(minutes: 60))),
+        'location': c.room,
+        'start_date': '2025-01-01',
+        'end_date': '2030-12-31',
+      },
+  ];
+  final today = isoDate(now);
+  final startsToday = classes.every((c) => isoDate(c.start) == today && isoDate(c.start.add(const Duration(minutes: 60))) == today);
+  return (json: jsonEncode(meetings), startsToday: startsToday);
+}
 
 IntegrationTestWidgetsFlutterBinding bindEnvironment() => IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
