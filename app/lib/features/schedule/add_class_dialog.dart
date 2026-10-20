@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/format.dart';
+import '../../core/two_up.dart';
 import 'meeting.dart';
 
 String _hhmm(TimeOfDay t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
@@ -138,7 +139,7 @@ class _AddClassDialogState extends State<AddClassDialog> {
                 ],
               ),
             const SizedBox(height: 8),
-            _Pair(
+            TwoUp(
               OutlinedButton(
                 onPressed: () => _pickTime(true),
                 child: Text(_start == null ? 'Starts' : clock12(_start!.hour, _start!.minute)),
@@ -149,7 +150,7 @@ class _AddClassDialogState extends State<AddClassDialog> {
               ),
             ),
             const SizedBox(height: 8),
-            _Pair(
+            TwoUp(
               OutlinedButton(
                 onPressed: () => _pickDate(true),
                 child: Text(_from.isEmpty ? (_oneTime ? 'Date' : 'From') : _from),
@@ -173,28 +174,6 @@ class _AddClassDialogState extends State<AddClassDialog> {
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
         FilledButton(onPressed: _submit, child: const Text('Add')),
       ],
-    );
-  }
-}
-
-/// Two buttons side by side, or one above the other once the text is large enough that they would not fit.
-class _Pair extends StatelessWidget {
-  const _Pair(this.first, this.second);
-
-  final Widget first;
-  final Widget? second;
-
-  @override
-  Widget build(BuildContext context) {
-    final buttons = [first, ?second];
-    if (MediaQuery.textScalerOf(context).scale(14) > 21) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [for (var i = 0; i < buttons.length; i++) ...[if (i > 0) const SizedBox(height: 8), buttons[i]]],
-      );
-    }
-    return Row(
-      children: [for (var i = 0; i < buttons.length; i++) ...[if (i > 0) const SizedBox(width: 8), Expanded(child: buttons[i])]],
     );
   }
 }

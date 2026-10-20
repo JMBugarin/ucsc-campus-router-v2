@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -60,6 +61,39 @@ Future<void> shot(
   }
 }
 
+/// Draws [texts] in black on white, saves the result as a PNG and returns its path. The file is removed after the test.
+Future<String> drawPicture(
+  WidgetTester tester,
+  String name,
+  List<(String, Offset)> texts, {
+  Size size = const Size(1200, 800),
+}) async {
+  final path = '${Directory.systemTemp.path}/$name.png';
+  await tester.runAsync(() async {
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder)..drawRect(Offset.zero & size, Paint()..color = Colors.white);
+    for (final (text, at) in texts) {
+      TextPainter(
+          text: TextSpan(
+            text: text,
+            style: const TextStyle(color: Colors.black, fontSize: 32),
+          ),
+          textDirection: TextDirection.ltr,
+        )
+        ..layout()
+        ..paint(canvas, at);
+    }
+    final image = await recorder.endRecording().toImage(size.width.round(), size.height.round());
+    final png = await image.toByteData(format: ui.ImageByteFormat.png);
+    await File(path).writeAsBytes(png!.buffer.asUint8List());
+  });
+  addTearDown(() {
+    final file = File(path);
+    if (file.existsSync()) file.deleteSync();
+  });
+  return path;
+}
+
 /// A schedule in the layout MyUCSC prints, with a class every day so "today" is never empty.
 const pastedSchedule = '''
 XYZ 10 - Sample Calculus Status Units Grading Grade Deadlines Enrolled 5.00 Graded
@@ -68,20 +102,20 @@ Class Nbr Section Component Days & Times Room Instructor Start/End Date
 ''';
 
 String savedSchedule() => jsonEncode([
-      {
-        'course': 'XYZ 10',
-        'title': 'Sample Calculus',
-        'section': '01',
-        'component': 'Lecture',
-        'class_nbr': '10002',
-        'days': [0, 1, 2, 3, 4, 5, 6],
-        'start': '14:40',
-        'end': '15:45',
-        'location': 'Kresge Acad 3201',
-        'start_date': '2025-01-01',
-        'end_date': '2030-12-31',
-      }
-    ]);
+  {
+    'course': 'XYZ 10',
+    'title': 'Sample Calculus',
+    'section': '01',
+    'component': 'Lecture',
+    'class_nbr': '10002',
+    'days': [0, 1, 2, 3, 4, 5, 6],
+    'start': '14:40',
+    'end': '15:45',
+    'location': 'Kresge Acad 3201',
+    'start_date': '2025-01-01',
+    'end_date': '2030-12-31',
+  },
+]);
 
 /// Two classes placed around now on the campus clock: one that ended 30 minutes ago in Soc Sci 2 075 and
 /// XYZ 10, which starts in 30 minutes, so "next class" is later today at whatever time the test runs.
@@ -110,7 +144,9 @@ String savedSchedule() => jsonEncode([
       },
   ];
   final today = isoDate(now);
-  final startsToday = classes.every((c) => isoDate(c.start) == today && isoDate(c.start.add(const Duration(minutes: 60))) == today);
+  final startsToday = classes.every(
+    (c) => isoDate(c.start) == today && isoDate(c.start.add(const Duration(minutes: 60))) == today,
+  );
   return (json: jsonEncode(meetings), startsToday: startsToday);
 }
 

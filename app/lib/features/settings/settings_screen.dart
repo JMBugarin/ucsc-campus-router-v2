@@ -209,9 +209,8 @@ class _PrivacyNote extends StatelessWidget {
         line("Location: your position goes with a request only when Use my location is on, or when you ask for a route."),
         line('Searches: what you type in Map search.'),
         line(
-          'Photos: if you read a schedule from a photo, the picture goes to the server, which sends it on to '
-          "Anthropic's Claude to read. The server keeps nothing and Anthropic handles it under its own terms. "
-          'Only a server whose owner set that up offers it, and only when you choose a photo.',
+          'Pictures: when you read a schedule from a picture, your phone reads it and the picture is never sent '
+          'anywhere. The classes it finds are then treated like any others, and their room names are checked with the server.',
         ),
         line(
           'The server uses each request for that one answer, keeps nothing and does not log queries or '

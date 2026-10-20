@@ -17,9 +17,13 @@ import 'package:ucsc_router/features/search/search_repository.dart';
 import 'package:ucsc_router/features/route/route_plan.dart';
 import 'package:ucsc_router/features/route/route_repository.dart';
 import 'package:ucsc_router/features/schedule/meeting.dart';
+import 'package:ucsc_router/features/schedule/ocr/picture_picker.dart';
+import 'package:ucsc_router/features/schedule/ocr/recognized_text.dart';
+import 'package:ucsc_router/features/schedule/ocr/text_recognizer.dart';
 import 'package:ucsc_router/features/schedule/photo_import.dart';
 import 'package:ucsc_router/features/schedule/schedule_repository.dart';
 import 'package:ucsc_router/features/schedule/schedule_screen.dart';
+import 'package:ucsc_router/features/schedule/term.dart';
 import 'package:ucsc_router/features/settings/settings.dart';
 import 'package:ucsc_router/features/today/today_controller.dart';
 import 'package:ucsc_router/features/today/today_models.dart';
@@ -68,8 +72,16 @@ class FakeScheduleRepository implements ScheduleRepository {
   @override
   Future<List<Meeting>> load() async => [...stored];
 
+  /// When set, saving waits for it; [saveFails] makes saving throw.
+  Future<void>? saveHold;
+  Object? saveFails;
+
   @override
-  Future<void> save(List<Meeting> meetings) async => stored = [...meetings];
+  Future<void> save(List<Meeting> meetings) async {
+    await saveHold;
+    if (saveFails != null) throw saveFails!;
+    stored = [...meetings];
+  }
 
   @override
   Future<ImportResult> importText(String text) async {
@@ -205,12 +217,60 @@ class FakeSearchRepository implements SearchRepository {
   Object answer = <Place>[];
   final queries = <String>[];
 
+  /// What the server makes of each room, by the text asked about; a room not listed is a building it knows.
+  final resolutions = <String, Object>{};
+  final resolved = <String>[];
+
+  @override
+  Future<RoomResolution> resolve(String location) async {
+    resolved.add(location);
+    final r = resolutions[location] ?? const RoomResolution(kind: 'building', roomKnown: true);
+    if (r is RoomResolution) return r;
+    throw r;
+  }
+
   @override
   Future<List<Place>> search(String query) async {
     queries.add(query);
     final a = answer;
     if (a is List<Place>) return a;
     throw a;
+  }
+}
+
+/// Stands in for the system photo picker: [path] is what the student chooses, or null for nothing.
+class FakePicturePicker implements PicturePicker {
+  String? path;
+  Object? failWith;
+  int picks = 0;
+  int released = 0;
+
+  @override
+  Future<String?> pick() async {
+    picks++;
+    if (failWith != null) throw failWith!;
+    return path;
+  }
+
+  @override
+  Future<void> release() async => released++;
+}
+
+/// Stands in for the phone's text recognition: [reading] is a [RecognizedText], or an exception to throw.
+class FakeTextRecognizer implements TextRecognizer {
+  Object reading = const RecognizedText(width: 1, height: 1, lines: []);
+  final paths = <String>[];
+
+  /// When set, reading waits for it, like a slow picture.
+  Future<void>? hold;
+
+  @override
+  Future<RecognizedText> recognize(String path) async {
+    paths.add(path);
+    await hold;
+    final r = reading;
+    if (r is RecognizedText) return r;
+    throw r;
   }
 }
 
@@ -226,13 +286,18 @@ class TestRig {
     this.now,
     this.photoPicker,
     this.photoPreparer,
+    this.pictureImport = true,
+    this.term,
+    this.stubTerm = false,
     Map<String, Object> prefs = const {},
   })  : schedule = FakeScheduleRepository(stored: stored),
         today = FakeTodayRepository(analysis ?? Analysis.fromJson(fixture('today_before_class'))),
         location = FakeLocationService(),
         scheduler = FakeReminderScheduler(),
         route = FakeRouteRepository(),
-        search = FakeSearchRepository() {
+        search = FakeSearchRepository(),
+        picker = FakePicturePicker(),
+        recognizer = FakeTextRecognizer() {
     SharedPreferences.setMockInitialValues({
       'server_url': serverUrl,
       'use_location': useLocation,
@@ -247,7 +312,18 @@ class TestRig {
   final FakeReminderScheduler scheduler;
   final FakeRouteRepository route;
   final FakeSearchRepository search;
+  final FakePicturePicker picker;
+  final FakeTextRecognizer recognizer;
   final int startTab;
+
+  /// Whether this phone can read a picture of a schedule.
+  final bool pictureImport;
+
+  /// The term the server reports, if any. Only used when [stubTerm] is set or a term is given.
+  final ({String start, String end})? term;
+
+  /// Answers the term from [term] instead of asking a server.
+  final bool stubTerm;
 
   /// Pins the app's clock when set (a UTC instant).
   final DateTime? now;
@@ -277,6 +353,10 @@ class TestRig {
       showMapTilesProvider.overrideWithValue(false),
       todayRefreshIntervalProvider.overrideWithValue(null), // no timers left running after a test
       calendarFilePickerProvider.overrideWithValue(() async => pickedCalendarText),
+      picturePickerProvider.overrideWithValue(picker),
+      textRecognizerProvider.overrideWithValue(recognizer),
+      pictureImportAvailableProvider.overrideWithValue(pictureImport),
+      if (stubTerm || term != null) termProvider.overrideWith((ref) async => term),
       photoPickerProvider.overrideWithValue(photoPicker ?? () async => null),
       photoPreparerProvider.overrideWithValue(photoPreparer ?? (bytes) async => PickedPhoto(bytes, 'image/png')),
     ];

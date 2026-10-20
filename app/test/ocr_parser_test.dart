@@ -8,7 +8,7 @@ import 'package:ucsc_router/features/schedule/ocr/schedule_parser.dart';
 
 import 'ocr_pages.dart';
 
-ParsedSchedule parse(Page page) => parseSchedule(page.build());
+ParsedSchedule parse(OcrPage page) => parseSchedule(page.build());
 
 String brief(ParsedRow r) => '${r.course} | ${r.component} | ${r.days} | ${r.start}-${r.end} | ${r.location}';
 
@@ -18,8 +18,8 @@ List<String> briefs(ParsedSchedule s) => [for (final r in s.rows) brief(r)];
 Set<RowIssue> issuesOf(ParsedRow r) => {...r.issues}..remove(RowIssue.noDates);
 
 /// A header-less table row: course, days, times, room, each in its own cell.
-Page oneRow(String days, String times, {String room = 'BE 152', String course = 'ART 20'}) =>
-    Page().cells(100, {40: course, 250: days, 520: times, 900: room});
+OcrPage oneRow(String days, String times, {String room = 'BE 152', String course = 'ART 20'}) =>
+    OcrPage().cells(100, {40: course, 250: days, 520: times, 900: room});
 
 void main() {
   group('readings the phone really returned', () {
@@ -135,7 +135,7 @@ void main() {
       final result = parse(myUcscPage(sampleCourses, noise: {('t2', '20002'): ':45PM'}));
       expect(result.rows, hasLength(4));
       final lecture = result.rows[1];
-      expect(lecture.start, isNull);
+      expect(lecture.start, '14:40', reason: 'the start that was read is kept');
       expect(lecture.end, isNull);
       expect(lecture.issues, contains(RowIssue.noTime));
       expect(lecture.needsReview, isTrue);
@@ -253,7 +253,7 @@ void main() {
     });
 
     test('a class with no room on the page is kept, with the note that it has none', () {
-      final result = parse(Page().cells(100, {40: 'ART 20', 250: 'MWF', 520: '1:20 PM - 2:25 PM'}));
+      final result = parse(OcrPage().cells(100, {40: 'ART 20', 250: 'MWF', 520: '1:20 PM - 2:25 PM'}));
       expect(result.rows.single.location, '');
       expect(result.rows.single.issues, contains(RowIssue.noRoom));
       expect(result.rows.single.needsReview, isFalse);
@@ -261,8 +261,8 @@ void main() {
   });
 
   group('cards and rows of text', () {
-    Page card(
-      Page p,
+    OcrPage card(
+      OcrPage p,
       double y, {
       String head = 'BME 160 Lecture',
       String when = 'MWF 1:20 PM - 2:25 PM',
@@ -274,13 +274,13 @@ void main() {
       ..line(60, y + 150, room);
 
     test('a card: course and kind of class, the title, days and times, then the room', () {
-      final result = parse(card(Page(), 100));
+      final result = parse(card(OcrPage(), 100));
       expect(briefs(result), ['BME 160 | Lecture | [0, 2, 4] | 13:20-14:25 | Baskin Engineering 152']);
       expect(result.rows.single.needsReview, isFalse);
     });
 
     test('cards one after the other each get their own course, time and room', () {
-      final p = Page();
+      final p = OcrPage();
       card(p, 100);
       card(p, 360, head: 'BME 160 Discussion', when: 'Th 8:30 AM - 9:35 AM', room: 'Thimann 101');
       card(p, 620, head: 'CSE 101 Lecture', when: 'TuTh 9:50 AM - 11:25 AM', room: 'BE 152');
@@ -293,13 +293,13 @@ void main() {
 
     test('a pin or bullet drawn before the room is not part of it', () {
       for (final glyph in ['\u2022', 'O', '|', '\u25cb']) {
-        final result = parse(card(Page(), 100, room: '$glyph Kresge Acad 3201'));
+        final result = parse(card(OcrPage(), 100, room: '$glyph Kresge Acad 3201'));
         expect(result.rows.single.location, 'Kresge Acad 3201', reason: glyph);
       }
     });
 
     test('a time that wraps onto a second line is one time', () {
-      final p = Page()
+      final p = OcrPage()
         ..line(60, 100, 'BME 160 Lecture')
         ..line(60, 150, 'MWF 1:20 PM -')
         ..line(60, 175, '2:25 PM')
@@ -308,7 +308,7 @@ void main() {
     });
 
     test('a card that labels each field: the value is the line under the label', () {
-      final p = Page()
+      final p = OcrPage()
         ..line(60, 100, 'MATH 30 - Seminar in Ethics')
         ..line(60, 150, 'Status')
         ..line(60, 190, 'Enrolled')
@@ -325,7 +325,7 @@ void main() {
     });
 
     test('a course that is dropped or wait-listed is left out and said so', () {
-      final p = Page()
+      final p = OcrPage()
         ..line(60, 100, 'MATH 30 - Seminar in Ethics')
         ..line(60, 150, 'Status')
         ..line(60, 190, 'Dropped')
@@ -340,7 +340,7 @@ void main() {
     });
 
     test('a second time under the same course takes that course, and is flagged as a guess', () {
-      final p = Page()
+      final p = OcrPage()
         ..line(60, 100, 'BME 160 Lecture')
         ..line(60, 150, 'MWF 1:20 PM - 2:25 PM')
         ..line(60, 200, 'Th 4:00 PM - 5:05 PM');
@@ -352,7 +352,7 @@ void main() {
     });
 
     test('the first line of a wrapped time is not mistaken for the course of the next class', () {
-      final p = Page()
+      final p = OcrPage()
         ..line(60, 100, 'BME 160 Lecture')
         ..line(60, 150, 'MWF 1:20 PM -')
         ..line(60, 175, '2:25 PM')
@@ -366,7 +366,7 @@ void main() {
     });
 
     test('rows of a table with no headings: every cell on one line', () {
-      final p = Page()
+      final p = OcrPage()
         ..cells(100, {40: 'ART 20', 250: 'MWF', 520: '1:20pm-2:25pm', 900: 'Thimann Lec 001'})
         ..cells(160, {40: 'ART 20', 250: 'M', 520: '1:20pm-2:25pm', 900: 'Social Sci 2 159'})
         ..cells(220, {40: 'ECON 1', 250: 'TuTh', 520: '5:20pm-6:55pm', 900: 'BE 165'});
@@ -378,7 +378,7 @@ void main() {
     });
 
     test('a class listed once for each day is one class on those days', () {
-      final p = Page()
+      final p = OcrPage()
         ..cells(100, {40: 'HIS10', 250: 'Tue', 520: '09:50', 700: '11:25', 900: 'Oakes 222'})
         ..cells(160, {40: 'HIS10', 250: 'Thu', 520: '09:50', 700: '11:25', 900: 'Oakes 222'})
         ..cells(220, {40: 'HIS10', 250: 'Mon', 520: '13:20', 700: '14:25', 900: 'Crown 104'});
@@ -422,7 +422,12 @@ void main() {
     });
 
     test('text the phone was unsure of is flagged', () {
-      final p = Page().cells(100, {40: 'ART 20', 250: 'MWF', 520: '1:20 PM - 2:25 PM', 900: 'BE 152'}, confidence: 0.3);
+      final p = OcrPage().cells(100, {
+        40: 'ART 20',
+        250: 'MWF',
+        520: '1:20 PM - 2:25 PM',
+        900: 'BE 152',
+      }, confidence: 0.3);
       final row = parse(p).rows.single;
       expect(row.issues, contains(RowIssue.unsureText));
       expect(row.needsReview, isTrue);
@@ -436,7 +441,7 @@ void main() {
     });
 
     test('what is missing comes first in the reasons, and a row can be missing several things', () {
-      final row = parse(Page().cells(100, {520: '1:20 PM - 2:25 PM'})).rows.single;
+      final row = parse(OcrPage().cells(100, {520: '1:20 PM - 2:25 PM'})).rows.single;
       expect(row.issues, containsAll([RowIssue.noCourse, RowIssue.noDays]));
       expect(row.reasons.take(2), unorderedEquals(['No course was found.', 'No days were found.']));
       expect(row.needsReview, isTrue);
@@ -446,7 +451,7 @@ void main() {
 
   group('repeats and noise', () {
     test('a class that appears twice is kept once, and the repeat is mentioned', () {
-      final p = Page()
+      final p = OcrPage()
         ..cells(100, {40: 'ART 20', 250: 'MWF', 520: '1:20 PM - 2:25 PM', 900: 'BE 152'})
         ..cells(160, {40: 'ECON 1', 250: 'TuTh', 520: '5:20 PM - 6:55 PM', 900: 'BE 165'})
         ..cells(220, {40: 'ART 20', 250: 'MWF', 520: '1:20 PM - 2:25 PM', 900: 'BE 152'});
@@ -462,7 +467,7 @@ void main() {
     });
 
     test('lines that are not classes, between and around the rows, are ignored', () {
-      final p = Page()
+      final p = OcrPage()
         ..line(40, 40, 'Fall 2026 - My Schedule')
         ..cells(100, {40: 'ART 20', 250: 'MWF', 520: '1:20 PM - 2:25 PM', 900: 'BE 152'})
         ..line(40, 140, '| | | ||')
@@ -478,7 +483,7 @@ void main() {
     });
 
     test('prices and other numbers that look a little like times are not classes', () {
-      final p = Page()
+      final p = OcrPage()
         ..cells(100, {40: 'Soup', 600: '5.50 - 6.50'})
         ..cells(160, {40: 'Units', 600: '5.00'})
         ..cells(220, {40: 'Sale', 600: '10.00 - 12.00'});
@@ -557,7 +562,7 @@ void main() {
     });
 
     test('text that is not a schedule', () {
-      final p = Page()
+      final p = OcrPage()
         ..line(40, 40, 'Corner Cafe - Lunch Menu')
         ..cells(100, {40: 'Margherita Pizza', 700: '\$12.50'})
         ..cells(160, {40: 'Caesar Salad', 700: '\$9.00'});
@@ -576,7 +581,7 @@ void main() {
 
     test('a great many lines are read in good time', () {
       final random = math.Random(7);
-      final p = Page(height: 90000);
+      final p = OcrPage(height: 90000);
       for (var i = 0; i < 4000; i++) {
         p.cells(i * 20.0, {
           40: 'ART ${random.nextInt(300)}',
@@ -593,7 +598,7 @@ void main() {
     });
 
     test('a very long line', () {
-      final p = Page(width: 200000)..line(0, 0, List.filled(3000, 'MWF 1:20 PM - 2:25 PM').join(' '));
+      final p = OcrPage(width: 200000)..line(0, 0, List.filled(3000, 'MWF 1:20 PM - 2:25 PM').join(' '));
       expect(() => parse(p), returnsNormally);
     });
 
@@ -645,7 +650,7 @@ void main() {
         '\u2022',
       ];
       for (var round = 0; round < 150; round++) {
-        final p = Page(charWidth: 4 + random.nextInt(14).toDouble(), textHeight: 8 + random.nextInt(40).toDouble());
+        final p = OcrPage(charWidth: 4 + random.nextInt(14).toDouble(), textHeight: 8 + random.nextInt(40).toDouble());
         for (var i = 0; i < 1 + random.nextInt(40); i++) {
           final cells = <double, String>{};
           for (var c = 0; c < 1 + random.nextInt(5); c++) {

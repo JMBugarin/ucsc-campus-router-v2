@@ -46,22 +46,24 @@ class _Page {
     var between = '';
     var skipped = false;
     var inherited = false;
-    if (findCourse(before) == null) {
+    bool hasCourse(String s) => findCourse(s.replaceAll(cellBreak, ' ')) != null;
+    if (!hasCourse(before)) {
       for (var k = i - 1; k >= 0 && i - k <= 8; k--) {
         if (taken.contains(k) || findTimeRange(lines[k].text) != null) break;
-        if (findCourse(lines[k].text) == null) continue;
+        final found = findCourse(lines[k].text);
+        if (found == null) continue;
         text = lines[k].textWithBreaks(gap);
         between = lines.sublist(k + 1, i).map((l) => l.text).join(' ');
         used.add(lines[k]);
         final status = courseStatus(lines.sublist(k + 1, i).expand((l) => l.tokens).map((t) => t.text));
         if (status != 'enrolled') {
-          notes.add('Skipped ${findCourse(text)!.code} ($status).');
+          notes.add('Skipped ${found.code} ($status).');
           skipped = true;
         }
         break;
       }
       // a second time under the same course (`MWF ...` then `Th ...`) has no course line of its own
-      if (findCourse(text) == null &&
+      if (!hasCourse(text) &&
           lastCourse != null &&
           lastTimeLine >= 0 &&
           i - lastTimeLine <= 3 &&
@@ -70,7 +72,7 @@ class _Page {
         inherited = true;
       }
     }
-    if (findCourse(text) != null) lastCourse = text;
+    if (hasCourse(text)) lastCourse = text;
     return (text: text, between: between, inherited: inherited, skipped: skipped);
   }
 
@@ -123,14 +125,18 @@ List<RawRow> readLines(List<VisualLine> lines, double h, List<String> notes) {
         skip = last;
       }
     }
-    if (range == null) continue;
+    // a lone time (its partner was lost) still makes a class when days and a course are there
+    final lone = range == null ? findLoneTime(text) : null;
+    if (range == null && (lone == null || findDays(text) == null)) continue;
+    final timeFrom = range?.from ?? lone!.from;
+    final timeTo = range?.to ?? lone!.to;
 
-    final before = text.substring(0, range.from);
+    final before = text.substring(0, timeFrom);
     final course = page.courseFor(i, before, used);
     page.lastTimeLine = last;
     page.taken.addAll([i, last]);
-    if (course.skipped) continue;
-    final room = page.roomFor(last, text.substring(range.to), used);
+    if (course.skipped || (range == null && findCourse(course.text.replaceAll(cellBreak, ' ')) == null)) continue;
+    final room = page.roomFor(last, text.substring(timeTo), used);
 
     final head = _withoutTitle(course.text.replaceAll(cellBreak, ' '));
     final hint = '$head ${course.between} $before'.replaceAll(cellBreak, ' ');

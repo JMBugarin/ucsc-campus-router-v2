@@ -8,7 +8,7 @@ import 'package:ucsc_router/app.dart';
 import 'package:ucsc_router/core/api_client.dart';
 import 'package:ucsc_router/core/waking_note.dart';
 import 'package:ucsc_router/features/schedule/meeting.dart';
-import 'package:ucsc_router/features/schedule/schedule_screen.dart';
+import 'package:ucsc_router/features/schedule/term.dart';
 import 'package:ucsc_router/features/search/place.dart';
 import 'package:ucsc_router/features/today/today_controller.dart';
 import 'package:ucsc_router/features/today/today_models.dart';

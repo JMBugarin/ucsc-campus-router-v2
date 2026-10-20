@@ -156,6 +156,32 @@ TimeRange? _resolve(_Clock a, _Clock b) {
 /// True if [text] has a time in it, even one with no partner.
 bool hasClock(String text) => _clocks(text).isNotEmpty;
 
+/// A time on its own, where its partner was not read (`MWF 1:20 PM -` with the end time lost).
+class LoneTime {
+  const LoneTime(this.time, this.from, this.to);
+
+  final String time;
+  final int from;
+  final int to;
+}
+
+/// The only time in [text], as `HH:mm`, or null if there is none or more than one. With no AM or PM it is guessed
+/// from school hours.
+LoneTime? findLoneTime(String text) {
+  final clocks = _clocks(text);
+  if (clocks.length != 1) return null;
+  final c = clocks.single;
+  final twentyFour = c.hour > 12 || c.hour == 0 || c.padded;
+  if (c.pm == null && !twentyFour) {
+    final pm = c.hour == 12 || c.hour < 8;
+    return LoneTime(_hhmm(c.minutes(pm)), c.from, c.to);
+  }
+  if (c.pm != null && (c.hour < 1 || c.hour > 12)) return null;
+  final minutes = c.pm == null ? c.hour * 60 + c.minute : c.minutes(c.pm!);
+  if (minutes >= 24 * 60) return null;
+  return LoneTime(_hhmm(minutes), c.from, c.to);
+}
+
 // ---- days -----------------------------------------------------------------------------------------------------
 
 /// Weekdays (0 = Monday) found in some text, and where.

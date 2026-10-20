@@ -117,7 +117,7 @@ void main() {
     await tester.scrollUntilVisible(find.text('What leaves your phone'), 300, scrollable: find.byType(Scrollable).first);
     await tester.pumpAndSettle();
     expect(find.textContaining('Right now this goes to 127.0.0.1.'), findsOneWidget);
-    expect(find.textContaining('Photos: if you read a schedule from a photo'), findsOneWidget);
+    expect(find.textContaining('Pictures: when you read a schedule from a picture'), findsOneWidget);
     await shot(binding, tester, '10-settings-privacy');
   });
 }
