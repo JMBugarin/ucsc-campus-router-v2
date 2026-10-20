@@ -135,7 +135,7 @@ void main() {
           expect(tester.takeException(), isNull, reason: 'no route');
         });
 
-        testWidgets('the paste and add-a-class dialogs', (tester) async {
+        testWidgets('the paste, photo and add-a-class dialogs', (tester) async {
           screen(tester, size, ratio, scale);
           await tester.pumpWidget(await rig(startTab: tabSchedule).app());
           await tester.pumpAndSettle();
@@ -143,6 +143,13 @@ void main() {
           await tester.pumpAndSettle();
           expect(find.text('Paste your schedule'), findsOneWidget);
           expect(tester.takeException(), isNull, reason: 'paste');
+          await tester.tap(find.text('Cancel'));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text('Read a photo'));
+          await tester.pumpAndSettle();
+          expect(find.text('Read a photo of your schedule'), findsOneWidget);
+          expect(tester.takeException(), isNull, reason: 'read a photo');
           await tester.tap(find.text('Cancel'));
           await tester.pumpAndSettle();
 

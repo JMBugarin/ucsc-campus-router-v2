@@ -72,7 +72,13 @@ class ApiClient {
   }
 
   /// [retry] is for requests that change nothing and cost nothing, so sending one twice is harmless.
-  Future<Map<String, dynamic>> postJson(String path, Map<String, dynamic> body, {bool retry = false}) async {
+  /// [timeout] replaces the usual wait for a request the server legitimately needs longer for.
+  Future<Map<String, dynamic>> postJson(
+    String path,
+    Map<String, dynamic> body, {
+    bool retry = false,
+    Duration? timeout,
+  }) async {
     final uri = _uri(path);
     return _send(
       () => _client.post(
@@ -81,6 +87,7 @@ class ApiClient {
         body: jsonEncode(body),
       ),
       retry: retry,
+      timeout: timeout,
     );
   }
 
@@ -103,10 +110,14 @@ class ApiClient {
     return Uri.parse('$baseUrl$path').replace(queryParameters: query);
   }
 
-  Future<Map<String, dynamic>> _send(Future<http.Response> Function() request, {required bool retry}) async {
+  Future<Map<String, dynamic>> _send(
+    Future<http.Response> Function() request, {
+    required bool retry,
+    Duration? timeout,
+  }) async {
     for (var tries = 1;; tries++) {
       try {
-        return await _once(request);
+        return await _once(request, timeout ?? this.timeout);
       } on ApiException catch (error) {
         final pause = retry ? _pauseBeforeRetry(error, tries) : null;
         if (pause == null) rethrow;
@@ -125,7 +136,7 @@ class ApiClient {
     return tries < maxTries && tries <= retryDelays.length ? retryDelays[tries - 1] : null;
   }
 
-  Future<Map<String, dynamic>> _once(Future<http.Response> Function() request) async {
+  Future<Map<String, dynamic>> _once(Future<http.Response> Function() request, Duration timeout) async {
     final http.Response response;
     try {
       response = await request().timeout(timeout);
@@ -176,6 +187,11 @@ class ApiClient {
     }
     if (status >= 400 && status < 500 && message is String) {
       throw ApiException(message, kind: ApiErrorKind.rejected, statusCode: status);
+    }
+    // Our own server explains a failure it caused (the photo reader's, for one); a host that is still
+    // waking up answers 502, 503 or 504 with a page of its own.
+    if (message is String && const {501, 502, 503, 504}.contains(status)) {
+      throw ApiException(message, statusCode: status);
     }
     if (const {502, 503, 504}.contains(status)) {
       throw ApiException(

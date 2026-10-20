@@ -16,13 +16,14 @@ _Captured in the iOS Simulator (iPhone 17) with the simulator's location set to 
 
 ## Status
 
-As of October 2026. The routing engine, server, data pipeline and Android/iOS app code are working and tested (hundreds of automated tests across C, Python and Dart, run in CI). The app is covered by widget tests and by integration tests that run in the iOS Simulator ([how](docs/developer-notes.md#simulator-checks)). It has **not been run on a physical device**, so real GPS accuracy and notification timing are unverified, and notifications were not exercised in the simulator either. Photo import (screenshot to schedule) is experimental and unverified against real input, see [developer notes](docs/developer-notes.md#photo-import).
+As of October 2026. The routing engine, server, data pipeline and Android/iOS app code are working and tested (hundreds of automated tests across C, Python and Dart, run in CI). The app is covered by widget tests and by integration tests that run in the iOS Simulator ([how](docs/developer-notes.md#simulator-checks)). It has **not been run on a physical device**, so real GPS accuracy and notification timing are unverified, and notifications were not exercised in the simulator either. Photo import (screenshot to schedule) is in the app and goes through the server, which holds the Anthropic key; it is **unverified against the real API**: a real run on 2026-10-19 was refused because the account had reached its usage limit, so only mocked-model tests and a fake reader have exercised it, see [developer notes](docs/developer-notes.md#photo-import).
 
 | Area | State |
 |---|---|
 | Room and building search | Working: abbreviations, partial names, typos (`/api/search`) |
 | Routing | Working: real walking paths from OpenStreetMap, elevation-aware effort, optional avoid-stairs. Straight-line distance inside buildings; floors are shown but not routed |
-| Today, week view, schedule import, reminders, day picker | Working. Reminders cover every class over the next week and are planned when the app opens; delivery is not verified on a device |
+| Today, week view, schedule import (paste, calendar file, by hand), reminders, day picker | Working. Reminders cover every class over the next week and are planned when the app opens; delivery is not verified on a device |
+| Photo import | Built, **unverified against the real API**. "Read a photo" on the Schedule tab sends the picture to the server, which has Claude read it; the app never holds a key. Off on a public server unless its owner turns it on; the hosted one has it off |
 | Offline | Today works offline; search, map and routes need the server |
 | Data | 32 buildings and the 87 general-assignment classrooms. Other rooms resolve to their building's nearest door |
 | Not built | Saved places, campus shuttle/bus, a map overlay of buildings and doors |

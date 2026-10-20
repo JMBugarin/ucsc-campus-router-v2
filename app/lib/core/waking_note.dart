@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 /// Goes under a spinner. If the wait drags on it explains why: a hosted server that has sat idle
 /// needs up to a minute to wake.
 class WakingNote extends StatefulWidget {
-  const WakingNote({super.key, this.after = const Duration(seconds: 4)});
+  const WakingNote({super.key, this.after = const Duration(seconds: 4), this.message});
 
   final Duration after;
+
+  /// What to say instead of the usual explanation, for a wait that is long for another reason.
+  final String? message;
 
   @override
   State<WakingNote> createState() => _WakingNoteState();
@@ -37,7 +40,8 @@ class _WakingNoteState extends State<WakingNote> {
       child: Padding(
         padding: const EdgeInsets.only(top: 8),
         child: Text(
-          'Still working. The server may be waking up after sitting idle, which can take up to a minute.',
+          widget.message ??
+              'Still working. The server may be waking up after sitting idle, which can take up to a minute.',
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
