@@ -8,11 +8,11 @@ Many UCSC classrooms (Baskin Engineering, Thimann Labs, and more) don't appear i
 - **Today**: import your class schedule and see what's now and next, how long the walk is, whether you have time, and when to leave. Works offline from saved walk times.
 - **Schedule**: paste your MyUCSC schedule, import a calendar (`.ics`) file, or add classes by hand. It stays on your phone.
 
-| Map search | Route | Today, offline | Day picker |
-|---|---|---|---|
-| <img src="docs/screenshots/02-map-search-be-152-results.png" width="200" alt="Searching BE 152 on the map"> | <img src="docs/screenshots/04-map-search-kresge-3201-route.png" width="200" alt="A walking route to Kresge 3201"> | <img src="docs/screenshots/08-today-offline.png" width="200" alt="Today with the server unreachable"> | <img src="docs/screenshots/07-today-next-day.png" width="200" alt="Tomorrow's classes"> |
+| Map search | Route | Today | Offline | Week view |
+|---|---|---|---|---|
+| <img src="docs/screenshots/02-map-search-be-152-results.png" width="170" alt="Searching BE 152 on the map"> | <img src="docs/screenshots/04-map-search-kresge-3201-route.png" width="170" alt="A walking route to Kresge 3201"> | <img src="docs/screenshots/06-today.png" width="170" alt="Today with the walk to the next class and when to leave"> | <img src="docs/screenshots/08-today-offline.png" width="170" alt="Today with the server unreachable"> | <img src="docs/screenshots/09-week-view.png" width="170" alt="The next seven days"> |
 
-_Captured in the iOS Simulator (iPhone 17) with the simulator's location set to campus; not a real device. Map tiles are OpenStreetMap's public ones because no tile key was set._ More in [docs/screenshots](docs/screenshots).
+_Captured on 2026-10-19 in the iOS Simulator (iPhone 17) with the simulator's location set to campus, an invented schedule and the server running on the same Mac; not a real device. Map tiles are OpenStreetMap's public ones because no tile key was set. More in [docs/screenshots](docs/screenshots)._
 
 ## Status
 
