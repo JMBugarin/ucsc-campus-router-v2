@@ -72,7 +72,7 @@ class _Problem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -101,56 +101,62 @@ class _RouteView extends ConsumerWidget {
     final bounds = LatLngBounds.fromPoints([_latLng(plan.start), ...points, _latLng(plan.door)]);
     final tiny = bounds.north == bounds.south && bounds.east == bounds.west;
 
-    return Column(
+    final map = FlutterMap(
+      options: MapOptions(
+        initialCenter: bounds.center,
+        initialZoom: 17,
+        initialCameraFit: tiny ? null : CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(48)),
+      ),
       children: [
-        Expanded(
-          child: FlutterMap(
-            options: MapOptions(
-              initialCenter: bounds.center,
-              initialZoom: 17,
-              initialCameraFit: tiny ? null : CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(48)),
-            ),
-            children: [
-              const BaseMapLayer(),
-              PolylineLayer(
-                polylines: [
-                  // The two short joins between the real start/door and the nearest path points.
-                  if (points.isNotEmpty) ...[
-                    Polyline(
-                      points: [_latLng(plan.start), points.first],
-                      strokeWidth: 3,
-                      color: scheme.outline,
-                      pattern: const StrokePattern.dotted(),
-                    ),
-                    Polyline(
-                      points: [points.last, _latLng(plan.door)],
-                      strokeWidth: 3,
-                      color: scheme.outline,
-                      pattern: const StrokePattern.dotted(),
-                    ),
-                  ],
-                  Polyline(points: points, strokeWidth: 5, color: scheme.primary),
-                ],
+        const BaseMapLayer(),
+        PolylineLayer(
+          polylines: [
+            // The two short joins between the real start/door and the nearest path points.
+            if (points.isNotEmpty) ...[
+              Polyline(
+                points: [_latLng(plan.start), points.first],
+                strokeWidth: 3,
+                color: scheme.outline,
+                pattern: const StrokePattern.dotted(),
               ),
-              MarkerLayer(
-                markers: [
-                  Marker(
-                    point: _latLng(plan.start),
-                    child: Icon(Icons.my_location, color: Colors.blue.shade800, semanticLabel: 'You are here'),
-                  ),
-                  Marker(
-                    point: _latLng(plan.door),
-                    alignment: Alignment.topCenter,
-                    child: Icon(Icons.location_on, size: 36, color: Colors.red.shade700, semanticLabel: 'Door'),
-                  ),
-                ],
+              Polyline(
+                points: [points.last, _latLng(plan.door)],
+                strokeWidth: 3,
+                color: scheme.outline,
+                pattern: const StrokePattern.dotted(),
               ),
-              const MapAttribution(),
             ],
-          ),
+            Polyline(points: points, strokeWidth: 5, color: scheme.primary),
+          ],
         ),
-        _Summary(plan: plan),
+        MarkerLayer(
+          markers: [
+            Marker(
+              point: _latLng(plan.start),
+              child: Icon(Icons.my_location, color: Colors.blue.shade800, semanticLabel: 'You are here'),
+            ),
+            Marker(
+              point: _latLng(plan.door),
+              alignment: Alignment.topCenter,
+              child: Icon(Icons.location_on, size: 36, color: Colors.red.shade700, semanticLabel: 'Door'),
+            ),
+          ],
+        ),
+        const MapAttribution(),
       ],
+    );
+
+    // At large text sizes the summary can outgrow the screen: it takes at most half the height and scrolls.
+    return LayoutBuilder(
+      builder: (context, box) => Column(
+        children: [
+          Expanded(child: map),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: box.maxHeight * 0.5),
+            child: SingleChildScrollView(child: _Summary(plan: plan)),
+          ),
+        ],
+      ),
     );
   }
 }

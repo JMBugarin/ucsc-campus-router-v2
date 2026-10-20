@@ -109,9 +109,10 @@ class _AddClassDialogState extends State<AddClassDialog> {
               decoration: const InputDecoration(labelText: 'Course', hintText: 'CSE 130'),
             ),
             DropdownButtonFormField<String>(
+              isExpanded: true,
               initialValue: _component,
               decoration: const InputDecoration(labelText: 'Type'),
-              items: [for (final c in _components) DropdownMenuItem(value: c, child: Text(c))],
+              items: [for (final c in _components) DropdownMenuItem(value: c, child: Text(c, overflow: TextOverflow.ellipsis))],
               onChanged: (value) => setState(() => _component = value ?? _component),
             ),
             TextField(
@@ -137,42 +138,28 @@ class _AddClassDialogState extends State<AddClassDialog> {
                 ],
               ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => _pickTime(true),
-                    child: Text(_start == null ? 'Starts' : clock12(_start!.hour, _start!.minute)),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => _pickTime(false),
-                    child: Text(_end == null ? 'Ends' : clock12(_end!.hour, _end!.minute)),
-                  ),
-                ),
-              ],
+            _Pair(
+              OutlinedButton(
+                onPressed: () => _pickTime(true),
+                child: Text(_start == null ? 'Starts' : clock12(_start!.hour, _start!.minute)),
+              ),
+              OutlinedButton(
+                onPressed: () => _pickTime(false),
+                child: Text(_end == null ? 'Ends' : clock12(_end!.hour, _end!.minute)),
+              ),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => _pickDate(true),
-                    child: Text(_from.isEmpty ? (_oneTime ? 'Date' : 'From') : _from),
-                  ),
-                ),
-                if (!_oneTime) ...[
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton(
+            _Pair(
+              OutlinedButton(
+                onPressed: () => _pickDate(true),
+                child: Text(_from.isEmpty ? (_oneTime ? 'Date' : 'From') : _from),
+              ),
+              _oneTime
+                  ? null
+                  : OutlinedButton(
                       onPressed: () => _pickDate(false),
                       child: Text(_to.isEmpty ? 'Until' : _to),
                     ),
-                  ),
-                ],
-              ],
             ),
             if (_problem != null)
               Padding(
@@ -186,6 +173,28 @@ class _AddClassDialogState extends State<AddClassDialog> {
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
         FilledButton(onPressed: _submit, child: const Text('Add')),
       ],
+    );
+  }
+}
+
+/// Two buttons side by side, or one above the other once the text is large enough that they would not fit.
+class _Pair extends StatelessWidget {
+  const _Pair(this.first, this.second);
+
+  final Widget first;
+  final Widget? second;
+
+  @override
+  Widget build(BuildContext context) {
+    final buttons = [first, ?second];
+    if (MediaQuery.textScalerOf(context).scale(14) > 21) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [for (var i = 0; i < buttons.length; i++) ...[if (i > 0) const SizedBox(height: 8), buttons[i]]],
+      );
+    }
+    return Row(
+      children: [for (var i = 0; i < buttons.length; i++) ...[if (i > 0) const SizedBox(width: 8), Expanded(child: buttons[i])]],
     );
   }
 }

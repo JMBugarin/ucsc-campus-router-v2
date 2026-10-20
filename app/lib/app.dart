@@ -82,7 +82,9 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     const screens = [MapScreen(), TodayScreen(), ScheduleScreen(), SettingsScreen()];
     return Scaffold(
       // IndexedStack keeps hidden tabs alive but still ticking, so a spinner there would animate unseen.
+      // The top is left to each tab: the map runs under the status bar, the others have an app bar.
       body: SafeArea(
+        top: false,
         child: IndexedStack(
           index: index,
           children: [for (var i = 0; i < screens.length; i++) TickerMode(enabled: i == index, child: screens[i])],

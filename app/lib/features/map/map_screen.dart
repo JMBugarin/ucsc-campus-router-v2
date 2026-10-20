@@ -71,32 +71,49 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final point = selected?.point;
     return Stack(
       children: [
-        FlutterMap(
-          mapController: _map,
-          options: const MapOptions(initialCenter: _campusCenter, initialZoom: 15),
-          children: [
-            const BaseMapLayer(),
-            if (point != null)
-              MarkerLayer(
-                markers: [
-                  Marker(
-                    point: LatLng(point.lat, point.lon),
-                    alignment: Alignment.topCenter,
-                    child: Icon(Icons.location_on, size: 40, color: Colors.red.shade700, semanticLabel: selected!.label),
-                  ),
-                ],
-              ),
-            const MapAttribution(),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        Semantics(
+          label: 'Campus map',
+          child: FlutterMap(
+            mapController: _map,
+            options: const MapOptions(initialCenter: _campusCenter, initialZoom: 15),
             children: [
-              _SearchField(controller: _controller, onChanged: _typed, onClear: _clear),
-              if (_query.isNotEmpty) _Results(query: _query, onChoose: _choose),
+              const BaseMapLayer(),
+              if (point != null)
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: LatLng(point.lat, point.lon),
+                      alignment: Alignment.topCenter,
+                      child: Icon(Icons.location_on, size: 40, color: Colors.red.shade700, semanticLabel: selected!.label),
+                    ),
+                  ],
+                ),
+              const MapAttribution(),
             ],
+          ),
+        ),
+        // The clock and battery are white in dark mode and the map is always light, so they get a veil.
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          height: MediaQuery.paddingOf(context).top,
+          child: ColoredBox(
+            key: const ValueKey('statusBarVeil'),
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.85),
+          ),
+        ),
+        SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _SearchField(controller: _controller, onChanged: _typed, onClear: _clear),
+                if (_query.isNotEmpty) Flexible(child: _Results(query: _query, onChoose: _choose)),
+              ],
+            ),
           ),
         ),
         if (selected != null) Align(alignment: Alignment.bottomCenter, child: _PlaceCard(place: selected)),
@@ -117,16 +134,21 @@ class _SearchField extends StatelessWidget {
     return Material(
       elevation: 3,
       borderRadius: BorderRadius.circular(28),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        textInputAction: TextInputAction.search,
-        decoration: InputDecoration(
-          hintText: 'Search a room or building, like BE 152',
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: IconButton(tooltip: 'Clear search', icon: const Icon(Icons.close), onPressed: onClear),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+      child: ValueListenableBuilder<TextEditingValue>(
+        valueListenable: controller,
+        builder: (context, value, _) => TextField(
+          controller: controller,
+          onChanged: onChanged,
+          textInputAction: TextInputAction.search,
+          decoration: InputDecoration(
+            hintText: 'Search a room or building, like BE 152',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: value.text.isEmpty
+                ? null
+                : IconButton(tooltip: 'Clear search', icon: const Icon(Icons.close), onPressed: onClear),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          ),
         ),
       ),
     );
@@ -144,7 +166,8 @@ class _Results extends ConsumerWidget {
     final results = ref.watch(searchResultsProvider(query));
     return Card(
       margin: const EdgeInsets.only(top: 8),
-      child: results.when(
+      child: SingleChildScrollView(
+        child: results.when(
         loading: () => const Padding(
           padding: EdgeInsets.all(16),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [LinearProgressIndicator(), WakingNote()]),
@@ -162,6 +185,7 @@ class _Results extends ConsumerWidget {
         data: (places) => places.isEmpty
             ? const _Note('No match. Try the building name and room, like "Kresge 3201".')
             : Column(mainAxisSize: MainAxisSize.min, children: [for (final p in places) _ResultTile(place: p, onTap: onChoose)]),
+        ),
       ),
     );
   }
@@ -202,25 +226,47 @@ class _PlaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      margin: const EdgeInsets.all(12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(place.label, style: theme.textTheme.titleMedium),
-            if (place.floor != null) Text('Floor ${place.floor}'),
-            if (place.roomKnown == false)
-              const Text('This room is not on the building\'s list, so the route goes to the building\'s nearest door.'),
-            const SizedBox(height: 12),
-            FilledButton.icon(
-              onPressed: () => openRoute(context, destination: RoomDestination(place.query)),
-              icon: const Icon(Icons.directions_walk),
-              label: const Text('Route here'),
+    // Large text must not push the card off the screen: it takes at most 60% of the height, and the
+    // words scroll while the button stays in reach.
+    return LayoutBuilder(
+      builder: (context, box) => ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: box.maxHeight * 0.6),
+        child: SizedBox(
+          width: double.infinity,
+          child: Card(
+            margin: const EdgeInsets.all(12),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(place.label, style: theme.textTheme.titleMedium),
+                          if (place.floor != null) Text('Floor ${place.floor}'),
+                          if (place.roomKnown == false)
+                            const Text('This room is not on the building\'s list, so the route goes to the building\'s nearest door.'),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: () => openRoute(context, destination: RoomDestination(place.query)),
+                      icon: const Icon(Icons.directions_walk),
+                      label: const Text('Route here'),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
