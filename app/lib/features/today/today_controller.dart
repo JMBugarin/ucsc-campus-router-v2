@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/api_client.dart';
+import '../../core/clock.dart';
 import '../../core/pacific.dart';
 import 'package:timezone/timezone.dart' as tz;
 import '../location/location_service.dart';
@@ -12,12 +13,21 @@ import '../schedule/schedule_controller.dart';
 import '../settings/settings.dart';
 import 'offline_analysis.dart';
 import 'today_models.dart';
+import 'today_text.dart';
 import 'walk_cache.dart';
 import 'today_repository.dart';
 
 /// What the Today screen shows.
 class TodayData {
-  const TodayData({this.analysis, this.locationProblem, this.reminderProblem, this.offline = false, this.viewDay});
+  const TodayData({
+    this.analysis,
+    this.locationProblem,
+    this.reminderProblem,
+    this.offline = false,
+    this.updating = false,
+    this.savedNote,
+    this.viewDay,
+  });
 
   /// Set when the day picker is showing a day other than today.
   final DateTime? viewDay;
@@ -35,7 +45,37 @@ class TodayData {
   /// schedule and the walk times saved from the last time it was reachable.
   final bool offline;
 
+  /// True while the saved view is on screen and the server has not answered yet.
+  final bool updating;
+
+  /// How old the saved walk times are, shown when [offline] or [updating].
+  final String? savedNote;
+
+  /// Whether the walk times on screen come from the phone's memory rather than the server.
+  bool get fromSaved => offline || updating;
+
   bool get hasSchedule => analysis != null;
+}
+
+String _savedNote(WalkCache walks, DateTime now) =>
+    savedWalksText(hasWalks: walks.hasAny, savedAt: walks.savedAt, now: now);
+
+/// What Today can show at once from the phone alone while the server is still answering, or null
+/// if the phone has nothing saved to show (no classes, or no walk times yet).
+TodayData? savedToday({required List<Meeting> meetings, required WalkCache walks, required DateTime now}) {
+  if (meetings.isEmpty || !walks.hasAny) return null;
+  return TodayData(
+    analysis: analyzeOffline(
+      meetings: meetings,
+      now: now,
+      holidays: walks.holidays,
+      walks: walks,
+      hasLocation: false,
+      explain: false,
+    ),
+    updating: true,
+    savedNote: _savedNote(walks, now),
+  );
 }
 
 /// The day the day picker is showing; null means today (whatever today is when you look).
@@ -45,7 +85,7 @@ class ViewedDay extends Notifier<DateTime?> {
 
   void show(DateTime day) {
     final picked = DateTime.utc(day.year, day.month, day.day);
-    final now = pacificTime(DateTime.now());
+    final now = pacificTime(ref.read(clockProvider)());
     state = isoDate(picked) == isoDate(now) ? null : picked;
   }
 
@@ -64,7 +104,8 @@ class TodayController extends AsyncNotifier<TodayData> {
   Timer? _timer;
   GeoPoint? _lastPoint;
   DateTime? _lastPointAt;
-  final DateTime Function() _now = DateTime.now;
+
+  DateTime Function() get _now => ref.read(clockProvider);
 
   @override
   Future<TodayData> build() async {
@@ -160,6 +201,7 @@ class TodayController extends AsyncNotifier<TodayData> {
         ),
         locationProblem: problem,
         offline: true,
+        savedNote: _savedNote(walks, now),
       );
     }
     unawaited(ref.read(walkCacheProvider).remember(analysis));
@@ -184,6 +226,7 @@ class TodayController extends AsyncNotifier<TodayData> {
     final at = tz.TZDateTime(pacific, day.year, day.month, day.day, 0, 1);
     Analysis analysis;
     var offline = false;
+    String? savedNote;
     try {
       analysis = await ref.read(todayRepositoryProvider).today(meetings: meetings, at: at);
     } on ApiException catch (error) {
@@ -194,8 +237,9 @@ class TodayController extends AsyncNotifier<TodayData> {
       final walks = ref.read(walkCacheProvider);
       analysis = analyzeOffline(meetings: meetings, now: at, holidays: walks.holidays, walks: walks, hasLocation: false);
       offline = true;
+      savedNote = _savedNote(walks, _now());
     }
-    return TodayData(analysis: analysis, offline: offline, viewDay: day);
+    return TodayData(analysis: analysis, offline: offline, savedNote: savedNote, viewDay: day);
   }
 
   Future<void> _cancelReminders(ReminderSync sync) async {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app.dart';
 import '../../core/api_client.dart';
+import '../../core/clock.dart';
 import '../../core/format.dart';
 import '../../core/pacific.dart';
 import '../../core/waking_note.dart';
@@ -13,6 +14,7 @@ import '../settings/settings.dart';
 import 'today_controller.dart';
 import 'today_models.dart';
 import 'today_text.dart';
+import 'walk_cache.dart';
 
 class TodayScreen extends ConsumerWidget {
   const TodayScreen({super.key});
@@ -21,8 +23,18 @@ class TodayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final serverUrl = ref.watch(settingsProvider.select((s) => s.serverUrl));
     final today = ref.watch(todayProvider);
+    final meetings = ref.watch(scheduleProvider).value ?? const [];
+    final otherDay = ref.watch(viewedDayProvider) != null;
 
     Future<void> refresh() => ref.read(todayProvider.notifier).refresh();
+
+    // While the server answers (it may be waking up) show what the phone already knows, if anything.
+    Widget loading() {
+      final saved = otherDay
+          ? null
+          : savedToday(meetings: meetings, walks: ref.read(walkCacheProvider), now: ref.read(clockProvider)());
+      return saved == null ? const _LoadingCard() : _TodayBody(data: saved);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +59,7 @@ class TodayScreen extends ConsumerWidget {
               )
             else
               today.when(
-                loading: () => const _LoadingCard(),
+                loading: loading,
                 error: (error, _) => _MessageCard(
                   icon: Icons.error_outline,
                   title: "Couldn't work out your day",
@@ -83,10 +95,9 @@ class _TodayBody extends ConsumerWidget {
       );
     }
 
-    final walk = walkText(analysis);
+    final walk = walkText(analysis, saved: data.fromSaved);
     final viewing = data.viewDay != null;
     final notes = [
-      if (data.offline) "Can't reach the server, so this is worked out on your phone. Pull down to try again.",
       if (data.locationProblem != null) data.locationProblem!,
       if (data.reminderProblem != null) data.reminderProblem!,
       ...analysis.notes,
@@ -94,6 +105,7 @@ class _TodayBody extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (data.fromSaved) _SavedBanner(data: data),
         _DayBar(viewDay: data.viewDay),
         Text(viewing ? dayViewSummary(analysis) : todaySummary(analysis), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
@@ -122,6 +134,58 @@ class _TodayBody extends ConsumerWidget {
   }
 }
 
+/// Says plainly that what is on screen comes from the phone's memory: the server could not be
+/// reached, or has not answered yet.
+class _SavedBanner extends ConsumerWidget {
+  const _SavedBanner({required this.data});
+
+  final TodayData data;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final color = theme.colorScheme.onSecondaryContainer;
+    final offline = data.offline;
+    final lead = offline
+        ? "Can't reach the server, so this is worked out on your phone."
+        : 'Showing what is saved on this phone while the server answers.';
+    return Semantics(
+      liveRegion: true,
+      child: Card(
+        color: theme.colorScheme.secondaryContainer,
+        margin: const EdgeInsets.only(bottom: 12),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(offline ? Icons.cloud_off_outlined : Icons.sync, color: color),
+                  const SizedBox(width: 8),
+                  Text(offline ? 'Offline' : 'Updating…', style: theme.textTheme.titleSmall?.copyWith(color: color)),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text('$lead ${data.savedNote ?? ''}'.trim(), style: theme.textTheme.bodyMedium?.copyWith(color: color)),
+              if (offline)
+                TextButton(
+                  onPressed: () => ref.read(todayProvider.notifier).refresh(),
+                  child: const Text('Try again'),
+                )
+              else ...[
+                const SizedBox(height: 8),
+                const LinearProgressIndicator(),
+                const WakingNote(),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Steps through the days of the schedule; a tap on the date opens a calendar.
 class _DayBar extends ConsumerWidget {
   const _DayBar({required this.viewDay});
@@ -131,7 +195,7 @@ class _DayBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final meetings = ref.watch(scheduleProvider).value ?? const [];
-    final nowPacific = pacificTime(DateTime.now());
+    final nowPacific = pacificTime(ref.read(clockProvider)());
     final today = DateTime.utc(nowPacific.year, nowPacific.month, nowPacific.day);
     final shown = viewDay ?? today;
     var first = today, last = today;
