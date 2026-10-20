@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'meeting.dart';
-import 'photo_import.dart';
 import 'schedule_repository.dart';
 
 /// What an import did, for the message shown afterwards.
@@ -32,12 +31,6 @@ class ScheduleController extends AsyncNotifier<List<Meeting>> {
   Future<ImportSummary> importText(String text) async => _merge(await _repo.importText(text));
 
   Future<ImportSummary> importCalendar(String text) async => _merge(await _repo.importCalendar(text));
-
-  /// Adds the classes the server read from a photo. A reading can be wrong, so the message says to check it.
-  Future<ImportSummary> importPhoto(PickedPhoto photo) async => _merge(
-        await _repo.importPhoto(photo.bytes, photo.mediaType),
-        check: 'Check each class against your photo, and remove any that are wrong.',
-      );
 
   /// Adds classes the student has checked one by one, after reading them from a picture. They were read on the
   /// phone, so no server has seen them yet.
@@ -82,7 +75,7 @@ class ScheduleController extends AsyncNotifier<List<Meeting>> {
 
   Future<void> clear() => _replace(const []);
 
-  Future<ImportSummary> _merge(ImportResult result, {String? check}) async {
+  Future<ImportSummary> _merge(ImportResult result) async {
     final existing = _current;
     final fresh = [
       for (final m in result.meetings)
@@ -92,7 +85,7 @@ class ScheduleController extends AsyncNotifier<List<Meeting>> {
     return ImportSummary(
       added: fresh.length,
       alreadyThere: result.meetings.length - fresh.length,
-      notes: [...result.notes, if (check != null && fresh.isNotEmpty) check],
+      notes: result.notes,
     );
   }
 

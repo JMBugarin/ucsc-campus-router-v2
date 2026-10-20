@@ -188,8 +188,8 @@ class ApiClient {
     if (status >= 400 && status < 500 && message is String) {
       throw ApiException(message, kind: ApiErrorKind.rejected, statusCode: status);
     }
-    // Our own server explains a failure it caused (the photo reader's, for one); a host that is still
-    // waking up answers 502, 503 or 504 with a page of its own.
+    // Our own server explains a failure it caused; a host that is still waking up answers 502, 503 or 504
+    // with a page of its own.
     if (message is String && const {501, 502, 503, 504}.contains(status)) {
       throw ApiException(message, statusCode: status);
     }
