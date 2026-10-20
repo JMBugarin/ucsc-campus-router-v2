@@ -7,6 +7,7 @@ import '../../core/clock.dart';
 import '../../core/pacific.dart';
 import 'package:timezone/timezone.dart' as tz;
 import '../location/location_service.dart';
+import '../reminders/reminder_planner.dart';
 import '../reminders/reminder_sync.dart';
 import '../schedule/meeting.dart';
 import '../schedule/schedule_controller.dart';
@@ -204,12 +205,23 @@ class TodayController extends AsyncNotifier<TodayData> {
         savedNote: _savedNote(walks, now),
       );
     }
-    unawaited(ref.read(walkCacheProvider).remember(analysis));
+    final walks = ref.read(walkCacheProvider);
+    await walks.remember(analysis);
 
     String? reminderProblem;
     try {
       if (settings.remindersOn) {
-        await sync.apply(analysis.reminders, now);
+        // Today's come from the server; every other class over the coming days is planned from the saved walks.
+        final ahead = planAhead(
+          meetings: meetings,
+          now: now,
+          holidays: walks.holidays,
+          walks: walks,
+          leadMinutes: settings.remindLeadMinutes,
+          sent: sync.firedKeys(now).toSet(),
+        );
+        await sync.apply(mergeReminderPlans(server: analysis.reminders, ahead: ahead), now);
+        unawaited(_learnUpcomingWalks(meetings));
       } else {
         await _cancelReminders(sync);
       }
@@ -218,6 +230,37 @@ class TodayController extends AsyncNotifier<TodayData> {
       reminderProblem = "Couldn't set up leave-now reminders on this phone.";
     }
     return TodayData(analysis: analysis, locationProblem: problem, reminderProblem: reminderProblem);
+  }
+
+  final _asked = <String>{};
+  var _learning = false;
+
+  /// Asks the server about the days ahead whose walks between classes the phone has not saved, so their
+  /// reminders can be planned too. It runs in the background, asks about a day at most once per run,
+  /// and plans again if it learned anything.
+  Future<void> _learnUpcomingWalks(List<Meeting> meetings) async {
+    if (_learning) return;
+    _learning = true;
+    try {
+      final walks = ref.read(walkCacheProvider);
+      var learned = false;
+      for (final day in daysMissingWalks(meetings: meetings, now: _now(), holidays: walks.holidays, walks: walks)) {
+        if (!ref.mounted || !_asked.add(isoDate(day))) continue;
+        try {
+          final answer = await ref.read(todayRepositoryProvider).today(
+                meetings: meetings,
+                at: tz.TZDateTime(pacific, day.year, day.month, day.day, 0, 1),
+              );
+          await walks.remember(answer);
+          learned = true;
+        } on ApiException {
+          break;
+        }
+      }
+      if (learned && ref.mounted) await refresh(quiet: true);
+    } finally {
+      _learning = false;
+    }
   }
 
   /// Another day's classes. It never touches the phone's location or reminders, which are about now.

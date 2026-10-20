@@ -99,6 +99,9 @@ class FakeTodayRepository implements TodayRepository {
   FakeTodayRepository(this.answer);
 
   Object answer; // an Analysis, or an exception to throw
+
+  /// When set, answers each request itself (given `at`, null for "now") instead of [answer].
+  Object Function(DateTime? at)? respond;
   final requests = <({List<Meeting> meetings, GeoPoint? here, int lead, List<String> reminded, DateTime? at})>[];
 
   @override
@@ -110,7 +113,7 @@ class FakeTodayRepository implements TodayRepository {
     DateTime? at,
   }) async {
     requests.add((meetings: meetings, here: here, lead: remindLeadMinutes, reminded: reminded, at: at));
-    final a = answer;
+    final a = respond?.call(at) ?? answer;
     if (a is Analysis) return a;
     if (a is Future<Analysis>) return a;
     throw a;
@@ -137,6 +140,7 @@ class FakeReminderScheduler implements ReminderScheduler {
   final shown = <String>[];
   final scheduled = <String, DateTime>{};
   final cancelled = <String>[];
+  int scheduleCalls = 0;
 
   void _check() {
     if (failing) throw StateError('notifications are broken');
@@ -154,6 +158,7 @@ class FakeReminderScheduler implements ReminderScheduler {
   @override
   Future<void> schedule(Reminder reminder, DateTime at) async {
     _check();
+    scheduleCalls++;
     scheduled[reminder.key] = at;
   }
 

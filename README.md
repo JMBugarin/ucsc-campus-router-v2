@@ -22,7 +22,7 @@ As of October 2026. The routing engine, server, data pipeline and Android/iOS ap
 |---|---|
 | Room and building search | Working: abbreviations, partial names, typos (`/api/search`) |
 | Routing | Working: real walking paths from OpenStreetMap, elevation-aware effort, optional avoid-stairs. Straight-line distance inside buildings; floors are shown but not routed |
-| Today, schedule import, reminders, day picker | Working. Reminders cover every class left today and are planned when the app opens |
+| Today, schedule import, reminders, day picker | Working. Reminders cover every class over the next week and are planned when the app opens; delivery is not verified on a device |
 | Offline | Today works offline; search, map and routes need the server |
 | Data | 32 buildings and the 87 general-assignment classrooms. Other rooms resolve to their building's nearest door |
 | Not built | Week view, saved places, campus shuttle/bus, a map overlay of buildings and doors |

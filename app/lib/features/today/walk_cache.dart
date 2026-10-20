@@ -38,6 +38,10 @@ class WalkCache {
     return _ints(data['any'])[destination];
   }
 
+  /// Whole minutes from the student's own position, as last timed there, to [destination]. Unlike
+  /// [minutes] it never falls back to a walk that started somewhere else.
+  int? fromHere(String destination) => _ints(_load()['walks'])['*>$destination'];
+
   Set<String> get holidays {
     final value = _load()['holidays'];
     return value is List ? {for (final h in value) h as String} : {};
