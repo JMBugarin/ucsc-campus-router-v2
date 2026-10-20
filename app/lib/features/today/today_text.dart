@@ -10,6 +10,18 @@ const _noClassesReasons = {
   'no_classes': 'No classes today.',
 };
 
+/// Why a day other than today has no classes.
+const _noClassesOnOtherDays = {
+  'weekend': 'No classes: weekend.',
+  'holiday': 'No classes: holiday.',
+  'before_term': 'The term has not started.',
+  'after_term': 'The term is over.',
+  'no_schedule': 'No classes yet.',
+  'no_classes': 'No classes.',
+};
+
+String noClassesOnOtherDayText(String? reason) => _noClassesOnOtherDays[reason] ?? _noClassesOnOtherDays['no_classes']!;
+
 /// `XYZ 10 Lecture at 2:40 PM in 40 min`, or for another day `Tue 9:50 AM, XYZ 10 Lecture`.
 String nextClassText(ClassTime next) {
   if (next.isToday) {
@@ -99,7 +111,10 @@ String dayLabel(DateTime day) => '${_weekdays[day.weekday - 1]}, ${_months[day.m
 
 /// The headline when the day picker shows a day other than today.
 String dayViewSummary(Analysis a) {
-  if (a.today.isEmpty) return _noClassesReasons[a.reason] ?? _noClassesReasons['no_classes']!;
-  final n = a.today.length;
-  return '$n ${n == 1 ? 'class' : 'classes'}, ${clockFromIso(a.today.first.start)} to ${clockFromIso(a.today.last.end)}.';
+  if (a.today.isEmpty) return noClassesOnOtherDayText(a.reason);
+  return classCountText(a.today.length, clockFromIso(a.today.first.start), clockFromIso(a.today.last.end));
 }
+
+/// `3 classes, 9:00 AM to 3:45 PM.`
+String classCountText(int count, String firstStart, String lastEnd) =>
+    '$count ${count == 1 ? 'class' : 'classes'}, $firstStart to $lastEnd.';
