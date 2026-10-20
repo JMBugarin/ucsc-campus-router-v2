@@ -278,6 +278,7 @@ class _PasteDialogState extends State<_PasteDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      scrollable: true,
       title: const Text('Paste your schedule'),
       content: Column(
         mainAxisSize: MainAxisSize.min,

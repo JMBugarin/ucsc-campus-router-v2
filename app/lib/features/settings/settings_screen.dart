@@ -167,7 +167,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: const Text('Heads-up before leaving'),
-            subtitle: const Text('How early the "leave soon" banner appears.'),
+            subtitle: const Text('How long before it is time to leave you get a heads-up, as a notification and on Today.'),
             trailing: DropdownButton<int>(
               value: settings.remindLeadMinutes,
               items: const [
