@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ucsc_router/core/api_client.dart';
@@ -9,6 +11,9 @@ import 'package:ucsc_router/features/settings/settings.dart';
 import 'package:ucsc_router/features/today/today_controller.dart';
 
 import 'helpers.dart';
+
+/// Monday 2026-10-12, noon on the campus clock, before the default class at 2:40 PM.
+final mondayNoon = DateTime.utc(2026, 10, 12, 19);
 
 void main() {
   group('schedule', () {
@@ -112,7 +117,7 @@ void main() {
     });
 
     test('asks the server with the classes and where the phone is', () async {
-      final rig = TestRig(stored: [meeting()]);
+      final rig = TestRig(stored: [meeting()], now: mondayNoon);
       final container = await rig.container();
       addTearDown(container.dispose);
 
@@ -124,7 +129,7 @@ void main() {
     });
 
     test('without location permission it still works and says why there is no location', () async {
-      final rig = TestRig(stored: [meeting()]);
+      final rig = TestRig(stored: [meeting()], now: mondayNoon);
       rig.location.result = const LocationResult.unavailable('Location permission was not given.');
       final container = await rig.container();
       addTearDown(container.dispose);
@@ -146,7 +151,7 @@ void main() {
     });
 
     test('a recent location is reused instead of asking the phone again', () async {
-      final rig = TestRig(stored: [meeting()]);
+      final rig = TestRig(stored: [meeting()], now: mondayNoon);
       final container = await rig.container();
       addTearDown(container.dispose);
 
@@ -155,6 +160,47 @@ void main() {
       await container.read(todayProvider.notifier).refresh();
       expect(rig.location.calls, 1);
       expect(rig.today.requests.length, 3, reason: 'the day is still recomputed each time');
+    });
+
+    group('the phone is asked where it is only when a walk from there could matter', () {
+      final later = meeting(course: 'ABC 20', start: '16:00', end: '17:05');
+      final cases = [
+        (when: 'before the first class', now: DateTime.utc(2026, 10, 12, 19), asks: true),
+        (when: 'between two classes', now: DateTime.utc(2026, 10, 12, 22, 50), asks: true),
+        (when: 'in a class, which the walk starts from', now: DateTime.utc(2026, 10, 12, 22), asks: false),
+        (when: 'after the last class', now: DateTime.utc(2026, 10, 13, 1), asks: false),
+        (when: 'on a weekend', now: DateTime.utc(2026, 10, 10, 19), asks: false),
+        (when: 'on a day with no classes', now: DateTime.utc(2026, 10, 13, 19), asks: false),
+      ];
+      for (final c in cases) {
+        test(c.when, () async {
+          final rig = TestRig(stored: [meeting(), later], now: c.now);
+          final container = await rig.container();
+          addTearDown(container.dispose);
+          await container.read(todayProvider.future);
+          expect(rig.location.calls, c.asks ? 1 : 0);
+          expect(rig.today.requests.single.here, c.asks ? const GeoPoint(36.9998, -122.0628) : isNull);
+        });
+      }
+
+      test('on a holiday', () async {
+        final rig = TestRig(stored: [meeting()], now: mondayNoon, prefs: {
+          'walk_cache_v1': jsonEncode({'walks': <String, int>{}, 'any': <String, int>{}, 'holidays': ['2026-10-12']}),
+        });
+        final container = await rig.container();
+        addTearDown(container.dispose);
+        await container.read(todayProvider.future);
+        expect(rig.location.calls, 0);
+      });
+
+      test('and no location problem is shown when it was not needed', () async {
+        final rig = TestRig(stored: [meeting()], now: DateTime.utc(2026, 10, 13, 1));
+        rig.location.result = const LocationResult.unavailable('Location permission was not given.');
+        final container = await rig.container();
+        addTearDown(container.dispose);
+        final data = await container.read(todayProvider.future);
+        expect(data.locationProblem, isNull);
+      });
     });
 
     test('a failed manual refresh shows the error; a failed quiet one keeps the last answer', () async {

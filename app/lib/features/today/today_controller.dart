@@ -176,9 +176,10 @@ class TodayController extends AsyncNotifier<TodayData> {
       return const TodayData();
     }
 
+    final walks = ref.read(walkCacheProvider);
     GeoPoint? here;
     String? problem;
-    if (settings.useLocation) {
+    if (settings.useLocation && walkFromHereMatters(meetings, pacificTime(_now()), walks.holidays)) {
       final lastAt = _lastPointAt;
       if (_lastPoint != null && lastAt != null && _now().difference(lastAt) < locationReuse) {
         here = _lastPoint;
@@ -207,7 +208,6 @@ class TodayController extends AsyncNotifier<TodayData> {
           error.kind == ApiErrorKind.timeout ||
           error.kind == ApiErrorKind.server;
       if (!unreachable) rethrow;
-      final walks = ref.read(walkCacheProvider);
       // Reminders already on the phone stay as they were; nothing new can be planned without the server.
       return TodayData(
         analysis: analyzeOffline(
@@ -222,7 +222,6 @@ class TodayController extends AsyncNotifier<TodayData> {
         savedNote: _savedNote(walks, now),
       );
     }
-    final walks = ref.read(walkCacheProvider);
     await walks.remember(analysis);
 
     String? reminderProblem;
