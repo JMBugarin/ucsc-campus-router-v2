@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'design/theme.dart';
 import 'features/map/map_screen.dart';
 import 'features/schedule/schedule_screen.dart';
 import 'features/settings/settings.dart';
@@ -27,9 +28,6 @@ const tabToday = 1;
 const tabSchedule = 2;
 const tabSettings = 3;
 
-// UC Santa Cruz blue and gold.
-const _ucscBlue = Color(0xFF003C6C);
-
 class UcscRouterApp extends StatelessWidget {
   const UcscRouterApp({super.key});
 
@@ -38,11 +36,8 @@ class UcscRouterApp extends StatelessWidget {
     return MaterialApp(
       title: 'UCSC Router',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: _ucscBlue), useMaterial3: true),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: _ucscBlue, brightness: Brightness.dark),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
       home: const HomeShell(),
     );
   }
