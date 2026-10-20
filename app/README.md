@@ -1,4 +1,4 @@
-# UCSC Router (Android app)
+# UCSC Router (iOS and Android app)
 
 Your classes, the walk to each, and when to leave. It is a thin client for the project's server: the phone keeps your schedule, the server works out walking times and forgets everything straight away.
 
