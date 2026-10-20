@@ -169,6 +169,8 @@ void main() {
           r.search.resolutions['Baskin Engineering 152'] = const RoomResolution(kind: 'unknown');
           await tester.pumpWidget(await r.app());
           await tester.pumpAndSettle();
+          await tester.ensureVisible(find.text('Read a photo'));
+          await tester.pumpAndSettle();
           await tester.tap(find.text('Read a photo'));
           await tester.pumpAndSettle();
           expect(find.text('Check your classes'), findsOneWidget);
