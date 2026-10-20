@@ -43,8 +43,13 @@ Future<void> waitFor(WidgetTester tester, Finder finder, {Duration timeout = con
 /// Asks the host to take a screenshot of the simulator (`binding.takeScreenshot` returns blank
 /// images after the first on iOS here). A watcher on the host, `scripts/sim_screenshots.sh`, sees
 /// the request file, runs `xcrun simctl io booted screenshot`, and removes the request.
-Future<void> shot(IntegrationTestWidgetsFlutterBinding binding, WidgetTester tester, String name) async {
-  await tester.pump(const Duration(milliseconds: 800));
+Future<void> shot(
+  IntegrationTestWidgetsFlutterBinding binding,
+  WidgetTester tester,
+  String name, {
+  Duration settle = const Duration(milliseconds: 800),
+}) async {
+  await tester.pump(settle);
   if (shotDir.isEmpty) return;
   await Directory(shotDir).create(recursive: true);
   final request = File('$shotDir/.want-$name');

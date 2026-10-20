@@ -5,6 +5,9 @@ import 'support.dart';
 
 /// Needs `python3 server/server.py` running on 127.0.0.1:8000, location allowed for the app and a
 /// simulated location on campus (see docs/developer-notes.md, "Simulator checks").
+/// The map's tiles come over the network after the screen is up; a screenshot taken straight away has gaps.
+const mapTiles = Duration(seconds: 15);
+
 void main() {
   final binding = bindEnvironment();
 
@@ -30,11 +33,11 @@ void main() {
       await tester.tap(find.widgetWithText(ListTile, label).first);
       await tester.pumpAndSettle();
       expect(find.text('Route here'), findsOneWidget);
-      await shot(binding, tester, '$shotName-place');
+      await shot(binding, tester, '$shotName-place', settle: mapTiles);
 
       await tester.tap(find.text('Route here'));
       await waitFor(tester, find.textContaining('min on foot'), timeout: const Duration(seconds: 60));
-      await shot(binding, tester, '$shotName-route');
+      await shot(binding, tester, '$shotName-route', settle: mapTiles);
     });
   }
 
@@ -54,6 +57,18 @@ void main() {
     await tester.tap(tab('Today'));
     await waitFor(tester, find.text("Today's classes"));
     expect(find.textContaining('XYZ 10'), findsWidgets);
+  });
+
+  testWidgets('Today times the walk to the next class from where the phone is', (tester) async {
+    final around = savedScheduleAroundNow();
+    await startApp(tester, prefs: {'server_url': localServer, 'schedule_v1': around.json});
+    await tester.tap(tab('Today'));
+    if (around.startsToday) {
+      await waitFor(tester, find.textContaining('Walk to Kresge Acad 3201 is about'), timeout: const Duration(seconds: 60));
+      expect(find.textContaining('from your location'), findsOneWidget);
+    } else {
+      await waitFor(tester, find.textContaining('Today, '));
+    }
     await shot(binding, tester, '06-today');
   });
 
@@ -68,7 +83,7 @@ void main() {
     final todayLabel = tester.widget<Text>(find.textContaining('Today, ')).data!;
 
     await tester.tap(find.byTooltip('Next day'));
-    await waitFor(tester, find.textContaining('classes').first);
+    await waitFor(tester, find.textContaining('Classes on '));
     expect(find.textContaining('Today, '), findsNothing);
     final bar = find.descendant(of: find.byType(TextButton), matching: find.byType(Text));
     expect(bar, findsWidgets);
@@ -77,5 +92,32 @@ void main() {
 
     await tester.tap(find.widgetWithText(TextButton, 'Today'));
     await waitFor(tester, find.textContaining('Today, '));
+  });
+
+  testWidgets('the week view lists the next seven days', (tester) async {
+    await startApp(tester, prefs: {
+      'server_url': localServer,
+      'use_location': false,
+      'schedule_v1': savedSchedule(),
+    });
+    await tester.tap(tab('Today'));
+    await waitFor(tester, find.textContaining('Today, '));
+    await tester.tap(find.byTooltip('Week'));
+    await tester.pumpAndSettle();
+    expect(find.text('Week'), findsOneWidget);
+    expect(find.textContaining('Today, '), findsOneWidget);
+    expect(find.textContaining('2:40 PM'), findsWidgets);
+    await shot(binding, tester, '09-week-view');
+  });
+
+  testWidgets('Settings says what leaves the phone and which server gets it', (tester) async {
+    await startApp(tester, prefs: {'server_url': localServer, 'use_location': false});
+    await tester.tap(tab('Settings'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('What leaves your phone'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Right now this goes to 127.0.0.1.'), findsOneWidget);
+    expect(find.textContaining('Photos: if you read a schedule from a photo'), findsOneWidget);
+    await shot(binding, tester, '10-settings-privacy');
   });
 }
