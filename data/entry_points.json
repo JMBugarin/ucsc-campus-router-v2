@@ -1,0 +1,155 @@
+{
+  "attribution": "(c) OpenStreetMap contributors, ODbL: https://www.openstreetmap.org/copyright",
+  "entry_points": [
+    {
+      "id": "science-hill-bus-stop",
+      "name": "Science Hill bus stop",
+      "type": "bus_stop",
+      "lat": 36.9999131,
+      "lon": -122.0623883,
+      "node": 1720,
+      "snap_m": 6.7,
+      "osm": "node/478352144"
+    },
+    {
+      "id": "bookstore-bus-stop",
+      "name": "Bookstore bus stop",
+      "type": "bus_stop",
+      "lat": 36.9974614,
+      "lon": -122.0550613,
+      "node": 1621,
+      "snap_m": 15.9,
+      "osm": "node/478352145"
+    },
+    {
+      "id": "kresge-college-bus-stop",
+      "name": "Kresge College bus stop",
+      "type": "bus_stop",
+      "lat": 36.9991748,
+      "lon": -122.0645533,
+      "node": 1575,
+      "snap_m": 7.3,
+      "osm": "node/596770103"
+    },
+    {
+      "id": "kerr-hall-bus-stop",
+      "name": "Kerr Hall bus stop",
+      "type": "bus_stop",
+      "lat": 36.9968651,
+      "lon": -122.0635781,
+      "node": 550,
+      "snap_m": 7.4,
+      "osm": "node/826980325"
+    },
+    {
+      "id": "colleges-9-10-bus-stop",
+      "name": "Colleges 9 and 10 bus stop",
+      "type": "bus_stop",
+      "lat": 36.9997701,
+      "lon": -122.0582429,
+      "node": 177,
+      "snap_m": 19.5,
+      "osm": "node/2006045758"
+    },
+    {
+      "id": "crown-merrill-bus-stop",
+      "name": "Crown and Merrill bus stop",
+      "type": "bus_stop",
+      "lat": 36.9990234,
+      "lon": -122.0552341,
+      "node": 128,
+      "snap_m": 8.7,
+      "osm": "node/6280076252"
+    },
+    {
+      "id": "porter-college-bus-stop",
+      "name": "Porter College bus stop",
+      "type": "bus_stop",
+      "lat": 36.9929959,
+      "lon": -122.0652316,
+      "node": 1573,
+      "snap_m": 2.6,
+      "osm": "node/6277144058"
+    },
+    {
+      "id": "rachel-carson-bus-stop",
+      "name": "Rachel Carson College bus stop",
+      "type": "bus_stop",
+      "lat": 36.9927855,
+      "lon": -122.064816,
+      "node": 1305,
+      "snap_m": 7.2,
+      "osm": "node/1999009032"
+    },
+    {
+      "id": "oakes-college-bus-stop",
+      "name": "Oakes College bus stop",
+      "type": "bus_stop",
+      "lat": 36.9899782,
+      "lon": -122.0672052,
+      "node": 1795,
+      "snap_m": 12.7,
+      "osm": "node/478355249"
+    },
+    {
+      "id": "family-student-housing-bus-stop",
+      "name": "Family Student Housing bus stop",
+      "type": "bus_stop",
+      "lat": 36.9917967,
+      "lon": -122.0668225,
+      "node": 213,
+      "snap_m": 6.2,
+      "osm": "node/2006045747"
+    },
+    {
+      "id": "east-field-house-bus-stop",
+      "name": "East Field House bus stop",
+      "type": "bus_stop",
+      "lat": 36.9942678,
+      "lon": -122.055533,
+      "node": 1590,
+      "snap_m": 19.6,
+      "osm": "node/479350072"
+    },
+    {
+      "id": "east-remote-bus-stop",
+      "name": "East Remote bus stop",
+      "type": "bus_stop",
+      "lat": 36.9913678,
+      "lon": -122.054707,
+      "node": 832,
+      "snap_m": 4.7,
+      "osm": "node/968394135"
+    },
+    {
+      "id": "empire-grade-heller-bus-stop",
+      "name": "Empire Grade and Heller Drive bus stop",
+      "type": "bus_stop",
+      "lat": 36.9883001,
+      "lon": -122.0687896,
+      "node": 1668,
+      "snap_m": 34.0,
+      "osm": "node/1999456663"
+    },
+    {
+      "id": "core-west-parking",
+      "name": "Core West parking structure",
+      "type": "parking",
+      "lat": 36.9991152,
+      "lon": -122.063643,
+      "node": 78,
+      "snap_m": 35.6,
+      "osm": "way/1169131635"
+    },
+    {
+      "id": "west-remote-parking",
+      "name": "West Remote parking",
+      "type": "parking",
+      "lat": 36.9887479,
+      "lon": -122.0669471,
+      "node": 30,
+      "snap_m": 10.5,
+      "osm": "node/6276597072"
+    }
+  ]
+}
