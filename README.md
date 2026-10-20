@@ -71,7 +71,7 @@ python3 server/server.py           # http://127.0.0.1:8000, also serves the web 
 cd app && flutter run --dart-define=SERVER_URL=http://127.0.0.1:8000
 ```
 
-The simulator reaching a plain-`http` local server is untested on iOS and may need an App Transport Security exception; the Android emulator uses `http://10.0.2.2:8000`. Details, hosted map tiles and the offline design are in [app/README.md](app/README.md).
+The iOS simulator reaches a plain-`http` server on `127.0.0.1`, `localhost`, a LAN address or a `.local` name without any App Transport Security exception (checked in the simulator; the app's network calls use `dart:io`, which ATS does not govern). The hosted `https` server passes Apple's default ATS check (`nscurl --ats-diagnostics`). A physical phone is untested: it will ask for local-network access the first time it reaches a LAN server. The Android emulator uses `http://10.0.2.2:8000`. Details, hosted map tiles and the offline design are in [app/README.md](app/README.md).
 
 **3. Tests**
 
