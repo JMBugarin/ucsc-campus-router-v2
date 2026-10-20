@@ -18,6 +18,8 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+import graph_meta
+
 API = "https://api.opentopodata.org/v1/ned10m"
 BATCH = 100  # the API's per-request limit
 PAUSE_S = 1.1  # and its public rate limit is one request per second
@@ -67,10 +69,7 @@ def main():
         w.writerow(header)
         w.writerows(body)
 
-    meta_path = args.graph / "meta.json"
-    meta = json.loads(meta_path.read_text())
-    meta["elevation_source"] = SOURCE
-    meta_path.write_text(json.dumps(meta, indent=2) + "\n")
+    graph_meta.record(args.graph, elevation_source=SOURCE)
     print(f"Filled {len(body)} nodes ({min(elevations):.1f} to {max(elevations):.1f} m)")
 
 

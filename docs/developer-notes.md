@@ -172,7 +172,7 @@ python build_graph.py --out ../graph/ucsc
 python fetch_elevation.py                     # fills elev_m (network; about 20 requests)
 ```
 
-This downloads from OpenStreetMap, so the result can change as the map is edited. The covered area is set by `DEFAULT_BBOX` in `build_graph.py`.
+This downloads from OpenStreetMap, so the result can change as the map is edited. The covered area is set by `DEFAULT_BBOX` in `build_graph.py`. `graph/ucsc/meta.json` records the download date and a SHA-256 of each CSV (`graph_meta.py`, run by both scripts), and the pipeline tests fail if the files stop matching, so a regenerated graph shows up as a changed hash in review instead of silently changing routes. For the committed graph only an upper bound on the download date is known, the first commit's.
 
 ## Benchmark results
 

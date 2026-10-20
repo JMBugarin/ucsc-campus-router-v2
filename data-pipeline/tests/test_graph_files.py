@@ -1,8 +1,14 @@
 """Sanity checks on the exported graph files (run: python -m unittest discover tests)."""
 
 import csv
+import json
+import sys
 import unittest
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import graph_meta  # noqa: E402
 
 GRAPH_DIR = Path(__file__).resolve().parents[2] / "graph" / "ucsc"
 
@@ -51,6 +57,16 @@ class TestGraphFiles(unittest.TestCase):
     def test_stairs_flag_is_boolean(self):
         for e in self.edges:
             self.assertIn(e["is_stairs"], ("0", "1"))
+
+    def test_the_recorded_hashes_match_the_files(self):
+        meta = json.loads((GRAPH_DIR / "meta.json").read_text())
+        self.assertEqual(
+            meta["sha256"], graph_meta.fingerprint(GRAPH_DIR),
+            "the graph changed without meta.json saying so; if that was on purpose, run "
+            "`python graph_meta.py ../graph/ucsc` from data-pipeline/ and commit the new hashes",
+        )
+        self.assertTrue(meta["downloaded"])
+        self.assertEqual((meta["nodes"], meta["edges"]), (len(self.nodes), len(self.edges)))
 
     def test_every_edge_has_a_reverse(self):
         pairs = {(e["from"], e["to"]) for e in self.edges}

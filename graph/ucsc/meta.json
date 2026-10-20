@@ -8,5 +8,10 @@
   "nodes": 1960,
   "edges": 5188,
   "source": "OpenStreetMap via osmnx",
-  "elevation_source": "USGS 3DEP 10 m (ned10m) via OpenTopoData"
+  "elevation_source": "USGS 3DEP 10 m (ned10m) via OpenTopoData",
+  "downloaded": "2026-10-07 or earlier (the date of the first commit; the exact date was not recorded)",
+  "sha256": {
+    "nodes.csv": "78ed79ca95fcade5c61f53693a9e47f28e01ec217633a76b66dce1eee1ca4af1",
+    "edges.csv": "e2d4e986e0e55580d15dba0553d023bca7a6e4a00c82a8ba89e9f98247a71f82"
+  }
 }
