@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../app.dart';
 import '../../core/api_client.dart';
 import '../../core/tiles.dart';
 import '../../core/waking_note.dart';
@@ -60,6 +61,12 @@ class RouteScreen extends ConsumerWidget {
             _ => 'Something went wrong. Try again.',
           },
           onRetry: () => ref.invalidate(routeProvider(destination)),
+          onSearch: error is ApiException && error.kind == ApiErrorKind.rejected || error is RouteProblem
+              ? () {
+                  ref.read(selectedTabProvider.notifier).select(tabMap);
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              : null,
         ),
         data: (outcome) => _RouteView(outcome: outcome, destination: destination),
       ),
@@ -68,10 +75,13 @@ class RouteScreen extends ConsumerWidget {
 }
 
 class _Problem extends StatelessWidget {
-  const _Problem({required this.message, required this.onRetry});
+  const _Problem({required this.message, required this.onRetry, this.onSearch});
 
   final String message;
   final VoidCallback onRetry;
+
+  /// Offered when a different search might help (the room is not recognised, or the place is not a room).
+  final VoidCallback? onSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +96,7 @@ class _Problem extends StatelessWidget {
             Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 16),
             FilledButton(onPressed: onRetry, child: const Text('Try again')),
+            if (onSearch != null) TextButton(onPressed: onSearch, child: const Text('Search the map instead')),
           ],
         ),
       ),

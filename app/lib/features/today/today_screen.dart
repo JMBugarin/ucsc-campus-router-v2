@@ -12,6 +12,7 @@ import '../campus/campus_area.dart';
 import '../handoff/trip_actions.dart';
 import '../route/destination.dart';
 import '../route/route_screen.dart';
+import '../schedule/meeting.dart';
 import '../schedule/schedule_controller.dart';
 import '../settings/settings.dart';
 import 'today_controller.dart';
@@ -100,14 +101,26 @@ class _TodayBody extends ConsumerWidget {
         icon: Icons.calendar_month_outlined,
         title: 'Add your classes',
         body: 'Paste your MyUCSC schedule, import a calendar file, or add classes by hand. Then this '
-            'screen shows what is next, how long the walk is, and whether you have time.',
+            'screen shows your next class, when to leave, and how to get there. '
+            'No schedule yet? You can still find any room on the map.',
         actionLabel: 'Go to Schedule',
         onAction: () => ref.read(selectedTabProvider.notifier).select(tabSchedule),
+        secondaryLabel: 'Find a room on the map',
+        onSecondary: () => ref.read(selectedTabProvider.notifier).select(tabMap),
       );
+    }
+
+    final meetings = ref.watch(scheduleProvider).value ?? const [];
+    final infos = ref.watch(locationInfoProvider).value ?? const [];
+    LocationInfo? infoOf(ClassTime t) {
+      final m = meetingFor(meetings, t);
+      final i = m == null ? -1 : meetings.indexOf(m);
+      return i >= 0 && infos.length == meetings.length ? infos[i] : null;
     }
 
     final walk = walkText(analysis, saved: data.fromSaved);
     final viewing = data.viewDay != null;
+    final nextInfo = analysis.next == null ? null : infoOf(analysis.next!);
     final trip = !viewing && data.offCampus && data.arrivals.isNotEmpty;
     final notes = [
       if (data.locationProblem != null) data.locationProblem!,
@@ -122,10 +135,12 @@ class _TodayBody extends ConsumerWidget {
         _DayBar(viewDay: data.viewDay),
         Text(viewing ? dayViewSummary(analysis) : todaySummary(analysis), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
-        if (trip) _TripCard(data: data),
+        if (trip) _TripCard(data: data, building: nextInfo?.buildingName),
         if (analysis.banner != null && !trip) _Banner(banner: analysis.banner!),
         if (walk != null && !viewing && !trip)
           _WalkCard(
+            next: analysis.next!,
+            building: nextInfo?.buildingName,
             status: walk.status,
             text: walk.text,
             onRoute: analysis.next == null
@@ -146,6 +161,7 @@ class _TodayBody extends ConsumerWidget {
               classTime: t,
               analysis: viewing ? null : analysis,
               arrival: viewing ? null : data.arrivals.where((a) => a.classTime.start == t.start).firstOrNull,
+              unknownRoom: infoOf(t)?.isUnknown ?? false,
             ),
         ],
       ],
@@ -278,9 +294,38 @@ class StatusChip extends StatelessWidget {
   }
 }
 
-class _WalkCard extends StatelessWidget {
-  const _WalkCard({required this.status, required this.text, this.onRoute});
+/// The next class, its room and the building, so a first-time student sees where they are going before anything else.
+class _ClassHeader extends StatelessWidget {
+  const _ClassHeader({required this.next, this.building});
 
+  final ClassTime next;
+  final String? building;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final where = [
+      clockFromIso(next.start),
+      next.location,
+      if (building != null && building!.isNotEmpty) building!,
+    ].join(' · ');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(header: true, container: true, child: Text('Going to class', style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.primary))),
+        const SizedBox(height: 2),
+        Text(next.label, style: theme.textTheme.titleLarge),
+        Text(where, style: theme.textTheme.bodyMedium),
+      ],
+    );
+  }
+}
+
+class _WalkCard extends StatelessWidget {
+  const _WalkCard({required this.next, required this.status, required this.text, this.building, this.onRoute});
+
+  final ClassTime next;
+  final String? building;
   final String status;
   final String text;
   final VoidCallback? onRoute;
@@ -289,26 +334,28 @@ class _WalkCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.all(16),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StatusChip(status: status),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(text),
-                  if (onRoute != null)
-                    TextButton.icon(
-                      onPressed: onRoute,
-                      icon: const Icon(Icons.map_outlined),
-                      label: const Text('Show route'),
-                    ),
-                ],
-              ),
+            _ClassHeader(next: next, building: building),
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                StatusChip(status: status),
+                const SizedBox(width: 10),
+                Expanded(child: Text(text)),
+              ],
             ),
+            if (onRoute != null) ...[
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: onRoute,
+                icon: const Icon(Icons.map_outlined),
+                label: const Text('Show route'),
+              ),
+            ],
           ],
         ),
       ),
@@ -318,36 +365,40 @@ class _WalkCard extends StatelessWidget {
 
 /// For a student who is not on campus: when to be at an entry point, from the walk on campus to the class.
 class _TripCard extends StatelessWidget {
-  const _TripCard({required this.data});
+  const _TripCard({required this.data, this.building});
 
   final TodayData data;
+  final String? building;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final onColor = theme.colorScheme.onPrimaryContainer;
     final next = data.arrivals.first;
     final far = data.place == Whereabouts.far;
-    return Semantics(
-      container: true,
-      child: Card(
-        color: theme.colorScheme.primaryContainer,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+    return Card(
+      color: theme.colorScheme.primaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: DefaultTextStyle.merge(
+          style: TextStyle(color: onColor),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Semantics(header: true, container: true, child: Text('Going to class', style: theme.textTheme.labelLarge?.copyWith(color: onColor))),
+              Text(next.classTime.label, style: theme.textTheme.titleMedium?.copyWith(color: onColor)),
               Text(
-                far ? "You're far from campus" : "You're not on campus yet",
-                style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.onPrimaryContainer),
+                [
+                  clockFromIso(next.classTime.start),
+                  next.classTime.location,
+                  if (building != null && building!.isNotEmpty) building!,
+                ].join(' · '),
               ),
+              const SizedBox(height: 12),
+              Text(far ? "You're far from campus" : "You're not on campus yet", style: theme.textTheme.labelLarge?.copyWith(color: onColor)),
+              Text(next.headline, style: theme.textTheme.titleLarge?.copyWith(color: onColor)),
               const SizedBox(height: 4),
-              Text(next.headline, style: theme.textTheme.titleLarge?.copyWith(color: theme.colorScheme.onPrimaryContainer)),
-              const SizedBox(height: 4),
-              Text(
-                'For ${next.classTime.label} at ${clockFromIso(next.classTime.start)} in ${next.classTime.location}: '
-                '${next.walkMinutes} min on foot from there, plus ${next.bufferMinutes} min to spare.',
-                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
-              ),
+              Text('${next.walkMinutes} min on foot from there, plus ${next.bufferMinutes} min to spare.'),
               const SizedBox(height: 8),
               TripActions(
                 entry: next.entry,
@@ -393,9 +444,12 @@ class _Banner extends StatelessWidget {
 }
 
 class _TimelineTile extends ConsumerWidget {
-  const _TimelineTile({required this.classTime, required this.analysis, this.arrival});
+  const _TimelineTile({required this.classTime, required this.analysis, this.arrival, this.unknownRoom = false});
 
   final ClassTime classTime;
+
+  /// The server could not place this class's room on the campus map.
+  final bool unknownRoom;
 
   /// For a student off campus: when to be at an entry point for this class.
   final Arrival? arrival;
@@ -466,10 +520,20 @@ class _TimelineTile extends ConsumerWidget {
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(arrival!.headline, style: Theme.of(context).textTheme.bodyMedium),
               ),
+            if (unknownRoom)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text("We can't find this room on the campus map.", style: Theme.of(context).textTheme.bodySmall),
+              ),
             Row(
               children: [
                 Expanded(child: Text(classTime.location)),
-                if (classTime.location.isNotEmpty)
+                if (unknownRoom)
+                  TextButton(
+                    onPressed: () => ref.read(selectedTabProvider.notifier).select(tabMap),
+                    child: const Text('Search the map'),
+                  )
+                else if (classTime.location.isNotEmpty)
                   IconButton(
                     tooltip: 'Route to ${classTime.label}',
                     icon: const Icon(Icons.map_outlined),
@@ -498,6 +562,8 @@ class _MessageCard extends StatelessWidget {
     required this.body,
     required this.actionLabel,
     required this.onAction,
+    this.secondaryLabel,
+    this.onSecondary,
   });
 
   final IconData icon;
@@ -505,6 +571,8 @@ class _MessageCard extends StatelessWidget {
   final String body;
   final String actionLabel;
   final VoidCallback onAction;
+  final String? secondaryLabel;
+  final VoidCallback? onSecondary;
 
   @override
   Widget build(BuildContext context) {
@@ -521,6 +589,8 @@ class _MessageCard extends StatelessWidget {
             Text(body),
             const SizedBox(height: 12),
             FilledButton(onPressed: onAction, child: Text(actionLabel)),
+            if (secondaryLabel != null && onSecondary != null)
+              TextButton(onPressed: onSecondary, child: Text(secondaryLabel!)),
           ],
         ),
       ),
