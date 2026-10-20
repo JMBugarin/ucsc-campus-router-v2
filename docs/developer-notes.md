@@ -88,7 +88,7 @@ Open **My schedule** and either paste your MyUCSC Class Schedule page (Enrollmen
 - every class today with a verdict on each transition between them: **OK**, **Tight** (under 5 minutes to spare) or **Late** (the walk is longer than the gap);
 - sensible messages for weekends, holidays, before and after the term, and when the next class is tomorrow.
 
-"Route to next class" sends the next class to the map. The server is stateless: your schedule is saved only in your browser (`localStorage`), instructor names are dropped on import, and the server just checks it and times the walks. Walking time is the climb-adjusted distance at 1.3 m/s (plus the straight-line distance from the door to the room), rounded up to whole minutes. Climbs and steep descents cost extra (Tobler's hiking function); gentle downhills are not credited as faster than flat. `/api/route` and `/api/route_to` accept `avoid_stairs=1`. `data/holidays.json` lists each term's dates and no-class days (Fall 2026 and Winter 2027 so far); it is a starting point, so check it against the official UCSC academic calendar.
+"Route to next class" sends the next class to the map. The server is stateless: your schedule is saved only in your browser (`localStorage`), instructor names are dropped on import, and the server just checks it and times the walks. Walking time is the climb-adjusted distance at 1.3 m/s (plus the straight-line distance from the door to the room), rounded up to whole minutes. Climbs and steep descents cost extra (Tobler's hiking function); gentle downhills are not credited as faster than flat. `/api/route` and `/api/route_to` accept `avoid_stairs=1`. `data/holidays.json` lists each term's dates and no-class days (Fall 2026, Winter 2027 and Spring 2027 so far), taken from the registrar's 2026-27 calendar.
 
 ### Leave-now reminders
 
@@ -277,7 +277,7 @@ For `offline_test.dart` build and run the same way with `SERVER_URL=http://127.0
 
 ### Known gaps
 - Schedule input is paste or manual only. A pasted schedule must contain the `Days & Times` and date columns as MyUCSC prints them; rows it can't read are reported, not dropped silently.
-- Holidays are only the ones listed in `data/holidays.json` (Fall 2026, Winter 2027; Winter's dates come from the registrar calendar and are unchecked against the PDF, which lists Presidents' Day that the HTML page omits). Add each new term as another entry in `terms`.
+- Holidays are only the ones listed in `data/holidays.json` (Fall 2026, Winter 2027, Spring 2027). Every term's start and end and each holiday were compared with the registrar's 2026-27 calendar, both the web page and the PDF, on 2026-10-19 and matched. Summer 2027 is not listed. Add each new term as another entry in `terms`; `test_the_committed_term_dates_are_sane` checks the entries are ordered, start on a weekday, end on a Friday and keep holidays inside their term.
 - The web demo needs internet (OSM tiles, Leaflet from unpkg). 
 - Elevations are 10 m USGS 3DEP samples at graph nodes (about 10 m horizontal and a few meters vertical error), so short steep edges can get a noisy grade; slopes are capped at 30% in the cost.
 - Nearest-node is a linear scan; add a grid index if the graph grows.
@@ -297,6 +297,6 @@ The code is released under the [MIT License](LICENSE). The data below keeps its 
 | Walking network and building footprints/entrances | [OpenStreetMap](https://www.openstreetmap.org/copyright) via osmnx, committed in `graph/ucsc/` and `data/buildings.json` | © OpenStreetMap contributors, [ODbL](https://opendatacommons.org/licenses/odbl/). Derived data must keep this attribution. |
 | Classroom names ("AIS Display Name") and facility ids | The public [UCSC classroom directory](https://classrooms.ucsc.edu/), read by `data-pipeline/fetch_classrooms.py` and committed as `data/classrooms.json` | Public web pages. No license or reuse terms were found or checked; this project is not affiliated with or endorsed by UCSC. |
 | Room coordinates and floor levels | The public classroom-points layer behind the [UCSC campus map](https://maps.ucsc.edu/) (UCSC Planning, Design & Construction), also in `data/classrooms.json` | Same as above: public, read-only, terms not checked. |
-| Hand-edited names, aliases and term dates | `data/building_sources.json`, `data/holidays.json` | Written for this project. Check term dates against the official UCSC academic calendar. |
+| Hand-edited names, aliases and term dates | `data/building_sources.json`, `data/holidays.json` | Written for this project. Term dates match the registrar's 2026-27 calendar as of 2026-10-19; check each new term against it. |
 
 If you are a UCSC data owner and want something changed or removed, open an issue.
