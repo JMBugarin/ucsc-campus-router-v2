@@ -15,6 +15,15 @@ import 'ocr_pages.dart';
 
 const term = (start: '2026-09-24', end: '2026-12-04');
 
+const baskin152 = Place(
+  buildingId: 'baskin-engineering',
+  buildingName: 'Jack Baskin Engineering',
+  label: 'Jack Baskin Engineering 152',
+  query: 'Jack Baskin Engineering 152',
+  room: '152',
+  roomKnown: true,
+);
+
 RecognizedText myUcsc([List<Course>? courses]) => myUcscPage(courses ?? sampleCourses).build();
 
 /// Two cards of the kind phone apps draw, which show no dates.
@@ -396,16 +405,7 @@ void main() {
     testWidgets('a room the server does not know is marked, and the room search finds the right one', (tester) async {
       final rig = rigFor(cards(room: 'Baskin Engr 15Z'), term: term);
       rig.search.resolutions['Baskin Engr 15Z'] = const RoomResolution(kind: 'unknown');
-      rig.search.answer = [
-        const Place(
-          buildingId: 'baskin-engineering',
-          buildingName: 'Jack Baskin Engineering',
-          label: 'Jack Baskin Engineering 152',
-          query: 'Jack Baskin Engineering 152',
-          room: '152',
-          roomKnown: true,
-        ),
-      ];
+      rig.search.answer = [baskin152];
       await open(tester, rig);
       await readPicture(tester);
 
@@ -416,7 +416,10 @@ void main() {
       expect(find.widgetWithText(TextField, 'Baskin Engr 15Z'), findsOneWidget, reason: 'starts from what was read');
       await tester.pump(const Duration(milliseconds: 400));
       await tester.pumpAndSettle();
-      expect(rig.search.queries, ['Baskin Engr 15Z']);
+      expect(rig.search.queries, [
+        'Baskin Engr 15Z',
+        'Baskin Engr 15Z',
+      ], reason: 'once for the card, once for the sheet');
       await tester.tap(find.text('Jack Baskin Engineering 152'));
       await tester.pumpAndSettle();
 
@@ -426,6 +429,64 @@ void main() {
       await tester.tap(find.text('Save 2 classes'));
       await tester.pumpAndSettle();
       expect(rig.schedule.stored.first.location, 'Jack Baskin Engineering 152');
+    });
+
+    testWidgets('the first match of the room search is offered on the card, and using it fixes the room', (
+      tester,
+    ) async {
+      final rig = rigFor(cards(room: 'Baskin Engr 15Z'), term: term);
+      rig.search.resolutions['Baskin Engr 15Z'] = const RoomResolution(kind: 'unknown');
+      rig.search.answer = [baskin152];
+      await open(tester, rig);
+      await readPicture(tester);
+
+      expect(find.text('Use Jack Baskin Engineering 152'), findsOneWidget);
+      await tester.tap(find.text('Use Jack Baskin Engineering 152'));
+      await tester.pumpAndSettle();
+      expect(find.text("I don't recognise this room."), findsNothing);
+      expect(find.text('Use Jack Baskin Engineering 152'), findsNothing);
+      expect(find.text('Jack Baskin Engineering 152'), findsOneWidget);
+      expect(find.textContaining('Found 2 classes.'), findsOneWidget);
+      expect(rig.search.resolved.last, 'Jack Baskin Engineering 152', reason: 'the new room is checked too');
+      await tester.tap(find.text('Save 2 classes'));
+      await tester.pumpAndSettle();
+      expect(rig.schedule.stored.first.location, 'Jack Baskin Engineering 152');
+    });
+
+    testWidgets('nothing is offered when the search finds no room, a room its building does not list, or fails', (
+      tester,
+    ) async {
+      const unlisted = Place(
+        buildingId: 'baskin-engineering',
+        buildingName: 'Jack Baskin Engineering',
+        label: 'Jack Baskin Engineering 999',
+        query: 'Jack Baskin Engineering 999',
+        room: '999',
+        roomKnown: false,
+      );
+      const building = Place(
+        buildingId: 'baskin-engineering',
+        buildingName: 'Jack Baskin Engineering',
+        label: 'Jack Baskin Engineering',
+        query: 'Jack Baskin Engineering',
+      );
+      final answers = <Object>[
+        <Place>[],
+        [unlisted],
+        [building],
+        const ApiException("Can't reach the server.", kind: ApiErrorKind.offline),
+      ];
+      for (final answer in answers) {
+        final rig = rigFor(cards(room: 'Baskin Engr 15Z'), term: term);
+        rig.search.resolutions['Baskin Engr 15Z'] = const RoomResolution(kind: 'unknown');
+        rig.search.answer = answer;
+        await open(tester, rig);
+        await readPicture(tester);
+        expect(find.text("I don't recognise this room."), findsOneWidget, reason: '$answer');
+        expect(find.textContaining('Use '), findsNothing, reason: '$answer');
+        expect(find.text('Find the room'), findsOneWidget, reason: '$answer');
+        await tester.pumpWidget(const SizedBox());
+      }
     });
 
     testWidgets('a building the server knows with a room number it does not list says so', (tester) async {

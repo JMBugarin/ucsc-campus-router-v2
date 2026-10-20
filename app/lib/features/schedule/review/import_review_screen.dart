@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../search/place.dart';
 import '../../search/search_repository.dart';
 import '../ocr/parsed_row.dart';
 import '../schedule_controller.dart';
@@ -40,6 +41,7 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
       if (!d.hasDates) d.id,
   };
   final _rooms = <String, RoomState>{};
+  final _suggestions = <String, Place>{};
   ({String start, String end})? _datesForUndated;
   bool _datesChosen = false;
   bool _saving = false;
@@ -109,8 +111,25 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
             state = RoomState.unchecked;
           }
           if (mounted) setState(() => _rooms[location] = state);
+          if (state.needsLook) await _suggest(location);
         }(),
     ]);
+  }
+
+  /// The room the room search puts first for a location the server could not place, offered with one tap.
+  Future<void> _suggest(String location) async {
+    try {
+      final places = await ref.read(searchRepositoryProvider).search(location);
+      final best = places.where((p) => p.isRoom && p.roomKnown != false).firstOrNull;
+      if (best != null && mounted) setState(() => _suggestions[location] = best);
+    } on Object {
+      // a suggestion is only a convenience: "Find the room" is still there
+    }
+  }
+
+  void _use(ClassDraft draft, Place place) {
+    setState(() => _replace(draft.copyWith(location: place.query)));
+    _checkRooms();
   }
 
   RoomState? _roomOf(ClassDraft d) => d.location.trim().isEmpty ? null : _rooms[d.location.trim()];
@@ -258,6 +277,8 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
               _ClassCard(
                 draft: draft,
                 room: _roomOf(draft),
+                suggestion: _suggestions[draft.location.trim()],
+                onUseSuggestion: (place) => _use(draft, place),
                 onEdit: () => _edit(draft),
                 onRemove: () => _remove(draft),
                 onFindRoom: () => _findRoom(draft),
@@ -340,6 +361,8 @@ class _ClassCard extends StatelessWidget {
   const _ClassCard({
     required this.draft,
     required this.room,
+    required this.suggestion,
+    required this.onUseSuggestion,
     required this.onEdit,
     required this.onRemove,
     required this.onFindRoom,
@@ -347,6 +370,8 @@ class _ClassCard extends StatelessWidget {
 
   final ClassDraft draft;
   final RoomState? room;
+  final Place? suggestion;
+  final void Function(Place) onUseSuggestion;
   final VoidCallback onEdit;
   final VoidCallback onRemove;
   final VoidCallback onFindRoom;
@@ -420,6 +445,12 @@ class _ClassCard extends StatelessWidget {
                 child: Wrap(
                   alignment: WrapAlignment.end,
                   children: [
+                    if ((room == RoomState.notFound || room == RoomState.unlisted) && suggestion != null)
+                      TextButton.icon(
+                        onPressed: () => onUseSuggestion(suggestion!),
+                        icon: const Icon(Icons.check),
+                        label: Text('Use ${suggestion!.label}'),
+                      ),
                     if (room == RoomState.notFound || room == RoomState.unlisted)
                       TextButton.icon(
                         onPressed: onFindRoom,
