@@ -1,0 +1,19 @@
+{
+  "entry_points": [
+    {"id": "science-hill-bus-stop", "name": "Science Hill bus stop", "type": "bus_stop", "osm": "node/478352144"},
+    {"id": "bookstore-bus-stop", "name": "Bookstore bus stop", "type": "bus_stop", "osm": "node/478352145"},
+    {"id": "kresge-college-bus-stop", "name": "Kresge College bus stop", "type": "bus_stop", "osm": "node/596770103"},
+    {"id": "kerr-hall-bus-stop", "name": "Kerr Hall bus stop", "type": "bus_stop", "osm": "node/826980325"},
+    {"id": "colleges-9-10-bus-stop", "name": "Colleges 9 and 10 bus stop", "type": "bus_stop", "osm": "node/2006045758"},
+    {"id": "crown-merrill-bus-stop", "name": "Crown and Merrill bus stop", "type": "bus_stop", "osm": "node/6280076252"},
+    {"id": "porter-college-bus-stop", "name": "Porter College bus stop", "type": "bus_stop", "osm": "node/6277144058"},
+    {"id": "rachel-carson-bus-stop", "name": "Rachel Carson College bus stop", "type": "bus_stop", "osm": "node/1999009032"},
+    {"id": "oakes-college-bus-stop", "name": "Oakes College bus stop", "type": "bus_stop", "osm": "node/478355249"},
+    {"id": "family-student-housing-bus-stop", "name": "Family Student Housing bus stop", "type": "bus_stop", "osm": "node/2006045747"},
+    {"id": "east-field-house-bus-stop", "name": "East Field House bus stop", "type": "bus_stop", "osm": "node/479350072"},
+    {"id": "east-remote-bus-stop", "name": "East Remote bus stop", "type": "bus_stop", "osm": "node/968394135"},
+    {"id": "empire-grade-heller-bus-stop", "name": "Empire Grade and Heller Drive bus stop", "type": "bus_stop", "osm": "node/1999456663"},
+    {"id": "core-west-parking", "name": "Core West parking structure", "type": "parking", "osm": "way/1169131635"},
+    {"id": "west-remote-parking", "name": "West Remote parking", "type": "parking", "osm": "node/6276597072"}
+  ]
+}
