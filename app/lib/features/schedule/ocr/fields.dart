@@ -308,12 +308,25 @@ class CourseMatch {
 }
 
 final _courseCode = RegExp(r'(?<![A-Za-z0-9])([A-Z][A-Z&]{1,4})\s?([0-9]{1,3}[A-Z]{0,2})(?![A-Za-z0-9])');
+final _numberEndingInO = RegExp(r'^([0-9]{1,2})(O{1,2})$');
 final _courseCodeMisread = RegExp(r'^\s*([A-Z]{2,5}?)\s?([OIl]{1,3})(?![A-Za-z0-9])');
 
 /// The first course code in [text] (`CSE 101`, `MATH 19A`, `BME 160L`).
 CourseMatch? findCourse(String text) {
   final m = _courseCode.firstMatch(text);
-  if (m != null) return CourseMatch('${m.group(1)} ${m.group(2)}', Certainty.exact, m.start, m.end);
+  if (m != null) {
+    // no course number ends in the letter O, so `2O` is `20`
+    final zeros = _numberEndingInO.firstMatch(m.group(2)!);
+    if (zeros != null) {
+      return CourseMatch(
+        '${m.group(1)} ${zeros.group(1)}${'0' * zeros.group(2)!.length}',
+        Certainty.repaired,
+        m.start,
+        m.end,
+      );
+    }
+    return CourseMatch('${m.group(1)} ${m.group(2)}', Certainty.exact, m.start, m.end);
+  }
   // `BIOLI`: a capital I read at the end is really the digit 1, as in `BIOL 1`
   final misread = _courseCodeMisread.firstMatch(text);
   final number = misread == null ? null : int.tryParse(fixDigits(misread.group(2)!));
@@ -448,9 +461,12 @@ List<String> findDates(String text) {
 final _glyph = RegExp(r'^(?:[•·●○◦▪▫■□*@>▶►|]+|[OQ0@])\s+(?=[A-Za-z0-9])');
 final _label = RegExp(r'^(?:room|rm|location|loc|where|building)\s*:\s*', caseSensitive: false);
 
+final _lostL = RegExp(r'(?<=[A-Za-z])I(?=[a-z])');
+
 /// A room as written on the page, without the pin or bullet drawn before it or a label such as `Room:`.
 String cleanRoom(String text) {
-  var room = normalizeText(text.replaceAll('\u2016', ' '));
+  // a capital I between letters is an l the phone could not tell from it: `CIrm` is `Clrm`
+  var room = normalizeText(text.replaceAll('\u2016', ' ')).replaceAll(_lostL, 'l');
   room = room.replaceFirst(_glyph, '').replaceFirst(_label, '');
   room = room.replaceAll(RegExp(r'[\s,;:|.\-]+$'), '').trim();
   return room.startsWith('(') && room.endsWith(')') ? room.substring(1, room.length - 1).trim() : room;

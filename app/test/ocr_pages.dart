@@ -102,11 +102,13 @@ const _col = {
 /// A MyUCSC "Class Schedule" page as text recognition reads it: a menu down the left, a table for each course with
 /// cells that wrap onto two lines, and a footer. The geometry follows a real page, with invented classes. [noise]
 /// replaces the text of a cell, keyed by the field and the row's class number. [merge] gives the phone's way of
-/// reading cells that sit close together as one line.
+/// reading cells that sit close together as one line. [headings] replaces a heading of one course's table, keyed by the
+/// course's position and the heading, with the text the phone read, or nothing at all if it left it out.
 OcrPage myUcscPage(
   List<Course> courses, {
   double scale = 1,
   Map<(String, String), String> noise = const {},
+  Map<(int, String), String> headings = const {},
   bool merge = false,
 }) {
   final pieces = <(double, double, String)>[];
@@ -121,7 +123,7 @@ OcrPage myUcscPage(
     }
   }
   var y = 441.0;
-  for (final c in courses) {
+  for (final (ci, c) in courses.indexed) {
     final title = '${c.code} ${c.title}'.split(' ');
     for (var k = 0; k < title.length; k++) {
       put(317 + 38.0 * k, y, title[k]);
@@ -152,7 +154,8 @@ OcrPage myUcscPage(
       ('Start/End', 796.0, 0.0),
       ('Date', 846.0, 0.0),
     ]) {
-      put(x, hy + dy, text);
+      final read = headings[(ci, text)] ?? text;
+      if (read.isNotEmpty) put(x, hy + dy, read);
     }
     for (var k = 0; k < c.rows.length; k++) {
       final r = c.rows[k];

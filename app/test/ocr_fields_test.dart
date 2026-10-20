@@ -199,6 +199,17 @@ void main() {
       expect(findCourse('1:20pm'), isNull);
     });
 
+    test('a course number ending in the letter O is the number with a zero, as no course number ends in O', () {
+      final m = findCourse('HIS 2O')!;
+      expect(m.code, 'HIS 20');
+      expect(m.certainty, Certainty.repaired);
+      expect(findCourse('CSE 1OO')?.code, 'CSE 100');
+      expect(findCourse('HIS2O Introduction')?.code, 'HIS 20');
+      expect(findCourse('MATH 19A')?.certainty, Certainty.exact);
+      expect(findCourse('ART 20')?.certainty, Certainty.exact);
+      expect(findCourse('BME 160L')?.code, 'BME 160L');
+    });
+
     test('a trailing capital I read for a 1 is guessed', () {
       final m = findCourse('BIOLI')!;
       expect(m.code, 'BIOL 1');
@@ -261,6 +272,20 @@ void main() {
       expect(cleanRoom('Location:   Kresge Acad 3201,'), 'Kresge Acad 3201');
       expect(cleanRoom('  Soc Sci 2    075 '), 'Soc Sci 2 075');
       expect(cleanRoom('Oakes Acad 222'), 'Oakes Acad 222', reason: 'a building that starts with O is not a pin');
+    });
+
+    test('a capital I between letters in a room is the lowercase l it was read for', () {
+      expect(cleanRoom('Crown CIrm 105'), 'Crown Clrm 105');
+      expect(cleanRoom('Cowell CIrm 131'), 'Cowell Clrm 131');
+      for (final room in [
+        'Crown Clrm 105',
+        'Kresge Acad 3201',
+        'McHenry Lib 1350',
+        'Hum & Soc Sci 250',
+        'Info Desk 1',
+      ]) {
+        expect(cleanRoom(room), room, reason: room);
+      }
     });
 
     test('what could be a room', () {

@@ -5,10 +5,13 @@ import 'layout.dart';
 import 'raw_row.dart';
 
 class _Column {
-  const _Column(this.kind, this.left, {this.weak = false});
+  const _Column(this.kind, this.left, {this.weak = false, this.right});
 
   final ColumnKind kind;
   final double left;
+
+  /// Where the heading's last word ends, when the heading is more than one word.
+  final double? right;
 
   /// Named by a word that could mean something else (`Class`, which heads a course column or a class number).
   final bool weak;
@@ -93,7 +96,7 @@ List<_Column> _columnsOf(List<Token> tokens, double h) {
     } else {
       kind = _kindOf(w);
     }
-    if (kind != null) columns.add(_Column(kind, sorted[i].left));
+    if (kind != null) columns.add(_Column(kind, sorted[i].left, right: sorted[i + consumed].right));
     i += consumed;
   }
   // `Class` just before `Section` and `Component` heads the class numbers, as it does on MyUCSC
@@ -110,7 +113,50 @@ List<_Column> _columnsOf(List<Token> tokens, double h) {
     }
     if (seen.add(column.kind)) result.add(column);
   }
+  _addMisreadRoom(result, sorted, h);
   return result;
+}
+
+/// A `Room` heading the phone misread (`Koom`) is still the one word between the times and the instructor.
+void _addMisreadRoom(List<_Column> columns, List<Token> headings, double h) {
+  if (columns.any((c) => c.kind == ColumnKind.room)) return;
+  final timing = columns.where((c) => {ColumnKind.daysTimes, ColumnKind.times, ColumnKind.end}.contains(c.kind));
+  final instructor = columns.where((c) => c.kind == ColumnKind.instructor).firstOrNull;
+  if (timing.isEmpty || instructor == null) return;
+  final after = timing.map((c) => c.right ?? c.left).reduce(math.max);
+  final between = [
+    for (final t in headings)
+      if (t.left > after + 0.5 * h && t.right < instructor.left && _word(t).length >= 3) t,
+  ];
+  if (between.length == 1) {
+    columns
+      ..add(_Column(ColumnKind.room, between.single.left))
+      ..sort((a, b) => a.left.compareTo(b.left));
+  }
+}
+
+/// A heading the phone dropped or misread is where the same heading is in the page's other tables, which are laid
+/// out alike (MyUCSC draws a table for each course).
+void _borrowColumns(List<_Band> bands, double h) {
+  final borrowed = List.generate(bands.length, (_) => <_Column>[]);
+  for (var b = 0; b < bands.length; b++) {
+    for (var o = 0; o < bands.length; o++) {
+      if (o == b) continue;
+      final same = bands[b].columns.where(
+        (c) => bands[o].columns.any((x) => x.kind == c.kind && (x.left - c.left).abs() <= 1.5 * h),
+      );
+      if (same.length < 3) continue;
+      for (final x in bands[o].columns) {
+        final present = bands[b].columns.any((c) => c.kind == x.kind || (c.left - x.left).abs() <= 1.5 * h);
+        if (!present && !borrowed[b].any((c) => c.kind == x.kind)) borrowed[b].add(x);
+      }
+    }
+  }
+  for (var b = 0; b < bands.length; b++) {
+    bands[b].columns
+      ..addAll(borrowed[b])
+      ..sort((a, c) => a.left.compareTo(c.left));
+  }
 }
 
 const _timingKinds = {ColumnKind.days, ColumnKind.times, ColumnKind.daysTimes, ColumnKind.start};
@@ -330,6 +376,7 @@ List<RawRow> _readBand(
 /// phone read together with a neighbour, still land in the right place.
 List<RawRow> readTables(List<VisualLine> lines, double h, List<String> notes) {
   final bands = _findBands(lines, h);
+  _borrowColumns(bands, h);
   final titles = [
     for (final band in bands) band.columns.any((c) => c.kind == ColumnKind.course) ? null : _titleAbove(lines, band, h),
   ];
