@@ -181,6 +181,9 @@ def best_entrance(engine, graph_dir, start, entrances, room_point=None, avoid_st
     """Pick the door with the least effort from start: the climb-adjusted walk plus, when the
     room's own point is known, the straight-line distance from that door to the room.
 
+    The router snaps both ends to the nearest path node, so the walk also counts the straight legs
+    from the start to its node and from the door's node to the door (a door can be 25 m from any).
+
     Returns (entrance, walk_m, indoor_m, effective_m, stairs_m), or None if no door can be reached.
     """
     best = None
@@ -196,9 +199,11 @@ def best_entrance(engine, graph_dir, start, entrances, room_point=None, avoid_st
         indoor = 0.0
         if room_point:
             indoor = distance_m((e["lat"], e["lon"]), (room_point["lat"], room_point["lon"]))
-        total = r["effective_m"] + indoor
+        legs = r.get("start_snap_m", 0.0) + r.get("end_snap_m", 0.0)
+        effective = r["effective_m"] + legs
+        total = effective + indoor
         if best is None or total < best[0]:
-            best = (total, e, r["distance_m"], indoor, r["effective_m"], r["stairs_m"])
+            best = (total, e, r["distance_m"] + legs, indoor, effective, r["stairs_m"])
     return None if best is None else best[1:]
 
 

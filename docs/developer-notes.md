@@ -281,7 +281,7 @@ For `offline_test.dart` build and run the same way with `SERVER_URL=http://127.0
 - The web demo needs internet (OSM tiles, Leaflet from unpkg). 
 - Elevations are 10 m USGS 3DEP samples at graph nodes (about 10 m horizontal and a few meters vertical error), so short steep edges can get a noisy grade; slopes are capped at 30% in the cost.
 - Nearest-node is a linear scan; add a grid index if the graph grows.
-- Snapping goes to the nearest graph *node*, not the nearest point on an edge. Nodes are sparse (intersections/bends), so an entrance can snap up to ~26 m away (Social Sciences 2). Snap to edges to fix.
+- Snapping goes to the nearest graph *node*, not the nearest point on an edge. Nodes are sparse (intersections/bends), so an entrance can snap up to ~26 m away (Social Sciences 2). The server counts the straight legs from the start to its node and from the door's node to the door in the walk, its effort and the choice of door (`best_entrance`; across the 32 buildings that added a median 26 m, at most 45 m). Snapping to edges is not done: the exported graph keeps no edge geometry, so a point could only be projected onto the straight line between two nodes, and about 10% of edges are more than 15% longer than that line.
 - Graph covers a core-campus bounding box only (see `DEFAULT_BBOX` in `build_graph.py`).
 - CI does not re-run the OSM download (network flake); it checks the committed graph instead.
 

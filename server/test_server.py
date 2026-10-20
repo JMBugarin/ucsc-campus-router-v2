@@ -100,6 +100,29 @@ class TestRemembered(unittest.TestCase):
             self.assertTrue(srv.door_walk("e", "g", (36.999, -122.06), (36.9995, -122.063))["found"])
 
 
+class TestBestEntrance(unittest.TestCase):
+    def test_a_door_far_from_the_paths_is_charged_for_the_way_to_it(self):
+        srv.DOOR_WALKS.clear()
+        near, far = (36.9990, -122.0630), (36.9991, -122.0630)
+        walks = {near: {"found": True, "distance_m": 100.0, "effective_m": 100.0, "stairs_m": 0.0,
+                        "start_snap_m": 5.0, "end_snap_m": 30.0},
+                 far: {"found": True, "distance_m": 120.0, "effective_m": 120.0, "stairs_m": 0.0,
+                       "start_snap_m": 5.0, "end_snap_m": 2.0}}
+        doors = [{"lat": d[0], "lon": d[1]} for d in (near, far)]
+
+        with mock.patch.object(srv, "run_engine", lambda e, g, algo, start, end, **kw: walks[end]):
+            door, walk_m, indoor_m, effective_m, stairs_m = srv.best_entrance("e", "g", (36.9980, -122.0630), doors)
+        self.assertEqual((door["lat"], walk_m, effective_m, indoor_m), (far[0], 127.0, 127.0, 0.0),
+                         "100 m of path plus 35 m of legs is longer than 120 m plus 7 m")
+
+    def test_an_engine_that_reports_no_snap_distances_counts_none(self):
+        srv.DOOR_WALKS.clear()
+        walk = {"found": True, "distance_m": 100.0, "effective_m": 130.0, "stairs_m": 0.0}
+        with mock.patch.object(srv, "run_engine", lambda *a, **kw: walk):
+            _, walk_m, _, effective_m, _ = srv.best_entrance("e", "g", (36.998, -122.063), [{"lat": 36.999, "lon": -122.063}])
+        self.assertEqual((walk_m, effective_m), (100.0, 130.0))
+
+
 @unittest.skipUnless(ENGINE.exists(), "engine not built: make -C engine route")
 class TestApi(unittest.TestCase):
     @classmethod
@@ -169,7 +192,8 @@ class TestApi(unittest.TestCase):
         d, a = body["dijkstra"], body["astar"]
         self.assertTrue(d["found"] and a["found"])
         self.assertAlmostEqual(d["distance_m"], a["distance_m"], places=1)
-        self.assertAlmostEqual(room["walk_m"], a["distance_m"], delta=1.0)
+        legs = a["start_snap_m"] + a["end_snap_m"]
+        self.assertAlmostEqual(room["walk_m"], a["distance_m"] + legs, delta=1.0)
         self.assertGreaterEqual(room["indoor_m"], 0)
         self.assertEqual(room["floor"], room["room_point"]["level"])
 
@@ -200,7 +224,8 @@ class TestApi(unittest.TestCase):
                 status, alt = self.get(
                     f"/api/route?start={start}&end={e['lat']},{e['lon']}")
                 indoor = srv.distance_m((e["lat"], e["lon"]), (point["lat"], point["lon"]))
-                self.assertLessEqual(chosen_total, alt["astar"]["effective_m"] + indoor + 1.0)
+                legs = alt["astar"]["start_snap_m"] + alt["astar"]["end_snap_m"]
+                self.assertLessEqual(chosen_total, alt["astar"]["effective_m"] + legs + indoor + 1.0)
 
     def test_route_to_room_errors(self):
         status, body = self.get(f"/api/route_to_room?start={START}&room=Online")
@@ -267,7 +292,8 @@ class TestApi(unittest.TestCase):
         place = body["room"]
         self.assertEqual((place["kind"], place["building_name"]), ("point", "Dropped pin"))
         self.assertTrue(body["astar"]["found"])
-        self.assertAlmostEqual(place["walk_m"], body["astar"]["distance_m"], delta=1.0)
+        legs = body["astar"]["start_snap_m"] + body["astar"]["end_snap_m"]
+        self.assertAlmostEqual(place["walk_m"], body["astar"]["distance_m"] + legs, delta=1.0)
         self.assertEqual(place["indoor_m"], 0)
         lat, lon = END.split(",")
         self.assertEqual((place["entrance"]["lat"], place["entrance"]["lon"]), (float(lat), float(lon)))
