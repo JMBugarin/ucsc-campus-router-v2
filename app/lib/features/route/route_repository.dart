@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/api_client.dart';
+import '../arrive/arrival.dart';
+import '../arrive/entry_walks.dart';
+import '../campus/campus_area.dart';
 import '../location/location_service.dart';
 import '../settings/settings.dart';
 import 'destination.dart';
@@ -41,12 +44,44 @@ class RouteProblem implements Exception {
   final String message;
 }
 
-/// The walk from the phone's location to a [Destination].
-final routeProvider = FutureProvider.autoDispose.family<RoutePlan, Destination>((ref, destination) async {
+/// The walk to show for a [Destination]. A student who is not on campus gets the walk from the entry
+/// point they will arrive at ([entry]), with the other choices in [options] (the best guess first).
+class RouteOutcome {
+  const RouteOutcome(this.plan, {this.entry, this.options = const [], this.place, this.locationProblem});
+
+  final RoutePlan plan;
+  final EntryPoint? entry;
+  final List<EntryWalk> options;
+  final Whereabouts? place;
+
+  /// Why the phone's location could not be used, when the walk starts at an entry point for that reason.
+  final String? locationProblem;
+
+  bool get offCampus => entry != null;
+}
+
+/// The walk to a [Destination]: from the phone's location when it is on campus, otherwise from the entry
+/// point the student will arrive at. Where the student is never goes to the server unless it is on campus.
+final routeProvider = FutureProvider.autoDispose.family<RouteOutcome, Destination>((ref, destination) async {
   // The student asked for this route, so the phone is asked for its location even if the
   // "use my location" setting (for Today) is off.
   final here = await ref.read(locationServiceProvider).current();
   final point = here.point;
-  if (point == null) throw RouteProblem(here.problem ?? 'Could not find where you are.');
-  return ref.read(routeRepositoryProvider).to(from: point, destination: destination);
+  final place = point == null ? null : whereIs(point);
+  if (point != null && place == Whereabouts.onCampus) {
+    return RouteOutcome(await ref.read(routeRepositoryProvider).to(from: point, destination: destination), place: place);
+  }
+  if (destination is! RoomDestination) {
+    throw RouteProblem(
+      point == null
+          ? (here.problem ?? 'Could not find where you are.')
+          : "You're not on campus. Search for a room or building to plan how to get there.",
+    );
+  }
+
+  final walks = await ref.read(entryWalksServiceProvider).forRoom(destination.location);
+  final options = orderEntries(walks.walks, point);
+  final entry = chooseEntry(options, ref.watch(entryChoiceProvider)).entry;
+  final plan = await ref.read(routeRepositoryProvider).to(from: entry.point, destination: destination);
+  return RouteOutcome(plan, entry: entry, options: options, place: place, locationProblem: here.problem);
 });

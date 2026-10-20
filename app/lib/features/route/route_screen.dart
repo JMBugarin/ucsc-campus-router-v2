@@ -6,6 +6,9 @@ import 'package:latlong2/latlong.dart';
 import '../../core/api_client.dart';
 import '../../core/tiles.dart';
 import '../../core/waking_note.dart';
+import '../arrive/entry_walks.dart';
+import '../campus/campus_area.dart';
+import '../handoff/trip_actions.dart';
 import '../location/location_service.dart';
 import 'destination.dart';
 import 'route_plan.dart';
@@ -52,12 +55,13 @@ class RouteScreen extends ConsumerWidget {
         error: (error, _) => _Problem(
           message: switch (error) {
             ApiException(:final message) => message,
+            EntryWalksUnavailable(:final message) => message,
             RouteProblem(:final message) => message,
             _ => 'Something went wrong. Try again.',
           },
           onRetry: () => ref.invalidate(routeProvider(destination)),
         ),
-        data: (plan) => _RouteView(plan: plan),
+        data: (outcome) => _RouteView(outcome: outcome, destination: destination),
       ),
     );
   }
@@ -90,9 +94,12 @@ class _Problem extends StatelessWidget {
 }
 
 class _RouteView extends ConsumerWidget {
-  const _RouteView({required this.plan});
+  const _RouteView({required this.outcome, required this.destination});
 
-  final RoutePlan plan;
+  final RouteOutcome outcome;
+  final Destination destination;
+
+  RoutePlan get plan => outcome.plan;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -133,7 +140,11 @@ class _RouteView extends ConsumerWidget {
           markers: [
             Marker(
               point: _latLng(plan.start),
-              child: Icon(Icons.my_location, color: Colors.blue.shade800, semanticLabel: 'You are here'),
+              child: Icon(
+                outcome.entry == null ? Icons.my_location : Icons.directions_bus_outlined,
+                color: Colors.blue.shade800,
+                semanticLabel: outcome.entry == null ? 'You are here' : outcome.entry!.name,
+              ),
             ),
             Marker(
               point: _latLng(plan.door),
@@ -153,7 +164,7 @@ class _RouteView extends ConsumerWidget {
           Expanded(child: map),
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: box.maxHeight * 0.5),
-            child: SingleChildScrollView(child: _Summary(plan: plan)),
+            child: SingleChildScrollView(child: _Summary(outcome: outcome, destination: destination)),
           ),
         ],
       ),
@@ -162,9 +173,12 @@ class _RouteView extends ConsumerWidget {
 }
 
 class _Summary extends StatelessWidget {
-  const _Summary({required this.plan});
+  const _Summary({required this.outcome, required this.destination});
 
-  final RoutePlan plan;
+  final RouteOutcome outcome;
+  final Destination destination;
+
+  RoutePlan get plan => outcome.plan;
 
   @override
   Widget build(BuildContext context) {
@@ -182,6 +196,25 @@ class _Summary extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (outcome.entry != null) ...[
+              Text(
+                switch (outcome.place) {
+                  Whereabouts.far => "You're far from campus",
+                  Whereabouts.offCampus => "You're not on campus yet",
+                  _ => "Your location isn't available",
+                },
+                style: theme.textTheme.labelLarge,
+              ),
+              Text('This walk starts at ${outcome.entry!.name}.', style: theme.textTheme.titleMedium),
+              if (outcome.locationProblem != null) Text(outcome.locationProblem!, style: theme.textTheme.bodySmall),
+              TripActions(
+                entry: outcome.entry!,
+                options: outcome.options,
+                roomLabel: destination.label,
+                far: outcome.place == Whereabouts.far,
+              ),
+              const Divider(),
+            ],
             Text('About ${plan.minutes} min on foot', style: theme.textTheme.titleLarge),
             const SizedBox(height: 4),
             Text('${plan.walkM.round()} m to the door$inside.'),
@@ -189,7 +222,9 @@ class _Summary extends StatelessWidget {
             if (plan.note != null) Text(plan.note!),
             const SizedBox(height: 6),
             Text(
-              'Dotted lines join you and the door to the nearest path points.',
+              outcome.entry == null
+                  ? 'Dotted lines join you and the door to the nearest path points.'
+                  : 'Dotted lines join the entry point and the door to the nearest path points.',
               style: theme.textTheme.bodySmall,
             ),
           ],

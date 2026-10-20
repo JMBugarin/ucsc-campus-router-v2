@@ -126,20 +126,24 @@ void main() {
       expect(find.text('Try again'), findsOneWidget);
     });
 
-    testWidgets('without location it says why and does not call the server', (tester) async {
+    testWidgets('without location it says why and starts the walk at an entry point instead', (tester) async {
       final rig = TestRig(stored: [meeting()]);
       await open(tester, rig);
       rig.location.result = const LocationResult.unavailable('Location is turned off on this phone.');
 
       await tester.tap(find.text('Show route'));
       await tester.pumpAndSettle();
+      expect(find.text("Your location isn't available"), findsOneWidget);
       expect(find.text('Location is turned off on this phone.'), findsOneWidget);
-      expect(rig.route.requests, isEmpty);
+      expect(find.textContaining('This walk starts at'), findsOneWidget);
+      expect(rig.route.requests.single.from, isNot(here), reason: 'no position was sent');
 
       rig.location.result = const LocationResult.found(here);
-      await tester.tap(find.text('Try again'));
+      await tester.tap(find.byTooltip('Find the route again'));
       await tester.pumpAndSettle();
       expect(find.textContaining('min on foot'), findsOneWidget);
+      expect(find.textContaining('This walk starts at'), findsNothing);
+      expect(rig.route.requests.last.from, here);
     });
   });
 }
