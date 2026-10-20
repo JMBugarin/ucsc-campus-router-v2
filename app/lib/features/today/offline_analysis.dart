@@ -59,6 +59,14 @@ Occurrence? nextOccurrence(List<Meeting> meetings, tz.TZDateTime now, Set<String
   return null;
 }
 
+/// Whether a walk from the phone's own position could matter at [now]: a class is still to start today
+/// and none is in progress (a walk then starts from that class).
+bool walkFromHereMatters(List<Meeting> meetings, tz.TZDateTime now, Set<String> holidays) {
+  final today = occurrences(meetings, DateTime.utc(now.year, now.month, now.day), holidays);
+  final inClass = today.any((o) => !o.start.isAfter(now) && o.end.isAfter(now));
+  return !inClass && today.any((o) => o.start.isAfter(now));
+}
+
 /// Why [day] has no class: `no_schedule`, `holiday`, `before_term`, `after_term`, `weekend` or `no_classes`.
 String whyNoClasses(List<Meeting> meetings, DateTime day, Set<String> holidays) {
   if (meetings.isEmpty) return 'no_schedule';

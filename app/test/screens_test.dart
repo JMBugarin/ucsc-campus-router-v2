@@ -118,7 +118,7 @@ void main() {
     });
 
     testWidgets('a location problem is shown beside the answer', (tester) async {
-      final rig = TestRig(stored: [meeting()]);
+      final rig = TestRig(stored: [meeting()], now: DateTime.utc(2026, 10, 12, 19));
       rig.location.result = const LocationResult.unavailable('Location permission was not given.');
       await open(tester, rig);
       expect(find.text('Location permission was not given.'), findsOneWidget);
