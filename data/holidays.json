@@ -1,5 +1,5 @@
 {
- "note": "Term dates and the no-class days inside each term. A starting point only: check against the official UCSC academic calendar (registrar.ucsc.edu/calendars-resources/academic-calendar) and edit as needed. Add the next term as another entry.",
+ "note": "Term dates (first and last day of instruction) and the no-class days inside each term, from the registrar's 2026-27 academic calendar (registrar.ucsc.edu/calendars-resources/academic-calendar, page and PDF, compared on 2026-10-19). Holidays outside a term are left out. Add the next term as another entry.",
  "terms": [
   {
    "name": "Fall 2026",
@@ -18,6 +18,14 @@
    "holidays": [
     "2027-01-18",
     "2027-02-15"
+   ]
+  },
+  {
+   "name": "Spring 2027",
+   "start": "2027-03-29",
+   "end": "2027-06-04",
+   "holidays": [
+    "2027-05-31"
    ]
   }
  ]

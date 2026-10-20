@@ -68,7 +68,7 @@ class TestApi(unittest.TestCase):
         status, body = self.get("/api/meta")
         self.assertEqual(status, 200)
         self.assertGreater(body["nodes"], 1000)
-        self.assertEqual([t["name"] for t in body["terms"]], ["Fall 2026", "Winter 2027"])
+        self.assertEqual([t["name"] for t in body["terms"]], ["Fall 2026", "Winter 2027", "Spring 2027"])
         self.assertIn(body["term"], body["terms"])
 
     def test_rooms_list_for_autocomplete(self):

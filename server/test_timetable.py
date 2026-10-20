@@ -1,5 +1,6 @@
 """Tests for timetable.py (run from the repo root: python3 -m unittest discover -s server)."""
 
+import json
 import sys
 import unittest
 from datetime import date, datetime, timedelta, timezone
@@ -405,6 +406,19 @@ class TestTerms(unittest.TestCase):
                "start_date": "2027-01-04", "end_date": "2027-03-12"}
         self.assertTrue(sch.occurs_on(mwf, date(2027, 1, 20), holidays))
         self.assertFalse(sch.occurs_on(mwf, date(2027, 1, 18), holidays))  # MLK Day, a Monday in Winter
+
+    def test_the_committed_term_dates_are_sane(self):
+        raw = json.loads((ROOT / "data" / "holidays.json").read_text(encoding="utf-8"))
+        terms = sch.parse_terms(raw["terms"])
+        self.assertEqual(len(terms), len(raw["terms"]))
+        for earlier, later in zip(terms, terms[1:]):
+            self.assertLess(earlier["end"], later["start"], f"{earlier['name']} overlaps {later['name']}")
+        for term in terms:
+            self.assertLess(date.fromisoformat(term["start"]).weekday(), 5, f"{term['name']} should start on a weekday")
+            self.assertEqual(date.fromisoformat(term["end"]).weekday(), 4, f"{term['name']} should end on a Friday")
+            for day in term["holidays"]:
+                self.assertTrue(term["start"] <= day <= term["end"], f"{day} is outside {term['name']}")
+                self.assertLess(date.fromisoformat(day).weekday(), 5, f"{day} is a weekend")
 
     def test_analyze_in_the_second_term(self):
         mwf = {"course": "W 1", "title": "", "section": "01", "component": "Lecture", "days": [0, 2, 4],
