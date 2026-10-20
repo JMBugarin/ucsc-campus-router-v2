@@ -57,11 +57,11 @@ class ApiScheduleRepository implements ScheduleRepository {
 
   @override
   Future<ImportResult> clean(List<Meeting> meetings) async => ImportResult.fromJson(
-        await _api.postJson('/api/schedule/clean', {'meetings': [for (final m in meetings) m.toJson()]}),
+        await _api.postJson('/api/schedule/clean', {'meetings': [for (final m in meetings) m.toJson()]}, retry: true),
       );
 
   Future<ImportResult> _post(String path, String text) async =>
-      ImportResult.fromJson(await _api.postJson(path, {'text': text}));
+      ImportResult.fromJson(await _api.postJson(path, {'text': text}, retry: true));
 }
 
 final scheduleRepositoryProvider = Provider<ScheduleRepository>((ref) {

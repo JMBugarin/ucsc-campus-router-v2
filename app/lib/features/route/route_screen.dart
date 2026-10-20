@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../../core/api_client.dart';
 import '../../core/tiles.dart';
+import '../../core/waking_note.dart';
 import '../location/location_service.dart';
 import 'destination.dart';
 import 'route_plan.dart';
@@ -40,7 +41,12 @@ class RouteScreen extends ConsumerWidget {
         loading: () => const Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [CircularProgressIndicator(), SizedBox(height: 12), Text('Finding your route…')],
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 12),
+              Text('Finding your route…'),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 24), child: WakingNote()),
+            ],
           ),
         ),
         error: (error, _) => _Problem(

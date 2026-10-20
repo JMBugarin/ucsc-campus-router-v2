@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/api_client.dart';
 import '../../core/server_url.dart';
+import '../../core/waking_note.dart';
 import '../reminders/reminder_scheduler.dart';
 import '../today/today_models.dart';
 import 'settings.dart';
@@ -115,6 +116,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: Text(_testing ? 'Connecting…' : 'Save and test'),
             ),
           ),
+          if (_testing) const WakingNote(),
           if (_message != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),

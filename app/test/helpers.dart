@@ -53,7 +53,11 @@ class FakeScheduleRepository implements ScheduleRepository {
   Object? failWith;
   final calls = <String>[];
 
-  ImportResult _result() {
+  /// When set, imports wait for it, like a server that is slow to answer.
+  Future<void>? hold;
+
+  Future<ImportResult> _result() async {
+    await hold;
     if (failWith != null) throw failWith!;
     return nextImport ?? const ImportResult(meetings: [], notes: [], locations: []);
   }
@@ -79,6 +83,7 @@ class FakeScheduleRepository implements ScheduleRepository {
   @override
   Future<ImportResult> clean(List<Meeting> meetings) async {
     calls.add('clean:${meetings.length}');
+    await hold;
     if (failWith != null) throw failWith!;
     return nextImport ??
         ImportResult(
@@ -106,6 +111,7 @@ class FakeTodayRepository implements TodayRepository {
     requests.add((meetings: meetings, here: here, lead: remindLeadMinutes, reminded: reminded, at: at));
     final a = answer;
     if (a is Analysis) return a;
+    if (a is Future<Analysis>) return a;
     throw a;
   }
 }
@@ -209,11 +215,13 @@ class TestRig {
   final FakeSearchRepository search;
   final int startTab;
   String? pickedCalendarText;
+  int warmUps = 0;
 
   Future<List<Override>> overrides() async {
     final prefs = await SharedPreferences.getInstance();
     return [
       sharedPreferencesProvider.overrideWithValue(prefs),
+      serverWarmUpProvider.overrideWithValue(() async => warmUps++),
       scheduleRepositoryProvider.overrideWithValue(schedule),
       todayRepositoryProvider.overrideWithValue(today),
       locationServiceProvider.overrideWithValue(location),

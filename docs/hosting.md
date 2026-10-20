@@ -20,7 +20,7 @@ The mobile app (and the web page) talk to one server: Python plus the C routing 
 4. Put that URL into the app's settings (the app asks for the server address).
 
 Notes:
-- The free plan **sleeps after a period with no traffic**, so the first request after a pause can take up to a minute. The app shows a "waking the server" message for this. A paid plan stays awake.
+- The free plan **sleeps after a period with no traffic**, so the first request after a pause can take up to a minute. The app pings `/healthz` when it opens and when it comes back to the foreground, explains a wait of more than a few seconds ("the server may be waking up"), and repeats a timed-out or 502/503/504 request. A paid plan stays awake.
 - Render passes the real client address in `X-Forwarded-For`; `render.yaml` sets `TRUST_PROXY=1` so the rate limits count each student separately. Only set `TRUST_PROXY` behind a proxy you trust, otherwise anyone can pretend to be someone else.
 - `render.yaml` was written from Render's documented format but **has not been run**. If the blueprint is rejected, create a "Web Service" by hand instead: runtime Docker, health check path `/healthz`, environment variable `TRUST_PROXY=1`.
 

@@ -39,7 +39,7 @@ class ApiTodayRepository implements TodayRepository {
       'meetings': [for (final m in meetings) m.toJson()],
       if (here != null) 'here': [here.lat, here.lon],
       if (at != null) 'now': isoWithOffset(pacificTime(at)) else ...{'remind_lead': remindLeadMinutes, 'reminded': reminded},
-    });
+    }, retry: true);
     return Analysis.fromJson(json);
   }
 }

@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../../core/api_client.dart';
 import '../../core/tiles.dart';
+import '../../core/waking_note.dart';
 import '../route/destination.dart';
 import '../route/route_screen.dart';
 import '../search/place.dart';
@@ -144,8 +145,20 @@ class _Results extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.only(top: 8),
       child: results.when(
-        loading: () => const Padding(padding: EdgeInsets.all(16), child: LinearProgressIndicator()),
-        error: (error, _) => _Note(error is ApiException ? error.message : 'Search failed. Try again.'),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [LinearProgressIndicator(), WakingNote()]),
+        ),
+        error: (error, _) => Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(error is ApiException ? error.message : 'Search failed. Try again.'),
+              TextButton(onPressed: () => ref.invalidate(searchResultsProvider(query)), child: const Text('Try again')),
+            ],
+          ),
+        ),
         data: (places) => places.isEmpty
             ? const _Note('No match. Try the building name and room, like "Kresge 3201".')
             : Column(mainAxisSize: MainAxisSize.min, children: [for (final p in places) _ResultTile(place: p, onTap: onChoose)]),

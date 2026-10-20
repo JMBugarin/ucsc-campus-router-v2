@@ -5,6 +5,7 @@ import '../../app.dart';
 import '../../core/api_client.dart';
 import '../../core/format.dart';
 import '../../core/pacific.dart';
+import '../../core/waking_note.dart';
 import '../route/destination.dart';
 import '../route/route_screen.dart';
 import '../schedule/schedule_controller.dart';
@@ -381,11 +382,7 @@ class _LoadingCard extends StatelessWidget {
             LinearProgressIndicator(),
             SizedBox(height: 12),
             Text('Working out your day…'),
-            SizedBox(height: 4),
-            Text(
-              'If the server has been idle this can take up to a minute while it wakes up.',
-              style: TextStyle(fontSize: 12),
-            ),
+            WakingNote(),
           ],
         ),
       ),
