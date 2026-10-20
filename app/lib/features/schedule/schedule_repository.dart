@@ -16,7 +16,7 @@ class PhotoSupport {
   final String reason;
 }
 
-/// How long a photo may take: the server gives Claude about three minutes at the very most, and
+/// How long a photo may take: the server allows its reader about three minutes at the very most, and
 /// the usual wait for a reply is far shorter.
 const photoTimeout = Duration(seconds: 200);
 
@@ -38,8 +38,8 @@ abstract class ScheduleRepository {
   /// Asks the server whether it can read photos, without sending one.
   Future<PhotoSupport> photoSupport();
 
-  /// Sends a photo of a schedule to the server, which has Claude read it and keeps nothing. Never sent
-  /// twice: each read costs the server's owner money.
+  /// Sends a photo of a schedule to the server, which reads it and keeps nothing. Never sent twice: each
+  /// reading costs the server's owner money.
   Future<ImportResult> importPhoto(Uint8List bytes, String mediaType);
 }
 

@@ -300,7 +300,7 @@ void main() {
       );
       expect((await slow.importPhoto(Uint8List.fromList([1, 2, 3]), 'image/png')).meetings, isEmpty);
       await expectLater(slow.clean(const []), throwsA(isA<ApiException>().having((e) => e.kind, 'kind', ApiErrorKind.timeout)));
-      expect(photoTimeout, greaterThan(const Duration(minutes: 3)), reason: 'the server gives Claude up to about three minutes');
+      expect(photoTimeout, greaterThan(const Duration(minutes: 3)), reason: 'the server allows its reader up to about three minutes');
     });
 
     test('a photo is sent once however it fails, because each reading costs money', () async {
