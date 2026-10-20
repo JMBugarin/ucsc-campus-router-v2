@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ucsc_router/design/controls.dart';
 import 'package:ucsc_router/core/api_client.dart';
 import 'package:ucsc_router/features/schedule/meeting.dart';
 import 'package:ucsc_router/features/today/today_models.dart';
@@ -175,7 +176,7 @@ void main() {
 
     testWidgets('with no schedule the button is off', (tester) async {
       await open(tester, rigWith(const []));
-      expect(tester.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.calendar_view_week_outlined)).onPressed, isNull);
+      expect(tester.widget<GlassIconButton>(find.widgetWithIcon(GlassIconButton, Icons.calendar_view_week_outlined)).onPressed, isNull);
     });
   });
 

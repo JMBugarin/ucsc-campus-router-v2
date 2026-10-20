@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ucsc_router/app.dart';
+import 'package:ucsc_router/design/glass.dart';
 import 'package:ucsc_router/core/api_client.dart';
 import 'package:ucsc_router/features/location/location_service.dart';
 import 'package:ucsc_router/features/search/place.dart';
@@ -238,9 +239,9 @@ void main() {
       await tester.tap(find.text('Jack Baskin Engineering 152'));
       await tester.pumpAndSettle();
 
-      final card = tester.getRect(find.ancestor(of: find.text('Route here'), matching: find.byType(Card)).first);
-      expect((card.left, card.right), (0, 402), reason: 'the iPhone 17 is 402 points wide, and the card brings its own 12 point margin');
-      expect(tester.getSize(find.widgetWithText(FilledButton, 'Route here')).width, closeTo(402 - 2 * 12 - 2 * 16, 0.5));
+      final card = tester.getRect(find.ancestor(of: find.text('Route here'), matching: find.byType(GlassSurface)).first);
+      expect((card.left, card.right), (16, 402 - 16), reason: 'the iPhone 17 is 402 points wide and the card keeps a 16 point margin');
+      expect(tester.getSize(find.widgetWithText(FilledButton, 'Route here')).width, closeTo(402 - 2 * 16 - 2 * 20, 0.5));
     });
 
     testWidgets('the search bar sits below the status bar while the map fills the screen', (tester) async {

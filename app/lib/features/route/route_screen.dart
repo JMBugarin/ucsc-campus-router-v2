@@ -7,6 +7,8 @@ import '../../app.dart';
 import '../../core/api_client.dart';
 import '../../core/tiles.dart';
 import '../../core/waking_note.dart';
+import '../../design/map_markers.dart';
+import '../../design/tokens.dart';
 import '../arrive/entry_walks.dart';
 import '../campus/campus_area.dart';
 import '../handoff/trip_actions.dart';
@@ -104,26 +106,26 @@ class _Problem extends StatelessWidget {
   }
 }
 
-class _RouteView extends ConsumerWidget {
-  const _RouteView({required this.outcome, required this.destination});
+/// The walk drawn on the map: the route on a casing so it reads on any tile, the start (you, or the entry
+/// point) and the door.
+class RouteMap extends StatelessWidget {
+  const RouteMap({super.key, required this.plan, this.entry, this.fitPadding = const EdgeInsets.all(48)});
 
-  final RouteOutcome outcome;
-  final Destination destination;
-
-  RoutePlan get plan => outcome.plan;
+  final RoutePlan plan;
+  final EntryPoint? entry;
+  final EdgeInsets fitPadding;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final scheme = Theme.of(context).colorScheme;
+  Widget build(BuildContext context) {
+    final c = context.colors;
     final points = [for (final p in plan.path) _latLng(p)];
     final bounds = LatLngBounds.fromPoints([_latLng(plan.start), ...points, _latLng(plan.door)]);
     final tiny = bounds.north == bounds.south && bounds.east == bounds.west;
-
-    final map = FlutterMap(
+    return FlutterMap(
       options: MapOptions(
         initialCenter: bounds.center,
         initialZoom: 17,
-        initialCameraFit: tiny ? null : CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(48)),
+        initialCameraFit: tiny ? null : CameraFit.bounds(bounds: bounds, padding: fitPadding),
       ),
       children: [
         const BaseMapLayer(),
@@ -134,45 +136,56 @@ class _RouteView extends ConsumerWidget {
               Polyline(
                 points: [_latLng(plan.start), points.first],
                 strokeWidth: 3,
-                color: scheme.outline,
+                color: c.labelSecondary,
                 pattern: const StrokePattern.dotted(),
               ),
               Polyline(
                 points: [points.last, _latLng(plan.door)],
                 strokeWidth: 3,
-                color: scheme.outline,
+                color: c.labelSecondary,
                 pattern: const StrokePattern.dotted(),
               ),
             ],
-            Polyline(points: points, strokeWidth: 5, color: scheme.primary),
+            Polyline(points: points, strokeWidth: 10, color: c.surfaceContent),
+            Polyline(points: points, strokeWidth: 5, color: c.accentFill),
           ],
         ),
         MarkerLayer(
           markers: [
             Marker(
               point: _latLng(plan.start),
-              child: Icon(
-                outcome.entry == null ? Icons.my_location : Icons.directions_bus_outlined,
-                color: Colors.blue.shade800,
-                semanticLabel: outcome.entry == null ? 'You are here' : outcome.entry!.name,
-              ),
+              width: entry == null ? 22 : 40,
+              height: entry == null ? 22 : 40,
+              child: entry == null ? const UserDot() : EntryMarker(name: entry!.name),
             ),
             Marker(
               point: _latLng(plan.door),
+              width: 40,
+              height: 40,
               alignment: Alignment.topCenter,
-              child: Icon(Icons.location_on, size: 36, color: Colors.red.shade700, semanticLabel: 'Door'),
+              child: const DestinationPin(label: 'Door'),
             ),
           ],
         ),
         const MapAttribution(),
       ],
     );
+  }
+}
 
+class _RouteView extends ConsumerWidget {
+  const _RouteView({required this.outcome, required this.destination});
+
+  final RouteOutcome outcome;
+  final Destination destination;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     // At large text sizes the summary can outgrow the screen: it takes at most half the height and scrolls.
     return LayoutBuilder(
       builder: (context, box) => Column(
         children: [
-          Expanded(child: map),
+          Expanded(child: RouteMap(plan: outcome.plan, entry: outcome.entry)),
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: box.maxHeight * 0.5),
             child: SingleChildScrollView(child: _Summary(outcome: outcome, destination: destination)),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,10 +23,22 @@ class StatusChip extends StatelessWidget {
       _ => '?',
     };
     return DecoratedBox(
-      decoration: BoxDecoration(color: c.statusFill(status), borderRadius: BorderRadius.circular(Radii.pill)),
+      decoration: BoxDecoration(
+        color: c.statusFill(status),
+        borderRadius: BorderRadius.circular(Radii.pill),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Space.sm, vertical: Space.xxs),
-        child: Text(label, style: AppText.footnote.copyWith(color: c.statusOn(status), fontWeight: FontWeight.w600)),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.sm,
+          vertical: Space.xxs,
+        ),
+        child: Text(
+          label,
+          style: AppText.footnote.copyWith(
+            color: c.statusOn(status),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
@@ -42,10 +56,22 @@ class RoleChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     return DecoratedBox(
-      decoration: BoxDecoration(color: fill ?? c.accentFill, borderRadius: BorderRadius.circular(Radii.pill)),
+      decoration: BoxDecoration(
+        color: fill ?? c.accentFill,
+        borderRadius: BorderRadius.circular(Radii.pill),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Space.sm, vertical: Space.xxs),
-        child: Text(label, style: AppText.footnote.copyWith(color: onFill ?? c.accentOnFill, fontWeight: FontWeight.w600)),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.sm,
+          vertical: Space.xxs,
+        ),
+        child: Text(
+          label,
+          style: AppText.footnote.copyWith(
+            color: onFill ?? c.accentOnFill,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
@@ -67,7 +93,9 @@ class ClassCard extends StatelessWidget {
     this.arrivalIcon = Icons.directions_walk,
     this.flag,
     this.trailing,
+    this.extra,
     this.action,
+    this.onTap,
   });
 
   final ClassRole role;
@@ -81,7 +109,13 @@ class ClassCard extends StatelessWidget {
   final IconData arrivalIcon;
   final String? flag;
   final Widget? trailing;
+
+  /// More under the lines above, such as how long the walk is and whether there is time.
+  final Widget? extra;
   final Widget? action;
+
+  /// Makes the whole card tappable.
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -91,58 +125,97 @@ class ClassCard extends StatelessWidget {
       ClassRole.now => (c.statusOkFill, 2.0),
       ClassRole.later => (c.separator, 1.0),
     };
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: c.surfaceContent,
+    return Material(
+      color: c.surfaceContent,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Radii.xl),
-        border: Border.all(color: borderColor, width: borderWidth),
+        side: BorderSide(color: borderColor, width: borderWidth),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(Space.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (header != null) ...[header!, const SizedBox(height: Space.xs)],
-            Row(
-              children: [
-                Expanded(child: Text(time, style: AppText.subhead.copyWith(color: c.labelSecondary))),
-                if (role == ClassRole.next) const RoleChip(label: 'Next'),
-                if (role == ClassRole.now) RoleChip(label: 'Now', fill: c.statusOkFill, onFill: c.statusOkOn),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(Space.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (header != null) ...[
+                header!,
+                const SizedBox(height: Space.xs),
               ],
-            ),
-            const SizedBox(height: Space.xs),
-            Text(title, style: AppText.headline.copyWith(color: c.labelPrimary)),
-            const SizedBox(height: Space.xxs),
-            Row(
-              children: [
-                Expanded(child: Text(room, style: AppText.callout.copyWith(color: c.labelSecondary))),
-                ?trailing,
-              ],
-            ),
-            if (arrival != null) ...[
-              const SizedBox(height: Space.xs),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(arrivalIcon, color: c.accentText),
-                  const SizedBox(width: Space.xs),
-                  Expanded(child: Text(arrival!, style: AppText.headline.copyWith(color: c.accentText))),
+                  Expanded(
+                    child: Text(
+                      time,
+                      style: AppText.subhead.copyWith(color: c.labelSecondary),
+                    ),
+                  ),
+                  if (role == ClassRole.next) const RoleChip(label: 'Next'),
+                  if (role == ClassRole.now)
+                    RoleChip(
+                      label: 'Now',
+                      fill: c.statusOkFill,
+                      onFill: c.statusOkOn,
+                    ),
                 ],
               ),
-            ],
-            if (flag != null) ...[
               const SizedBox(height: Space.xs),
+              Text(
+                title,
+                style: AppText.headline.copyWith(color: c.labelPrimary),
+              ),
+              const SizedBox(height: Space.xxs),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: c.statusTightFill),
-                  const SizedBox(width: Space.xs),
-                  Expanded(child: Text(flag!, style: AppText.subhead.copyWith(color: c.labelPrimary))),
+                  Expanded(
+                    child: Text(
+                      room,
+                      style: AppText.callout.copyWith(color: c.labelSecondary),
+                    ),
+                  ),
+                  ?trailing,
                 ],
               ),
+              if (arrival != null) ...[
+                const SizedBox(height: Space.xs),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(arrivalIcon, color: c.accentText),
+                    const SizedBox(width: Space.xs),
+                    Expanded(
+                      child: Text(
+                        arrival!,
+                        style: AppText.headline.copyWith(color: c.accentText),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              if (flag != null) ...[
+                const SizedBox(height: Space.xs),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.warning_amber_rounded, color: c.statusTightFill),
+                    const SizedBox(width: Space.xs),
+                    Expanded(
+                      child: Text(
+                        flag!,
+                        style: AppText.subhead.copyWith(color: c.labelPrimary),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              if (extra != null) ...[const SizedBox(height: Space.xs), extra!],
+              if (action != null) ...[
+                const SizedBox(height: Space.sm),
+                action!,
+              ],
             ],
-            if (action != null) ...[const SizedBox(height: Space.sm), action!],
-          ],
+          ),
         ),
       ),
     );
@@ -154,7 +227,14 @@ enum BannerKind { offline, stale, updating }
 /// Says plainly that what is on screen comes from the phone's memory: the server cannot be reached, the
 /// saved times are old, or it is asking again.
 class StatusBanner extends StatelessWidget {
-  const StatusBanner({super.key, required this.kind, required this.title, required this.body, this.actionLabel, this.onAction});
+  const StatusBanner({
+    super.key,
+    required this.kind,
+    required this.title,
+    required this.body,
+    this.actionLabel,
+    this.onAction,
+  });
 
   final BannerKind kind;
   final String title;
@@ -173,9 +253,17 @@ class StatusBanner extends StatelessWidget {
     return Semantics(
       liveRegion: true,
       child: DecoratedBox(
-        decoration: BoxDecoration(color: c.bannerFill, borderRadius: BorderRadius.circular(Radii.lg)),
+        decoration: BoxDecoration(
+          color: c.bannerFill,
+          borderRadius: BorderRadius.circular(Radii.lg),
+        ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(Space.md, Space.md, Space.md, Space.sm),
+          padding: const EdgeInsets.fromLTRB(
+            Space.md,
+            Space.md,
+            Space.md,
+            Space.sm,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,13 +271,25 @@ class StatusBanner extends StatelessWidget {
                 children: [
                   Icon(icon, color: c.accentText),
                   const SizedBox(width: Space.xs),
-                  Expanded(child: Text(title, style: AppText.headline.copyWith(color: c.labelPrimary))),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: AppText.headline.copyWith(color: c.labelPrimary),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: Space.xs),
-              Text(body, style: AppText.subhead.copyWith(color: c.labelPrimary)),
-              if (kind == BannerKind.updating) ...[const SizedBox(height: Space.xs), const LinearProgressIndicator()],
-              if (actionLabel != null) TextButton(onPressed: onAction, child: Text(actionLabel!)),
+              Text(
+                body,
+                style: AppText.subhead.copyWith(color: c.labelPrimary),
+              ),
+              if (kind == BannerKind.updating) ...[
+                const SizedBox(height: Space.xs),
+                const LinearProgressIndicator(),
+              ],
+              if (actionLabel != null)
+                TextButton(onPressed: onAction, child: Text(actionLabel!)),
             ],
           ),
         ),
@@ -198,22 +298,49 @@ class StatusBanner extends StatelessWidget {
   }
 }
 
-/// What a screen shows while a server that has sat idle wakes up: a progress bar and the reason. It is glass
-/// over the map and a solid card on a list.
-class WakingCard extends ConsumerWidget {
+/// What a screen shows while a server that has sat idle wakes up: a progress bar at once and, if the wait drags
+/// on, the reason. It is glass over the map and a solid card on a list.
+class WakingCard extends ConsumerStatefulWidget {
   const WakingCard({
     super.key,
     this.glass = false,
+    this.after = Duration.zero,
     this.title = 'Waking the server',
-    this.body = 'The free host sleeps when idle and can take up to a minute. Your saved classes are still here.',
+    this.body =
+        'Still working. The server may be waking up after sitting idle, which can take up to a minute.',
   });
 
   final bool glass;
+
+  /// How long to wait before saying why. Zero says it at once.
+  final Duration after;
   final String title;
   final String body;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WakingCard> createState() => _WakingCardState();
+}
+
+class _WakingCardState extends ConsumerState<WakingCard> {
+  Timer? _timer;
+  late bool _explaining = widget.after == Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!_explaining) {
+      _timer = Timer(widget.after, () => setState(() => _explaining = true));
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final c = context.colors;
     final content = Padding(
       padding: const EdgeInsets.all(Space.md),
@@ -221,14 +348,25 @@ class WakingCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const LinearProgressIndicator(),
-          const SizedBox(height: Space.xs),
-          Semantics(liveRegion: true, child: Text(title, style: AppText.headline.copyWith(color: c.labelPrimary))),
-          const SizedBox(height: Space.xs),
-          Text(body, style: AppText.subhead.copyWith(color: c.labelSecondary)),
+          if (_explaining) ...[
+            const SizedBox(height: Space.xs),
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                widget.title,
+                style: AppText.headline.copyWith(color: c.labelPrimary),
+              ),
+            ),
+            const SizedBox(height: Space.xs),
+            Text(
+              widget.body,
+              style: AppText.subhead.copyWith(color: c.labelSecondary),
+            ),
+          ],
         ],
       ),
     );
-    if (glass) return GlassSurface(child: content);
+    if (widget.glass) return GlassSurface(child: content);
     return DecoratedBox(
       decoration: BoxDecoration(
         color: c.surfaceContent,
@@ -242,7 +380,14 @@ class WakingCard extends ConsumerWidget {
 
 /// A row in a solid list, such as a search result. [flagged] puts a warning with a sentence under the title.
 class ListRow extends StatelessWidget {
-  const ListRow({super.key, required this.title, this.subtitle, this.icon = Icons.place_outlined, this.flagged = false, this.onTap});
+  const ListRow({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.icon = Icons.place_outlined,
+    this.flagged = false,
+    this.onTap,
+  });
 
   final String title;
   final String? subtitle;
@@ -253,38 +398,61 @@ class ListRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    return Material(
-      color: c.surfaceContent,
-      child: InkWell(
-        onTap: onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 56),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Space.md, vertical: Space.sm),
-            child: Row(
-              children: [
-                Icon(icon, color: c.labelSecondary),
-                const SizedBox(width: Space.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, style: AppText.body.copyWith(color: c.labelPrimary)),
-                      if (subtitle != null)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (flagged) ...[Icon(Icons.warning_amber_rounded, size: 18, color: c.statusTightFill), const SizedBox(width: Space.xxs)],
-                            Expanded(
-                              child: Text(subtitle!, style: AppText.subhead.copyWith(color: flagged ? c.labelPrimary : c.labelSecondary)),
-                            ),
-                          ],
+    return MergeSemantics(
+      child: Material(
+        color: c.surfaceContent,
+        child: InkWell(
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 56),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Space.md,
+                vertical: Space.sm,
+              ),
+              child: Row(
+                children: [
+                  Icon(icon, color: c.labelSecondary),
+                  const SizedBox(width: Space.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: AppText.body.copyWith(color: c.labelPrimary),
                         ),
-                    ],
+                        if (subtitle != null)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (flagged) ...[
+                                Icon(
+                                  Icons.warning_amber_rounded,
+                                  size: 18,
+                                  color: c.statusTightFill,
+                                ),
+                                const SizedBox(width: Space.xxs),
+                              ],
+                              Expanded(
+                                child: Text(
+                                  subtitle!,
+                                  style: AppText.subhead.copyWith(
+                                    color: flagged
+                                        ? c.labelPrimary
+                                        : c.labelSecondary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-                if (onTap != null) Icon(Icons.chevron_right, color: c.labelTertiary),
-              ],
+                  if (onTap != null)
+                    Icon(Icons.chevron_right, color: c.labelTertiary),
+                ],
+              ),
             ),
           ),
         ),

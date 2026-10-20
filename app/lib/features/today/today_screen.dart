@@ -7,8 +7,14 @@ import '../../core/clock.dart';
 import '../../core/format.dart';
 import '../../core/pacific.dart';
 import '../../core/waking_note.dart';
+import '../../design/controls.dart';
+import '../../design/floating_bar.dart';
+import '../../design/surfaces.dart';
+import '../../design/tokens.dart';
+import '../../design/type.dart';
 import '../arrive/arrival.dart';
 import '../campus/campus_area.dart';
+import '../going/going_to_class_screen.dart';
 import '../handoff/trip_actions.dart';
 import '../route/destination.dart';
 import '../route/route_screen.dart';
@@ -30,6 +36,7 @@ class TodayScreen extends ConsumerWidget {
     final today = ref.watch(todayProvider);
     final meetings = ref.watch(scheduleProvider).value ?? const [];
     final otherDay = ref.watch(viewedDayProvider) != null;
+    final inset = FloatingBarInset.of(context);
 
     Future<void> refresh() => ref.read(todayProvider.notifier).refresh();
 
@@ -42,45 +49,58 @@ class TodayScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Today'),
-        actions: [
-          IconButton(
-            tooltip: 'Week',
-            icon: const Icon(Icons.calendar_view_week_outlined),
-            onPressed: meetings.isEmpty
-                ? null
-                : () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const WeekScreen())),
-          ),
-          IconButton(tooltip: 'Refresh', icon: const Icon(Icons.refresh), onPressed: serverUrl.isEmpty ? null : refresh),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: refresh,
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            if (serverUrl.isEmpty)
-              _MessageCard(
-                icon: Icons.cloud_off_outlined,
-                title: 'Connect to the server',
-                body: 'The app needs the address of the campus router server to work out your walks.',
-                actionLabel: 'Open Settings',
-                onAction: () => ref.read(selectedTabProvider.notifier).select(tabSettings),
-              )
-            else
-              today.when(
-                loading: loading,
-                error: (error, _) => _MessageCard(
-                  icon: Icons.error_outline,
-                  title: "Couldn't work out your day",
-                  body: error is ApiException ? error.message : 'Something went wrong. Try again.',
-                  actionLabel: 'Try again',
-                  onAction: refresh,
-                ),
-                data: (data) => _TodayBody(data: data),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(Space.md, Space.xs, Space.md, Space.xxs),
+              child: Row(
+                children: [
+                  Expanded(child: Semantics(header: true, child: Text('Today', style: Theme.of(context).textTheme.displayMedium))),
+                  GlassIconButton(
+                    icon: Icons.calendar_view_week_outlined,
+                    tooltip: 'Week',
+                    onPressed: meetings.isEmpty
+                        ? null
+                        : () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const WeekScreen())),
+                  ),
+                  const SizedBox(width: Space.sm),
+                  GlassIconButton(icon: Icons.refresh, tooltip: 'Refresh', onPressed: serverUrl.isEmpty ? null : refresh),
+                ],
               ),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: refresh,
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(Space.md, Space.xs, Space.md, Space.md + inset),
+                  children: [
+                    if (serverUrl.isEmpty)
+                      _MessageCard(
+                        icon: Icons.cloud_off_outlined,
+                        title: 'Connect to the server',
+                        body: 'The app needs the address of the campus router server to work out your walks.',
+                        actionLabel: 'Open Settings',
+                        onAction: () => ref.read(selectedTabProvider.notifier).select(tabSettings),
+                      )
+                    else
+                      today.when(
+                        loading: loading,
+                        error: (error, _) => _MessageCard(
+                          icon: Icons.error_outline,
+                          title: "Couldn't work out your day",
+                          body: error is ApiException ? error.message : 'Something went wrong. Try again.',
+                          actionLabel: 'Try again',
+                          onAction: refresh,
+                        ),
+                        data: (data) => _TodayBody(data: data),
+                      ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -128,40 +148,37 @@ class _TodayBody extends ConsumerWidget {
       if (!viewing && data.offCampus && data.tripProblem != null) data.tripProblem!,
       if (!viewing && !trip) ...analysis.notes, // another day has no "next class" to walk to; a trip plan replaces the walk
     ];
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (data.fromSaved) _SavedBanner(data: data),
+        if (data.fromSaved) ...[_SavedBanner(data: data), const SizedBox(height: Space.sm)],
         _DayBar(viewDay: data.viewDay),
-        Text(viewing ? dayViewSummary(analysis) : todaySummary(analysis), style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 12),
-        if (trip) _TripCard(data: data, building: nextInfo?.buildingName),
-        if (analysis.banner != null && !trip) _Banner(banner: analysis.banner!),
-        if (walk != null && !viewing && !trip)
-          _WalkCard(
-            next: analysis.next!,
-            building: nextInfo?.buildingName,
-            status: walk.status,
-            text: walk.text,
-            onRoute: analysis.next == null
-                ? null
-                : () => openRoute(context, destination: RoomDestination(analysis.next!.location)),
-          ),
+        Text(viewing ? dayViewSummary(analysis) : todaySummary(analysis), style: theme.textTheme.titleLarge),
+        const SizedBox(height: Space.sm),
+        if (analysis.banner != null && !trip) ...[_LeaveBanner(banner: analysis.banner!), const SizedBox(height: Space.sm)],
+        if (trip)
+          _NextCard(data: data, building: nextInfo?.buildingName)
+        else if (walk != null && !viewing && analysis.next != null)
+          _NextCard(data: data, building: nextInfo?.buildingName, walk: walk),
         for (final note in notes)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(note, style: Theme.of(context).textTheme.bodyMedium),
+            padding: const EdgeInsets.only(top: Space.xs),
+            child: Text(note, style: theme.textTheme.bodyMedium),
           ),
         if (analysis.today.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          Text(viewing ? 'Classes on ${dayLabel(data.viewDay!)}' : "Today's classes", style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
+          const SizedBox(height: Space.md),
+          Text(viewing ? 'Classes on ${dayLabel(data.viewDay!)}' : "Today's classes", style: theme.textTheme.titleMedium),
+          const SizedBox(height: Space.xs),
           for (final t in analysis.today)
-            _TimelineTile(
-              classTime: t,
-              analysis: viewing ? null : analysis,
-              arrival: viewing ? null : data.arrivals.where((a) => a.classTime.start == t.start).firstOrNull,
-              unknownRoom: infoOf(t)?.isUnknown ?? false,
+            Padding(
+              padding: const EdgeInsets.only(bottom: Space.sm),
+              child: _ClassTile(
+                classTime: t,
+                analysis: viewing ? null : analysis,
+                arrival: viewing ? null : data.arrivals.where((a) => a.classTime.start == t.start).firstOrNull,
+                unknownRoom: infoOf(t)?.isUnknown ?? false,
+              ),
             ),
         ],
       ],
@@ -178,45 +195,22 @@ class _SavedBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final color = theme.colorScheme.onSecondaryContainer;
     final offline = data.offline;
     final lead = offline
         ? "Can't reach the server, so this is worked out on your phone."
         : 'Showing what is saved on this phone while the server answers.';
-    return Semantics(
-      liveRegion: true,
-      child: Card(
-        color: theme.colorScheme.secondaryContainer,
-        margin: const EdgeInsets.only(bottom: 12),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(offline ? Icons.cloud_off_outlined : Icons.sync, color: color),
-                  const SizedBox(width: 8),
-                  Text(offline ? 'Offline' : 'Updating…', style: theme.textTheme.titleSmall?.copyWith(color: color)),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text('$lead ${data.savedNote ?? ''}'.trim(), style: theme.textTheme.bodyMedium?.copyWith(color: color)),
-              if (offline)
-                TextButton(
-                  onPressed: () => ref.read(todayProvider.notifier).refresh(),
-                  child: const Text('Try again'),
-                )
-              else ...[
-                const SizedBox(height: 8),
-                const LinearProgressIndicator(),
-                const WakingNote(),
-              ],
-            ],
-          ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        StatusBanner(
+          kind: offline ? BannerKind.offline : BannerKind.updating,
+          title: offline ? 'Offline' : 'Updating…',
+          body: '$lead ${data.savedNote ?? ''}'.trim(),
+          actionLabel: offline ? 'Try again' : null,
+          onAction: offline ? () => ref.read(todayProvider.notifier).refresh() : null,
         ),
-      ),
+        if (!offline) const WakingNote(),
+      ],
     );
   }
 }
@@ -229,6 +223,7 @@ class _DayBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final c = context.colors;
     final meetings = ref.watch(scheduleProvider).value ?? const [];
     final nowPacific = pacificTime(ref.read(clockProvider)());
     final today = DateTime.utc(nowPacific.year, nowPacific.month, nowPacific.day);
@@ -238,11 +233,12 @@ class _DayBar extends ConsumerWidget {
     DateTime step(int days) => DateTime.utc(shown.year, shown.month, shown.day + days);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: Space.xs),
       child: Row(
         children: [
           IconButton(
             tooltip: 'Previous day',
+            color: c.accentText,
             icon: const Icon(Icons.chevron_left),
             onPressed: shown.isAfter(first) ? () => controller.show(step(-1)) : null,
           ),
@@ -262,6 +258,7 @@ class _DayBar extends ConsumerWidget {
           ),
           IconButton(
             tooltip: 'Next day',
+            color: c.accentText,
             icon: const Icon(Icons.chevron_right),
             onPressed: shown.isBefore(last) ? () => controller.show(step(1)) : null,
           ),
@@ -272,140 +269,79 @@ class _DayBar extends ConsumerWidget {
   }
 }
 
-/// A status chip that never relies on colour alone: it always carries a word.
-class StatusChip extends StatelessWidget {
-  const StatusChip({super.key, required this.status});
-
-  final String status;
-
-  @override
-  Widget build(BuildContext context) {
-    final (label, color) = switch (status) {
-      'ok' => ('OK', Colors.green.shade700),
-      'tight' => ('Tight', Colors.orange.shade800),
-      'late' => ('Late', Colors.red.shade700),
-      _ => ('?', Colors.grey.shade700),
-    };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(999)),
-      child: Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12)),
-    );
-  }
-}
-
-/// The next class, its room and the building, so a first-time student sees where they are going before anything else.
-class _ClassHeader extends StatelessWidget {
-  const _ClassHeader({required this.next, this.building});
-
-  final ClassTime next;
-  final String? building;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final where = [
-      clockFromIso(next.start),
-      next.location,
-      if (building != null && building!.isNotEmpty) building!,
-    ].join(' · ');
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Semantics(header: true, container: true, child: Text('Going to class', style: theme.textTheme.labelLarge?.copyWith(color: theme.colorScheme.primary))),
-        const SizedBox(height: 2),
-        Text(next.label, style: theme.textTheme.titleLarge),
-        Text(where, style: theme.textTheme.bodyMedium),
-      ],
-    );
-  }
-}
-
-class _WalkCard extends StatelessWidget {
-  const _WalkCard({required this.next, required this.status, required this.text, this.building, this.onRoute});
-
-  final ClassTime next;
-  final String? building;
-  final String status;
-  final String text;
-  final VoidCallback? onRoute;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _ClassHeader(next: next, building: building),
-            const SizedBox(height: 12),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                StatusChip(status: status),
-                const SizedBox(width: 10),
-                Expanded(child: Text(text)),
-              ],
-            ),
-            if (onRoute != null) ...[
-              const SizedBox(height: 12),
-              FilledButton.icon(
-                onPressed: onRoute,
-                icon: const Icon(Icons.map_outlined),
-                label: const Text('Show route'),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// For a student who is not on campus: when to be at an entry point, from the walk on campus to the class.
-class _TripCard extends StatelessWidget {
-  const _TripCard({required this.data, this.building});
+/// The next class as a card: when and where, how to get there, and the one button for it. Tapping the card
+/// opens Going to class.
+class _NextCard extends StatelessWidget {
+  const _NextCard({required this.data, this.building, this.walk});
 
   final TodayData data;
   final String? building;
 
+  /// The walk from where the student is; null for a student off campus, who gets a trip instead.
+  final ({String status, String text})? walk;
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final onColor = theme.colorScheme.onPrimaryContainer;
-    final next = data.arrivals.first;
+    final c = context.colors;
+    final trip = walk == null ? data.arrivals.first : null;
+    final next = trip?.classTime ?? data.analysis!.next!;
     final far = data.place == Whereabouts.far;
-    return Card(
-      color: theme.colorScheme.primaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: DefaultTextStyle.merge(
-          style: TextStyle(color: onColor),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final room = [next.location, if (building != null && building!.isNotEmpty) building!].join(' · ');
+    return ClassCard(
+      role: ClassRole.next,
+      time: '${clockFromIso(next.start)}–${clockFromIso(next.end)}',
+      title: next.label,
+      room: room,
+      header: trip == null
+          ? null
+          : Text(far ? "You're far from campus" : "You're not on campus yet", style: AppText.subhead.copyWith(color: c.labelSecondary)),
+      arrival: trip?.headline,
+      arrivalIcon: Icons.directions_bus_outlined,
+      extra: trip != null
+          ? Text('${trip.walkMinutes} min on foot from there, plus ${trip.bufferMinutes} min to spare.', style: AppText.subhead.copyWith(color: c.labelPrimary))
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                StatusChip(status: walk!.status),
+                const SizedBox(width: Space.xs),
+                Expanded(child: Text(walk!.text, style: AppText.subhead.copyWith(color: c.labelPrimary))),
+              ],
+            ),
+      action: trip != null
+          ? TripActions(entry: trip.entry, options: trip.options, roomLabel: next.location, far: far)
+          : (next.location.isEmpty
+              ? null
+              : FilledButton.icon(
+                  onPressed: () => openRoute(context, destination: RoomDestination(next.location)),
+                  icon: const Icon(Icons.map_outlined),
+                  label: const Text('Show route'),
+                )),
+      onTap: () => openGoingToClass(context),
+    );
+  }
+}
+
+class _LeaveBanner extends StatelessWidget {
+  const _LeaveBanner({required this.banner});
+
+  final LeaveBanner banner;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final fill = banner.late ? c.statusLateFill : c.statusTightFill;
+    final on = banner.late ? c.statusLateOn : c.statusTightOn;
+    return Semantics(
+      liveRegion: true,
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(Radii.lg)),
+        child: Padding(
+          padding: const EdgeInsets.all(Space.sm),
+          child: Row(
             children: [
-              Semantics(header: true, container: true, child: Text('Going to class', style: theme.textTheme.labelLarge?.copyWith(color: onColor))),
-              Text(next.classTime.label, style: theme.textTheme.titleMedium?.copyWith(color: onColor)),
-              Text(
-                [
-                  clockFromIso(next.classTime.start),
-                  next.classTime.location,
-                  if (building != null && building!.isNotEmpty) building!,
-                ].join(' · '),
-              ),
-              const SizedBox(height: 12),
-              Text(far ? "You're far from campus" : "You're not on campus yet", style: theme.textTheme.labelLarge?.copyWith(color: onColor)),
-              Text(next.headline, style: theme.textTheme.titleLarge?.copyWith(color: onColor)),
-              const SizedBox(height: 4),
-              Text('${next.walkMinutes} min on foot from there, plus ${next.bufferMinutes} min to spare.'),
-              const SizedBox(height: 8),
-              TripActions(
-                entry: next.entry,
-                options: next.options,
-                roomLabel: next.classTime.location,
-                far: far,
-              ),
+              Icon(Icons.directions_walk, color: on),
+              const SizedBox(width: Space.sm),
+              Expanded(child: Text(banner.text, style: AppText.headline.copyWith(color: on))),
             ],
           ),
         ),
@@ -414,37 +350,8 @@ class _TripCard extends StatelessWidget {
   }
 }
 
-class _Banner extends StatelessWidget {
-  const _Banner({required this.banner});
-
-  final LeaveBanner banner;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = banner.late ? Colors.red.shade700 : Colors.orange.shade800;
-    return Semantics(
-      liveRegion: true,
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
-        child: Row(
-          children: [
-            const Icon(Icons.directions_walk, color: Colors.white),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(banner.text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TimelineTile extends ConsumerWidget {
-  const _TimelineTile({required this.classTime, required this.analysis, this.arrival, this.unknownRoom = false});
+class _ClassTile extends ConsumerWidget {
+  const _ClassTile({required this.classTime, required this.analysis, this.arrival, this.unknownRoom = false});
 
   final ClassTime classTime;
 
@@ -478,78 +385,51 @@ class _TimelineTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final c = context.colors;
     final canSkip = DateTime.parse(classTime.end).isAfter(ref.read(clockProvider)());
     final isNow = analysis?.current?.start == classTime.start;
     final isNext = analysis?.next?.isToday == true && analysis?.next?.start == classTime.start;
-    final scheme = Theme.of(context).colorScheme;
     final transition = transitionText(classTime);
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: isNow ? scheme.primary : (isNext ? scheme.tertiary : scheme.outlineVariant),
-          width: isNow || isNext ? 2 : 1,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (transition != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    StatusChip(status: transition.status),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(transition.text, style: Theme.of(context).textTheme.bodySmall)),
-                  ],
-                ),
-              ),
-            Text(
-              '${clockFromIso(classTime.start)}–${clockFromIso(classTime.end)}'
-              '${isNow ? '  ·  now' : (isNext ? '  ·  next' : '')}',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 2),
-            Text(classTime.label, style: Theme.of(context).textTheme.titleMedium),
-            if (arrival != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Text(arrival!.headline, style: Theme.of(context).textTheme.bodyMedium),
-              ),
-            if (unknownRoom)
-              Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Text("We can't find this room on the campus map.", style: Theme.of(context).textTheme.bodySmall),
-              ),
-            Row(
+    return ClassCard(
+      role: isNow ? ClassRole.now : (isNext ? ClassRole.next : ClassRole.later),
+      time: '${clockFromIso(classTime.start)}–${clockFromIso(classTime.end)}',
+      title: classTime.label,
+      room: classTime.location,
+      header: transition == null
+          ? null
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: Text(classTime.location)),
-                if (unknownRoom)
-                  TextButton(
-                    onPressed: () => ref.read(selectedTabProvider.notifier).select(tabMap),
-                    child: const Text('Search the map'),
-                  )
-                else if (classTime.location.isNotEmpty)
-                  IconButton(
-                    tooltip: 'Route to ${classTime.label}',
-                    icon: const Icon(Icons.map_outlined),
-                    onPressed: () => openRoute(context, destination: RoomDestination(classTime.location)),
-                  ),
-                if (canSkip)
-                  PopupMenuButton<void>(
-                    tooltip: 'More for ${classTime.label}',
-                    itemBuilder: (_) => [
-                      PopupMenuItem<void>(onTap: () => _skip(context, ref), child: const Text('Skip this day')),
-                    ],
-                  ),
+                StatusChip(status: transition.status),
+                const SizedBox(width: Space.xs),
+                Expanded(child: Text(transition.text, style: AppText.footnote.copyWith(color: c.labelSecondary))),
               ],
             ),
-          ],
-        ),
+      arrival: arrival?.headline,
+      arrivalIcon: Icons.directions_bus_outlined,
+      flag: unknownRoom ? "We can't find this room on the campus map." : null,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (unknownRoom)
+            TextButton(
+              onPressed: () => ref.read(selectedTabProvider.notifier).select(tabMap),
+              child: const Text('Search the map'),
+            )
+          else if (classTime.location.isNotEmpty)
+            IconButton(
+              tooltip: 'Route to ${classTime.label}',
+              icon: const Icon(Icons.map_outlined),
+              onPressed: () => openRoute(context, destination: RoomDestination(classTime.location)),
+            ),
+          if (canSkip)
+            PopupMenuButton<void>(
+              tooltip: 'More for ${classTime.label}',
+              itemBuilder: (_) => [
+                PopupMenuItem<void>(onTap: () => _skip(context, ref), child: const Text('Skip this day')),
+              ],
+            ),
+        ],
       ),
     );
   }
@@ -576,18 +456,20 @@ class _MessageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
+    final theme = Theme.of(context);
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(Space.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 32, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(height: 8),
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 4),
-            Text(body),
-            const SizedBox(height: 12),
+            Icon(icon, size: 32, color: c.accentText),
+            const SizedBox(height: Space.sm),
+            Text(title, style: theme.textTheme.titleLarge),
+            const SizedBox(height: Space.xs),
+            Text(body, style: theme.textTheme.bodyLarge?.copyWith(color: c.labelSecondary)),
+            const SizedBox(height: Space.md),
             FilledButton(onPressed: onAction, child: Text(actionLabel)),
             if (secondaryLabel != null && onSecondary != null)
               TextButton(onPressed: onSecondary, child: Text(secondaryLabel!)),
@@ -603,19 +485,49 @@ class _LoadingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Card(
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            LinearProgressIndicator(),
-            SizedBox(height: 12),
-            Text('Working out your day…'),
-            WakingNote(),
-          ],
+    final c = context.colors;
+    Widget bar(double width) => DecoratedBox(
+          decoration: BoxDecoration(color: c.separator, borderRadius: BorderRadius.circular(6)),
+          child: SizedBox(width: width, height: 12),
+        );
+    Widget placeholder(double width) => ExcludeSemantics(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: c.surfaceContent,
+              borderRadius: BorderRadius.circular(Radii.xl),
+              border: Border.all(color: c.separator),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(Space.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [bar(120), const SizedBox(height: Space.sm), bar(width), const SizedBox(height: Space.sm), bar(100)],
+              ),
+            ),
+          ),
+        );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Card(
+          child: Padding(
+            padding: EdgeInsets.all(Space.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LinearProgressIndicator(),
+                SizedBox(height: Space.sm),
+                Text('Working out your day…'),
+                WakingNote(),
+              ],
+            ),
+          ),
         ),
-      ),
+        const SizedBox(height: Space.sm),
+        placeholder(200),
+        const SizedBox(height: Space.sm),
+        placeholder(160),
+      ],
     );
   }
 }

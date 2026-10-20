@@ -49,26 +49,17 @@ void unknownRoom(TestRig rig) => rig.schedule.nextImport = const ImportResult(
     );
 
 void main() {
-  group('the Going to class card', () {
+  group('the next class card on Today', () {
     testWidgets('names the class, the time, the room and the building, with one clear button', (tester) async {
       await open(tester);
-      expect(find.text('Going to class'), findsOneWidget);
+      expect(find.text('Next'), findsWidgets);
       expect(find.text('XYZ 10 Lecture'), findsWidgets);
-      expect(find.text('2:40 PM · Kresge Acad 3201 · Some Hall'), findsOneWidget);
+      expect(find.text('Kresge Acad 3201 · Some Hall'), findsOneWidget);
       expect(find.text('Show route'), findsOneWidget);
-    });
-
-    testWidgets('is a header for screen readers', (tester) async {
-      final handle = tester.ensureSemantics();
-      await open(tester);
-      expect(tester.getSemantics(find.text('Going to class')), matchesSemantics(isHeader: true, label: 'Going to class'));
-      handle.dispose();
     });
 
     testWidgets('off campus it says when to be at the entry point, and the button is Transit', (tester) async {
       await open(tester, at: downtown);
-      expect(find.text('Going to class'), findsOneWidget);
-      expect(find.text('2:40 PM · Kresge Acad 3201 · Some Hall'), findsOneWidget);
       expect(find.text("You're not on campus yet"), findsOneWidget);
       expect(find.text('Be at Kerr Hall bus stop by 2:20 PM'), findsWidgets);
       expect(find.text('Get to campus with Transit'), findsOneWidget);
@@ -88,6 +79,71 @@ void main() {
             expect(tester.takeException(), isNull, reason: 'unknown room');
             await open(tester, schedule: false, size: size, ratio: ratio, textScale: scale, dark: dark);
             expect(tester.takeException(), isNull, reason: 'first run');
+          });
+        }
+      }
+    }
+  });
+
+  group('the Going to class screen', () {
+    Future<void> openGoing(WidgetTester tester, {GeoPoint at = campus, void Function(TestRig)? setUp, Size size = const Size(1206, 2622), double ratio = 3.0, double textScale = 1.0, bool dark = false}) async {
+      await open(tester, at: at, setUp: setUp, size: size, ratio: ratio, textScale: textScale, dark: dark);
+      await tester.tap(find.text('XYZ 10 Lecture').first);
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 600));
+    }
+
+    testWidgets('is opened by the card and says what to do', (tester) async {
+      await openGoing(tester);
+      expect(find.text('Going to class'), findsOneWidget);
+      expect(find.text('Leave by'), findsOneWidget);
+      expect(find.text('Kresge Acad 3201 · starts 2:40 PM'), findsOneWidget);
+      expect(find.text('Some Hall'), findsOneWidget);
+      expect(find.text('Show route'), findsOneWidget);
+      expect(find.byTooltip('Back'), findsOneWidget);
+      await tester.tap(find.byTooltip('Back'));
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.text('Going to class'), findsNothing);
+    });
+
+    testWidgets('is a header for screen readers', (tester) async {
+      final handle = tester.ensureSemantics();
+      await openGoing(tester);
+      expect(tester.getSemantics(find.text('Going to class')), matchesSemantics(isHeader: true, label: 'Going to class'));
+      handle.dispose();
+    });
+
+    testWidgets('off campus the time to act is when to be at the entry point', (tester) async {
+      await openGoing(tester, at: downtown);
+      expect(find.text('Be at Kerr Hall bus stop by'), findsOneWidget);
+      expect(find.text('2:20 PM'), findsOneWidget);
+      expect(find.textContaining('10 min on foot from there, plus 10 min to spare'), findsWidgets);
+      expect(find.text('Get to campus with Transit'), findsOneWidget);
+    });
+
+    testWidgets('an unknown room says so, and offers the map search and the schedule', (tester) async {
+      await openGoing(tester, setUp: unknownRoom);
+      expect(find.text("We can't find this room"), findsOneWidget);
+      expect(find.text('Building not recognized'), findsOneWidget);
+      expect(find.text('Leave by'), findsNothing);
+      await tester.tap(find.text('Edit class'));
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.text('My schedule'), findsOneWidget);
+    });
+
+    for (final phone in phones.entries) {
+      for (final scale in [1.0, 3.0]) {
+        for (final dark in [false, true]) {
+          testWidgets('fits on ${phone.key} at ${scale}x text${dark ? ' in dark mode' : ''}', (tester) async {
+            final (size, ratio) = phone.value;
+            for (final at in [campus, downtown, sanFrancisco]) {
+              await openGoing(tester, at: at, size: size, ratio: ratio, textScale: scale, dark: dark);
+              expect(tester.takeException(), isNull, reason: '$at');
+            }
+            await openGoing(tester, setUp: unknownRoom, size: size, ratio: ratio, textScale: scale, dark: dark);
+            expect(tester.takeException(), isNull, reason: 'unknown room');
           });
         }
       }

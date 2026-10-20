@@ -249,11 +249,16 @@ class GlassTabBar extends ConsumerWidget {
     return GlassSurface(
       radius: Radii.pill,
       padding: const EdgeInsets.all(Space.xxs),
-      child: NavigationBar(
-        height: 58,
-        selectedIndex: selectedIndex,
-        onDestinationSelected: onSelected,
-        destinations: destinations,
+      // The bar floats above the home indicator, so NavigationBar must not add that inset a second time.
+      child: MediaQuery.removePadding(
+        context: context,
+        removeBottom: true,
+        child: NavigationBar(
+          height: 58,
+          selectedIndex: selectedIndex,
+          onDestinationSelected: onSelected,
+          destinations: destinations,
+        ),
       ),
     );
   }
