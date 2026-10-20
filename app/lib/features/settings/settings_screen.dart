@@ -95,7 +95,56 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Server', style: Theme.of(context).textTheme.titleMedium),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Use my location'),
+            subtitle: const Text('Starts your walk to class from where you are. Off campus, your position stays on this phone.'),
+            value: settings.useLocation,
+            onChanged: controller.setUseLocation,
+          ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Leave-now reminders'),
+            subtitle: const Text(
+              'A notification when it is time to leave for each class over the next week, even if the app is '
+              'closed. Off campus, it says when to be at a campus bus stop or parking area. They are planned '
+              'whenever the app opens, from the walk times it has saved, so open it at least once a week.',
+            ),
+            value: settings.remindersOn,
+            onChanged: _setReminders,
+          ),
+          if (_reminderMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(_reminderMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            ),
+          if (settings.remindersOn)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: _sendTest,
+                icon: const Icon(Icons.notifications_active_outlined),
+                label: const Text('Send a test notification'),
+              ),
+            ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Heads-up before leaving'),
+            subtitle: const Text('How long before it is time to leave you get a heads-up, as a notification and on Today.'),
+            trailing: DropdownButton<int>(
+              value: settings.remindLeadMinutes,
+              items: const [
+                DropdownMenuItem(value: 0, child: Text('None')),
+                DropdownMenuItem(value: 5, child: Text('5 min')),
+                DropdownMenuItem(value: 10, child: Text('10 min')),
+              ],
+              onChanged: (value) => controller.setRemindLead(value ?? 5),
+            ),
+          ),
+          const Divider(height: 32),
+          _PrivacyNote(serverUrl: settings.serverUrl),
+          const Divider(height: 32),
+          Semantics(header: true, child: Text('Advanced: server', style: Theme.of(context).textTheme.titleMedium)),
           const SizedBox(height: 8),
           TextField(
             controller: _url,
@@ -131,55 +180,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             'you allow it) each time and forgets them straight away.',
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          const Divider(height: 32),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Use my location'),
-            subtitle: const Text('Starts the walk to your next class from where you are.'),
-            value: settings.useLocation,
-            onChanged: controller.setUseLocation,
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Leave-now reminders'),
-            subtitle: const Text(
-              'A notification when it is time to leave for each class over the next week, even if the app is '
-              'closed. They are planned whenever the app opens, from the walk times it has saved, so open it '
-              'at least once a week.',
-            ),
-            value: settings.remindersOn,
-            onChanged: _setReminders,
-          ),
-          if (_reminderMessage != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(_reminderMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-            ),
-          if (settings.remindersOn)
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: _sendTest,
-                icon: const Icon(Icons.notifications_active_outlined),
-                label: const Text('Send a test notification'),
-              ),
-            ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Heads-up before leaving'),
-            subtitle: const Text('How long before it is time to leave you get a heads-up, as a notification and on Today.'),
-            trailing: DropdownButton<int>(
-              value: settings.remindLeadMinutes,
-              items: const [
-                DropdownMenuItem(value: 0, child: Text('None')),
-                DropdownMenuItem(value: 5, child: Text('5 min')),
-                DropdownMenuItem(value: 10, child: Text('10 min')),
-              ],
-              onChanged: (value) => controller.setRemindLead(value ?? 5),
-            ),
-          ),
-          const Divider(height: 32),
-          _PrivacyNote(serverUrl: settings.serverUrl),
         ],
       ),
     );
@@ -206,7 +206,15 @@ class _PrivacyNote extends StatelessWidget {
           'A schedule you paste or a calendar you import is sent as text once so the server can read it; '
           'instructor names in it are dropped there.',
         ),
-        line("Location: your position goes with a request only when Use my location is on, or when you ask for a route."),
+        line(
+          'Location on campus: your position goes with a request only when Use my location is on, or when you ask for a route.',
+        ),
+        line(
+          "Location off campus: it never leaves your phone. The server is only asked how long it takes to walk from "
+          "campus bus stops and parking to a room, never where you are. Transit and Apple Maps find where you are "
+          "themselves; the app gives them only the campus entry point you picked.",
+        ),
+        line('Entry point: the last one you pick is remembered on this phone.'),
         line('Searches: what you type in Map search.'),
         line(
           'Pictures: when you read a schedule from a picture, your phone reads it and the picture is never sent '

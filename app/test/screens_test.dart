@@ -305,7 +305,10 @@ void main() {
       await tester.scrollUntilVisible(find.text('What leaves your phone'), 300, scrollable: find.byType(Scrollable).first);
       expect(find.textContaining('Classes: to time a walk'), findsOneWidget);
       expect(find.textContaining('instructor names in it are dropped there'), findsOneWidget);
-      expect(find.textContaining('Location: your position goes with a request only when Use my location is on'), findsOneWidget);
+      expect(find.textContaining('Location on campus: your position goes with a request only when Use my location is on'), findsOneWidget);
+      expect(find.textContaining('Location off campus: it never leaves your phone'), findsOneWidget);
+      expect(find.textContaining('never where you are'), findsOneWidget);
+      expect(find.textContaining('Entry point: the last one you pick is remembered on this phone.'), findsOneWidget);
       expect(find.textContaining('Searches: what you type in Map search.'), findsOneWidget);
       expect(find.textContaining('Pictures: when you read a schedule from a picture, your phone reads it and the picture is never sent anywhere'), findsOneWidget);
       expect(find.textContaining('their room names are checked with the server'), findsOneWidget);
