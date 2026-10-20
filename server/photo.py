@@ -18,7 +18,8 @@ from pathlib import Path
 
 MODEL = "claude-opus-5-5"
 MAX_OUTPUT_TOKENS = 16000
-TIMEOUT_S = 90.0
+TIMEOUT_S = 90.0  # per try; with the one retry below, a read gives up after about three minutes
+MAX_RETRIES = 1
 MAX_IMAGE_BYTES = 5 * 1024 * 1024  # the API's per-image limit
 MEDIA_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 # On a safety decline the API re-runs the request on a fallback model inside the same call.
@@ -87,6 +88,18 @@ class PhotoError(Exception):
         super().__init__(message)
         self.status = status
         self.message = message
+
+
+OUT_OF_CREDIT_WORDS = ("usage limit", "credit balance")
+
+
+def _api_message(error):
+    """The API's own explanation from an error response, without the status line and request id the SDK
+    puts in str(error)."""
+    body = getattr(error, "body", None)
+    detail = body.get("error") if isinstance(body, dict) else None
+    message = detail.get("message") if isinstance(detail, dict) else None
+    return " ".join(message.split())[:300] if isinstance(message, str) else ""
 
 
 def _load_sdk():
@@ -170,7 +183,7 @@ def read_schedule_image(image_bytes, media_type, client=None):
         ready, reason = availability()
         if not ready:
             raise PhotoError(501, reason)
-        client = anthropic.Anthropic(api_key=api_key(), timeout=TIMEOUT_S)
+        client = anthropic.Anthropic(api_key=api_key(), timeout=TIMEOUT_S, max_retries=MAX_RETRIES)
 
     try:
         response = client.beta.messages.create(
@@ -195,7 +208,15 @@ def read_schedule_image(image_bytes, media_type, client=None):
     except anthropic.RateLimitError:
         raise PhotoError(429, "The photo reader is busy. Try again in a minute.") from None
     except anthropic.BadRequestError as e:
-        raise PhotoError(400, f"The photo reader couldn't use that image: {e.message}") from None
+        detail = _api_message(e)
+        if any(word in detail.lower() for word in OUT_OF_CREDIT_WORDS):
+            raise PhotoError(503, "The photo reader is unavailable: the server's Anthropic account has run out "
+                                  "of credit or reached its usage limit. Its owner needs to fix that. "
+                                  "Pasting your schedule works meanwhile.") from None
+        raise PhotoError(400, "The photo reader couldn't use that image" + (f": {detail}" if detail else ".")) from None
+    except anthropic.APITimeoutError:
+        raise PhotoError(504, "The photo reader took too long. Try a clearer or smaller screenshot, "
+                              "or try again.") from None
     except anthropic.APIConnectionError:
         raise PhotoError(502, "Couldn't reach the Claude API. Check the internet connection.") from None
     except anthropic.APIStatusError as e:
