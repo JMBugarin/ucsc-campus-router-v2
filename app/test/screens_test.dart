@@ -307,8 +307,8 @@ void main() {
       expect(find.textContaining('instructor names in it are dropped there'), findsOneWidget);
       expect(find.textContaining('Location: your position goes with a request only when Use my location is on'), findsOneWidget);
       expect(find.textContaining('Searches: what you type in Map search.'), findsOneWidget);
-      expect(find.textContaining('Photos: if you read a schedule from a photo, the picture goes to the server, which sends it on'), findsOneWidget);
-      expect(find.textContaining('The server keeps nothing and Anthropic handles it under its own terms'), findsOneWidget);
+      expect(find.textContaining('Pictures: when you read a schedule from a picture, your phone reads it and the picture is never sent anywhere'), findsOneWidget);
+      expect(find.textContaining('their room names are checked with the server'), findsOneWidget);
       expect(find.textContaining('keeps nothing and does not log queries or locations'), findsOneWidget);
       expect(find.textContaining('Right now this goes to router.example.'), findsOneWidget);
     });

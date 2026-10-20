@@ -39,6 +39,11 @@ class ScheduleController extends AsyncNotifier<List<Meeting>> {
         check: 'Check each class against your photo, and remove any that are wrong.',
       );
 
+  /// Adds classes the student has checked one by one, after reading them from a picture. They were read on the
+  /// phone, so no server has seen them yet.
+  Future<ImportSummary> addChecked(List<Meeting> meetings, {List<String> notes = const []}) =>
+      _merge(ImportResult(meetings: meetings, notes: notes, locations: const []));
+
   /// Adds one hand-typed class after the server has checked it.
   Future<ImportSummary> add(Meeting meeting) async => _merge(await _repo.clean([meeting]));
 
