@@ -86,7 +86,7 @@ The data tests run without the heavy geospatial packages. Rebuilding the graph o
 
 ## Privacy
 
-Your schedule is saved only on your phone. When the app needs a walk time it sends the schedule text and your location to the server, which uses them for that one answer and does not store them or log locations. A server you don't run can still see those requests, so point the app at a server you trust. Search, routing and the map need the network.
+Your schedule is saved only on your phone. When the app needs a walk time it sends the schedule text and your location to the server, which uses them for that one answer and does not store them or log locations. A server you don't run can still see those requests, so point the app at a server you trust. Search, routing and the map need the network. Settings spells out what is sent and to which server.
 
 ## License
 

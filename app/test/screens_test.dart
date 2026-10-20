@@ -300,6 +300,23 @@ void main() {
       expect(find.textContaining('not secure (http)'), findsOneWidget);
     });
 
+    testWidgets('says what leaves the phone, and which server gets it', (tester) async {
+      await openSettings(tester, url: 'https://router.example');
+      await tester.scrollUntilVisible(find.text('What leaves your phone'), 300, scrollable: find.byType(Scrollable).first);
+      expect(find.textContaining('Classes: to time a walk'), findsOneWidget);
+      expect(find.textContaining('instructor names in it are dropped there'), findsOneWidget);
+      expect(find.textContaining('Location: your position goes with a request only when Use my location is on'), findsOneWidget);
+      expect(find.textContaining('Searches: what you type in Map search.'), findsOneWidget);
+      expect(find.textContaining('keeps nothing and does not log queries or locations'), findsOneWidget);
+      expect(find.textContaining('Right now this goes to router.example.'), findsOneWidget);
+    });
+
+    testWidgets('with no server address it names none', (tester) async {
+      await openSettings(tester);
+      await tester.scrollUntilVisible(find.text('What leaves your phone'), 300, scrollable: find.byType(Scrollable).first);
+      expect(find.textContaining('Right now this goes to'), findsNothing);
+    });
+
     testWidgets('the location switch is remembered', (tester) async {
       await openSettings(tester);
       final location = find.widgetWithText(SwitchListTile, 'Use my location');
