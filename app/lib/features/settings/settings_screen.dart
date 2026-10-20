@@ -178,8 +178,43 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onChanged: (value) => controller.setRemindLead(value ?? 5),
             ),
           ),
+          const Divider(height: 32),
+          _PrivacyNote(serverUrl: settings.serverUrl),
         ],
       ),
+    );
+  }
+}
+
+/// What the app sends to the server, in plain words, and where it goes.
+class _PrivacyNote extends StatelessWidget {
+  const _PrivacyNote({required this.serverUrl});
+
+  final String serverUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final host = Uri.tryParse(serverUrl)?.host ?? '';
+    Widget line(String text) => Padding(padding: const EdgeInsets.only(top: 6), child: Text(text, style: theme.textTheme.bodyMedium));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(header: true, child: Text('What leaves your phone', style: theme.textTheme.titleMedium)),
+        line(
+          'Classes: to time a walk, the app sends your classes (course, days, times and room) to the server. '
+          'A schedule you paste or a calendar you import is sent as text once so the server can read it; '
+          'instructor names in it are dropped there.',
+        ),
+        line("Location: your position goes with a request only when Use my location is on, or when you ask for a route."),
+        line('Searches: what you type in Map search.'),
+        line(
+          'The server uses each request for that one answer, keeps nothing and does not log queries or '
+          'locations. Your schedule is saved only on this phone.',
+        ),
+        if (host.isNotEmpty)
+          line('Right now this goes to $host. A server you do not run can still see these requests, so only use one you trust.'),
+      ],
     );
   }
 }
