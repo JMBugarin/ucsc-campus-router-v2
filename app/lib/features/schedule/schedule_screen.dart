@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,9 @@ import '../settings/settings.dart';
 import '../today/today_text.dart';
 import 'add_class_dialog.dart';
 import 'meeting.dart';
+import 'photo_import.dart';
 import 'schedule_controller.dart';
+import 'schedule_repository.dart';
 
 /// Picks a calendar file and returns its text, or null if nothing was chosen. Tests replace this.
 final calendarFilePickerProvider = Provider<Future<String?> Function()>((ref) => pickCalendarFileText);
@@ -40,15 +43,16 @@ final termProvider = FutureProvider<({String start, String end})?>((ref) async {
   return null;
 });
 
-/// What the screen is waiting on the server for, or null when it is not waiting.
-class _Busy extends Notifier<String?> {
+/// What the screen is waiting on the server for, and what to say if the wait drags on, or null when it
+/// is not waiting.
+class _Busy extends Notifier<({String label, String? note})?> {
   @override
-  String? build() => null;
+  ({String label, String? note})? build() => null;
 
-  void set(String? label) => state = label;
+  void set(String? label, {String? note}) => state = label == null ? null : (label: label, note: note);
 }
 
-final _busyProvider = NotifierProvider<_Busy, String?>(_Busy.new);
+final _busyProvider = NotifierProvider<_Busy, ({String label, String? note})?>(_Busy.new);
 
 class ScheduleScreen extends ConsumerWidget {
   const ScheduleScreen({super.key});
@@ -89,13 +93,18 @@ class ScheduleScreen extends ConsumerWidget {
                 onPressed: busy == null ? () => _calendar(context, ref) : null,
               ),
               FilledButton.tonalIcon(
+                icon: const Icon(Icons.photo_camera_outlined),
+                label: const Text('Read a photo'),
+                onPressed: busy == null ? () => _photo(context, ref) : null,
+              ),
+              FilledButton.tonalIcon(
                 icon: const Icon(Icons.add),
                 label: const Text('Add a class'),
                 onPressed: busy == null ? () => _add(context, ref) : null,
               ),
             ],
           ),
-          if (busy != null) _Working(busy),
+          if (busy != null) _Working(busy.label, note: busy.note),
           const SizedBox(height: 8),
           Text(
             'Your classes are saved on this phone. Instructor names are never kept.',
@@ -143,6 +152,58 @@ class ScheduleScreen extends ConsumerWidget {
     await _run(context, ref, 'Reading your schedule…', () => ref.read(scheduleProvider.notifier).importCalendar(text!));
   }
 
+  Future<void> _photo(BuildContext context, WidgetRef ref) async {
+    final busy = ref.read(_busyProvider.notifier)..set('Checking the server…');
+    final PhotoSupport support;
+    try {
+      support = await ref.read(scheduleRepositoryProvider).photoSupport();
+    } on ApiException catch (e) {
+      if (context.mounted) _say(context, e.message);
+      return;
+    } finally {
+      busy.set(null);
+    }
+    if (!context.mounted) return;
+    if (!support.ready) {
+      _say(context, support.reason);
+      return;
+    }
+
+    final host = Uri.tryParse(ref.read(settingsProvider).serverUrl)?.host ?? '';
+    final agreed = await showDialog<bool>(context: context, builder: (_) => _PhotoDialog(host: host));
+    if (agreed != true || !context.mounted) return;
+
+    final Uint8List? chosen;
+    try {
+      chosen = await ref.read(photoPickerProvider)();
+    } on Object {
+      if (context.mounted) _say(context, "Couldn't open your photos. Try again.");
+      return;
+    }
+    if (chosen == null || !context.mounted) return;
+
+    busy.set('Preparing your photo…');
+    final PickedPhoto photo;
+    try {
+      photo = await ref.read(photoPreparerProvider)(chosen);
+    } on Object catch (e) {
+      busy.set(null);
+      if (context.mounted) _say(context, e is FormatException ? e.message : "That file isn't a photo I can read.");
+      return;
+    }
+    if (!context.mounted) {
+      busy.set(null);
+      return;
+    }
+    await _run(
+      context,
+      ref,
+      'Reading your photo…',
+      () => ref.read(scheduleProvider.notifier).importPhoto(photo),
+      note: 'Reading a photo takes a while, up to a minute or two. It goes to your server, which sends it to Claude.',
+    );
+  }
+
   Future<void> _add(BuildContext context, WidgetRef ref) async {
     // A sleeping server must not hold the form back: without the term it just starts with empty dates.
     final term = await ref.read(termProvider.future).timeout(const Duration(milliseconds: 1500), onTimeout: () => null);
@@ -173,9 +234,10 @@ class ScheduleScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     String working,
-    Future<ImportSummary> Function() action,
-  ) async {
-    final busy = ref.read(_busyProvider.notifier)..set(working);
+    Future<ImportSummary> Function() action, {
+    String? note,
+  }) async {
+    final busy = ref.read(_busyProvider.notifier)..set(working, note: note);
     String message;
     try {
       message = (await action()).message;
@@ -195,9 +257,10 @@ class ScheduleScreen extends ConsumerWidget {
 }
 
 class _Working extends StatelessWidget {
-  const _Working(this.label);
+  const _Working(this.label, {this.note});
 
   final String label;
+  final String? note;
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +268,12 @@ class _Working extends StatelessWidget {
       padding: const EdgeInsets.only(top: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [const LinearProgressIndicator(), const SizedBox(height: 8), Text(label), const WakingNote()],
+        children: [
+          const LinearProgressIndicator(),
+          const SizedBox(height: 8),
+          Text(label),
+          WakingNote(after: note == null ? const Duration(seconds: 4) : const Duration(seconds: 2), message: note),
+        ],
       ),
     );
   }
@@ -273,6 +341,33 @@ class _MeetingTile extends StatelessWidget {
           onPressed: onDelete,
         ),
       ),
+    );
+  }
+}
+
+/// Says where a photo goes before the student picks one, since this is the one import that sends a picture
+/// somewhere other than the server's own code.
+class _PhotoDialog extends StatelessWidget {
+  const _PhotoDialog({required this.host});
+
+  final String host;
+
+  @override
+  Widget build(BuildContext context) {
+    final where = host.isEmpty ? 'your server' : host;
+    return AlertDialog(
+      scrollable: true,
+      title: const Text('Read a photo of your schedule'),
+      content: Text(
+        'The photo you choose is sent to $where, which sends it on to Anthropic\'s Claude to read. '
+        'The server keeps nothing, Anthropic handles the picture under its own terms, and instructor names are dropped.\n\n'
+        'Choose a screenshot of your schedule, not a picture with other people or details in it. '
+        'Check the classes it finds afterwards, since a reading can be wrong.',
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+        FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Choose a photo')),
+      ],
     );
   }
 }
