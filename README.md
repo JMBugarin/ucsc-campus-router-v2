@@ -7,6 +7,7 @@ Many UCSC classrooms (Baskin Engineering, Thimann Labs, and more) don't appear i
 - **Map**: search a room or building ("BE 152", "kresge 3201", "Thimann 101"), see where it is, get a route. No schedule or sign-up needed.
 - **Today**: import your class schedule and see what's now and next, how long the walk is, whether you have time, and when to leave. Works offline from saved walk times.
 - **Schedule**: paste your MyUCSC schedule, import a calendar (`.ics`) file, read a screenshot or photo of it (on iOS, on the phone itself: free, private, works offline, needs no account or key), or add classes by hand. It stays on your phone.
+- **Getting to campus**: if you are not on campus, Today tells you when to be at a campus bus stop or parking area, and one button hands the trip there to the [Transit](https://transitapp.com) app. This project shows no bus times and uses no transit data or keys. See [Getting to campus](#getting-to-campus-from-off-campus).
 
 | Map search | Route | Today | Offline | Week view |
 |---|---|---|---|---|
@@ -24,9 +25,10 @@ As of October 2026. The routing engine, server, data pipeline and Android/iOS ap
 | Routing | Working: real walking paths from OpenStreetMap, elevation-aware effort, optional avoid-stairs. Straight-line distance inside buildings; floors are shown but not routed |
 | Today, week view, schedule import (paste, calendar file, by hand), reminders, day picker | Working. Reminders cover every class over the next week and are planned when the app opens; delivery is not verified on a device |
 | Photo import | iOS only. "Read a photo" on the Schedule tab reads a screenshot or photo on the phone with Apple's Vision framework, then lists the classes for you to check before anything is saved. The picture never leaves the phone, and no account or key is involved. Measured on invented schedules in the Simulator ([results](#reading-a-schedule-from-a-picture)); not tried on a real device, a real photo or a real schedule. Not available on Android |
+| Getting to campus from off campus | Working against a local server in the iOS Simulator, with the simulator's location set to campus, downtown Santa Cruz, Westside, Capitola, Scotts Valley and San Francisco, and with the server unreachable or too old to have the new path. Transit itself is not installed in the Simulator, so only the fall-back to Apple Maps was seen opening; the Transit link is checked by tests. **The deployed server needs a redeploy** for this to work: until then the app says it can't plan a trip and Today and routes behave as before. See [Getting to campus](#getting-to-campus-from-off-campus) |
 | Offline | Today works offline; search, map and routes need the server |
 | Data | 32 buildings and the 87 general-assignment classrooms. Other rooms resolve to their building's nearest door |
-| Not built | Saved places, campus shuttle/bus, a map overlay of buildings and doors |
+| Not built | Saved places, live bus information (Transit has it; this app does not), a map overlay of buildings and doors |
 
 ## Reading a schedule from a picture
 
@@ -60,6 +62,24 @@ Set 1's mistakes led to the first repairs and set 2's to the rest; set 3 was rea
 These are invented pictures in fonts and layouts the project chose, so they flatter real use: they say nothing about glare, a tilted photo of a screen, heavy compression, another app's layout or any language but English. It has not been tried on a real device, a real photo or a real schedule, and the system photo picker, a photo kept only in iCloud and a HEIC photo from the camera were not exercised. The pictures and the scripts that drew and scored them are not in the repository; the readings recorded from 22 pictures like them are, in `app/test/fixtures/ocr`, and run in CI. Reading takes about a second in the Simulator on a Mac. Android has no reader yet, so the button is not shown there.
 
 A picture that cannot be read says so and adds nothing: one with no text, text that is not a schedule, a blurry picture, or one over 120 megapixels. A very large picture is shrunk before it is read, and a table cut off part way down gives the rows that are there; each of these was tried in the Simulator.
+
+## Getting to campus from off campus
+
+Many students live off campus, and this app does not pretend to route buses. Instead it does two things.
+
+**1. It tells you when to be on campus.** When the phone is off campus, Today shows "Be at *Rachel Carson College bus stop* by *3:34 PM*" for each class still to come: the class start, minus the walk on campus paths from that entry point to the room (climbs and stairs included, the same walk time Today uses elsewhere), minus 10 minutes to spare. Leave-now reminders for those classes use the same time: a heads-up 30 minutes before it and a reminder 10 minutes before it (the app can't know how long your trip takes, so these lead times are fixed guesses). On campus, nothing changes.
+
+The entry points are 13 campus bus stops and 2 parking areas taken from OpenStreetMap ([`data/entry_points.json`](data/README.md)), each checked to sit on the walking graph. The suggested one is the nearest to you among those within 10 minutes of the shortest walk to your room; **Change entry point** lists them all with their walk to the room, and your last pick is remembered on the phone.
+
+**2. It hands the first leg to Transit.** **Get to campus with Transit** opens `transit://directions?to=<latitude>,<longitude>` for the entry point. That follows Transit's [developer page](https://www.transitapp.com/apis): `to` takes a latitude-longitude pair or a place, and leaving out a parameter uses the user's current location, so the app leaves `from` out and does not give Transit where you are. The page shows no example with coordinates, and the link has not been opened with Transit installed. If Transit isn't installed (the app checks, which is why `transit` is declared in `Info.plist`), the same trip opens in Apple Maps and a **Get Transit** button links to its App Store page. **Open in Apple Maps** also offers walking, biking, driving and public transit to the same point, using Apple's [unified Maps URLs](https://developer.apple.com/documentation/mapkit/unified-map-urls) (`/directions?destination=…&mode=…`, documented for iOS 18.4 and later; older iOS is untested). On Android the same buttons use Google Maps links.
+
+**What the app contacts, and what it does not.** Your server, for walking times from entry points to your rooms; the map tile server; and Transit or Apple Maps only when you tap them. Where you are is never sent to the server when you are off campus: the phone decides it is off campus itself, and the server is only asked about a room, never a position. No bus or timetable data is bundled, and no transit API or key is used.
+
+**Limits.**
+- No live bus information: arrival times, delays and routes are Transit's. The times here are walking times from entry points, a 10-minute cushion and the reminder leads above.
+- The walking graph covers the core campus only (roughly north of 36.986° N), so the Main Entrance and Lower Campus stops are not entry points. OpenStreetMap's gates and entrances are unnamed, so none are included.
+- A dropped pin can't be planned from off campus (only rooms and buildings), and a server older than this feature answers `/api/entry_walks` with 404, which the app reports as "This server can't plan a trip to campus yet".
+- Not tried on a physical device, with Transit installed, or on Android.
 
 ## How it works
 
@@ -119,7 +139,7 @@ The data tests run without the heavy geospatial packages. Rebuilding the graph o
 
 ## Privacy
 
-Your schedule is saved only on your phone. When the app needs a walk time it sends the schedule text and your location to the server, which uses them for that one answer and does not store them or log locations. A server you don't run can still see those requests, so point the app at a server you trust. Search, routing and the map need the network. Settings spells out what is sent and to which server.
+Your schedule is saved only on your phone. When the app needs a walk time it sends the schedule text to the server and, on campus, your location; the server uses them for that one answer and does not store them or log locations. Off campus, your location stays on the phone: the server is only asked about rooms. Opening Transit or Apple Maps gives that app the campus entry point you picked, not where you are. A server you don't run can still see the requests it receives, so point the app at a server you trust. Search, routing and the map need the network. Settings spells out what is sent and to which server.
 
 ## License
 
@@ -131,6 +151,7 @@ The code is released under the [MIT License](LICENSE). The data below keeps its 
 |---|---|---|
 | Elevation of each graph node | [USGS 3DEP](https://www.usgs.gov/3d-elevation-program) 10 m data (`ned10m`) through the [OpenTopoData](https://www.opentopodata.org/) API, fetched once by `data-pipeline/fetch_elevation.py` and committed in `graph/ucsc/nodes.csv` | USGS data is public domain. |
 | Walking network and building footprints/entrances | [OpenStreetMap](https://www.openstreetmap.org/copyright) via osmnx, committed in `graph/ucsc/` and `data/buildings.json` | © OpenStreetMap contributors, [ODbL](https://opendatacommons.org/licenses/odbl/). Derived data must keep this attribution. |
+| Campus bus stops and parking areas (entry points) | [OpenStreetMap](https://www.openstreetmap.org/copyright) through the Overpass API, chosen by hand in `data/entry_point_sources.json`, built by `data-pipeline/build_entry_points.py` into `data/entry_points.json`. Positions and names only: no routes, no timetable | © OpenStreetMap contributors, [ODbL](https://opendatacommons.org/licenses/odbl/). Derived data must keep this attribution. |
 | Classroom names ("AIS Display Name") and facility ids | The public [UCSC classroom directory](https://classrooms.ucsc.edu/), read by `data-pipeline/fetch_classrooms.py` and committed as `data/classrooms.json` | Public web pages. No license or reuse terms were found or checked; this project is not affiliated with or endorsed by UCSC. |
 | Room coordinates and floor levels | The public classroom-points layer behind the [UCSC campus map](https://maps.ucsc.edu/) (UCSC Planning, Design & Construction), also in `data/classrooms.json` | Same as above: public, read-only, terms not checked. |
 | Hand-edited names, aliases and term dates | `data/building_sources.json`, `data/search_aliases.json`, `data/holidays.json` | Written for this project. Term dates match the registrar's 2026-27 calendar as of 2026-10-19; check each new term against it. |

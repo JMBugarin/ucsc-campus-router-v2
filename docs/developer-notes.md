@@ -156,6 +156,10 @@ python fetch_elevation.py                     # fills elev_m (network; about 20 
 
 This downloads from OpenStreetMap, so the result can change as the map is edited. The covered area is set by `DEFAULT_BBOX` in `build_graph.py`. `graph/ucsc/meta.json` records the download date and a SHA-256 of each CSV (`graph_meta.py`, run by both scripts), and the pipeline tests fail if the files stop matching, so a regenerated graph shows up as a changed hash in review instead of silently changing routes. For the committed graph only an upper bound on the download date is known, the first commit's.
 
+### Entry points
+
+`data/entry_points.json` (the campus bus stops and parking areas the app plans arrivals around) is built from the hand-reviewed `data/entry_point_sources.json` by `python3 data-pipeline/build_entry_points.py`, which uses only the standard library (it asks the Overpass API for the listed OSM elements, or reads a saved answer with `--elements`). It refuses a point outside the graph's area or more than 40 m from a path, so after regenerating the graph rerun it and the pipeline tests. To add a stop, add its `node/…` or `way/…` id, name and type to the sources file and rebuild. Any change to the file needs a redeploy of the server, which serves `GET /api/entry_walks` from it.
+
 ## Benchmark results
 
 1000 random node-to-node queries on the full graph (1,960 nodes, 5,188 edges), seed 42, `make -C engine bench`, `-O2`, Apple Silicon Mac (October 2026, after elevation-aware costs were added). Costs are grade-adjusted walking effort, not plain length. Timing varies by machine, but the node counts are deterministic.
@@ -234,6 +238,8 @@ flutter drive --driver=test_driver/integration_test.dart --target=integration_te
 ```
 
 `picture_import_test.dart` and `ocr_test.dart` use the real Vision framework, so they need the simulator; the first also needs the local server for the room checks, and neither needs location: run `flutter test integration_test/picture_import_test.dart -d <id>` (a screenshot is only taken when `SHOT_DIR` is set, as above).
+
+`where_test.dart`, `off_campus_test.dart`, `trip_matrix_test.dart` and `tour_test.dart` check the off-campus flow: set the location first (`xcrun simctl location <id> set 36.9741,-122.0308` for downtown Santa Cruz, `36.9998,-122.0628` for campus, `37.7749,-122.4194` for far away), and grant location after installing, because `flutter drive` uninstalls the app when it ends and the grant goes with it. `trip_matrix_test.dart` takes `--dart-define=MODE=online|old|offline` when it is *built*: `old` expects a server without `/api/entry_walks` on port 8001 (run `server/server.py --port 8001` from a checkout of an older commit), `offline` expects nothing to listen. The simulator has no Transit app, so the Transit button opens Apple Maps; the Transit link itself is checked in `app/test/handoff_test.dart`.
 
 For `offline_test.dart` build and run the same way with `SERVER_URL=http://127.0.0.1:1` (nothing listens there). The permission is granted after installing the prebuilt app because `flutter test` reinstalls the app and loses the grant, which leaves the system prompt over the screen. `binding.takeScreenshot` returned blank images after the first one here, so screenshots are taken by the host script with `xcrun simctl io`. Notification permission cannot be granted with `simctl privacy`, so reminders are not covered. The tests check widget text, not pixels; look at the screenshots for layout.
 
