@@ -208,9 +208,8 @@ class _Table {
     if (typed != null) {
       _Column? nearest;
       for (final c in columns) {
-        if (typed.kinds.contains(c.kind) &&
-            (nearest == null || (c.left - t.left).abs() < (nearest.left - t.left).abs()))
-          nearest = c;
+        final nearer = nearest == null || (c.left - t.left).abs() < (nearest.left - t.left).abs();
+        if (typed.kinds.contains(c.kind) && nearer) nearest = c;
       }
       if (nearest != null && (nearest.left - t.left).abs() <= typed.reach * h) return nearest.kind;
     }
@@ -276,8 +275,8 @@ List<RawRow> _readBand(
   double h,
   List<String> notes,
 ) {
-  if (!band.columns.any((c) => {ColumnKind.nbr, ColumnKind.section, ColumnKind.course}.contains(c.kind)))
-    return const [];
+  final hasRowKey = band.columns.any((c) => {ColumnKind.nbr, ColumnKind.section, ColumnKind.course}.contains(c.kind));
+  if (!hasRowKey) return const [];
   if (title != null) {
     final status = courseStatus([
       for (final l in lines)
