@@ -48,7 +48,7 @@ flutter run --dart-define=SERVER_URL=http://10.0.2.2:8000
 Plain `http` is allowed only in debug builds (for the dev machine). A release build needs an `https` server address, such as the hosted deployment in `docs/hosting.md`.
 
 ## Code layout
-`lib/core` (API client, address cleanup, time formatting) and `lib/features/{today,schedule,settings,location}`. State uses Riverpod notifiers with a repository per feature, so screens and controllers are tested against fakes, and models are tested against JSON captured from the real server (`test/fixtures`, built from an invented schedule).
+`lib/core` (API client, address cleanup, time formatting) and `lib/features/{today,schedule,settings,location}`. State uses Riverpod notifiers with a repository per feature, so screens and controllers are tested against fakes, and models are tested against JSON captured from the real server (`test/fixtures`, built from an invented schedule). `server/test_app_contract.py` in the parent repo replays the same questions against the current server and fails if a fixture's field is gone or changes type.
 
 ```bash
 flutter analyze
