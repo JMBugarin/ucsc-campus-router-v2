@@ -1,45 +1,16 @@
 import 'dart:io';
-import 'dart:ui' as ui;
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:ucsc_router/features/schedule/ocr/recognized_text.dart';
 import 'package:ucsc_router/features/schedule/ocr/text_recognizer.dart';
 
-/// Runs the real Vision framework on pictures drawn here, in the iOS Simulator:
-/// `flutter test integration_test/ocr_test.dart -d <simulator>`.
-Future<String> drawPicture(
-  WidgetTester tester,
-  String name,
-  List<(String, Offset)> texts, {
-  Size size = const Size(1200, 800),
-}) async {
-  final path = '${Directory.systemTemp.path}/$name.png';
-  await tester.runAsync(() async {
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder)..drawRect(Offset.zero & size, Paint()..color = Colors.white);
-    for (final (text, at) in texts) {
-      TextPainter(
-          text: TextSpan(
-            text: text,
-            style: const TextStyle(color: Colors.black, fontSize: 32),
-          ),
-          textDirection: TextDirection.ltr,
-        )
-        ..layout()
-        ..paint(canvas, at);
-    }
-    final image = await recorder.endRecording().toImage(size.width.round(), size.height.round());
-    final png = await image.toByteData(format: ui.ImageByteFormat.png);
-    await File(path).writeAsBytes(png!.buffer.asUint8List());
-  });
-  addTearDown(() => File(path).deleteSync());
-  return path;
-}
+import 'support.dart';
 
 String squash(String text) => text.replaceAll(RegExp(r'\s+'), '').toLowerCase();
 
+/// Runs the real Vision framework on pictures drawn here, in the iOS Simulator:
+/// `flutter test integration_test/ocr_test.dart -d <simulator>`.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   const recognizer = VisionTextRecognizer();
