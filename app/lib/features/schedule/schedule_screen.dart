@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/api_client.dart';
 import '../../core/waking_note.dart';
 import '../settings/settings.dart';
+import '../today/today_text.dart';
 import 'add_class_dialog.dart';
 import 'meeting.dart';
 import 'schedule_controller.dart';
@@ -113,6 +114,7 @@ class ScheduleScreen extends ConsumerWidget {
                           meeting: meetings[i],
                           location: i < locations.length ? locations[i] : null,
                           onDelete: () => ref.read(scheduleProvider.notifier).removeAt(i),
+                          onRestore: () => ref.read(scheduleProvider.notifier).restoreAllDays(meetings[i]),
                         ),
                     ],
                   ),
@@ -220,11 +222,12 @@ class _Empty extends StatelessWidget {
 }
 
 class _MeetingTile extends StatelessWidget {
-  const _MeetingTile({required this.meeting, required this.location, required this.onDelete});
+  const _MeetingTile({required this.meeting, required this.location, required this.onDelete, required this.onRestore});
 
   final Meeting meeting;
   final LocationInfo? location;
   final VoidCallback onDelete;
+  final VoidCallback onRestore;
 
   @override
   Widget build(BuildContext context) {
@@ -245,8 +248,23 @@ class _MeetingTile extends StatelessWidget {
           : null,
       child: ListTile(
         title: Text(meeting.label.isEmpty ? '(untitled)' : meeting.label),
-        subtitle: Text(
-          '${meeting.whenLabel}  ${meeting.timeLabel}\n${meeting.location}${place == null ? '' : ' ($place)'}',
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${meeting.whenLabel}  ${meeting.timeLabel}\n${meeting.location}${place == null ? '' : ' ($place)'}'),
+            if (meeting.skipDates.isNotEmpty)
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Not meeting ${meeting.skipDates.map((d) => shortDayLabel(DateTime.parse(d))).join(', ')}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  TextButton(onPressed: onRestore, child: const Text('Restore')),
+                ],
+              ),
+          ],
         ),
         isThreeLine: true,
         trailing: IconButton(

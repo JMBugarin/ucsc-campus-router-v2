@@ -109,6 +109,9 @@ const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 
 /// `Mon, Oct 12`.
 String dayLabel(DateTime day) => '${_weekdays[day.weekday - 1]}, ${_months[day.month - 1]} ${day.day}';
 
+/// `Oct 12`.
+String shortDayLabel(DateTime day) => '${_months[day.month - 1]} ${day.day}';
+
 /// The headline when the day picker shows a day other than today.
 String dayViewSummary(Analysis a) {
   if (a.today.isEmpty) return noClassesOnOtherDayText(a.reason);

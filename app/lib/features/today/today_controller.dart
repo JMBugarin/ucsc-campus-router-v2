@@ -79,6 +79,23 @@ TodayData? savedToday({required List<Meeting> meetings, required WalkCache walks
   );
 }
 
+/// The saved class that a timeline entry shows, or null if it is no longer in the schedule.
+Meeting? meetingFor(List<Meeting> meetings, ClassTime t) {
+  final start = RegExp(r'T(\d{2}:\d{2})').firstMatch(t.start)?.group(1);
+  final day = DateTime.tryParse('${t.start.substring(0, 10)}T00:00:00Z');
+  if (day == null) return null;
+  for (final m in meetings) {
+    if (m.course == t.course &&
+        m.component == t.component &&
+        m.location == t.location &&
+        m.start == start &&
+        occursOn(m, day, const {})) {
+      return m;
+    }
+  }
+  return null;
+}
+
 /// The day the day picker is showing; null means today (whatever today is when you look).
 class ViewedDay extends Notifier<DateTime?> {
   @override
