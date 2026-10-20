@@ -86,6 +86,37 @@ class Meeting {
       location == other.location &&
       startDate == other.startDate;
 
+  /// The server accepts at most this many skipped dates for one class.
+  static const maxSkipDates = 60;
+
+  /// This class again, not meeting on [iso] either. Dates before [today] no longer matter and are
+  /// dropped. Null when there is no room left for another skipped date.
+  Meeting? skipping(String iso, {required String today}) {
+    final dates = {...skipDates.where((d) => d.compareTo(today) >= 0), iso}.toList()..sort();
+    return dates.length > maxSkipDates ? null : _withSkipDates(dates);
+  }
+
+  /// This class again, meeting on [iso] after all.
+  Meeting meetingOn(String iso) => _withSkipDates([for (final d in skipDates) if (d != iso) d]);
+
+  /// True if it does not meet on [iso] because the student skipped that day.
+  bool skips(String iso) => skipDates.contains(iso);
+
+  Meeting _withSkipDates(List<String> dates) => Meeting(
+        course: course,
+        title: title,
+        section: section,
+        component: component,
+        classNbr: classNbr,
+        days: days,
+        start: start,
+        end: end,
+        location: location,
+        startDate: startDate,
+        endDate: endDate,
+        skipDates: dates,
+      );
+
   bool _sameDays(Meeting other) =>
       days.length == other.days.length && [for (var i = 0; i < days.length; i++) days[i] == other.days[i]].every((b) => b);
 }
