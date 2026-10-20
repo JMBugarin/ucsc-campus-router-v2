@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,7 +19,6 @@ import 'package:ucsc_router/features/schedule/meeting.dart';
 import 'package:ucsc_router/features/schedule/ocr/picture_picker.dart';
 import 'package:ucsc_router/features/schedule/ocr/recognized_text.dart';
 import 'package:ucsc_router/features/schedule/ocr/text_recognizer.dart';
-import 'package:ucsc_router/features/schedule/photo_import.dart';
 import 'package:ucsc_router/features/schedule/schedule_repository.dart';
 import 'package:ucsc_router/features/schedule/schedule_screen.dart';
 import 'package:ucsc_router/features/schedule/term.dart';
@@ -92,23 +90,6 @@ class FakeScheduleRepository implements ScheduleRepository {
   @override
   Future<ImportResult> importCalendar(String text) async {
     calls.add('ics:$text');
-    return _result();
-  }
-
-  /// What the server says about reading photos; set `photoSupportFails` to make asking fail instead.
-  PhotoSupport photoSupportNow = const PhotoSupport(ready: true);
-  Object? photoSupportFails;
-
-  @override
-  Future<PhotoSupport> photoSupport() async {
-    calls.add('photo-support');
-    if (photoSupportFails != null) throw photoSupportFails!;
-    return photoSupportNow;
-  }
-
-  @override
-  Future<ImportResult> importPhoto(Uint8List bytes, String mediaType) async {
-    calls.add('photo:$mediaType:${bytes.length}');
     return _result();
   }
 
@@ -284,8 +265,6 @@ class TestRig {
     bool remindersOn = false,
     this.startTab = tabToday,
     this.now,
-    this.photoPicker,
-    this.photoPreparer,
     this.pictureImport = true,
     this.term,
     this.stubTerm = false,
@@ -328,11 +307,6 @@ class TestRig {
   /// Pins the app's clock when set (a UTC instant).
   final DateTime? now;
 
-  /// What the photo picker returns; by default nothing is chosen.
-  final Future<Uint8List?> Function()? photoPicker;
-
-  /// What turns the picked bytes into a photo to send; by default they are sent as they are, as a PNG.
-  final Future<PickedPhoto> Function(Uint8List)? photoPreparer;
   String? pickedCalendarText;
   int warmUps = 0;
 
@@ -357,8 +331,6 @@ class TestRig {
       textRecognizerProvider.overrideWithValue(recognizer),
       pictureImportAvailableProvider.overrideWithValue(pictureImport),
       if (stubTerm || term != null) termProvider.overrideWith((ref) async => term),
-      photoPickerProvider.overrideWithValue(photoPicker ?? () async => null),
-      photoPreparerProvider.overrideWithValue(photoPreparer ?? (bytes) async => PickedPhoto(bytes, 'image/png')),
     ];
   }
 

@@ -15,7 +15,7 @@
     routeNext: $("route-next"), useLocation: $("use-location"),
     paste: $("paste"), importBtn: $("import-btn"), manualForm: $("manual-form"),
     icsFile: $("ics-file"), icsBtn: $("ics-btn"), remindOn: $("remind-on"), remindLead: $("remind-lead"), leaveBanner: $("leave-banner"),
-    photoFile: $("photo-file"), photoBtn: $("photo-btn"), photoReason: $("photo-reason"), ocrBtn: $("ocr-btn"),
+    photoFile: $("photo-file"), ocrBtn: $("ocr-btn"),
     message: $("schedule-message"), meetings: $("meeting-list"), clear: $("clear-schedule"),
     once: $("m-once"), days: $("m-days"), from: $("m-from"), to: $("m-to"), toLabel: $("m-to-label"),
   };
@@ -359,30 +359,6 @@
     }
   });
 
-  /* ---- reading a photo -------------------------------------------------- */
-
-  const MAX_EDGE_PX = 2000;
-
-  // Shrink and re-encode as JPEG in the browser: smaller to send, under the 5 MB limit,
-  // and it drops metadata such as where the photo was taken.
-  async function prepareImage(file) {
-    const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, MAX_EDGE_PX / Math.max(bitmap.width, bitmap.height));
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.round(bitmap.width * scale);
-    canvas.height = Math.round(bitmap.height * scale);
-    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.88));
-    if (!blob) throw new Error("Couldn't prepare that image.");
-    const data = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result).split(",")[1]);
-      reader.onerror = () => reject(new Error("Couldn't read that image."));
-      reader.readAsDataURL(blob);
-    });
-    return { image: data, media_type: "image/jpeg" };
-  }
-
   /* ---- reading on this device (no account, nothing uploaded) ------------ */
 
   // The text reader (Tesseract.js) is loaded only when asked for, and the browser checks the
@@ -512,44 +488,11 @@
     }
   });
 
-  let photoReady = false;
-
   function updatePhotoButton() {
-    const chosen = els.photoFile.files.length > 0;
-    els.ocrBtn.disabled = !chosen;
-    els.photoBtn.disabled = !(photoReady && chosen);
-  }
-
-  async function checkPhotoSupport() {
-    try {
-      const caps = await fetch("/api/capabilities").then((r) => r.json());
-      photoReady = caps.photo.ready;
-      els.photoReason.hidden = photoReady;
-      els.photoReason.textContent = photoReady ? "" : `Not set up on this server. ${caps.photo.reason}`;
-    } catch (e) {
-      photoReady = false;
-    }
-    updatePhotoButton();
+    els.ocrBtn.disabled = els.photoFile.files.length === 0;
   }
 
   els.photoFile.addEventListener("change", updatePhotoButton);
-
-  els.photoBtn.addEventListener("click", async () => {
-    const file = els.photoFile.files[0];
-    if (!file) return;
-    els.photoBtn.disabled = true;
-    say("Reading your photo. This takes a few seconds…");
-    try {
-      const found = await post("schedule/photo", await prepareImage(file));
-      if (await addImported(found, "Check each class against your photo, and remove any that are wrong.")) {
-        els.photoFile.value = "";
-      }
-    } catch (err) {
-      say(err.message, true);
-    } finally {
-      updatePhotoButton();
-    }
-  });
 
   els.once.addEventListener("change", () => {
     const once = els.once.checked;
@@ -624,6 +567,5 @@
     }
   }
 
-  checkPhotoSupport();
   init();
 })();

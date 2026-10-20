@@ -1,7 +1,7 @@
 import AppKit
 
-// Draws an invented class schedule in the layout of the MyUCSC "Class Schedule" page, for trying photo
-// import without anyone's real schedule. server/check_photo.py runs it and knows what it should read.
+// Draws an invented class schedule in the layout of the MyUCSC "Class Schedule" page, for trying picture
+// import without anyone's real schedule.
 // Usage: swift make_sample_schedule.swift out.png
 
 let width = 1500

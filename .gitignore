@@ -15,9 +15,6 @@ engine/route
 .idea/
 .DS_Store
 
-# Optional server dependency installed locally (see README: Photo import)
-server/vendor/
-
 # Temporary local test images (never commit a real schedule)
 web/_dev/
 

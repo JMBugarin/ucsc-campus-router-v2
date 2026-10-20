@@ -24,9 +24,6 @@ API
     POST /api/schedule/parse   {"text": "..."}       read a schedule pasted from MyUCSC
     POST /api/schedule/clean   {"meetings": [...]}   validate meetings (manual entry, saved ones)
     GET  /healthz                            "ok" for a hosting platform's health check
-    GET  /api/capabilities                   what this server can do (e.g. whether photo import is set up)
-    POST /api/schedule/photo   {"image": "<base64>", "media_type": "image/jpeg"}
-                                           read a schedule from a photo with the Claude API
     POST /api/schedule/ics     {"text": "BEGIN:VCALENDAR..."}   read classes from a calendar (.ics) file
     POST /api/schedule/ocr     {"words": [{"text", "x0", "y0", "x1", "y1"}, ...]}
                                            rebuild a schedule from word positions that the browser read
@@ -64,12 +61,10 @@ from limits import RateLimiter  # noqa: E402
 from room_parser import load_campus  # noqa: E402
 import ics  # noqa: E402
 import ocr_table  # noqa: E402
-import photo  # noqa: E402
 import timetable  # noqa: E402
 
 ALGORITHMS = ("dijkstra", "astar")
 MAX_BODY_BYTES = 300_000
-PHOTO_MAX_BODY_BYTES = 8_000_000  # a 5 MB image is about 6.7 MB as base64
 OCR_MAX_BODY_BYTES = 1_000_000  # a few thousand word boxes
 ICS_MAX_BODY_BYTES = 1_200_000  # a calendar file (limited to 1M characters inside)
 DRAIN_LIMIT_BYTES = 12_000_000  # a refused upload is read and dropped up to this size, so the client sees the refusal
@@ -80,11 +75,7 @@ ENGINE_SLOTS = threading.BoundedSemaphore(int(os.environ.get("ENGINE_CONCURRENCY
 SLOW_CLIENT_TIMEOUT_S = 30  # a connection that stalls this long is dropped
 # Per client: (requests, seconds). Heavy endpoints run the routing engine, so they get a tighter limit.
 DEFAULT_LIMITS = {"general": (120, 60), "heavy": (30, 60)}
-LOOPBACK_HOSTS = ("127.0.0.1", "localhost", "::1")
-PHOTO_OFF_PUBLIC = ("Reading photos with Claude is turned off on a public server, so strangers can't spend its API "
-                    "key. The on-device reader still works.")
-HEAVY_PATHS = frozenset({"/api/route", "/api/route_to_room", "/api/today", "/api/schedule/ocr",
-                         "/api/schedule/photo"})
+HEAVY_PATHS = frozenset({"/api/route", "/api/route_to_room", "/api/today", "/api/schedule/ocr"})
 
 
 class BadRequest(Exception):
@@ -267,8 +258,7 @@ def safe_static_path(web_dir, url_path):
     return candidate
 
 
-def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, trust_proxy=False,
-                 photo_enabled=True):
+def make_handler(engine, graph_dir, web_dir, limits=None, trust_proxy=False):
     meta = json.loads((graph_dir / "meta.json").read_text(encoding="utf-8"))
     bbox = tuple(meta["bbox_west_south_east_north"])
     campus = load_campus(ROOT / "data")
@@ -278,7 +268,6 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
     def current_term():
         return timetable.term_for(terms, datetime.now(timetable.TZ).date())
     room_names = load_room_names(ROOT / "data" / "classrooms.json")
-    read_photo = photo_reader or photo.read_schedule_image  # tests pass a fake reader
     resolution_fields = ("raw", "kind", "building_id", "room", "entrances", "floor", "note",
                          "room_known", "room_point", "candidates")
 
@@ -360,11 +349,6 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                                          "term": current_term(), "terms": terms})
                 elif url.path == "/api/rooms":
                     self.send_json(200, {"rooms": room_names})
-                elif url.path == "/api/capabilities":
-                    ready, reason = (True, "") if photo_reader else photo.availability()
-                    if not photo_enabled:
-                        ready, reason = False, PHOTO_OFF_PUBLIC
-                    self.send_json(200, {"photo": {"ready": ready, "reason": reason, "model": photo.MODEL}})
                 elif url.path == "/api/route":
                     start = parse_point(query.get("start", [""])[0], bbox)
                     end = parse_point(query.get("end", [""])[0], bbox)
@@ -449,14 +433,10 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                     self.schedule_ics(self.read_json(ICS_MAX_BODY_BYTES))
                 elif url.path == "/api/schedule/ocr":
                     self.schedule_ocr(self.read_json(OCR_MAX_BODY_BYTES))
-                elif url.path == "/api/schedule/photo":
-                    self.schedule_photo(self.read_json(PHOTO_MAX_BODY_BYTES))
                 elif url.path == "/api/today":
                     self.today(self.read_json())
                 else:
                     self.send_json(404, {"error": "unknown endpoint"})
-            except photo.PhotoError as e:
-                self.send_json(e.status, {"error": e.message})
             except (BadRequest, timetable.ScheduleError) as e:
                 self.send_json(400, {"error": str(e)})
             except (RuntimeError, subprocess.TimeoutExpired, json.JSONDecodeError) as e:
@@ -486,15 +466,6 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
                 m["class_nbr"] = ""  # recognition often drops a digit, and the number is not needed
             self.send_json(200, {"meetings": meetings, "notes": notes + parse_notes, "source": "ocr",
                                  "text": text, "locations": describe_locations(meetings)})
-
-        def schedule_photo(self, body):
-            if not photo_enabled:
-                raise photo.PhotoError(403, PHOTO_OFF_PUBLIC)
-            image, media_type = photo.check_image(body.get("image"), body.get("media_type"))
-            extraction = read_photo(image, media_type)
-            meetings, notes = timetable.meetings_from_extraction(extraction, current_term())
-            self.send_json(200, {"meetings": meetings, "notes": notes, "source": "photo",
-                                 "locations": describe_locations(meetings)})
 
         def today(self, body):
             meetings = timetable.clean_schedule(body.get("meetings", []))
@@ -589,9 +560,8 @@ def make_handler(engine, graph_dir, web_dir, photo_reader=None, limits=None, tru
     return Handler
 
 
-def make_server(host, port, engine, graph_dir, web_dir, photo_reader=None, limits=None, trust_proxy=False,
-                photo_enabled=True):
-    handler = make_handler(engine, graph_dir, web_dir, photo_reader, limits, trust_proxy, photo_enabled)
+def make_server(host, port, engine, graph_dir, web_dir, limits=None, trust_proxy=False):
+    handler = make_handler(engine, graph_dir, web_dir, limits, trust_proxy)
     return ThreadingHTTPServer((host, port), handler)
 
 
@@ -609,15 +579,7 @@ def main():
     args = ap.parse_args()
     if not args.engine.exists():
         sys.exit(f"engine not found at {args.engine}; build it with: make -C engine route")
-    # The Claude photo route uses the owner's API key. On a server reachable by others it stays off
-    # unless the owner says otherwise, because anyone could then run up the bill.
-    public = args.host not in LOOPBACK_HOSTS
-    photo_enabled = not public or os.environ.get("ALLOW_PUBLIC_CLAUDE_PHOTO") == "1"
-    if public and not photo_enabled and (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")):
-        print("Note: an API key is set, but Claude photo reading is off because this server is public "
-              "(set ALLOW_PUBLIC_CLAUDE_PHOTO=1 to override).", flush=True)
-    server = make_server(args.host, args.port, args.engine, args.graph, args.web, trust_proxy=args.trust_proxy,
-                         photo_enabled=photo_enabled)
+    server = make_server(args.host, args.port, args.engine, args.graph, args.web, trust_proxy=args.trust_proxy)
     print(f"Serving on http://{args.host}:{args.port}  (Ctrl+C to stop)")
     try:
         server.serve_forever()

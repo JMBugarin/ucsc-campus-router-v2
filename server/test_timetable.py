@@ -139,65 +139,6 @@ class TestValidation(unittest.TestCase):
             sch.clean_schedule([self.good()] * (sch.MAX_MEETINGS + 1))
 
 
-class TestExtraction(unittest.TestCase):
-    TERM = {"name": "Fall 2026", "start": "2026-09-24", "end": "2026-12-04"}
-
-    def row(self, **changes):
-        base = {"course": "XYZ 10", "title": "Sample Calculus", "section": "01", "component": "Lecture",
-                "class_nbr": "20002", "days": ["Mo", "We", "Fr"], "start": "14:40", "end": "15:45",
-                "location": "Kresge Acad 3201", "start_date": "2026-09-24", "end_date": "2026-12-04",
-                "status": "Enrolled"}
-        return {**base, **changes}
-
-    def test_good_rows_become_meetings(self):
-        meetings, notes = sch.meetings_from_extraction({"classes": [self.row()], "notes": []}, self.TERM)
-        self.assertEqual(notes, [])
-        self.assertEqual((meetings[0]["days"], meetings[0]["start"], meetings[0]["location"]),
-                         ([0, 2, 4], "14:40", "Kresge Acad 3201"))
-
-    def test_dropped_and_unreadable_rows_are_reported_not_used(self):
-        data = {"classes": [
-            self.row(),
-            self.row(course="DEF 30", status="Dropped"),
-            self.row(course="BAD 1", end="13:00"),            # ends before it starts
-            self.row(course="BAD 2", days=["Xx"]),            # not a day
-            self.row(course="BAD 3", start="2pm"),            # not a time
-            "not a row",
-        ], "notes": []}
-        meetings, notes = sch.meetings_from_extraction(data, self.TERM)
-        self.assertEqual([m["course"] for m in meetings], ["XYZ 10"])
-        text = " ".join(notes)
-        for fragment in ("DEF 30 (dropped)", "BAD 1", "days for BAD 2", "BAD 3"):
-            self.assertIn(fragment, text)
-
-    def test_missing_dates_fall_back_to_the_term(self):
-        meetings, notes = sch.meetings_from_extraction(
-            {"classes": [self.row(start_date="", end_date="")], "notes": []}, self.TERM)
-        self.assertEqual((meetings[0]["start_date"], meetings[0]["end_date"]), ("2026-09-24", "2026-12-04"))
-        self.assertTrue(any("term dates" in n for n in notes))
-        meetings, notes = sch.meetings_from_extraction({"classes": [self.row(start_date="")], "notes": []}, None)
-        self.assertEqual(meetings, [])  # no term to fall back on, so the row is reported instead
-        self.assertTrue(notes)
-
-    def test_models_notes_are_passed_on_and_prefixed(self):
-        _, notes = sch.meetings_from_extraction({"classes": [], "notes": ["Row 3 is blurry", " "]}, self.TERM)
-        self.assertEqual(notes, ["From the photo: Row 3 is blurry"])
-
-    def test_nothing_found_says_so(self):
-        meetings, notes = sch.meetings_from_extraction({"classes": [], "notes": []}, self.TERM)
-        self.assertEqual((meetings, notes), ([], ["I couldn't find any classes in that image."]))
-
-    def test_numbers_and_stray_text_are_tidied_not_trusted(self):
-        meetings, _ = sch.meetings_from_extraction(
-            {"classes": [self.row(class_nbr=20002, location="  Kresge   Acad 3201  ")], "notes": []}, self.TERM)
-        self.assertEqual((meetings[0]["class_nbr"], meetings[0]["location"]), ("20002", "Kresge Acad 3201"))
-
-    def test_row_count_is_capped(self):
-        rows = [self.row(class_nbr=str(i)) for i in range(sch.MAX_MEETINGS + 20)]
-        meetings, _ = sch.meetings_from_extraction({"classes": rows, "notes": []}, self.TERM)
-        self.assertEqual(len(meetings), sch.MAX_MEETINGS)
-
-
 class TestReminders(unittest.TestCase):
     """One class at 2:40 PM and a 12 minute walk, so the student must leave at 2:28."""
 
