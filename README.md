@@ -6,7 +6,7 @@ Many UCSC classrooms (Baskin Engineering, Thimann Labs, and more) don't appear i
 
 - **Map**: search a room or building ("BE 152", "kresge 3201", "Thimann 101"), see where it is, get a route. No schedule or sign-up needed.
 - **Today**: import your class schedule and see what's now and next, how long the walk is, whether you have time, and when to leave. Works offline from saved walk times.
-- **Schedule**: paste your MyUCSC schedule, import a calendar (`.ics`) file, or add classes by hand. It stays on your phone.
+- **Schedule**: paste your MyUCSC schedule, import a calendar (`.ics`) file, read a screenshot or photo of it (on iOS, on the phone itself: free, private, works offline, needs no account or key), or add classes by hand. It stays on your phone.
 
 | Map search | Route | Today | Offline | Week view |
 |---|---|---|---|---|
@@ -16,17 +16,50 @@ _Captured on 2026-10-19 in the iOS Simulator (iPhone 17) with the simulator's lo
 
 ## Status
 
-As of October 2026. The routing engine, server, data pipeline and Android/iOS app code are working and tested (hundreds of automated tests across C, Python and Dart, run in CI). The app is covered by widget tests and by integration tests that run in the iOS Simulator ([how](docs/developer-notes.md#simulator-checks)). It has **not been run on a physical device**, so real GPS accuracy and notification timing are unverified, and notifications were not exercised in the simulator either. Photo import (screenshot to schedule) reads the picture on the phone, and has only been tried on invented schedules in the Simulator, see [developer notes](docs/developer-notes.md#photo-import).
+As of October 2026. The routing engine, server, data pipeline and Android/iOS app code are working and tested (hundreds of automated tests across C, Python and Dart, run in CI). The app is covered by widget tests and by integration tests that run in the iOS Simulator ([how](docs/developer-notes.md#simulator-checks)). It has **not been run on a physical device**, so real GPS accuracy and notification timing are unverified, and notifications were not exercised in the simulator either. Photo import (screenshot to schedule) reads the picture on the phone and has only been tried on invented schedules in the Simulator, see [Reading a schedule from a picture](#reading-a-schedule-from-a-picture).
 
 | Area | State |
 |---|---|
 | Room and building search | Working: abbreviations, partial names, typos (`/api/search`) |
 | Routing | Working: real walking paths from OpenStreetMap, elevation-aware effort, optional avoid-stairs. Straight-line distance inside buildings; floors are shown but not routed |
 | Today, week view, schedule import (paste, calendar file, by hand), reminders, day picker | Working. Reminders cover every class over the next week and are planned when the app opens; delivery is not verified on a device |
-| Photo import | iOS only. "Read a photo" on the Schedule tab reads a screenshot or photo on the phone with Apple's Vision framework, then lists the classes for you to check before anything is saved. The picture never leaves the phone, and no account or key is involved. Tried only on invented schedules in the Simulator, not on a real device or a real schedule. Not available on Android |
+| Photo import | iOS only. "Read a photo" on the Schedule tab reads a screenshot or photo on the phone with Apple's Vision framework, then lists the classes for you to check before anything is saved. The picture never leaves the phone, and no account or key is involved. Measured on invented schedules in the Simulator ([results](#reading-a-schedule-from-a-picture)); not tried on a real device, a real photo or a real schedule. Not available on Android |
 | Offline | Today works offline; search, map and routes need the server |
 | Data | 32 buildings and the 87 general-assignment classrooms. Other rooms resolve to their building's nearest door |
 | Not built | Saved places, campus shuttle/bus, a map overlay of buildings and doors |
+
+## Reading a schedule from a picture
+
+On iOS, **Read a photo** on the Schedule tab takes a screenshot or photo of your schedule (the MyUCSC Class Schedule page, or a phone calendar or timetable app). The phone reads it itself with Apple's Vision text recognition, and Dart code in the app turns the text into classes. It is free and needs no account or key, and the reading itself works offline. The picture never leaves the phone; afterwards only the room names it found are sent to the server, to check that it can place them, as it does for any class. (Without the server you can still choose the dates and save what was read.)
+
+| Check your classes | A class to look at |
+|---|---|
+| <img src="docs/screenshots/12-import-review.png" width="200" alt="The Check your classes screen listing three classes read from an invented picture"> | <img src="docs/screenshots/13-import-marked.png" width="200" alt="A class marked for the student to look at, with the room search's match one tap away"> |
+
+Nothing is saved until you tap Save on the **Check your classes** screen:
+
+- Each class can be edited (course, type, days, times, room, dates) or removed, with Undo. Cancel throws the whole import away.
+- A class the reading was not sure of is outlined and says why (`The days may be wrong`, `AM or PM was guessed`). A class that cannot be saved yet, such as one with no times, is outlined in red and Save waits.
+- A room the server cannot place is marked. The room search's best match is one tap away (`Use Porter Academic Building 148`), and `Find the room` opens the full search.
+- A picture that shows no dates (the card layouts tried here showed none) takes the term's dates from the server, or you choose them.
+
+**How well it works.** Invented schedules were drawn in six layouts (MyUCSC's page at several sizes, phone-style cards in light and dark, a compact table, an export with a row for each day, cards with everything on one line, and cards that label each field), read through the app in the iOS Simulator with the real Vision framework and a local server, and the review screen was compared with what each picture says. A class counts as right only if its course, days, start, end and room text all match. Each set was 23 pictures that had not been read before:
+
+| Layout | Set 1, before any fix | Set 2, after set 1's fixes | Set 3, final code |
+|---|---|---|---|
+| MyUCSC Class Schedule page | 20 of 26 | 18 of 30 | 28 of 28 |
+| Phone cards | 16 of 16 | 16 of 16 | 16 of 16 |
+| Compact table | 34 of 36 | 29 of 31 | 37 of 37 |
+| One row for each day | 20 of 23 | 20 of 21 | 20 of 20 |
+| Days, times and room on one line | 29 of 30 | 27 of 29 | 29 of 29 |
+| Cards that label each field | 12 of 12 | 12 of 12 | 11 of 12 |
+| **All** | **131 of 143 (92%)** | **122 of 139 (88%)** | **141 of 142 (99%)** |
+
+Set 1's mistakes led to the first repairs and set 2's to the rest; set 3 was read once, on the final code. Every wrong class was marked for review except two in set 1, where a course number read with a letter O split one class in two. The mistakes were mostly letters misread in room names (`Clrm` read as `CIrm`), an end time the phone did not read, and table headings it misread. In set 3, 24 of the 141 right classes were marked anyway, 17 of them because the server's schedule reader did not know the way the picture wrote a room (`BE 156` where it expects `J Baskin Engr 156`); the room search finds those.
+
+These are invented pictures in fonts and layouts the project chose, so they flatter real use: they say nothing about glare, a tilted photo of a screen, heavy compression, another app's layout or any language but English. It has not been tried on a real device, a real photo or a real schedule, and the system photo picker, a photo kept only in iCloud and a HEIC photo from the camera were not exercised. The pictures and the scripts that drew and scored them are not in the repository; the readings recorded from 22 pictures like them are, in `app/test/fixtures/ocr`, and run in CI. Reading takes about a second in the Simulator on a Mac. Android has no reader yet, so the button is not shown there.
+
+A picture that cannot be read says so and adds nothing: one with no text, text that is not a schedule, a blurry picture, or one over 120 megapixels. A very large picture is shrunk before it is read, and a table cut off part way down gives the rows that are there; each of these was tried in the Simulator.
 
 ## How it works
 
