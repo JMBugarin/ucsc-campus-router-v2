@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ucsc_router/app.dart';
+import 'package:ucsc_router/core/clock.dart';
 import 'package:ucsc_router/core/tiles.dart';
 import 'package:ucsc_router/features/location/location_service.dart';
 import 'package:ucsc_router/features/reminders/reminder_scheduler.dart';
@@ -198,13 +199,20 @@ class TestRig {
     bool useLocation = true,
     bool remindersOn = false,
     this.startTab = tabToday,
+    this.now,
+    Map<String, Object> prefs = const {},
   })  : schedule = FakeScheduleRepository(stored: stored),
         today = FakeTodayRepository(analysis ?? Analysis.fromJson(fixture('today_before_class'))),
         location = FakeLocationService(),
         scheduler = FakeReminderScheduler(),
         route = FakeRouteRepository(),
         search = FakeSearchRepository() {
-    SharedPreferences.setMockInitialValues({'server_url': serverUrl, 'use_location': useLocation, 'reminders_on': remindersOn});
+    SharedPreferences.setMockInitialValues({
+      'server_url': serverUrl,
+      'use_location': useLocation,
+      'reminders_on': remindersOn,
+      ...prefs,
+    });
   }
 
   final FakeScheduleRepository schedule;
@@ -214,13 +222,18 @@ class TestRig {
   final FakeRouteRepository route;
   final FakeSearchRepository search;
   final int startTab;
+
+  /// Pins the app's clock when set (a UTC instant).
+  final DateTime? now;
   String? pickedCalendarText;
   int warmUps = 0;
 
   Future<List<Override>> overrides() async {
     final prefs = await SharedPreferences.getInstance();
+    final pinned = now;
     return [
       sharedPreferencesProvider.overrideWithValue(prefs),
+      if (pinned != null) clockProvider.overrideWithValue(() => pinned),
       serverWarmUpProvider.overrideWithValue(() async => warmUps++),
       scheduleRepositoryProvider.overrideWithValue(schedule),
       todayRepositoryProvider.overrideWithValue(today),

@@ -22,6 +22,14 @@ String clock12(int hour, int minute) {
   return '$h:${minute.toString().padLeft(2, '0')} $period';
 }
 
+/// How long ago something was: `just now`, `5 min ago`, `3 h ago`, `2 days ago`.
+String agoText(Duration age) {
+  if (age.inMinutes < 1) return 'just now';
+  if (age.inMinutes < 60) return '${age.inMinutes} min ago';
+  if (age.inHours < 24) return '${age.inHours} h ago';
+  return '${age.inDays} ${age.inDays == 1 ? 'day' : 'days'} ago';
+}
+
 /// `95` as `1 h 35 min`; under a minute as `less than a minute`.
 String durationText(num minutes) {
   final total = minutes.round();

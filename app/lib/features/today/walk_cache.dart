@@ -11,9 +11,10 @@ import 'today_models.dart';
 /// Keys read `origin>destination`, where the origin is a class's location or `*` for wherever the
 /// student was. A walk to a place from anywhere is also kept as a fallback.
 class WalkCache {
-  WalkCache(this._prefs);
+  WalkCache(this._prefs, {DateTime Function()? clock}) : _clock = clock ?? DateTime.now;
 
   final SharedPreferences _prefs;
+  final DateTime Function() _clock;
 
   static const _key = 'walk_cache_v1';
 
@@ -43,6 +44,12 @@ class WalkCache {
   }
 
   bool get hasAny => _ints(_load()['walks']).isNotEmpty;
+
+  /// When the server last answered and its walk times were kept; null if never, or saved before this was recorded.
+  DateTime? get savedAt {
+    final value = _load()['at'];
+    return value is int ? DateTime.fromMillisecondsSinceEpoch(value) : null;
+  }
 
   /// Learns from an answer the server just gave.
   Future<void> remember(Analysis analysis) async {
@@ -74,7 +81,10 @@ class WalkCache {
     }
 
     final holidays = analysis.holidays.isNotEmpty ? analysis.holidays : this.holidays.toList();
-    await _prefs.setString(_key, jsonEncode({'walks': walks, 'any': any, 'holidays': holidays}));
+    await _prefs.setString(
+      _key,
+      jsonEncode({'walks': walks, 'any': any, 'holidays': holidays, 'at': _clock().millisecondsSinceEpoch}),
+    );
   }
 
   String? _lastEndedBefore(Analysis analysis, ClassTime next) {

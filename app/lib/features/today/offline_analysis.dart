@@ -101,13 +101,15 @@ ClassTime _classTime(Occurrence o, {tz.TZDateTime? now, bool isToday = true, Map
 
 /// What the server would say about [meetings] at [now], with walk times from [walks] (or none).
 ///
-/// [hasLocation] says the phone knows where the student is, so a walk starts from there.
+/// [hasLocation] says the phone knows where the student is, so a walk starts from there. With
+/// [explain] off, a missing walk time is left unmentioned (the screen is only a stopgap).
 Analysis analyzeOffline({
   required List<Meeting> meetings,
   required DateTime now,
   required Set<String> holidays,
   required WalkCache walks,
   required bool hasLocation,
+  bool explain = true,
 }) {
   final here = pacificTime(now);
   final today = occurrences(meetings, DateTime.utc(here.year, here.month, here.day), holidays);
@@ -168,7 +170,7 @@ Analysis analyzeOffline({
         freeMin = _round1(free);
         status = _spareStatus(free);
         leaveBy = isoWithOffset(next.start.subtract(Duration(minutes: minutes)));
-      } else if (next.meeting.location.isNotEmpty) {
+      } else if (explain && next.meeting.location.isNotEmpty) {
         notes.add("Offline: I don't have a saved walk time for that class yet.");
       }
     }

@@ -58,15 +58,24 @@ String walkOrigin(String from) => switch (from) {
     };
 
 /// The walk to the next class and the time to spare, or null if there is no walk to talk about.
-({String status, String text})? walkText(Analysis a) {
+/// A [saved] walk time comes from the phone's memory of an earlier answer, so it names no starting point.
+({String status, String text})? walkText(Analysis a, {bool saved = false}) {
   final next = a.next;
   final walk = a.walk;
   if (next == null || walk == null || a.freeMin == null) return null;
   final spare = spareText(a.freeMin!, leaveBy: a.leaveBy);
-  return (
-    status: spare.status,
-    text: 'Walk to ${next.location} is about ${walk.minutes} min from ${walkOrigin(walk.from)}. ${spare.text}',
-  );
+  final intro = saved
+      ? 'Saved walk time to ${next.location}: about ${walk.minutes} min.'
+      : 'Walk to ${next.location} is about ${walk.minutes} min from ${walkOrigin(walk.from)}.';
+  return (status: spare.status, text: '$intro ${spare.text}');
+}
+
+/// How old the walk times kept on the phone are, for the line under "Offline" or "Updating".
+String savedWalksText({required bool hasWalks, DateTime? savedAt, required DateTime now}) {
+  if (!hasWalks) return "No walk times are saved yet, so walks can't be timed.";
+  if (savedAt == null) return 'Walk times are from an earlier visit.';
+  final age = now.difference(savedAt);
+  return 'Walk times were last updated ${agoText(age)}.${age.inDays >= 7 ? ' They may be out of date.' : ''}';
 }
 
 /// The gap and walk between a class and the one before it, or null for the first class.
