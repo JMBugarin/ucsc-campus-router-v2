@@ -8,7 +8,6 @@ The mobile app (and the web page) talk to one server: Python plus the C routing 
 - The request logs record the method, the path and the status, **never the query string**, which is where a location travels. A test checks this.
 - The host's own infrastructure (its load balancer, for example) can still see traffic, as with any hosted service. If that matters, use a host you trust or run it yourself.
 - There are no logins. To keep a public copy from being run into the ground it has per-address rate limits (120 requests a minute, 30 for the ones that run the router), a cap of four router processes at a time, a 30-second timeout on stalled connections, and request-size limits.
-- **Claude photo reading is switched off on any server that isn't running on localhost**, so strangers can't use your API key. Don't set `ALLOW_PUBLIC_CLAUDE_PHOTO=1` on a public server unless you want exactly that. Reading a photo on the student's own device needs no key and still works.
 
 ## Render (the suggested starting point)
 
