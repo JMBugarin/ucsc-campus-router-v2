@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'features/map/map_screen.dart';
 import 'features/schedule/schedule_screen.dart';
+import 'features/settings/settings.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/today/today_controller.dart';
 import 'features/today/today_screen.dart';
@@ -60,8 +61,13 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   @override
   void initState() {
     super.initState();
-    // A new day, or a long time in the background, means yesterday's reminder plan is stale.
-    _lifecycle = AppLifecycleListener(onResume: () => ref.read(todayProvider.notifier).refresh(quiet: true));
+    ref.read(serverWarmUpProvider)();
+    // A new day, or a long time in the background, means yesterday's reminder plan is stale, and a
+    // free host may have gone back to sleep.
+    _lifecycle = AppLifecycleListener(onResume: () {
+      ref.read(serverWarmUpProvider)();
+      ref.read(todayProvider.notifier).refresh(quiet: true);
+    });
   }
 
   @override
@@ -75,7 +81,13 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     final index = ref.watch(selectedTabProvider);
     const screens = [MapScreen(), TodayScreen(), ScheduleScreen(), SettingsScreen()];
     return Scaffold(
-      body: SafeArea(child: IndexedStack(index: index, children: screens)),
+      // IndexedStack keeps hidden tabs alive but still ticking, so a spinner there would animate unseen.
+      body: SafeArea(
+        child: IndexedStack(
+          index: index,
+          children: [for (var i = 0; i < screens.length; i++) TickerMode(enabled: i == index, child: screens[i])],
+        ),
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: ref.read(selectedTabProvider.notifier).select,

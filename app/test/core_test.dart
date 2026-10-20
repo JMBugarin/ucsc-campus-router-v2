@@ -61,11 +61,16 @@ void main() {
   });
 
   group('ApiClient', () {
-    ApiClient clientFor(Future<http.Response> Function(http.Request) handler, {Duration? timeout}) =>
+    ApiClient clientFor(
+      Future<http.Response> Function(http.Request) handler, {
+      Duration? timeout,
+      List<Duration> retryDelays = const [Duration.zero, Duration.zero],
+    }) =>
         ApiClient(
           baseUrl: 'https://example.com',
           client: MockClient(handler),
           timeout: timeout ?? const Duration(seconds: 5),
+          retryDelays: retryDelays,
         );
 
     http.Response json(Object body, [int status = 200]) =>
@@ -152,6 +157,94 @@ void main() {
             .having((e) => e.kind, 'kind', ApiErrorKind.timeout)
             .having((e) => e.message, 'message', contains('waking up'))),
       );
+    });
+
+    test('a request that timed out is tried again, and the second try can succeed', () async {
+      var calls = 0;
+      final api = clientFor(
+        (r) => ++calls == 1 ? Completer<http.Response>().future : Future.value(json({'ok': true})),
+        timeout: const Duration(milliseconds: 50),
+      );
+      expect(await api.getJson('/x'), {'ok': true});
+      expect(calls, 2);
+    });
+
+    test('a request that keeps timing out is tried twice, not more', () async {
+      var calls = 0;
+      final api = clientFor((r) {
+        calls++;
+        return Completer<http.Response>().future;
+      }, timeout: const Duration(milliseconds: 20));
+      await expectLater(
+        api.getJson('/x'),
+        throwsA(isA<ApiException>().having((e) => e.kind, 'kind', ApiErrorKind.timeout)),
+      );
+      expect(calls, 2);
+    });
+
+    test('a 502, 503 or 504 while the host wakes is retried, then reported as waking up', () async {
+      for (final status in [502, 503, 504]) {
+        var calls = 0;
+        final api = clientFor((r) async {
+          calls++;
+          return http.Response('Service Unavailable', status);
+        });
+        await expectLater(
+          api.getJson('/x'),
+          throwsA(isA<ApiException>()
+              .having((e) => e.message, 'message', allOf(contains('$status'), contains('waking up')))),
+        );
+        expect(calls, 3, reason: 'the first try and one repeat per delay');
+      }
+    });
+
+    test('a refused connection is tried once more, not three times', () async {
+      var calls = 0;
+      final api = clientFor((r) async {
+        calls++;
+        throw http.ClientException('refused');
+      });
+      await expectLater(
+        api.getJson('/x'),
+        throwsA(isA<ApiException>().having((e) => e.kind, 'kind', ApiErrorKind.offline)),
+      );
+      expect(calls, 2);
+    });
+
+    test('a rejection, a rate limit or a plain 500 is not retried', () async {
+      for (final status in [400, 422, 429, 500]) {
+        var calls = 0;
+        final api = clientFor((r) async {
+          calls++;
+          return json({'error': 'No.'}, status);
+        });
+        await expectLater(api.getJson('/x'), throwsA(isA<ApiException>()));
+        expect(calls, 1, reason: '$status');
+      }
+    });
+
+    test('a POST is only repeated when the caller says that is safe', () async {
+      var calls = 0;
+      final api = clientFor((r) async {
+        calls++;
+        return http.Response('', 503);
+      });
+      await expectLater(api.postJson('/x', {}), throwsA(isA<ApiException>()));
+      expect(calls, 1);
+      calls = 0;
+      await expectLater(api.postJson('/x', {}, retry: true), throwsA(isA<ApiException>()));
+      expect(calls, 3);
+    });
+
+    test('warming up asks /healthz and never throws', () async {
+      final paths = <String>[];
+      final api = clientFor((r) async {
+        paths.add(r.url.path);
+        throw http.ClientException('down');
+      });
+      await api.warmUp();
+      expect(paths, ['/healthz']);
+      await ApiClient(baseUrl: '').warmUp();
     });
   });
 }

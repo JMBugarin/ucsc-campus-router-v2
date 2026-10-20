@@ -46,12 +46,20 @@ class ApiClient {
   ApiClient({
     required this.baseUrl,
     http.Client? client,
-    this.timeout = const Duration(seconds: 60),
+    this.timeout = const Duration(seconds: 45),
+    this.retryDelays = const [Duration(seconds: 1), Duration(seconds: 3)],
   }) : _client = client ?? http.Client();
 
   /// Like `https://example.onrender.com`, with no trailing slash. Empty means "not set up yet".
   final String baseUrl;
+
+  /// How long one try may take. A free host that went idle needs up to a minute to wake, so a request
+  /// that outlasts this is tried again rather than failed.
   final Duration timeout;
+
+  /// The pause before each repeat of a request that is safe to send twice. A timeout or a refused
+  /// connection is repeated once; a 502, 503 or 504, which a waking host answers quickly, once per entry.
+  final List<Duration> retryDelays;
   final http.Client _client;
 
   bool get isConfigured => baseUrl.isNotEmpty;
@@ -60,16 +68,29 @@ class ApiClient {
   // the same way every other failure does, instead of being thrown on the spot.
   Future<Map<String, dynamic>> getJson(String path, {Map<String, String>? query}) async {
     final uri = _uri(path, query);
-    return _send(() => _client.get(uri, headers: {'Accept': 'application/json'}));
+    return _send(() => _client.get(uri, headers: {'Accept': 'application/json'}), retry: true);
   }
 
-  Future<Map<String, dynamic>> postJson(String path, Map<String, dynamic> body) async {
+  /// [retry] is for requests that change nothing and cost nothing, so sending one twice is harmless.
+  Future<Map<String, dynamic>> postJson(String path, Map<String, dynamic> body, {bool retry = false}) async {
     final uri = _uri(path);
-    return _send(() => _client.post(
-          uri,
-          headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-          body: jsonEncode(body),
-        ));
+    return _send(
+      () => _client.post(
+        uri,
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: jsonEncode(body),
+      ),
+      retry: retry,
+    );
+  }
+
+  /// Asks a sleeping host to start waking. The answer does not matter, so this never fails.
+  Future<void> warmUp() async {
+    try {
+      await _client.get(_uri('/healthz')).timeout(const Duration(seconds: 90));
+    } on Object {
+      // the first real request tries again
+    }
   }
 
   Uri _uri(String path, [Map<String, String>? query]) {
@@ -82,7 +103,29 @@ class ApiClient {
     return Uri.parse('$baseUrl$path').replace(queryParameters: query);
   }
 
-  Future<Map<String, dynamic>> _send(Future<http.Response> Function() request) async {
+  Future<Map<String, dynamic>> _send(Future<http.Response> Function() request, {required bool retry}) async {
+    for (var tries = 1;; tries++) {
+      try {
+        return await _once(request);
+      } on ApiException catch (error) {
+        final pause = retry ? _pauseBeforeRetry(error, tries) : null;
+        if (pause == null) rethrow;
+        await Future<void>.delayed(pause);
+      }
+    }
+  }
+
+  /// How long to wait before trying again after [tries] failed tries, or null to give up.
+  Duration? _pauseBeforeRetry(ApiException error, int tries) {
+    final maxTries = switch (error.kind) {
+      ApiErrorKind.offline || ApiErrorKind.timeout => 2,
+      ApiErrorKind.server when const {502, 503, 504}.contains(error.statusCode) => retryDelays.length + 1,
+      _ => 1,
+    };
+    return tries < maxTries && tries <= retryDelays.length ? retryDelays[tries - 1] : null;
+  }
+
+  Future<Map<String, dynamic>> _once(Future<http.Response> Function() request) async {
     final http.Response response;
     try {
       response = await request().timeout(timeout);
@@ -133,6 +176,13 @@ class ApiClient {
     }
     if (status >= 400 && status < 500 && message is String) {
       throw ApiException(message, kind: ApiErrorKind.rejected, statusCode: status);
+    }
+    if (const {502, 503, 504}.contains(status)) {
+      throw ApiException(
+        "The server isn't answering (status $status). If it has been idle it may still be waking up, "
+        'so try again in a minute.',
+        statusCode: status,
+      );
     }
     throw ApiException(
       'The server had a problem (status $status). Try again in a moment.',

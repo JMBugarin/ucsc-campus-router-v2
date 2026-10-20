@@ -91,3 +91,6 @@ final apiClientProvider = Provider<ApiClient>((ref) {
   ref.onDispose(client.close);
   return client;
 });
+
+/// Pings the server so a sleeping host starts waking before the first real request. Tests replace it.
+final serverWarmUpProvider = Provider<Future<void> Function()>((ref) => () => ref.read(apiClientProvider).warmUp());

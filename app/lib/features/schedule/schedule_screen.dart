@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/api_client.dart';
+import '../../core/waking_note.dart';
 import '../settings/settings.dart';
 import 'add_class_dialog.dart';
 import 'meeting.dart';
@@ -38,6 +39,16 @@ final termProvider = FutureProvider<({String start, String end})?>((ref) async {
   return null;
 });
 
+/// What the screen is waiting on the server for, or null when it is not waiting.
+class _Busy extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void set(String? label) => state = label;
+}
+
+final _busyProvider = NotifierProvider<_Busy, String?>(_Busy.new);
+
 class ScheduleScreen extends ConsumerWidget {
   const ScheduleScreen({super.key});
 
@@ -45,6 +56,7 @@ class ScheduleScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final schedule = ref.watch(scheduleProvider);
     final locations = ref.watch(locationInfoProvider).value ?? const <LocationInfo>[];
+    final busy = ref.watch(_busyProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -68,20 +80,21 @@ class ScheduleScreen extends ConsumerWidget {
               FilledButton.tonalIcon(
                 icon: const Icon(Icons.content_paste),
                 label: const Text('Paste from MyUCSC'),
-                onPressed: () => _paste(context, ref),
+                onPressed: busy == null ? () => _paste(context, ref) : null,
               ),
               FilledButton.tonalIcon(
                 icon: const Icon(Icons.event),
                 label: const Text('Calendar file'),
-                onPressed: () => _calendar(context, ref),
+                onPressed: busy == null ? () => _calendar(context, ref) : null,
               ),
               FilledButton.tonalIcon(
                 icon: const Icon(Icons.add),
                 label: const Text('Add a class'),
-                onPressed: () => _add(context, ref),
+                onPressed: busy == null ? () => _add(context, ref) : null,
               ),
             ],
           ),
+          if (busy != null) _Working(busy),
           const SizedBox(height: 8),
           Text(
             'Your classes are saved on this phone. Instructor names are never kept.',
@@ -112,7 +125,7 @@ class ScheduleScreen extends ConsumerWidget {
   Future<void> _paste(BuildContext context, WidgetRef ref) async {
     final text = await showDialog<String>(context: context, builder: (_) => const _PasteDialog());
     if (text == null || text.trim().isEmpty || !context.mounted) return;
-    await _run(context, () => ref.read(scheduleProvider.notifier).importText(text));
+    await _run(context, ref, 'Reading your schedule…', () => ref.read(scheduleProvider.notifier).importText(text));
   }
 
   Future<void> _calendar(BuildContext context, WidgetRef ref) async {
@@ -125,16 +138,18 @@ class ScheduleScreen extends ConsumerWidget {
     }
     if (text == null) return;
     if (!context.mounted) return;
-    await _run(context, () => ref.read(scheduleProvider.notifier).importCalendar(text!));
+    await _run(context, ref, 'Reading your schedule…', () => ref.read(scheduleProvider.notifier).importCalendar(text!));
   }
 
   Future<void> _add(BuildContext context, WidgetRef ref) async {
-    final term = await ref.read(termProvider.future);
+    // A sleeping server must not hold the form back: without the term it just starts with empty dates.
+    final term = await ref.read(termProvider.future).timeout(const Duration(milliseconds: 1500), onTimeout: () => null);
+    if (term == null) ref.invalidate(termProvider);
     if (!context.mounted) return;
     final meeting = await showDialog<Meeting>(context: context, builder: (_) => AddClassDialog(term: term));
     if (meeting == null) return;
     if (!context.mounted) return;
-    await _run(context, () => ref.read(scheduleProvider.notifier).add(meeting));
+    await _run(context, ref, 'Checking the class…', () => ref.read(scheduleProvider.notifier).add(meeting));
   }
 
   Future<void> _confirmClear(BuildContext context, WidgetRef ref) async {
@@ -152,19 +167,45 @@ class ScheduleScreen extends ConsumerWidget {
     if (ok == true) await ref.read(scheduleProvider.notifier).clear();
   }
 
-  Future<void> _run(BuildContext context, Future<ImportSummary> Function() action) async {
+  Future<void> _run(
+    BuildContext context,
+    WidgetRef ref,
+    String working,
+    Future<ImportSummary> Function() action,
+  ) async {
+    final busy = ref.read(_busyProvider.notifier)..set(working);
+    String message;
     try {
-      final summary = await action();
-      if (context.mounted) _say(context, summary.message);
+      message = (await action()).message;
     } on ApiException catch (e) {
-      if (context.mounted) _say(context, e.message);
+      message = e.message;
+    } finally {
+      busy.set(null);
     }
+    if (context.mounted) _say(context, message);
   }
 
   void _say(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message), duration: const Duration(seconds: 8)));
+  }
+}
+
+class _Working extends StatelessWidget {
+  const _Working(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [const LinearProgressIndicator(), const SizedBox(height: 8), Text(label), const WakingNote()],
+      ),
+    );
   }
 }
 

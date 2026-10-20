@@ -77,22 +77,36 @@ class TodayController extends AsyncNotifier<TodayData> {
     if (interval != null) _timer = Timer.periodic(interval, (_) => refresh(quiet: true));
     ref.onDispose(() => _timer?.cancel());
 
-    return _compute(meetings, settings, viewDay);
+    return _guarded(() => _compute(meetings, settings, viewDay));
   }
 
   /// Recomputes now. A [quiet] refresh (the timer) keeps showing the last answer if it fails,
   /// rather than replacing a useful screen with an error; a manual refresh shows the error.
+  /// A quiet refresh is skipped while another is still waiting, so a server that is slow to wake
+  /// does not collect a pile of identical requests.
   Future<void> refresh({bool quiet = false}) async {
+    if (quiet && _inFlight > 0) return;
     final meetings = ref.read(scheduleProvider).value ?? const <Meeting>[];
     final settings = ref.read(settingsProvider);
     AsyncValue<TodayData> result;
     try {
-      result = AsyncData(await _compute(meetings, settings, ref.read(viewedDayProvider)));
+      result = AsyncData(await _guarded(() => _compute(meetings, settings, ref.read(viewedDayProvider))));
     } catch (error, stackTrace) {
       result = AsyncError(error, stackTrace);
     }
     if (quiet && result.hasError && state.hasValue) return;
     state = result;
+  }
+
+  var _inFlight = 0;
+
+  Future<TodayData> _guarded(Future<TodayData> Function() job) async {
+    _inFlight++;
+    try {
+      return await job();
+    } finally {
+      _inFlight--;
+    }
   }
 
   Future<TodayData> _compute(List<Meeting> meetings, Settings settings, DateTime? viewDay) async {
