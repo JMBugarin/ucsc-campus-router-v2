@@ -293,6 +293,11 @@ def _occ_dict(occ, now=None):
     return d
 
 
+def walk_minutes(effort_m):
+    """Whole minutes to walk this much climb-adjusted distance."""
+    return math.ceil(effort_m / WALK_SPEED_M_PER_S / 60.0)
+
+
 def _walk_info(walker, origin, destination):
     """Ask the walker for a walk; returns the result plus whole minutes, or None."""
     if walker is None or origin is None:
@@ -304,7 +309,7 @@ def _walk_info(walker, origin, destination):
     meters = result["meters"] + indoor
     effort = result.get("effective_m", result["meters"]) + indoor  # climbs make a walk take longer
     return {**result, "total_m": round(meters, 1),
-            "minutes": math.ceil(effort / WALK_SPEED_M_PER_S / 60.0)}
+            "minutes": walk_minutes(effort)}
 
 
 def _clock12(moment):

@@ -23,6 +23,9 @@ API
                                            /api/route_to_room is the same endpoint under its old name
     POST /api/schedule/parse   {"text": "..."}       read a schedule pasted from MyUCSC
     POST /api/schedule/clean   {"meetings": [...]}   validate meetings (manual entry, saved ones)
+    GET /api/entry_walks?room=Kresge+Acad+3201[&avoid_stairs=1]
+                                           the walk from each campus entry point (bus stops, parking) to
+                                           a room, shortest first. Takes no coordinates from the phone.
     GET  /healthz                            "ok" for a hosting platform's health check
     POST /api/schedule/ics     {"text": "BEGIN:VCALENDAR..."}   read classes from a calendar (.ics) file
     POST /api/schedule/ocr     {"words": [{"text", "x0", "y0", "x1", "y1"}, ...]}
@@ -75,7 +78,7 @@ ENGINE_SLOTS = threading.BoundedSemaphore(int(os.environ.get("ENGINE_CONCURRENCY
 SLOW_CLIENT_TIMEOUT_S = 30  # a connection that stalls this long is dropped
 # Per client: (requests, seconds). Heavy endpoints run the routing engine, so they get a tighter limit.
 DEFAULT_LIMITS = {"general": (120, 60), "heavy": (30, 60)}
-HEAVY_PATHS = frozenset({"/api/route", "/api/route_to_room", "/api/today", "/api/schedule/ocr"})
+HEAVY_PATHS = frozenset({"/api/route", "/api/route_to_room", "/api/entry_walks", "/api/today", "/api/schedule/ocr"})
 
 
 class BadRequest(Exception):
@@ -213,6 +216,13 @@ def load_room_names(path):
     return sorted(r["ais_display_name"] for r in rooms)
 
 
+def load_entry_points(path):
+    """The campus entry points in data/entry_points.json; a missing file means none."""
+    if not path.exists():
+        return []
+    return json.loads(path.read_text(encoding="utf-8"))["entry_points"]
+
+
 def make_walker(engine, graph_dir, campus):
     """A walker(origin, destination_text) for timetable.analyze, backed by the router.
 
@@ -249,6 +259,14 @@ def make_walker(engine, graph_dir, campus):
     return walker
 
 
+def unwalkable(res, candidate_names):
+    """The 422 body for a location with nowhere to walk (online, no room yet, or not recognised)."""
+    reason = {"online": "that class is online, so there is nowhere to walk",
+              "tba": "that class has no room yet",
+              "unknown": "I don't recognise that location"}[res.kind]
+    return {"error": reason, "kind": res.kind, "candidates": res.candidates, "candidate_names": candidate_names}
+
+
 def safe_static_path(web_dir, url_path):
     """Map a URL path to a file under web_dir, or None if it escapes or is missing."""
     rel = "index.html" if url_path in ("", "/") else url_path.lstrip("/")
@@ -268,6 +286,7 @@ def make_handler(engine, graph_dir, web_dir, limits=None, trust_proxy=False):
     def current_term():
         return timetable.term_for(terms, datetime.now(timetable.TZ).date())
     room_names = load_room_names(ROOT / "data" / "classrooms.json")
+    entry_points = load_entry_points(ROOT / "data" / "entry_points.json")
     resolution_fields = ("raw", "kind", "building_id", "room", "entrances", "floor", "note",
                          "room_known", "room_point", "candidates")
 
@@ -368,6 +387,8 @@ def make_handler(engine, graph_dir, web_dir, limits=None, trust_proxy=False):
                     self.send_json(200, resolution_dict(campus.resolve(query.get("q", [""])[0])))
                 elif url.path in ("/api/route_to", "/api/route_to_room"):
                     self.route_to(query, bbox)
+                elif url.path == "/api/entry_walks":
+                    self.entry_walks(query)
                 elif url.path.startswith("/api/"):
                     self.send_json(404, {"error": "unknown endpoint"})
                 else:
@@ -497,6 +518,31 @@ def make_handler(engine, graph_dir, web_dir, limits=None, trust_proxy=False):
             result["holidays"] = sorted(d.isoformat() for d in holidays)  # so a phone can work offline
             self.send_json(200, result)
 
+        def entry_walks(self, query):
+            text = query.get("room", [""])[0]
+            if not text.strip() or len(text) > 100:
+                raise BadRequest("room must be a schedule location such as 'Kresge Acad 3201'")
+            res = campus.resolve(text)
+            if res.kind != "building":
+                self.send_json(422, unwalkable(res, resolution_dict(res)["candidate_names"]))
+                return
+            avoid_stairs = query.get("avoid_stairs", ["0"])[0] == "1"
+            walks = []
+            for point in entry_points:
+                chosen = best_entrance(engine, graph_dir, (point["lat"], point["lon"]), res.entrances,
+                                       res.room_point, avoid_stairs)
+                if chosen is None:
+                    continue
+                _, walk_m, indoor_m, effective_m, stairs_m = chosen
+                walks.append({**{k: point[k] for k in ("id", "name", "type", "lat", "lon")},
+                              "minutes": timetable.walk_minutes(effective_m + indoor_m),
+                              "walk_m": round(walk_m + indoor_m, 1),
+                              "stairs_m": round(stairs_m, 1)})
+            walks.sort(key=lambda w: (w["minutes"], w["walk_m"]))
+            self.send_json(200, {"room": {"building_name": campus.buildings[res.building_id]["name"],
+                                          "room": res.room, "floor": res.floor, "room_known": res.room_known},
+                                 "entry_points": walks})
+
         def route_to(self, query, bbox):
             start = parse_point(query.get("start", [""])[0], bbox)
             if query.get("to"):
@@ -510,11 +556,7 @@ def make_handler(engine, graph_dir, web_dir, limits=None, trust_proxy=False):
                     raise BadRequest("room must be a schedule location such as 'Kresge Acad 3201', or give to=LAT,LON")
                 res = campus.resolve(text)
                 if res.kind != "building":
-                    reason = {"online": "that class is online, so there is nowhere to walk",
-                              "tba": "that class has no room yet",
-                              "unknown": "I don't recognise that location"}[res.kind]
-                    self.send_json(422, {"error": reason, "kind": res.kind, "candidates": res.candidates,
-                                         "candidate_names": resolution_dict(res)["candidate_names"]})
+                    self.send_json(422, unwalkable(res, resolution_dict(res)["candidate_names"]))
                     return
                 entrances, room_point = res.entrances, res.room_point
             avoid_stairs = query.get("avoid_stairs", ["0"])[0] == "1"
