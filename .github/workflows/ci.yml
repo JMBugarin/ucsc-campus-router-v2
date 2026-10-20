@@ -59,6 +59,8 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
+      - name: Tests again in a time zone a day ahead of Pacific, where the calendar date differs
+        run: TZ=Pacific/Kiritimati flutter test
 
   container:
     name: Server container image
