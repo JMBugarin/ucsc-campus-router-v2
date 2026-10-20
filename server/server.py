@@ -47,6 +47,7 @@ import subprocess
 import sys
 import threading
 import time
+from collections import OrderedDict
 from datetime import date, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -132,6 +133,50 @@ def run_engine(engine, graph_dir, algo, start, end, explored=True, avoid_stairs=
     return json.loads(proc.stdout)
 
 
+class Remembered:
+    """A small least-recently-used memory that request threads can share."""
+
+    def __init__(self, size):
+        self.size = size
+        self._items = OrderedDict()
+        self._lock = threading.Lock()
+
+    def get(self, key):
+        """The value kept for key, or None."""
+        with self._lock:
+            if key not in self._items:
+                return None
+            self._items.move_to_end(key)
+            return self._items[key]
+
+    def put(self, key, value):
+        with self._lock:
+            self._items[key] = value
+            self._items.move_to_end(key)
+            while len(self._items) > self.size:
+                self._items.popitem(last=False)
+
+    def clear(self):
+        with self._lock:
+            self._items.clear()
+
+
+DOOR_WALKS = Remembered(20_000)
+
+
+def door_walk(engine, graph_dir, start, door, avoid_stairs=False):
+    """The A* walk from start to a door (see run_engine). The graph does not change while the server
+    runs and a phone asks about the same places again and again, so a walk is remembered; starts
+    within about a meter of each other share one."""
+    key = (str(engine), str(graph_dir), round(start[0], 5), round(start[1], 5),
+           round(door[0], 6), round(door[1], 6), avoid_stairs)
+    walk = DOOR_WALKS.get(key)
+    if walk is None:
+        walk = run_engine(engine, graph_dir, "astar", start, door, explored=False, avoid_stairs=avoid_stairs)
+        DOOR_WALKS.put(key, walk)
+    return walk
+
+
 def best_entrance(engine, graph_dir, start, entrances, room_point=None, avoid_stairs=False):
     """Pick the door with the least effort from start: the climb-adjusted walk plus, when the
     room's own point is known, the straight-line distance from that door to the room.
@@ -145,8 +190,7 @@ def best_entrance(engine, graph_dir, start, entrances, room_point=None, avoid_st
         if key in seen:
             continue
         seen.add(key)
-        r = run_engine(engine, graph_dir, "astar", start, (e["lat"], e["lon"]), explored=False,
-                       avoid_stairs=avoid_stairs)
+        r = door_walk(engine, graph_dir, start, (e["lat"], e["lon"]), avoid_stairs)
         if not r["found"]:
             continue
         indoor = 0.0

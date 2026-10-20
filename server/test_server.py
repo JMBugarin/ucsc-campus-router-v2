@@ -3,6 +3,7 @@
 import base64
 import json
 import os
+import subprocess
 import threading
 import unittest
 import urllib.error
@@ -42,6 +43,61 @@ class TestHelpers(unittest.TestCase):
         self.assertIsNone(srv.safe_static_path(web, "/../server/server.py"))
         self.assertIsNone(srv.safe_static_path(web, "/%2e%2e/README.md"))
         self.assertIsNone(srv.safe_static_path(web, "/does-not-exist.js"))
+
+
+class TestRemembered(unittest.TestCase):
+    def test_the_least_recently_used_goes_first(self):
+        memory = srv.Remembered(2)
+        memory.put("a", 1)
+        memory.put("b", 2)
+        self.assertEqual(memory.get("a"), 1)  # a was used, so b is now the oldest
+        memory.put("c", 3)
+        self.assertEqual((memory.get("a"), memory.get("b"), memory.get("c")), (1, None, 3))
+        memory.clear()
+        self.assertIsNone(memory.get("a"))
+
+    def test_threads_can_share_it(self):
+        memory = srv.Remembered(50)
+        workers = [threading.Thread(target=lambda n=n: [memory.put((n, i), i) or memory.get((n, i - 1)) for i in range(200)])
+                   for n in range(8)]
+        for w in workers:
+            w.start()
+        for w in workers:
+            w.join()
+        self.assertLessEqual(len(memory._items), 50)
+
+    def test_a_walk_is_asked_of_the_engine_once_for_starts_a_meter_apart(self):
+        srv.DOOR_WALKS.clear()
+        asked = []
+
+        def fake_engine(engine, graph, algo, start, end, explored=True, avoid_stairs=False):
+            asked.append((start, end, avoid_stairs))
+            return {"found": True, "distance_m": 10.0, "effective_m": 12.0, "stairs_m": 0.0}
+
+        with mock.patch.object(srv, "run_engine", fake_engine):
+            door = (36.9995, -122.0630)
+            first = srv.door_walk("e", "g", (36.99912345, -122.06312345), door)
+            again = srv.door_walk("e", "g", (36.99912346, -122.06312346), door)  # a centimeter away
+            srv.door_walk("e", "g", (36.9992, -122.0632), door)  # tens of meters away
+            srv.door_walk("e", "g", (36.99912345, -122.06312345), door, avoid_stairs=True)
+        self.assertIs(first, again)
+        self.assertEqual(len(asked), 3)
+        self.assertEqual([a[2] for a in asked], [False, False, True])
+
+    def test_a_failure_is_not_remembered(self):
+        srv.DOOR_WALKS.clear()
+        calls = []
+
+        def flaky(*args, **kwargs):
+            calls.append(1)
+            if len(calls) == 1:
+                raise RuntimeError("engine fell over")
+            return {"found": True, "distance_m": 1.0, "effective_m": 1.0, "stairs_m": 0.0}
+
+        with mock.patch.object(srv, "run_engine", flaky):
+            with self.assertRaises(RuntimeError):
+                srv.door_walk("e", "g", (36.999, -122.06), (36.9995, -122.063))
+            self.assertTrue(srv.door_walk("e", "g", (36.999, -122.06), (36.9995, -122.063))["found"])
 
 
 @unittest.skipUnless(ENGINE.exists(), "engine not built: make -C engine route")
@@ -299,6 +355,37 @@ class TestApi(unittest.TestCase):
                 self.assertEqual((status, body["error"]), (400, "that request is too large"))
         status, body = self.post("/api/nope", {"text": "x" * 3_000_000})
         self.assertEqual((status, body["error"]), (404, "unknown endpoint"))
+
+    def test_asking_again_does_not_run_the_engine_again(self):
+        srv.DOOR_WALKS.clear()
+        meetings = [{"course": "XYZ 10", "days": [0, 2, 4], "start": "09:00", "end": "09:50",
+                     "location": "Kresge Acad 3201", "start_date": "2026-09-24", "end_date": "2026-12-04"},
+                    {"course": "ABC 20", "days": [0, 2, 4], "start": "10:00", "end": "10:50",
+                     "location": "Thim Lecture 003", "start_date": "2026-09-24", "end_date": "2026-12-04"}]
+        ask = {"meetings": meetings, "here": [36.9998, -122.0628], "now": "2026-10-12T07:30:00-07:00"}
+        real_run = subprocess.run
+        with mock.patch.object(srv.subprocess, "run", wraps=real_run) as run:
+            status, first = self.post("/api/today", ask)
+            runs_first = run.call_count
+            status2, second = self.post("/api/today", ask)
+            runs_second = run.call_count - runs_first
+        self.assertEqual((status, status2), (200, 200))
+        self.assertGreater(runs_first, 2)
+        self.assertEqual(runs_second, 0)
+        first.pop("now"), second.pop("now")
+        self.assertEqual(first, second)
+
+    def test_a_route_reuses_the_door_walks_it_already_timed(self):
+        srv.DOOR_WALKS.clear()
+        real_run = subprocess.run
+        query = f"/api/route_to?start={START}&room=Kresge+Acad+3201&algo=astar&explored=0"
+        with mock.patch.object(srv.subprocess, "run", wraps=real_run) as run:
+            self.get(query)
+            first = run.call_count
+            self.get(query)
+            second = run.call_count - first
+        self.assertGreater(first, 1)
+        self.assertEqual(second, 1, "only the path itself is drawn again")
 
     def test_today_plans_leave_reminders(self):
         meetings = [{"course": "XYZ 10", "days": [0, 2, 4], "start": "14:40", "end": "15:45",
