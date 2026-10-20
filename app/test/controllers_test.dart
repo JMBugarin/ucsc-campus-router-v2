@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ucsc_router/core/api_client.dart';
+import 'package:ucsc_router/core/pacific.dart';
 import 'package:ucsc_router/features/location/location_service.dart';
 import 'package:ucsc_router/features/schedule/meeting.dart';
 import 'package:ucsc_router/features/schedule/schedule_controller.dart';
@@ -228,7 +229,8 @@ void main() {
       final rig = TestRig(stored: [meeting()]);
       final container = await rig.container();
       addTearDown(container.dispose);
-      container.read(viewedDayProvider.notifier).show(DateTime.now());
+      final today = pacificTime(DateTime.now());
+      container.read(viewedDayProvider.notifier).show(DateTime(today.year, today.month, today.day));
       expect(container.read(viewedDayProvider), isNull);
     });
 
