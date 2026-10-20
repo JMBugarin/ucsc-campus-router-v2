@@ -59,7 +59,8 @@ Occurrence? nextOccurrence(List<Meeting> meetings, tz.TZDateTime now, Set<String
   return null;
 }
 
-String _whyNoClasses(List<Meeting> meetings, DateTime day, Set<String> holidays) {
+/// Why [day] has no class: `no_schedule`, `holiday`, `before_term`, `after_term`, `weekend` or `no_classes`.
+String whyNoClasses(List<Meeting> meetings, DateTime day, Set<String> holidays) {
   if (meetings.isEmpty) return 'no_schedule';
   final iso = isoDate(day);
   final first = meetings.map((m) => m.startDate).reduce((a, b) => a.compareTo(b) < 0 ? a : b);
@@ -198,7 +199,7 @@ Analysis analyzeOffline({
   return Analysis(
     now: isoWithOffset(here),
     state: state,
-    reason: today.isEmpty ? _whyNoClasses(meetings, DateTime.utc(here.year, here.month, here.day), holidays) : null,
+    reason: today.isEmpty ? whyNoClasses(meetings, DateTime.utc(here.year, here.month, here.day), holidays) : null,
     current: current == null ? null : _classTime(current, now: here),
     next: nextTime,
     walk: walk,

@@ -15,6 +15,7 @@ import 'today_controller.dart';
 import 'today_models.dart';
 import 'today_text.dart';
 import 'walk_cache.dart';
+import 'week_view.dart';
 
 class TodayScreen extends ConsumerWidget {
   const TodayScreen({super.key});
@@ -40,6 +41,13 @@ class TodayScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Today'),
         actions: [
+          IconButton(
+            tooltip: 'Week',
+            icon: const Icon(Icons.calendar_view_week_outlined),
+            onPressed: meetings.isEmpty
+                ? null
+                : () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const WeekScreen())),
+          ),
           IconButton(tooltip: 'Refresh', icon: const Icon(Icons.refresh), onPressed: serverUrl.isEmpty ? null : refresh),
         ],
       ),
@@ -100,7 +108,7 @@ class _TodayBody extends ConsumerWidget {
     final notes = [
       if (data.locationProblem != null) data.locationProblem!,
       if (data.reminderProblem != null) data.reminderProblem!,
-      ...analysis.notes,
+      if (!viewing) ...analysis.notes, // another day has no "next class" to walk to, so no walk to explain
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +133,7 @@ class _TodayBody extends ConsumerWidget {
           ),
         if (analysis.today.isNotEmpty) ...[
           const SizedBox(height: 8),
-          Text("Today's classes", style: Theme.of(context).textTheme.titleMedium),
+          Text(viewing ? 'Classes on ${dayLabel(data.viewDay!)}' : "Today's classes", style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           for (final t in analysis.today) _TimelineTile(classTime: t, analysis: viewing ? null : analysis),
         ],
@@ -198,12 +206,7 @@ class _DayBar extends ConsumerWidget {
     final nowPacific = pacificTime(ref.read(clockProvider)());
     final today = DateTime.utc(nowPacific.year, nowPacific.month, nowPacific.day);
     final shown = viewDay ?? today;
-    var first = today, last = today;
-    for (final m in meetings) {
-      final s = DateTime.tryParse('${m.startDate}T00:00:00Z'), e = DateTime.tryParse('${m.endDate}T00:00:00Z');
-      if (s != null && s.isBefore(first)) first = s;
-      if (e != null && e.isAfter(last)) last = e;
-    }
+    final (:first, :last) = scheduleSpan(meetings, today);
     final controller = ref.read(viewedDayProvider.notifier);
     DateTime step(int days) => DateTime.utc(shown.year, shown.month, shown.day + days);
 
