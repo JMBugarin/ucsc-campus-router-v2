@@ -109,6 +109,7 @@ jobs:
           curl -fs http://127.0.0.1:8000/healthz
           curl -fs http://127.0.0.1:8000/api/meta | grep -q '"nodes"'
           curl -fs "http://127.0.0.1:8000/api/route_to_room?start=36.9998,-122.0628&room=Kresge+Acad+3201" | grep -q '"astar"'
+          curl -fs "http://127.0.0.1:8000/api/entry_walks?room=Kresge+Acad+3201" | grep -q '"entry_points"'
           curl -fs -X POST -H 'Content-Type: application/json' -d '{"meetings": []}' http://127.0.0.1:8000/api/today | grep -q '"state"'
           curl -fs http://127.0.0.1:8000/ | grep -qi '<html'
       - name: Queries (which hold locations) must not be in the logs
