@@ -705,6 +705,56 @@
    }
   },
   {
+   "name": "asking before the clocks go back, about a class after",
+   "now": "2026-11-01T00:30:00-07:00",
+   "meetings": [
+    "I"
+   ],
+   "here": false,
+   "expect": {
+    "state": "before_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-11-01T09:00:00-08:00",
+    "next_is_today": true,
+    "starts_in_min": 570.0,
+    "today_starts": [
+     "2026-11-01T09:00:00-08:00"
+    ],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
+   "name": "asking before the clocks go forward, about a class after",
+   "now": "2026-03-08T00:30:00-08:00",
+   "meetings": [
+    "I2"
+   ],
+   "here": false,
+   "expect": {
+    "state": "before_classes",
+    "reason": null,
+    "current_start": null,
+    "next_start": "2026-03-08T09:00:00-07:00",
+    "next_is_today": true,
+    "starts_in_min": 450.0,
+    "today_starts": [
+     "2026-03-08T09:00:00-07:00"
+    ],
+    "walk_minutes": null,
+    "walk_from": null,
+    "free_min": null,
+    "status": "unknown",
+    "leave_by": null,
+    "transitions": []
+   }
+  },
+  {
    "name": "no classes at all",
    "now": "2026-10-12T10:00:00-07:00",
    "meetings": [],

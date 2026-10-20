@@ -15,7 +15,7 @@ module has no idea about maps or the routing engine.
 
 import math
 import re
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 try:
@@ -304,8 +304,14 @@ def next_occurrence(meetings, now, holidays=frozenset()):
 
 # ---- the "today" analysis -------------------------------------------------
 
-def _minutes(delta):
-    return delta.total_seconds() / 60.0
+def _seconds(later, earlier):
+    """Real seconds from earlier to later. Moments that share a time zone subtract their wall clocks,
+    which is an hour out when the clocks change in between."""
+    return (later.astimezone(timezone.utc) - earlier.astimezone(timezone.utc)).total_seconds()
+
+
+def _minutes(later, earlier):
+    return _seconds(later, earlier) / 60.0
 
 
 def _spare_status(free_min):
@@ -323,8 +329,8 @@ def _occ_dict(occ, now=None):
     d = {k: m[k] for k in ("course", "title", "section", "component", "location")}
     d["start"], d["end"] = start.isoformat(), end.isoformat()
     if now is not None:
-        d["starts_in_min"] = round(_minutes(start - now), 1)
-        d["minutes_left"] = round(_minutes(end - now), 1)
+        d["starts_in_min"] = round(_minutes(start, now), 1)
+        d["minutes_left"] = round(_minutes(end, now), 1)
     return d
 
 
@@ -360,7 +366,7 @@ def _stage_reminders(item, now, lead_min, sent, allow_late):
         key = f"{start.isoformat()}|{stage}"
         if key in sent:
             continue
-        seconds = (at - now).total_seconds()
+        seconds = _seconds(at, now)
         if seconds >= 0:
             reminders.append({"stage": stage, "key": key, "in_seconds": round(seconds, 1),
                               "title": titles[stage], "body": details})
@@ -422,7 +428,7 @@ def plan_reminders(out, now, lead_min, sent=()):
             if now >= leave:
                 text = f"Leave now for {name}: it is a {minutes} min walk and class starts at {_clock12(first_start)}."
             else:
-                minutes_left = math.ceil((leave - now).total_seconds() / 60)
+                minutes_left = math.ceil(_minutes(leave, now))
                 text = (f"Leave in {minutes_left} min for {name} "
                         f"({minutes} min walk, class at {_clock12(first_start)}).")
             banner = {"text": text, "late": now >= leave and out["status"] == "late"}
@@ -475,7 +481,7 @@ def analyze(meetings, now, holidays=frozenset(), walker=None, here=None, remind=
         # class tomorrow would just be noise.
         walk = _walk_info(walker, origin, nxt[2]["location"]) if out["next"]["is_today"] else None
         if walk:
-            free = _minutes(nxt[0] - spare_from) - walk["minutes"]
+            free = _minutes(nxt[0], spare_from) - walk["minutes"]
             out["walk"] = {"minutes": walk["minutes"], "meters": walk["total_m"],
                            "from": "current_class" if current else ("here" if here else "previous_class")}
             out["free_min"] = round(free, 1)
@@ -488,7 +494,7 @@ def analyze(meetings, now, holidays=frozenset(), walker=None, here=None, remind=
         item = _occ_dict(occ)
         if i > 0:
             prev = today[i - 1]
-            gap = _minutes(occ[0] - prev[1])
+            gap = _minutes(occ[0], prev[1])
             walk = _walk_info(walker, ("room", prev[2]["location"]), occ[2]["location"])
             item["gap_min"] = round(gap, 1)
             if walk:
