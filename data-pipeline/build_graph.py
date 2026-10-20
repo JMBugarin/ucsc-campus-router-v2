@@ -6,7 +6,7 @@ Usage (from data-pipeline/):
 Outputs, in the --out directory:
     nodes.csv  id,osm_id,lat,lon,elev_m
     edges.csv  from,to,length_m,is_stairs,highway
-    meta.json  bounding box and counts
+    meta.json  bounding box, counts, the download date and a hash of each CSV
 
 Node ids are renumbered 0..N-1 (sorted by OSM id, so output is deterministic)
 so the C engine can index plain arrays. Edges are directed; a walkable street
@@ -16,7 +16,10 @@ appears once in each direction. elev_m is left empty until the elevation phase.
 import argparse
 import csv
 import json
+from datetime import datetime, timezone
 from pathlib import Path
+
+import graph_meta
 
 # Core UCSC campus plus a small margin: (west, south, east, north).
 DEFAULT_BBOX = (-122.0700, 36.9860, -122.0460, 37.0030)
@@ -91,8 +94,10 @@ def main():
         "nodes": n_nodes,
         "edges": n_edges,
         "source": "OpenStreetMap via osmnx",
+        "downloaded": datetime.now(timezone.utc).date().isoformat(),
     }
     (args.out / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
+    graph_meta.record(args.out)
     print(f"Wrote {n_nodes} nodes and {n_edges} edges to {args.out}")
 
 
