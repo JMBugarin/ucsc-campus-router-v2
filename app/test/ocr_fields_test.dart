@@ -6,9 +6,42 @@ import 'package:ucsc_router/features/schedule/ocr/fields.dart';
   return r == null ? null : (r.start, r.end);
 }
 
+String? lone(String text) => findLoneTime(text)?.time;
+
 List<int>? days(String text) => findDays(text)?.days;
 
 void main() {
+  group('a time with no partner', () {
+    test('is read when its end was lost, with the meridiem it has', () {
+      expect(lone('MWF 1:20 PM -'), '13:20');
+      expect(lone('Th 8:30 AM \u2013'), '08:30');
+      expect(lone('12:05 PM'), '12:05');
+      expect(lone('12:05 AM'), '00:05');
+      expect(lone('9am'), '09:00');
+    });
+
+    test('is guessed from school hours when no meridiem was read, and 24 hour times are taken as they are', () {
+      expect(lone('MWF 9:00'), '09:00');
+      expect(lone('MWF 1:20'), '13:20');
+      expect(lone('MWF 13:20'), '13:20');
+      expect(lone('MWF 08:30'), '08:30');
+    });
+
+    test('is not read when there are two times, none, or an impossible one', () {
+      expect(lone('1:20 PM - 2:25 PM'), isNull);
+      expect(lone('MWF'), isNull);
+      expect(lone(''), isNull);
+      expect(lone('13:20 PM'), isNull);
+      expect(lone('25:10'), isNull);
+      expect(lone('price 5.50'), isNull);
+    });
+
+    test('says where it was found', () {
+      final found = findLoneTime('MWF 1:20 PM -')!;
+      expect('MWF 1:20 PM -'.substring(found.from, found.to), '1:20 PM');
+    });
+  });
+
   group('times', () {
     test('12 hour times with a meridiem on each, in the forms schedules use', () {
       expect(range('Mo 8:00AM - 9:05AM'), ('08:00', '09:05'));

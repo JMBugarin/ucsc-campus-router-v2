@@ -19,6 +19,7 @@ ParsedRow? buildRow(RawRow raw) {
     timeText = '${cell(ColumnKind.start)} - ${cell(ColumnKind.end)}';
   }
   final range = findTimeRange(timeText);
+  final loneStart = range == null ? findLoneTime(timeText)?.time : null;
   if (range == null) {
     issues.add(RowIssue.noTime);
   } else if (range.certainty == Certainty.guessed) {
@@ -99,7 +100,7 @@ ParsedRow? buildRow(RawRow raw) {
     section: section,
     component: component,
     days: daysMatch?.days ?? const [],
-    start: range?.start,
+    start: range?.start ?? loneStart,
     end: range?.end,
     location: room,
     startDate: dates.length >= 2 ? dates[0] : null,

@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:ucsc_router/features/schedule/ocr/recognized_text.dart';
 
 /// Builds what the phone returns for a picture: lines of text, and where each word of them is.
-class Page {
-  Page({this.width = 1200, this.height = 1600, this.charWidth = 12, this.textHeight = 24});
+class OcrPage {
+  OcrPage({this.width = 1200, this.height = 1600, this.charWidth = 12, this.textHeight = 24});
 
   final int width;
   final int height;
@@ -14,11 +14,11 @@ class Page {
   final List<RecognizedLine> lines = [];
 
   /// A line of text with its first word at ([x], [y]).
-  Page line(double x, double y, String text, {double confidence = 1}) => cells(y, {x: text}, confidence: confidence);
+  OcrPage line(double x, double y, String text, {double confidence = 1}) => cells(y, {x: text}, confidence: confidence);
 
   /// Cells that the phone read as one line, as it does when they sit close together. The key is where a cell
   /// starts.
-  Page cells(double y, Map<double, String> byX, {double confidence = 1}) {
+  OcrPage cells(double y, Map<double, String> byX, {double confidence = 1}) {
     final words = <RecognizedWord>[];
     for (final entry in byX.entries) {
       var x = entry.key;
@@ -103,7 +103,7 @@ const _col = {
 /// cells that wrap onto two lines, and a footer. The geometry follows a real page, with invented classes. [noise]
 /// replaces the text of a cell, keyed by the field and the row's class number. [merge] gives the phone's way of
 /// reading cells that sit close together as one line.
-Page myUcscPage(
+OcrPage myUcscPage(
   List<Course> courses, {
   double scale = 1,
   Map<(String, String), String> noise = const {},
@@ -188,7 +188,7 @@ Page myUcscPage(
     put(810 + 45.0 * k, y + 20, ['Printer', 'Friendly', 'Page'][k]);
   }
 
-  final page = Page(
+  final page = OcrPage(
     width: (1000 * scale).round(),
     height: (y * scale + 100).round(),
     charWidth: 6.2 * scale,
