@@ -435,6 +435,57 @@ def plan_reminders(out, now, lead_min, sent=()):
     return reminders, banner
 
 
+def _state_of(today, current, upcoming, previous):
+    if current:
+        return "in_class"
+    if upcoming:
+        return "between_classes" if previous else "before_classes"
+    return "done_for_today" if today else "no_classes_today"
+
+
+def _walk_to_next(out, nxt, now, current, previous, here, walker):
+    """Fill in the next class and, when it is today, the walk to it, the time to spare and when to leave."""
+    out["next"] = _occ_dict(nxt, now)
+    out["next"]["is_today"] = nxt[0].date() == now.date()
+    origin, spare_from = None, now
+    if current:  # finish this class, then walk
+        origin, spare_from = ("room", current[2]["location"]), current[1]
+    elif here is not None:
+        origin = ("point", here[0], here[1])
+    elif previous:
+        origin = ("room", previous[2]["location"])
+    # A walk only matters when the class is today; "18 hours of free time" before a
+    # class tomorrow would just be noise.
+    walk = _walk_info(walker, origin, nxt[2]["location"]) if out["next"]["is_today"] else None
+    if walk:
+        free = _minutes(nxt[0], spare_from) - walk["minutes"]
+        out["walk"] = {"minutes": walk["minutes"], "meters": walk["total_m"],
+                       "from": "current_class" if current else ("here" if here else "previous_class")}
+        out["free_min"] = round(free, 1)
+        out["status"] = _spare_status(free)
+        out["leave_by"] = (nxt[0] - timedelta(minutes=walk["minutes"])).isoformat()
+    elif out["next"]["is_today"] and nxt[2]["location"]:
+        out["notes"].append("I can't work out the walk to that class (online, TBA, or an unknown room).")
+
+
+def _timeline(today, walker):
+    """Today's classes as rows, each with the gap and the walk from the class before it."""
+    rows = []
+    for i, occ in enumerate(today):
+        item = _occ_dict(occ)
+        if i > 0:
+            prev = today[i - 1]
+            gap = _minutes(occ[0], prev[1])
+            walk = _walk_info(walker, ("room", prev[2]["location"]), occ[2]["location"])
+            item["gap_min"] = round(gap, 1)
+            if walk:
+                item["walk_min"] = walk["minutes"]
+                item["free_min"] = round(gap - walk["minutes"], 1)
+            item["status"] = _spare_status(item.get("free_min"))
+        rows.append(item)
+    return rows
+
+
 def analyze(meetings, now, holidays=frozenset(), walker=None, here=None, remind=None):
     """Summarise where the student is in their day.
 
@@ -452,57 +503,14 @@ def analyze(meetings, now, holidays=frozenset(), walker=None, here=None, remind=
     upcoming = [o for o in today if o[0] > now]
     nxt = upcoming[0] if upcoming else next_occurrence(meetings, now, holidays)
 
-    if current:
-        state = "in_class"
-    elif upcoming:
-        state = "between_classes" if previous else "before_classes"
-    elif today:
-        state = "done_for_today"
-    else:
-        state = "no_classes_today"
-
-    out = {"now": now.isoformat(), "state": state,
+    out = {"now": now.isoformat(), "state": _state_of(today, current, upcoming, previous),
            "reason": None if today else _why_no_classes(meetings, now.date(), holidays),
            "current": _occ_dict(current, now) if current else None,
            "next": None, "walk": None, "free_min": None, "status": "unknown",
            "leave_by": None, "today": [], "notes": []}
-
     if nxt:
-        out["next"] = _occ_dict(nxt, now)
-        out["next"]["is_today"] = nxt[0].date() == now.date()
-        origin, spare_from = None, now
-        if current:  # finish this class, then walk
-            origin, spare_from = ("room", current[2]["location"]), current[1]
-        elif here is not None:
-            origin = ("point", here[0], here[1])
-        elif previous:
-            origin = ("room", previous[2]["location"])
-        # A walk only matters when the class is today; "18 hours of free time" before a
-        # class tomorrow would just be noise.
-        walk = _walk_info(walker, origin, nxt[2]["location"]) if out["next"]["is_today"] else None
-        if walk:
-            free = _minutes(nxt[0], spare_from) - walk["minutes"]
-            out["walk"] = {"minutes": walk["minutes"], "meters": walk["total_m"],
-                           "from": "current_class" if current else ("here" if here else "previous_class")}
-            out["free_min"] = round(free, 1)
-            out["status"] = _spare_status(free)
-            out["leave_by"] = (nxt[0] - timedelta(minutes=walk["minutes"])).isoformat()
-        elif out["next"]["is_today"] and nxt[2]["location"]:
-            out["notes"].append("I can't work out the walk to that class (online, TBA, or an unknown room).")
-
-    for i, occ in enumerate(today):
-        item = _occ_dict(occ)
-        if i > 0:
-            prev = today[i - 1]
-            gap = _minutes(occ[0], prev[1])
-            walk = _walk_info(walker, ("room", prev[2]["location"]), occ[2]["location"])
-            item["gap_min"] = round(gap, 1)
-            if walk:
-                item["walk_min"] = walk["minutes"]
-                item["free_min"] = round(gap - walk["minutes"], 1)
-            item["status"] = _spare_status(item.get("free_min"))
-        out["today"].append(item)
-
+        _walk_to_next(out, nxt, now, current, previous, here, walker)
+    out["today"] = _timeline(today, walker)
     if remind is not None:
         out["reminders"], out["banner"] = plan_reminders(out, now, remind["lead_min"], set(remind["sent"]))
     return out
