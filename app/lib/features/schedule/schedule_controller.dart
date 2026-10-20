@@ -35,6 +35,34 @@ class ScheduleController extends AsyncNotifier<List<Meeting>> {
   /// Adds one hand-typed class after the server has checked it.
   Future<ImportSummary> add(Meeting meeting) async => _merge(await _repo.clean([meeting]));
 
+  /// Marks [iso] (`2026-10-21`) as a day [meeting] does not meet. Returns false if there is no room
+  /// for another skipped date, or the class is no longer in the schedule.
+  Future<bool> skipDay(Meeting meeting, String iso, {required String today}) async {
+    final i = _current.indexWhere(meeting.sameClassAs);
+    final updated = i < 0 ? null : _current[i].skipping(iso, today: today);
+    if (updated == null) return false;
+    await _replace([..._current]..[i] = updated);
+    return true;
+  }
+
+  /// Undoes [skipDay]: the class meets on [iso] again.
+  Future<void> restoreDay(Meeting meeting, String iso) async {
+    final i = _current.indexWhere(meeting.sameClassAs);
+    if (i < 0) return;
+    await _replace([..._current]..[i] = _current[i].meetingOn(iso));
+  }
+
+  /// Every day skipped for [meeting] meets again.
+  Future<void> restoreAllDays(Meeting meeting) async {
+    final i = _current.indexWhere(meeting.sameClassAs);
+    if (i < 0) return;
+    var updated = _current[i];
+    for (final d in updated.skipDates) {
+      updated = updated.meetingOn(d);
+    }
+    await _replace([..._current]..[i] = updated);
+  }
+
   Future<void> removeAt(int index) async {
     final updated = [..._current]..removeAt(index);
     await _replace(updated);

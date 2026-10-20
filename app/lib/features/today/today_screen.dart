@@ -334,7 +334,7 @@ class _Banner extends StatelessWidget {
   }
 }
 
-class _TimelineTile extends StatelessWidget {
+class _TimelineTile extends ConsumerWidget {
   const _TimelineTile({required this.classTime, required this.analysis});
 
   final ClassTime classTime;
@@ -342,8 +342,28 @@ class _TimelineTile extends StatelessWidget {
   /// Null when another day is shown, where nothing is "now" or "next".
   final Analysis? analysis;
 
+  Future<void> _skip(BuildContext context, WidgetRef ref) async {
+    final meetings = ref.read(scheduleProvider).value ?? const [];
+    final meeting = meetingFor(meetings, classTime);
+    if (meeting == null) return;
+    final messenger = ScaffoldMessenger.of(context); // the tile itself is gone once the class is skipped
+    final day = classTime.start.substring(0, 10);
+    final nowPacific = pacificTime(ref.read(clockProvider)());
+    final schedule = ref.read(scheduleProvider.notifier);
+    final skipped = await schedule.skipDay(meeting, day, today: isoDate(nowPacific));
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text(skipped
+            ? 'Skipped ${classTime.label} on ${dayLabel(DateTime.parse(day))}.'
+            : "Can't skip another day for ${classTime.label}: too many days are already skipped."),
+        action: skipped ? SnackBarAction(label: 'Undo', onPressed: () => schedule.restoreDay(meeting, day)) : null,
+      ));
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final canSkip = DateTime.parse(classTime.end).isAfter(ref.read(clockProvider)());
     final isNow = analysis?.current?.start == classTime.start;
     final isNext = analysis?.next?.isToday == true && analysis?.next?.start == classTime.start;
     final scheme = Theme.of(context).colorScheme;
@@ -388,6 +408,13 @@ class _TimelineTile extends StatelessWidget {
                     tooltip: 'Route to ${classTime.label}',
                     icon: const Icon(Icons.map_outlined),
                     onPressed: () => openRoute(context, destination: RoomDestination(classTime.location)),
+                  ),
+                if (canSkip)
+                  PopupMenuButton<void>(
+                    tooltip: 'More for ${classTime.label}',
+                    itemBuilder: (_) => [
+                      PopupMenuItem<void>(onTap: () => _skip(context, ref), child: const Text('Skip this day')),
+                    ],
                   ),
               ],
             ),
