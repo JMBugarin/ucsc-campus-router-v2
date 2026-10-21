@@ -1,7 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'design/controls.dart';
+import 'design/floating_bar.dart';
 import 'design/theme.dart';
+import 'design/tokens.dart';
 import 'features/map/map_screen.dart';
 import 'features/schedule/schedule_screen.dart';
 import 'features/settings/settings.dart';
@@ -75,26 +80,40 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   Widget build(BuildContext context) {
     final index = ref.watch(selectedTabProvider);
     const screens = [MapScreen(), TodayScreen(), ScheduleScreen(), SettingsScreen()];
+    final barBottom = math.max(MediaQuery.paddingOf(context).bottom, Space.sm);
+    final inset = GlassTabBar.height + barBottom + Space.sm;
     return Scaffold(
       // IndexedStack keeps hidden tabs alive but still ticking, so a spinner there would animate unseen.
-      // The top is left to each tab: the map runs under the status bar, the others have an app bar.
-      body: SafeArea(
-        top: false,
-        child: IndexedStack(
-          index: index,
-          children: [for (var i = 0; i < screens.length; i++) TickerMode(enabled: i == index, child: screens[i])],
-        ),
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: index,
-        onDestinationSelected: ref.read(selectedTabProvider.notifier).select,
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.map_outlined), selectedIcon: Icon(Icons.map), label: 'Map'),
-          NavigationDestination(icon: Icon(Icons.today_outlined), selectedIcon: Icon(Icons.today), label: 'Today'),
-          NavigationDestination(
-              icon: Icon(Icons.calendar_month_outlined), selectedIcon: Icon(Icons.calendar_month), label: 'Schedule'),
-          NavigationDestination(
-              icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: 'Settings'),
+      // The top is left to each tab: the map runs under the status bar, the others draw their own title.
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: FloatingBarInset(
+              bottom: inset,
+              child: IndexedStack(
+                index: index,
+                children: [for (var i = 0; i < screens.length; i++) TickerMode(enabled: i == index, child: screens[i])],
+              ),
+            ),
+          ),
+          if (index != tabMap) Positioned(left: 0, right: 0, bottom: 0, height: inset + Space.xl, child: const ScrollEdgeFade()),
+          Positioned(
+            left: Space.md,
+            right: Space.md,
+            bottom: barBottom,
+            child: GlassTabBar(
+              selectedIndex: index,
+              onSelected: ref.read(selectedTabProvider.notifier).select,
+              destinations: const [
+                NavigationDestination(icon: Icon(Icons.map_outlined), selectedIcon: Icon(Icons.map), label: 'Map'),
+                NavigationDestination(icon: Icon(Icons.today_outlined), selectedIcon: Icon(Icons.today), label: 'Today'),
+                NavigationDestination(
+                    icon: Icon(Icons.calendar_month_outlined), selectedIcon: Icon(Icons.calendar_month), label: 'Schedule'),
+                NavigationDestination(
+                    icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: 'Settings'),
+              ],
+            ),
+          ),
         ],
       ),
     );

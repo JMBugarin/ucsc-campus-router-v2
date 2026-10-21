@@ -6,12 +6,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../core/api_client.dart';
+import '../../core/format.dart';
 import '../../core/tiles.dart';
-import '../../core/waking_note.dart';
+import '../../design/controls.dart';
+import '../../design/floating_bar.dart';
+import '../../design/glass.dart';
+import '../../design/map_markers.dart';
+import '../../design/surfaces.dart';
+import '../../design/tokens.dart';
+import '../../design/type.dart';
+import '../going/going_to_class_screen.dart';
 import '../route/destination.dart';
 import '../route/route_screen.dart';
 import '../search/place.dart';
 import '../search/search_repository.dart';
+import '../today/today_controller.dart';
 
 const _campusCenter = LatLng(36.9951, -122.0585);
 
@@ -69,7 +78,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   Widget build(BuildContext context) {
     final selected = _selected;
     final point = selected?.point;
+    final inset = FloatingBarInset.of(context);
+    final c = context.colors;
+    final today = ref.watch(todayProvider).value;
     return Stack(
+      fit: StackFit.expand,
       children: [
         Semantics(
           label: 'Campus map',
@@ -83,8 +96,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   markers: [
                     Marker(
                       point: LatLng(point.lat, point.lon),
+                      width: 40,
+                      height: 40,
                       alignment: Alignment.topCenter,
-                      child: Icon(Icons.location_on, size: 40, color: Colors.red.shade700, semanticLabel: selected!.label),
+                      child: DestinationPin(label: selected!.label),
                     ),
                   ],
                 ),
@@ -100,54 +115,105 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           height: MediaQuery.paddingOf(context).top,
           child: ColoredBox(
             key: const ValueKey('statusBarVeil'),
-            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.85),
+            color: c.bgCanvas.withValues(alpha: 0.85),
           ),
         ),
         SafeArea(
           bottom: false,
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(Space.md),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _SearchField(controller: _controller, onChanged: _typed, onClear: _clear),
+                GlassSearchField(controller: _controller, onChanged: _typed, onClear: _clear),
+                if (today != null && today.offline) ...[
+                  const SizedBox(height: Space.xs),
+                  StatusBanner(
+                    kind: BannerKind.offline,
+                    title: 'Offline',
+                    body: "Can't reach the server. Searching and routes need it; Today still works from what is saved on your phone.",
+                    actionLabel: 'Try again',
+                    onAction: () => ref.read(todayProvider.notifier).refresh(),
+                  ),
+                ],
                 if (_query.isNotEmpty) Flexible(child: _Results(query: _query, onChoose: _choose)),
               ],
             ),
           ),
         ),
-        if (selected != null) Align(alignment: Alignment.bottomCenter, child: _PlaceCard(place: selected)),
+        if (selected != null)
+          Positioned(left: 0, right: 0, bottom: inset, child: _PlaceCard(place: selected))
+        else if (_query.isEmpty && today != null)
+          Positioned(left: 0, right: 0, bottom: inset, child: _NextClassCard(data: today)),
       ],
     );
   }
 }
 
-class _SearchField extends StatelessWidget {
-  const _SearchField({required this.controller, required this.onChanged, required this.onClear});
+/// The next class over the map, one tap from Going to class.
+class _NextClassCard extends StatelessWidget {
+  const _NextClassCard({required this.data});
 
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
-  final VoidCallback onClear;
+  final TodayData data;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      elevation: 3,
-      borderRadius: BorderRadius.circular(28),
-      child: ValueListenableBuilder<TextEditingValue>(
-        valueListenable: controller,
-        builder: (context, value, _) => TextField(
-          controller: controller,
-          onChanged: onChanged,
-          textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-            hintText: 'Search a room or building, like BE 152',
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon: value.text.isEmpty
-                ? null
-                : IconButton(tooltip: 'Clear search', icon: const Icon(Icons.close), onPressed: onClear),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+    final analysis = data.analysis;
+    final next = analysis?.next;
+    if (data.viewDay != null || analysis == null || next == null || !next.isToday) return const SizedBox.shrink();
+    final c = context.colors;
+    final trip = data.offCampus ? data.arrivals.where((a) => a.classTime.start == next.start).firstOrNull : null;
+    final walk = analysis.walk;
+    final detail = trip != null
+        ? trip.headline
+        : walk == null
+            ? 'At ${clockFromIso(next.start)}'
+            : data.fromSaved
+                ? 'Saved walk time: about ${walk.minutes} min'
+                : analysis.leaveBy == null
+                    ? '${walk.minutes} min walk'
+                    : 'Leave by ${clockFromIso(analysis.leaveBy!)} · ${walk.minutes} min walk';
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(Space.md, 0, Space.md, Space.sm),
+      child: Semantics(
+        button: true,
+        label: 'Next: ${next.label}. $detail. Opens Going to class.',
+        excludeSemantics: true,
+        child: GlassSurface(
+          padding: EdgeInsets.zero,
+          child: Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: () => openGoingToClass(context),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 72),
+                child: Padding(
+                  padding: const EdgeInsets.all(Space.md),
+                  child: Row(
+                    children: [
+                      DecoratedBox(
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: c.accentTint),
+                        child: SizedBox.square(
+                          dimension: 44,
+                          child: Icon(trip != null ? Icons.directions_bus_outlined : Icons.directions_walk, color: c.accentText),
+                        ),
+                      ),
+                      const SizedBox(width: Space.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Next: ${next.label}', style: AppText.headline.copyWith(color: c.labelPrimary)),
+                            Text(detail, style: AppText.subhead.copyWith(color: c.labelSecondary)),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.chevron_right, color: c.labelSecondary),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -163,57 +229,62 @@ class _Results extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final c = context.colors;
     final results = ref.watch(searchResultsProvider(query));
-    return Card(
-      margin: const EdgeInsets.only(top: 8),
-      child: SingleChildScrollView(
-        child: results.when(
-        loading: () => const Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [LinearProgressIndicator(), WakingNote()]),
-        ),
-        error: (error, _) => Padding(
-          padding: const EdgeInsets.all(16),
+    Widget solid(Widget child) => Padding(
+          padding: const EdgeInsets.only(top: Space.xs),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: c.surfaceContent,
+              borderRadius: BorderRadius.circular(Radii.xl),
+              border: Border.all(color: c.separator),
+              boxShadow: Elevation.raised,
+            ),
+            child: ClipRRect(borderRadius: BorderRadius.circular(Radii.xl), child: SingleChildScrollView(child: child)),
+          ),
+        );
+    return results.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.only(top: Space.xs),
+        child: WakingCard(glass: true, after: Duration(seconds: 4)),
+      ),
+      error: (error, _) => solid(
+        Padding(
+          padding: const EdgeInsets.all(Space.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(error is ApiException ? error.message : 'Search failed. Try again.'),
+              Text(error is ApiException ? error.message : 'Search failed. Try again.', style: AppText.body.copyWith(color: c.labelPrimary)),
               TextButton(onPressed: () => ref.invalidate(searchResultsProvider(query)), child: const Text('Try again')),
             ],
           ),
         ),
-        data: (places) => places.isEmpty
-            ? const _Note('No match. Try the building name and room, like "Kresge 3201".')
-            : Column(mainAxisSize: MainAxisSize.min, children: [for (final p in places) _ResultTile(place: p, onTap: onChoose)]),
-        ),
       ),
-    );
-  }
-}
-
-class _Note extends StatelessWidget {
-  const _Note(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(padding: const EdgeInsets.all(16), child: Text(text));
-}
-
-class _ResultTile extends StatelessWidget {
-  const _ResultTile({required this.place, required this.onTap});
-
-  final Place place;
-  final ValueChanged<Place> onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      dense: true,
-      leading: Icon(place.isRoom ? Icons.meeting_room_outlined : Icons.apartment_outlined),
-      title: Text(place.label),
-      subtitle: place.roomKnown == false ? const Text('Not on the building\'s room list') : null,
-      onTap: () => onTap(place),
+      data: (places) => solid(
+        places.isEmpty
+            ? Padding(
+                padding: const EdgeInsets.all(Space.md),
+                child: Text(
+                  'No match. Try the building name and room, like "Kresge 3201".',
+                  style: AppText.body.copyWith(color: c.labelPrimary),
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final (i, p) in places.indexed) ...[
+                    if (i > 0) Divider(height: 1, color: c.separator),
+                    ListRow(
+                      title: p.label,
+                      subtitle: p.roomKnown == false ? "Not on the building's room list" : null,
+                      icon: p.isRoom ? Icons.meeting_room_outlined : Icons.apartment_outlined,
+                      flagged: p.roomKnown == false,
+                      onTap: () => onChoose(p),
+                    ),
+                  ],
+                ],
+              ),
+      ),
     );
   }
 }
@@ -225,47 +296,59 @@ class _PlaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final c = context.colors;
     // Large text must not push the card off the screen: it takes at most 60% of the height, and the
     // words scroll while the button stays in reach.
-    return LayoutBuilder(
-      builder: (context, box) => ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: box.maxHeight * 0.6),
-        child: SizedBox(
-          width: double.infinity,
-          child: Card(
-            margin: const EdgeInsets.all(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(place.label, style: theme.textTheme.titleMedium),
-                          if (place.floor != null) Text('Floor ${place.floor}'),
-                          if (place.roomKnown == false)
-                            const Text('This room is not on the building\'s list, so the route goes to the building\'s nearest door.'),
-                        ],
-                      ),
-                    ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(Space.md, 0, Space.md, Space.sm),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.6),
+        child: GlassSurface(
+          level: GlassLevel.strong,
+          strong: true,
+          padding: const EdgeInsets.all(Space.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(place.label, style: AppText.title3.copyWith(color: c.labelPrimary)),
+                      if (place.floor != null) Text('Floor ${place.floor}', style: AppText.subhead.copyWith(color: c.labelSecondary)),
+                      if (place.roomKnown == false)
+                        Padding(
+                          padding: const EdgeInsets.only(top: Space.xs),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.warning_amber_rounded, color: c.statusTightFill),
+                              const SizedBox(width: Space.xs),
+                              Expanded(
+                                child: Text(
+                                  "This room is not on the building's list, so the route goes to the building's nearest door.",
+                                  style: AppText.subhead.copyWith(color: c.labelPrimary),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () => openRoute(context, destination: RoomDestination(place.query)),
-                      icon: const Icon(Icons.directions_walk),
-                      label: const Text('Route here'),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(height: Space.sm),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () => openRoute(context, destination: RoomDestination(place.query)),
+                  icon: const Icon(Icons.directions_walk),
+                  label: const Text('Route here'),
+                ),
+              ),
+            ],
           ),
         ),
       ),

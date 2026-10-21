@@ -55,8 +55,8 @@ void main() {
       expect(find.text('Late'), findsWidgets, reason: 'status is a word, not just a colour');
       expect(find.text("Today's classes"), findsOneWidget);
       expect(find.text('XYZ 10 Discussion'), findsOneWidget);
-      expect(find.textContaining('2:40 PM–3:45 PM'), findsOneWidget);
-      expect(find.textContaining('·  next'), findsOneWidget);
+      expect(find.textContaining('2:40 PM–3:45 PM'), findsOneWidget, reason: 'the next class is on its card, not repeated in the day');
+      expect(find.text('Next'), findsOneWidget, reason: 'the next class is marked on its card');
     });
 
     testWidgets('with no connection it still lists the day and says it is working offline', (tester) async {
