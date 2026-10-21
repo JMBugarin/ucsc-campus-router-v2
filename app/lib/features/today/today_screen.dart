@@ -142,6 +142,7 @@ class _TodayBody extends ConsumerWidget {
     final viewing = data.viewDay != null;
     final nextInfo = analysis.next == null ? null : infoOf(analysis.next!);
     final trip = !viewing && data.offCampus && data.arrivals.isNotEmpty;
+    final showNextCard = trip || (walk != null && !viewing && analysis.next != null);
     final notes = [
       if (data.locationProblem != null) data.locationProblem!,
       if (data.reminderProblem != null) data.reminderProblem!,
@@ -157,10 +158,7 @@ class _TodayBody extends ConsumerWidget {
         Text(viewing ? dayViewSummary(analysis) : todaySummary(analysis), style: theme.textTheme.titleLarge),
         const SizedBox(height: Space.sm),
         if (analysis.banner != null && !trip) ...[_LeaveBanner(banner: analysis.banner!), const SizedBox(height: Space.sm)],
-        if (trip)
-          _NextCard(data: data, building: nextInfo?.buildingName)
-        else if (walk != null && !viewing && analysis.next != null)
-          _NextCard(data: data, building: nextInfo?.buildingName, walk: walk),
+        if (showNextCard) _NextCard(data: data, building: nextInfo?.buildingName, walk: trip ? null : walk, unknownRoom: nextInfo?.isUnknown ?? false),
         for (final note in notes)
           Padding(
             padding: const EdgeInsets.only(top: Space.xs),
@@ -170,7 +168,7 @@ class _TodayBody extends ConsumerWidget {
           const SizedBox(height: Space.md),
           Text(viewing ? 'Classes on ${dayLabel(data.viewDay!)}' : "Today's classes", style: theme.textTheme.titleMedium),
           const SizedBox(height: Space.xs),
-          for (final t in analysis.today)
+          for (final t in analysis.today.where((t) => !(showNextCard && analysis.next?.isToday == true && t.start == analysis.next!.start)))
             Padding(
               padding: const EdgeInsets.only(bottom: Space.sm),
               child: _ClassTile(
@@ -271,17 +269,20 @@ class _DayBar extends ConsumerWidget {
 
 /// The next class as a card: when and where, how to get there, and the one button for it. Tapping the card
 /// opens Going to class.
-class _NextCard extends StatelessWidget {
-  const _NextCard({required this.data, this.building, this.walk});
+class _NextCard extends ConsumerWidget {
+  const _NextCard({required this.data, this.building, this.walk, this.unknownRoom = false});
 
   final TodayData data;
   final String? building;
+
+  /// The server could not place the room on the campus map.
+  final bool unknownRoom;
 
   /// The walk from where the student is; null for a student off campus, who gets a trip instead.
   final ({String status, String text})? walk;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final c = context.colors;
     final trip = walk == null ? data.arrivals.first : null;
     final next = trip?.classTime ?? data.analysis!.next!;
@@ -292,12 +293,29 @@ class _NextCard extends StatelessWidget {
       time: '${clockFromIso(next.start)}–${clockFromIso(next.end)}',
       title: next.label,
       room: room,
-      header: trip == null
-          ? null
-          : Text(far ? "You're far from campus" : "You're not on campus yet", style: AppText.subhead.copyWith(color: c.labelSecondary)),
-      arrival: trip?.headline,
+      header: _header(c, next, trip != null, far),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (next.location.isNotEmpty && !unknownRoom)
+            IconButton(
+              tooltip: 'Route to ${next.label}',
+              icon: const Icon(Icons.map_outlined),
+              onPressed: () => openRoute(context, destination: RoomDestination(next.location)),
+            ),
+          if (DateTime.parse(next.end).isAfter(ref.read(clockProvider)()))
+            PopupMenuButton<void>(
+              tooltip: 'More for ${next.label}',
+              itemBuilder: (_) => [PopupMenuItem<void>(onTap: () => skipClassDay(context, ref, next), child: const Text('Skip this day'))],
+            ),
+        ],
+      ),
+      arrival: unknownRoom ? null : trip?.headline,
       arrivalIcon: Icons.directions_bus_outlined,
-      extra: trip != null
+      flag: unknownRoom ? "We can't find this room on the campus map." : null,
+      extra: unknownRoom
+          ? null
+          : trip != null
           ? Text('${trip.walkMinutes} min on foot from there, plus ${trip.bufferMinutes} min to spare.', style: AppText.subhead.copyWith(color: c.labelPrimary))
           : Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +325,13 @@ class _NextCard extends StatelessWidget {
                 Expanded(child: Text(walk!.text, style: AppText.subhead.copyWith(color: c.labelPrimary))),
               ],
             ),
-      action: trip != null
+      action: unknownRoom
+          ? FilledButton.icon(
+              onPressed: () => ref.read(selectedTabProvider.notifier).select(tabMap),
+              icon: const Icon(Icons.search),
+              label: const Text('Search the map'),
+            )
+          : trip != null
           ? TripActions(entry: trip.entry, options: trip.options, roomLabel: next.location, far: far)
           : (next.location.isEmpty
               ? null
@@ -317,6 +341,26 @@ class _NextCard extends StatelessWidget {
                   label: const Text('Show route'),
                 )),
       onTap: () => openGoingToClass(context),
+    );
+  }
+
+  Widget? _header(AppColors c, ClassTime next, bool trip, bool far) {
+    final transition = transitionText(next);
+    if (!trip && transition == null) return null;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (trip) Text(far ? "You're far from campus" : "You're not on campus yet", style: AppText.subhead.copyWith(color: c.labelSecondary)),
+        if (transition != null)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              StatusChip(status: transition.status),
+              const SizedBox(width: Space.xs),
+              Expanded(child: Text(transition.text, style: AppText.footnote.copyWith(color: c.labelSecondary))),
+            ],
+          ),
+      ],
     );
   }
 }
@@ -364,25 +408,6 @@ class _ClassTile extends ConsumerWidget {
   /// Null when another day is shown, where nothing is "now" or "next".
   final Analysis? analysis;
 
-  Future<void> _skip(BuildContext context, WidgetRef ref) async {
-    final meetings = ref.read(scheduleProvider).value ?? const [];
-    final meeting = meetingFor(meetings, classTime);
-    if (meeting == null) return;
-    final messenger = ScaffoldMessenger.of(context); // the tile itself is gone once the class is skipped
-    final day = classTime.start.substring(0, 10);
-    final nowPacific = pacificTime(ref.read(clockProvider)());
-    final schedule = ref.read(scheduleProvider.notifier);
-    final skipped = await schedule.skipDay(meeting, day, today: isoDate(nowPacific));
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        content: Text(skipped
-            ? 'Skipped ${classTime.label} on ${dayLabel(DateTime.parse(day))}.'
-            : "Can't skip another day for ${classTime.label}: too many days are already skipped."),
-        action: skipped ? SnackBarAction(label: 'Undo', onPressed: () => schedule.restoreDay(meeting, day)) : null,
-      ));
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.colors;
@@ -426,7 +451,7 @@ class _ClassTile extends ConsumerWidget {
             PopupMenuButton<void>(
               tooltip: 'More for ${classTime.label}',
               itemBuilder: (_) => [
-                PopupMenuItem<void>(onTap: () => _skip(context, ref), child: const Text('Skip this day')),
+                PopupMenuItem<void>(onTap: () => skipClassDay(context, ref, classTime), child: const Text('Skip this day')),
               ],
             ),
         ],
@@ -530,4 +555,24 @@ class _LoadingCard extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Takes one class off one day, with an Undo.
+Future<void> skipClassDay(BuildContext context, WidgetRef ref, ClassTime classTime) async {
+  final meetings = ref.read(scheduleProvider).value ?? const [];
+  final meeting = meetingFor(meetings, classTime);
+  if (meeting == null) return;
+  final messenger = ScaffoldMessenger.of(context); // the tile itself is gone once the class is skipped
+  final day = classTime.start.substring(0, 10);
+  final nowPacific = pacificTime(ref.read(clockProvider)());
+  final schedule = ref.read(scheduleProvider.notifier);
+  final skipped = await schedule.skipDay(meeting, day, today: isoDate(nowPacific));
+  messenger
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+      content: Text(skipped
+          ? 'Skipped ${classTime.label} on ${dayLabel(DateTime.parse(day))}.'
+          : "Can't skip another day for ${classTime.label}: too many days are already skipped."),
+      action: skipped ? SnackBarAction(label: 'Undo', onPressed: () => schedule.restoreDay(meeting, day)) : null,
+    ));
 }

@@ -31,8 +31,17 @@ class GlassButton extends ConsumerWidget {
       mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (icon != null) ...[Icon(icon, color: color), const SizedBox(width: Space.xs)],
-        Flexible(child: Text(label, textAlign: TextAlign.center, style: AppText.headline.copyWith(color: color))),
+        if (icon != null) ...[
+          Icon(icon, color: color),
+          const SizedBox(width: Space.xs),
+        ],
+        Flexible(
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: AppText.headline.copyWith(color: color),
+          ),
+        ),
       ],
     );
     return Semantics(
@@ -52,7 +61,10 @@ class GlassButton extends ConsumerWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 50),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: Space.sm),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Space.lg,
+                  vertical: Space.sm,
+                ),
                 child: Center(widthFactor: expand ? null : 1, child: content),
               ),
             ),
@@ -65,7 +77,13 @@ class GlassButton extends ConsumerWidget {
 
 /// A round glass button with an icon, such as locate me or the buttons beside a large title.
 class GlassIconButton extends ConsumerWidget {
-  const GlassIconButton({super.key, required this.icon, required this.tooltip, required this.onPressed, this.size = 50});
+  const GlassIconButton({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+    this.size = 50,
+  });
 
   final IconData icon;
   final String tooltip;
@@ -146,12 +164,18 @@ class GlassSearchField extends ConsumerWidget {
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(vertical: Space.sm),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: Space.sm,
+                    ),
                   ),
                 ),
               ),
               if (value.text.isNotEmpty)
-                IconButton(tooltip: 'Clear search', icon: Icon(Icons.cancel, color: c.labelSecondary), onPressed: onClear)
+                IconButton(
+                  tooltip: 'Clear search',
+                  icon: Icon(Icons.cancel, color: c.labelSecondary),
+                  onPressed: onClear,
+                )
               else
                 const SizedBox(width: Space.md),
             ],
@@ -163,7 +187,11 @@ class GlassSearchField extends ConsumerWidget {
 }
 
 class ModeOption<T> {
-  const ModeOption({required this.value, required this.label, required this.icon});
+  const ModeOption({
+    required this.value,
+    required this.label,
+    required this.icon,
+  });
 
   final T value;
   final String label;
@@ -172,7 +200,12 @@ class ModeOption<T> {
 
 /// A segmented control on glass. The selected segment is the accent; each segment is at least 44 pt.
 class ModeSelector<T> extends ConsumerWidget {
-  const ModeSelector({super.key, required this.options, required this.selected, required this.onSelected});
+  const ModeSelector({
+    super.key,
+    required this.options,
+    required this.selected,
+    required this.onSelected,
+  });
 
   final List<ModeOption<T>> options;
   final T? selected;
@@ -207,16 +240,28 @@ class ModeSelector<T> extends ConsumerWidget {
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(minHeight: 44),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: Space.xs, vertical: Space.xs),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Space.xs,
+                            vertical: Space.xs,
+                          ),
                           child: Wrap(
                             alignment: WrapAlignment.center,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             spacing: Space.xxs,
                             children: [
-                              Icon(o.icon, color: o.value == selected ? c.accentOnFill : c.labelPrimary),
+                              Icon(
+                                o.icon,
+                                color: o.value == selected
+                                    ? c.accentOnFill
+                                    : c.labelPrimary,
+                              ),
                               Text(
                                 o.label,
-                                style: AppText.subhead.copyWith(color: o.value == selected ? c.accentOnFill : c.labelPrimary),
+                                style: AppText.subhead.copyWith(
+                                  color: o.value == selected
+                                      ? c.accentOnFill
+                                      : c.labelPrimary,
+                                ),
                               ),
                             ],
                           ),
@@ -235,7 +280,12 @@ class ModeSelector<T> extends ConsumerWidget {
 
 /// The floating tab bar: a glass capsule around a `NavigationBar`, so tabs keep their native semantics.
 class GlassTabBar extends ConsumerWidget {
-  const GlassTabBar({super.key, required this.selectedIndex, required this.onSelected, required this.destinations});
+  const GlassTabBar({
+    super.key,
+    required this.selectedIndex,
+    required this.onSelected,
+    required this.destinations,
+  });
 
   final int selectedIndex;
   final ValueChanged<int> onSelected;
@@ -246,18 +296,25 @@ class GlassTabBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GlassSurface(
-      radius: Radii.pill,
-      padding: const EdgeInsets.all(Space.xxs),
-      // The bar floats above the home indicator, so NavigationBar must not add that inset a second time.
-      child: MediaQuery.removePadding(
-        context: context,
-        removeBottom: true,
-        child: NavigationBar(
-          height: 58,
-          selectedIndex: selectedIndex,
-          onDestinationSelected: onSelected,
-          destinations: destinations,
+    return SizedBox(
+      height: height,
+      child: GlassSurface(
+        radius: Radii.pill,
+        padding: const EdgeInsets.all(Space.xxs),
+        // NavigationBar's SafeArea would otherwise add the status bar and home indicator insets inside the pill.
+        child: MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(padding: EdgeInsets.zero, viewPadding: EdgeInsets.zero),
+          child: MediaQuery.withClampedTextScaling(
+            maxScaleFactor: 1.2,
+            child: NavigationBar(
+              height: 58,
+              selectedIndex: selectedIndex,
+              onDestinationSelected: onSelected,
+              destinations: destinations,
+            ),
+          ),
         ),
       ),
     );

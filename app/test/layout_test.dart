@@ -70,10 +70,17 @@ const manyPlaces = [
   ),
 ];
 
-TestRig rig({int startTab = tabMap, ({String start, String end})? term}) => TestRig(
+TestRig rig({int startTab = tabMap, ({String start, String end})? term}) =>
+    TestRig(
       stored: [
         meeting(days: const [0, 1, 2, 3, 4, 5, 6]),
-        meeting(course: 'ABC 20', start: '16:00', end: '17:05', location: 'Thim Lecture 003', days: const [0, 1, 2, 3, 4, 5, 6]),
+        meeting(
+          course: 'ABC 20',
+          start: '16:00',
+          end: '17:05',
+          location: 'Thim Lecture 003',
+          days: const [0, 1, 2, 3, 4, 5, 6],
+        ),
       ],
       analysis: Analysis.fromJson(fixture('today_before_class')),
       now: mondayNoon,
@@ -90,7 +97,9 @@ void screen(WidgetTester tester, Size size, double ratio, double textScale) {
 }
 
 Future<void> tab(WidgetTester tester, String label) async {
-  await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text(label)));
+  await tester.tap(
+    find.descendant(of: find.byType(NavigationBar), matching: find.text(label)),
+  );
   await tester.pumpAndSettle();
 }
 
@@ -100,7 +109,9 @@ void main() {
       group('${phone.key} at text size ${scale}x', () {
         final (size, ratio) = phone.value;
 
-        testWidgets('the Map with a long list of results and a place picked', (tester) async {
+        testWidgets('the Map with a long list of results and a place picked', (
+          tester,
+        ) async {
           screen(tester, size, ratio, scale);
           await tester.pumpWidget(await rig().app());
           await tester.pumpAndSettle();
@@ -116,7 +127,9 @@ void main() {
           expect(find.text('Route here'), findsOneWidget);
         });
 
-        testWidgets('a route, and a route that could not be found', (tester) async {
+        testWidgets('a route, and a route that could not be found', (
+          tester,
+        ) async {
           screen(tester, size, ratio, scale);
           final r = rig(startTab: tabToday);
           await tester.pumpWidget(await r.app());
@@ -130,7 +143,10 @@ void main() {
 
           await tester.tap(find.byTooltip('Back'));
           await tester.pumpAndSettle();
-          r.route.answer = const ApiException('I could not find a walking route there, and this sentence is long.', kind: ApiErrorKind.rejected);
+          r.route.answer = const ApiException(
+            'I could not find a walking route there, and this sentence is long.',
+            kind: ApiErrorKind.rejected,
+          );
           await tester.ensureVisible(find.text('Show route'));
           await tester.pumpAndSettle();
           await tester.tap(find.text('Show route'));
@@ -155,47 +171,66 @@ void main() {
           expect(tester.takeException(), isNull, reason: 'add a class');
         });
 
-        testWidgets('the classes read from a picture, a class being edited, and the room finder', (tester) async {
-          screen(tester, size, ratio, scale);
-          final r = rig(startTab: tabSchedule, term: (start: '2026-09-24', end: '2026-12-04'))
-            ..picker.path = '/fake/schedule.png'
-            ..recognizer.reading = (OcrPage()
-                  ..line(60, 100, 'BME 160 Lecture')
-                  ..line(60, 150, 'MoWer 1:20 PM - 2:25 PM')
-                  ..line(60, 200, 'Baskin Engineering 152')
-                  ..line(60, 400, 'ART 20 Discussion')
-                  ..line(60, 450, 'Th 8:30 AM - 9:35 AM')
-                  ..line(60, 500, 'Thimann 101'))
-                .build();
-          r.search.resolutions['Baskin Engineering 152'] = const RoomResolution(kind: 'unknown');
-          await tester.pumpWidget(await r.app());
-          await tester.pumpAndSettle();
-          await tester.ensureVisible(find.text('Read a photo'));
-          await tester.pumpAndSettle();
-          await tester.tap(find.text('Read a photo'));
-          await tester.pumpAndSettle();
-          expect(find.text('Check your classes'), findsOneWidget);
-          expect(tester.takeException(), isNull, reason: 'review');
+        testWidgets(
+          'the classes read from a picture, a class being edited, and the room finder',
+          (tester) async {
+            screen(tester, size, ratio, scale);
+            final r =
+                rig(
+                    startTab: tabSchedule,
+                    term: (start: '2026-09-24', end: '2026-12-04'),
+                  )
+                  ..picker.path = '/fake/schedule.png'
+                  ..recognizer.reading =
+                      (OcrPage()
+                            ..line(60, 100, 'BME 160 Lecture')
+                            ..line(60, 150, 'MoWer 1:20 PM - 2:25 PM')
+                            ..line(60, 200, 'Baskin Engineering 152')
+                            ..line(60, 400, 'ART 20 Discussion')
+                            ..line(60, 450, 'Th 8:30 AM - 9:35 AM')
+                            ..line(60, 500, 'Thimann 101'))
+                          .build();
+            r.search.resolutions['Baskin Engineering 152'] =
+                const RoomResolution(kind: 'unknown');
+            await tester.pumpWidget(await r.app());
+            await tester.pumpAndSettle();
+            await tester.ensureVisible(find.text('Read a photo'));
+            await tester.pumpAndSettle();
+            await tester.tap(find.text('Read a photo'));
+            await tester.pumpAndSettle();
+            expect(find.text('Check your classes'), findsOneWidget);
+            expect(tester.takeException(), isNull, reason: 'review');
 
-          await tester.scrollUntilVisible(find.text('Find the room'), 200, scrollable: find.byType(Scrollable).first);
-          await tester.pumpAndSettle();
-          await tester.tap(find.text('Find the room'));
-          await tester.pumpAndSettle();
-          expect(find.text('Find the room'), findsWidgets);
-          expect(tester.takeException(), isNull, reason: 'room finder');
-          await tester.pump(const Duration(milliseconds: 400));
-          await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull, reason: 'room finder results');
-          await tester.tapAt(const Offset(5, 5));
-          await tester.pumpAndSettle();
+            await tester.scrollUntilVisible(
+              find.text('Find the room'),
+              200,
+              scrollable: find.byType(Scrollable).first,
+            );
+            await tester.pumpAndSettle();
+            await tester.tap(find.text('Find the room'));
+            await tester.pumpAndSettle();
+            expect(find.text('Find the room'), findsWidgets);
+            expect(tester.takeException(), isNull, reason: 'room finder');
+            await tester.pump(const Duration(milliseconds: 400));
+            await tester.pumpAndSettle();
+            expect(
+              tester.takeException(),
+              isNull,
+              reason: 'room finder results',
+            );
+            await tester.tapAt(const Offset(5, 5));
+            await tester.pumpAndSettle();
 
-          await tester.tap(find.text('Edit').first);
-          await tester.pumpAndSettle();
-          expect(find.text('Edit class'), findsOneWidget);
-          expect(tester.takeException(), isNull, reason: 'editor');
-        });
+            await tester.tap(find.text('Edit').first);
+            await tester.pumpAndSettle();
+            expect(find.text('Edit class'), findsOneWidget);
+            expect(tester.takeException(), isNull, reason: 'editor');
+          },
+        );
 
-        testWidgets('Today, the Schedule, the Settings and the Week', (tester) async {
+        testWidgets('Today, the Schedule, the Settings and the Week', (
+          tester,
+        ) async {
           screen(tester, size, ratio, scale);
           await tester.pumpWidget(await rig(startTab: tabToday).app());
           await tester.pumpAndSettle();
@@ -213,23 +248,31 @@ void main() {
   }
 
   group('the Map', () {
-    testWidgets('shows the clear button only when there is something to clear', (tester) async {
-      screen(tester, const Size(1206, 2622), 3.0, 1.0);
-      await tester.pumpWidget(await rig().app());
-      await tester.pumpAndSettle();
-      expect(find.byTooltip('Clear search'), findsNothing);
+    testWidgets(
+      'shows the clear button only when there is something to clear',
+      (tester) async {
+        screen(tester, const Size(1206, 2622), 3.0, 1.0);
+        await tester.pumpWidget(await rig().app());
+        await tester.pumpAndSettle();
+        expect(find.byTooltip('Clear search'), findsNothing);
 
-      await tester.enterText(find.byType(TextField), 'BE');
-      await tester.pump();
-      expect(find.byTooltip('Clear search'), findsOneWidget);
+        await tester.enterText(find.byType(TextField), 'BE');
+        await tester.pump();
+        expect(find.byTooltip('Clear search'), findsOneWidget);
 
-      await tester.tap(find.byTooltip('Clear search'));
-      await tester.pump();
-      expect(find.byTooltip('Clear search'), findsNothing);
-      expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, isEmpty);
-    });
+        await tester.tap(find.byTooltip('Clear search'));
+        await tester.pump();
+        expect(find.byTooltip('Clear search'), findsNothing);
+        expect(
+          tester.widget<TextField>(find.byType(TextField)).controller!.text,
+          isEmpty,
+        );
+      },
+    );
 
-    testWidgets('the place card spans the screen between its margins', (tester) async {
+    testWidgets('the place card spans the screen between its margins', (
+      tester,
+    ) async {
       screen(tester, const Size(1206, 2622), 3.0, 1.0);
       await tester.pumpWidget(await rig().app());
       await tester.pumpAndSettle();
@@ -239,24 +282,57 @@ void main() {
       await tester.tap(find.text('Jack Baskin Engineering 152'));
       await tester.pumpAndSettle();
 
-      final card = tester.getRect(find.ancestor(of: find.text('Route here'), matching: find.byType(GlassSurface)).first);
-      expect((card.left, card.right), (16, 402 - 16), reason: 'the iPhone 17 is 402 points wide and the card keeps a 16 point margin');
-      expect(tester.getSize(find.widgetWithText(FilledButton, 'Route here')).width, closeTo(402 - 2 * 16 - 2 * 20, 0.5));
+      final card = tester.getRect(
+        find
+            .ancestor(
+              of: find.text('Route here'),
+              matching: find.byType(GlassSurface),
+            )
+            .first,
+      );
+      expect(
+        (card.left, card.right),
+        (16, 402 - 16),
+        reason:
+            'the iPhone 17 is 402 points wide and the card keeps a 16 point margin',
+      );
+      expect(
+        tester.getSize(find.widgetWithText(FilledButton, 'Route here')).width,
+        closeTo(402 - 2 * 16 - 2 * 20, 0.5),
+      );
     });
 
-    testWidgets('the search bar sits below the status bar while the map fills the screen', (tester) async {
-      screen(tester, const Size(1206, 2622), 3.0, 1.0);
-      tester.view.padding = const FakeViewPadding(top: 141); // a 47 point status bar and island
-      addTearDown(tester.view.resetPadding);
-      await tester.pumpWidget(await rig().app());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'the search bar sits below the status bar while the map fills the screen',
+      (tester) async {
+        screen(tester, const Size(1206, 2622), 3.0, 1.0);
+        tester.view.padding = const FakeViewPadding(
+          top: 141,
+        ); // a 47 point status bar and island
+        addTearDown(tester.view.resetPadding);
+        await tester.pumpWidget(await rig().app());
+        await tester.pumpAndSettle();
 
-      expect(tester.getTopLeft(find.byType(TextField)).dy, greaterThanOrEqualTo(47 + 12));
-      expect(tester.getTopLeft(find.bySemanticsLabel('Campus map')).dy, 0, reason: 'the map runs under the status bar');
-      expect(tester.getSize(find.byKey(const ValueKey('statusBarVeil'))).height, 47, reason: 'a veil keeps the clock readable');
-    });
+        expect(
+          tester.getTopLeft(find.byType(TextField)).dy,
+          greaterThanOrEqualTo(47 + 12),
+        );
+        expect(
+          tester.getTopLeft(find.bySemanticsLabel('Campus map')).dy,
+          0,
+          reason: 'the map runs under the status bar',
+        );
+        expect(
+          tester.getSize(find.byKey(const ValueKey('statusBarVeil'))).height,
+          47,
+          reason: 'a veil keeps the clock readable',
+        );
+      },
+    );
 
-    testWidgets('the map and the places are named for a screen reader', (tester) async {
+    testWidgets('the map and the places are named for a screen reader', (
+      tester,
+    ) async {
       final semantics = tester.ensureSemantics();
       screen(tester, const Size(1206, 2622), 3.0, 1.0);
       await tester.pumpWidget(await rig().app());
@@ -265,11 +341,20 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
       await tester.pumpAndSettle();
       expect(find.bySemanticsLabel('Campus map'), findsOneWidget);
-      expect(find.bySemanticsLabel(RegExp(r'Jack Baskin Engineering 156[\s\S]*Not on the building')), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          RegExp(r'Jack Baskin Engineering 156[\s\S]*Not on the building'),
+        ),
+        findsOneWidget,
+      );
 
       await tester.tap(find.text('Jack Baskin Engineering 152'));
       await tester.pumpAndSettle();
-      expect(find.bySemanticsLabel('Jack Baskin Engineering 152'), findsWidgets, reason: 'the pin on the map and the card');
+      expect(
+        find.bySemanticsLabel('Jack Baskin Engineering 152'),
+        findsWidgets,
+        reason: 'the pin on the map and the card',
+      );
       semantics.dispose();
     });
   });
@@ -281,7 +366,10 @@ void main() {
       await tester.pumpWidget(await rig(startTab: tabToday).app());
       await tester.pumpAndSettle();
       expect(find.text('OK'), findsWidgets);
-      expect(tester.getSemantics(find.byTooltip('Route to XYZ 10 Lecture')).tooltip, 'Route to XYZ 10 Lecture');
+      expect(
+        tester.getSemantics(find.byTooltip('Route to XYZ 10 Lecture')).tooltip,
+        'Route to XYZ 10 Lecture',
+      );
       semantics.dispose();
     });
   });
