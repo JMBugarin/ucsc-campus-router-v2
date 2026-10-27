@@ -276,7 +276,7 @@ For `offline_test.dart` build and run the same way with `SERVER_URL=http://127.0
 
 ## License
 
-The code is released under the [MIT License](LICENSE). The data below keeps its own terms and is not covered by that license.
+The code is released under the [MIT License](../LICENSE). The data below keeps its own terms and is not covered by that license.
 
 ## Data sources
 
