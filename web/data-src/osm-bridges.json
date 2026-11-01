@@ -1,0 +1,745 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-11-01T05:07:36Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "way",
+  "id": 34686089,
+  "bounds": {
+    "minlat": 37.0005993,
+    "minlon": -122.0630748,
+    "maxlat": 37.0008675,
+    "maxlon": -122.0630340
+  },
+  "geometry": [
+    { "lat": 37.0008675, "lon": -122.0630748 },
+    { "lat": 37.0008509, "lon": -122.0630728 },
+    { "lat": 37.0005993, "lon": -122.0630340 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "yes",
+    "surface": "concrete"
+  }
+},
+{
+  "type": "way",
+  "id": 37382082,
+  "bounds": {
+    "minlat": 36.9942129,
+    "minlon": -122.0633878,
+    "maxlat": 36.9942311,
+    "maxlon": -122.0632175
+  },
+  "geometry": [
+    { "lat": 36.9942129, "lon": -122.0632175 },
+    { "lat": 36.9942311, "lon": -122.0633878 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "residential",
+    "layer": "1",
+    "name": "Meyer Drive",
+    "smoothness": "good",
+    "surface": "asphalt",
+    "tiger:cfcc": "A41",
+    "tiger:county": "Santa Cruz, CA",
+    "tiger:name_base": "Meyer",
+    "tiger:name_type": "Dr"
+  }
+},
+{
+  "type": "way",
+  "id": 37887750,
+  "bounds": {
+    "minlat": 36.9944468,
+    "minlon": -122.0451382,
+    "maxlat": 36.9945817,
+    "maxlon": -122.0449336
+  },
+  "geometry": [
+    { "lat": 36.9944468, "lon": -122.0451382 },
+    { "lat": 36.9944698, "lon": -122.0450862 },
+    { "lat": 36.9944951, "lon": -122.0450422 },
+    { "lat": 36.9945460, "lon": -122.0449861 },
+    { "lat": 36.9945817, "lon": -122.0449336 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "dog": "no",
+    "highway": "path",
+    "horse": "no",
+    "layer": "1",
+    "name": "Pogonip Creek Nature Loop"
+  }
+},
+{
+  "type": "way",
+  "id": 40876706,
+  "bounds": {
+    "minlat": 36.9988737,
+    "minlon": -122.0595893,
+    "maxlat": 36.9995033,
+    "maxlon": -122.0589506
+  },
+  "geometry": [
+    { "lat": 36.9995033, "lon": -122.0589506 },
+    { "lat": 36.9988737, "lon": -122.0595893 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "bridge:structure": "beam",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "no",
+    "name": "ISB Bridge",
+    "surface": "wood",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 40876728,
+  "bounds": {
+    "minlat": 36.9977779,
+    "minlon": -122.0587141,
+    "maxlat": 36.9981000,
+    "maxlon": -122.0580080
+  },
+  "geometry": [
+    { "lat": 36.9977779, "lon": -122.0587141 },
+    { "lat": 36.9981000, "lon": -122.0580080 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "yes",
+    "surface": "wood"
+  }
+},
+{
+  "type": "way",
+  "id": 41552039,
+  "bounds": {
+    "minlat": 36.9889310,
+    "minlon": -122.0555252,
+    "maxlat": 36.9889694,
+    "maxlon": -122.0554238
+  },
+  "geometry": [
+    { "lat": 36.9889310, "lon": -122.0555252 },
+    { "lat": 36.9889694, "lon": -122.0554238 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "surface": "concrete"
+  }
+},
+{
+  "type": "way",
+  "id": 42999010,
+  "bounds": {
+    "minlat": 36.9936890,
+    "minlon": -122.0466880,
+    "maxlat": 36.9937310,
+    "maxlon": -122.0466870
+  },
+  "geometry": [
+    { "lat": 36.9936890, "lon": -122.0466870 },
+    { "lat": 36.9937310, "lon": -122.0466880 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "dog": "no",
+    "highway": "path",
+    "horse": "no",
+    "layer": "1",
+    "name": "Pogonip Creek Nature Loop"
+  }
+},
+{
+  "type": "way",
+  "id": 44879740,
+  "bounds": {
+    "minlat": 36.9987458,
+    "minlon": -122.0658619,
+    "maxlat": 36.9991050,
+    "maxlon": -122.0648117
+  },
+  "geometry": [
+    { "lat": 36.9987458, "lon": -122.0658619 },
+    { "lat": 36.9991050, "lon": -122.0648117 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "yes",
+    "surface": "wood",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 46491577,
+  "bounds": {
+    "minlat": 36.9894071,
+    "minlon": -122.0640247,
+    "maxlat": 36.9894121,
+    "maxlon": -122.0636986
+  },
+  "geometry": [
+    { "lat": 36.9894071, "lon": -122.0640247 },
+    { "lat": 36.9894121, "lon": -122.0636986 }
+  ],
+  "tags": {
+    "bicycle": "yes",
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 48623570,
+  "bounds": {
+    "minlat": 37.0012414,
+    "minlon": -122.0649584,
+    "maxlat": 37.0014564,
+    "maxlon": -122.0647333
+  },
+  "geometry": [
+    { "lat": 37.0012414, "lon": -122.0647333 },
+    { "lat": 37.0014564, "lon": -122.0649584 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "bridge": "yes",
+    "highway": "unclassified",
+    "layer": "1",
+    "name": "Heller Drive",
+    "sidewalk": "left",
+    "surface": "asphalt",
+    "tiger:cfcc": "A41",
+    "tiger:county": "Santa Cruz, CA",
+    "tiger:name_base": "Heller",
+    "tiger:name_type": "Dr"
+  }
+},
+{
+  "type": "way",
+  "id": 48624021,
+  "bounds": {
+    "minlat": 36.9964398,
+    "minlon": -122.0649371,
+    "maxlat": 36.9966012,
+    "maxlon": -122.0641850
+  },
+  "geometry": [
+    { "lat": 36.9964398, "lon": -122.0649371 },
+    { "lat": 36.9966012, "lon": -122.0641850 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "surface": "wood"
+  }
+},
+{
+  "type": "way",
+  "id": 48624023,
+  "bounds": {
+    "minlat": 36.9969047,
+    "minlon": -122.0635087,
+    "maxlat": 36.9972142,
+    "maxlon": -122.0626438
+  },
+  "geometry": [
+    { "lat": 36.9969047, "lon": -122.0635087 },
+    { "lat": 36.9972142, "lon": -122.0626438 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "yes",
+    "surface": "wood"
+  }
+},
+{
+  "type": "way",
+  "id": 48624217,
+  "bounds": {
+    "minlat": 36.9944703,
+    "minlon": -122.0634682,
+    "maxlat": 36.9947504,
+    "maxlon": -122.0634313
+  },
+  "geometry": [
+    { "lat": 36.9947504, "lon": -122.0634313 },
+    { "lat": 36.9944703, "lon": -122.0634682 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "cycleway": "lane",
+    "highway": "secondary",
+    "layer": "1",
+    "maxspeed": "25 mph",
+    "name": "Heller Drive",
+    "smoothness": "excellent",
+    "surface": "asphalt",
+    "tiger:cfcc": "A41",
+    "tiger:county": "Santa Cruz, CA",
+    "tiger:name_base": "Heller",
+    "tiger:name_type": "Dr",
+    "tiger:zip_right": "95064"
+  }
+},
+{
+  "type": "way",
+  "id": 48624220,
+  "bounds": {
+    "minlat": 36.9999150,
+    "minlon": -122.0603224,
+    "maxlat": 37.0001201,
+    "maxlon": -122.0594735
+  },
+  "geometry": [
+    { "lat": 36.9999150, "lon": -122.0594735 },
+    { "lat": 37.0001201, "lon": -122.0603224 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "bridge": "yes",
+    "highway": "secondary",
+    "lanes": "2",
+    "layer": "1",
+    "lit": "yes",
+    "maxspeed": "25 mph",
+    "maxweight:signed": "no",
+    "name": "McLaughlin Drive",
+    "shoulder": "no",
+    "sidewalk": "both",
+    "sidewalk:both:surface": "asphalt",
+    "smoothness": "good",
+    "surface": "concrete",
+    "tiger:cfcc": "A41",
+    "tiger:county": "Santa Cruz, CA",
+    "tiger:name_base": "McLaughlin",
+    "tiger:name_type": "Dr"
+  }
+},
+{
+  "type": "way",
+  "id": 148491458,
+  "bounds": {
+    "minlat": 36.9912749,
+    "minlon": -122.0667449,
+    "maxlat": 36.9914652,
+    "maxlon": -122.0662556
+  },
+  "geometry": [
+    { "lat": 36.9912749, "lon": -122.0667449 },
+    { "lat": 36.9913916, "lon": -122.0664445 },
+    { "lat": 36.9914652, "lon": -122.0662556 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "smoothness": "excellent"
+  }
+},
+{
+  "type": "way",
+  "id": 193819519,
+  "bounds": {
+    "minlat": 36.9942778,
+    "minlon": -122.0633550,
+    "maxlat": 36.9942989,
+    "maxlon": -122.0633000
+  },
+  "geometry": [
+    { "lat": 36.9942778, "lon": -122.0633000 },
+    { "lat": 36.9942989, "lon": -122.0633550 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "surface": "paved"
+  }
+},
+{
+  "type": "way",
+  "id": 201500510,
+  "bounds": {
+    "minlat": 36.9999437,
+    "minlon": -122.0603157,
+    "maxlat": 37.0001681,
+    "maxlon": -122.0593808
+  },
+  "geometry": [
+    { "lat": 36.9999437, "lon": -122.0593808 },
+    { "lat": 37.0001681, "lon": -122.0603157 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "footway": "sidewalk",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "yes",
+    "surface": "concrete"
+  }
+},
+{
+  "type": "way",
+  "id": 201514055,
+  "bounds": {
+    "minlat": 36.9998435,
+    "minlon": -122.0603060,
+    "maxlat": 37.0000772,
+    "maxlon": -122.0593713
+  },
+  "geometry": [
+    { "lat": 37.0000772, "lon": -122.0603060 },
+    { "lat": 36.9998435, "lon": -122.0593713 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "foot": "yes",
+    "footway": "sidewalk",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "yes",
+    "surface": "concrete"
+  }
+},
+{
+  "type": "way",
+  "id": 205518846,
+  "bounds": {
+    "minlat": 36.9960113,
+    "minlon": -122.0578545,
+    "maxlat": 36.9961369,
+    "maxlon": -122.0575898
+  },
+  "geometry": [
+    { "lat": 36.9960113, "lon": -122.0575898 },
+    { "lat": 36.9961369, "lon": -122.0578545 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "foot": "designated",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "yes",
+    "surface": "wood",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 380886704,
+  "bounds": {
+    "minlat": 37.0002612,
+    "minlon": -122.0535378,
+    "maxlat": 37.0003405,
+    "maxlon": -122.0535083
+  },
+  "geometry": [
+    { "lat": 37.0003405, "lon": -122.0535083 },
+    { "lat": 37.0002612, "lon": -122.0535378 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1"
+  }
+},
+{
+  "type": "way",
+  "id": 380886705,
+  "bounds": {
+    "minlat": 37.0002213,
+    "minlon": -122.0532513,
+    "maxlat": 37.0002751,
+    "maxlon": -122.0532122
+  },
+  "geometry": [
+    { "lat": 37.0002751, "lon": -122.0532122 },
+    { "lat": 37.0002213, "lon": -122.0532513 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1"
+  }
+},
+{
+  "type": "way",
+  "id": 380886706,
+  "bounds": {
+    "minlat": 36.9999652,
+    "minlon": -122.0531551,
+    "maxlat": 37.0000240,
+    "maxlon": -122.0528688
+  },
+  "geometry": [
+    { "lat": 37.0000240, "lon": -122.0528688 },
+    { "lat": 37.0000237, "lon": -122.0529999 },
+    { "lat": 36.9999652, "lon": -122.0531551 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1"
+  }
+},
+{
+  "type": "way",
+  "id": 384454480,
+  "bounds": {
+    "minlat": 36.9982964,
+    "minlon": -122.0617020,
+    "maxlat": 36.9983967,
+    "maxlon": -122.0616990
+  },
+  "geometry": [
+    { "lat": 36.9982964, "lon": -122.0616990 },
+    { "lat": 36.9983967, "lon": -122.0617020 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "level": "2",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 401319702,
+  "bounds": {
+    "minlat": 36.9949470,
+    "minlon": -122.0596264,
+    "maxlat": 36.9950265,
+    "maxlon": -122.0596200
+  },
+  "geometry": [
+    { "lat": 36.9950265, "lon": -122.0596200 },
+    { "lat": 36.9949470, "lon": -122.0596264 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "surface": "paved"
+  }
+},
+{
+  "type": "way",
+  "id": 418415258,
+  "bounds": {
+    "minlat": 36.9988341,
+    "minlon": -122.0535530,
+    "maxlat": 36.9988822,
+    "maxlon": -122.0535208
+  },
+  "geometry": [
+    { "lat": 36.9988341, "lon": -122.0535208 },
+    { "lat": 36.9988822, "lon": -122.0535530 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1"
+  }
+},
+{
+  "type": "way",
+  "id": 665718000,
+  "bounds": {
+    "minlat": 36.9965527,
+    "minlon": -122.0578229,
+    "maxlat": 36.9965880,
+    "maxlon": -122.0577733
+  },
+  "geometry": [
+    { "lat": 36.9965527, "lon": -122.0578229 },
+    { "lat": 36.9965880, "lon": -122.0577733 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "yes",
+    "surface": "wood"
+  }
+},
+{
+  "type": "way",
+  "id": 666173759,
+  "bounds": {
+    "minlat": 36.9946390,
+    "minlon": -122.0540567,
+    "maxlat": 36.9948454,
+    "maxlon": -122.0540474
+  },
+  "geometry": [
+    { "lat": 36.9948454, "lon": -122.0540567 },
+    { "lat": 36.9946390, "lon": -122.0540474 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "no",
+    "surface": "concrete"
+  }
+},
+{
+  "type": "way",
+  "id": 670160385,
+  "bounds": {
+    "minlat": 36.9963071,
+    "minlon": -122.0586775,
+    "maxlat": 36.9963739,
+    "maxlon": -122.0584742
+  },
+  "geometry": [
+    { "lat": 36.9963071, "lon": -122.0584742 },
+    { "lat": 36.9963739, "lon": -122.0586775 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "yes",
+    "surface": "wood"
+  }
+},
+{
+  "type": "way",
+  "id": 671666934,
+  "bounds": {
+    "minlat": 36.9939613,
+    "minlon": -122.0608525,
+    "maxlat": 36.9941945,
+    "maxlon": -122.0608093
+  },
+  "geometry": [
+    { "lat": 36.9939613, "lon": -122.0608093 },
+    { "lat": 36.9941945, "lon": -122.0608525 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1"
+  }
+},
+{
+  "type": "way",
+  "id": 685372460,
+  "bounds": {
+    "minlat": 36.9967074,
+    "minlon": -122.0566081,
+    "maxlat": 36.9967523,
+    "maxlon": -122.0565853
+  },
+  "geometry": [
+    { "lat": 36.9967074, "lon": -122.0566081 },
+    { "lat": 36.9967523, "lon": -122.0565853 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "lit": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 742717521,
+  "bounds": {
+    "minlat": 36.9958091,
+    "minlon": -122.0571193,
+    "maxlat": 36.9958967,
+    "maxlon": -122.0570928
+  },
+  "geometry": [
+    { "lat": 36.9958091, "lon": -122.0571193 },
+    { "lat": 36.9958426, "lon": -122.0571072 },
+    { "lat": 36.9958967, "lon": -122.0570928 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "smoothness": "excellent"
+  }
+},
+{
+  "type": "way",
+  "id": 942017227,
+  "bounds": {
+    "minlat": 36.9931129,
+    "minlon": -122.0629326,
+    "maxlat": 36.9931275,
+    "maxlon": -122.0628529
+  },
+  "geometry": [
+    { "lat": 36.9931275, "lon": -122.0628529 },
+    { "lat": 36.9931217, "lon": -122.0628850 },
+    { "lat": 36.9931129, "lon": -122.0629326 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "name": "Rachel Carson College Path",
+    "smoothness": "good",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1169169841,
+  "bounds": {
+    "minlat": 36.9925788,
+    "minlon": -122.0629858,
+    "maxlat": 36.9927280,
+    "maxlon": -122.0629171
+  },
+  "geometry": [
+    { "lat": 36.9927280, "lon": -122.0629171 },
+    { "lat": 36.9925788, "lon": -122.0629858 }
+  ],
+  "tags": {
+    "bicycle": "yes",
+    "bridge": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "name": "Oakes Path",
+    "smoothness": "intermediate",
+    "surface": "asphalt"
+  }
+}
+
+  ]
+}

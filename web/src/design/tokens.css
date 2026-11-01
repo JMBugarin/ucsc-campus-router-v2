@@ -1,0 +1,167 @@
+/* Design tokens, translated from TileLens (ui/design/tokens.py). One place for every value. */
+:root {
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI Variable', 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
+  --ts: 1;
+
+  --s-xs: 4px;
+  --s-s: 8px;
+  --s-m: 12px;
+  --s-l: 16px;
+  --s-xl: 20px;
+  --s-xxl: 24px;
+
+  /* concentric: a child's radius is its parent's minus the gap */
+  --r-control: 10px;
+  --r-card: 12px;
+  --r-sheet: 18px;
+  --r-panel: 20px;
+
+  --m-fast: 120ms;
+  --m-base: 180ms;
+  --m-slow: 280ms;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --h-control: 32px;
+  --h-control-s: 26px;
+  --hit: 32px;
+
+  --t-caption: calc(11px * var(--ts));
+  --t-footnote: calc(12px * var(--ts));
+  --t-body: calc(13px * var(--ts));
+  --t-headline: calc(15px * var(--ts));
+  --t-title: calc(20px * var(--ts));
+
+  --blur: 26px;
+  --glass-strength: 1;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --ts: 1.14;
+    --h-control: 44px;
+    --h-control-s: 34px;
+    --hit: 44px;
+  }
+}
+
+/* dark material (TileLens DARK) */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --tint-top-rgb: 60 68 88;
+  --tint-top-a: 0.22;
+  --tint-bottom-rgb: 26 32 48;
+  --tint-bottom-a: 0.34;
+  --solid-top: rgb(44 52 72 / 0.9);
+  --solid-bottom: rgb(22 28 44 / 0.94);
+  --rim-top: rgb(255 255 255 / 0.7);
+  --rim-mid: rgb(255 255 255 / 0.07);
+  --rim-bottom: rgb(255 255 255 / 0.34);
+  --edge: rgb(0 0 0 / 0.34);
+  --shadow-rgb: 2 6 18;
+  --sheen: rgb(255 255 255 / 0.13);
+  --backdrop-adjust: brightness(0.8) saturate(1.5);
+
+  --text: rgb(255 255 255 / 0.96);
+  --text-2: rgb(235 240 255 / 0.7);
+  --text-3: rgb(235 240 255 / 0.48);
+  --fill: rgb(255 255 255 / 0.07);
+  --fill-hover: rgb(255 255 255 / 0.13);
+  --fill-press: rgb(255 255 255 / 0.19);
+  --divider: rgb(255 255 255 / 0.1);
+  --accent-rgb: 90 200 250;
+  --on-accent: rgb(4 22 34);
+  --success-rgb: 48 209 88;
+  --warning-rgb: 255 214 10;
+  --danger-rgb: 255 105 97;
+  --map-ink: #0b1220;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --tint-top-rgb: 255 255 255;
+  --tint-top-a: 0.34;
+  --tint-bottom-rgb: 244 247 255;
+  --tint-bottom-a: 0.24;
+  --solid-top: rgb(252 253 255 / 0.92);
+  --solid-bottom: rgb(238 242 250 / 0.9);
+  --rim-top: rgb(255 255 255 / 0.95);
+  --rim-mid: rgb(255 255 255 / 0.3);
+  --rim-bottom: rgb(255 255 255 / 0.7);
+  --edge: rgb(20 30 60 / 0.16);
+  --shadow-rgb: 20 30 60;
+  --sheen: rgb(255 255 255 / 0.34);
+  --backdrop-adjust: brightness(1.12) saturate(1.5);
+
+  --text: rgb(18 22 32 / 0.94);
+  --text-2: rgb(28 36 56 / 0.68);
+  --text-3: rgb(28 36 56 / 0.5);
+  --fill: rgb(20 30 60 / 0.05);
+  --fill-hover: rgb(20 30 60 / 0.09);
+  --fill-press: rgb(20 30 60 / 0.14);
+  --divider: rgb(20 30 60 / 0.1);
+  --accent-rgb: 0 113 227;
+  --on-accent: rgb(255 255 255);
+  --success-rgb: 26 150 66;
+  --warning-rgb: 176 108 0;
+  --danger-rgb: 210 30 40;
+  --map-ink: #f4f7fb;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --tint-top-rgb: 255 255 255;
+    --tint-top-a: 0.34;
+    --tint-bottom-rgb: 244 247 255;
+    --tint-bottom-a: 0.24;
+    --solid-top: rgb(252 253 255 / 0.92);
+    --solid-bottom: rgb(238 242 250 / 0.9);
+    --rim-top: rgb(255 255 255 / 0.95);
+    --rim-mid: rgb(255 255 255 / 0.3);
+    --rim-bottom: rgb(255 255 255 / 0.7);
+    --edge: rgb(20 30 60 / 0.16);
+    --shadow-rgb: 20 30 60;
+    --sheen: rgb(255 255 255 / 0.34);
+    --backdrop-adjust: brightness(1.12) saturate(1.5);
+    --text: rgb(18 22 32 / 0.94);
+    --text-2: rgb(28 36 56 / 0.68);
+    --text-3: rgb(28 36 56 / 0.5);
+    --fill: rgb(20 30 60 / 0.05);
+    --fill-hover: rgb(20 30 60 / 0.09);
+    --fill-press: rgb(20 30 60 / 0.14);
+    --divider: rgb(20 30 60 / 0.1);
+    --accent-rgb: 0 113 227;
+    --on-accent: rgb(255 255 255);
+    --success-rgb: 26 150 66;
+    --warning-rgb: 176 108 0;
+    --danger-rgb: 210 30 40;
+    --map-ink: #f4f7fb;
+  }
+}
+
+:root {
+  --accent: rgb(var(--accent-rgb));
+  --accent-wash: rgb(var(--accent-rgb) / 0.14);
+  --accent-line: rgb(var(--accent-rgb) / 0.7);
+  --success: rgb(var(--success-rgb));
+  --warning: rgb(var(--warning-rgb));
+  --danger: rgb(var(--danger-rgb));
+  --tint-top: rgb(var(--tint-top-rgb) / calc(var(--tint-top-a) * var(--glass-strength)));
+  --tint-bottom: rgb(var(--tint-bottom-rgb) / calc(var(--tint-bottom-a) * var(--glass-strength)));
+  --elev-floating: 0 12px 26px rgb(var(--shadow-rgb) / 0.34), 0 2px 5px rgb(var(--shadow-rgb) / 0.28);
+  --elev-raised: 0 3px 10px rgb(var(--shadow-rgb) / 0.18), 0 1px 2.5px rgb(var(--shadow-rgb) / 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --m-fast: 0ms;
+    --m-base: 0ms;
+    --m-slow: 0ms;
+  }
+}
+:root[data-motion='reduce'] {
+  --m-fast: 0ms;
+  --m-base: 0ms;
+  --m-slow: 0ms;
+}
