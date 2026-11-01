@@ -6,8 +6,9 @@ export function TransitModal({ open, onClose }: { open: boolean; onClose: () => 
   return (
     <GlassModal open={open} onClose={onClose} title="Shuttles and buses">
       <p className="note" style={{ marginTop: 0 }}>
-        UCSC runs a campus circulator and is served by Santa Cruz METRO. Stops are on the map under Transit.
+        Santa Cruz METRO routes 11, 16, 18, 19 and 20 serve campus. Open a METRO stop on the map for its next buses, and use Directions to see when a bus beats walking.
       </p>
+      <h3>Campus shuttles</h3>
       <ul className="plain">
         {SHUTTLES.map((s) => (
           <li key={s.name}>
@@ -16,12 +17,13 @@ export function TransitModal({ open, onClose }: { open: boolean; onClose: () => 
           </li>
         ))}
       </ul>
-      <GlassBanner tone="warning" title="No live times here">
-        This map has no arrival data: no authorized free live feed was available. Check the official pages for routes and schedules.
+      <GlassBanner tone="warning" title="No live shuttle times here">
+        UCSC tracks Loop and Upper Campus shuttles only in its flexigo app, with a UCSC login. No public schedule or location feed was found, so this map cannot show them.
       </GlassBanner>
       <div className="links">
         <a href={TRANSIT_LINKS.tapsBuses} target="_blank" rel="noopener">UCSC Buses &amp; Shuttles</a>
         <a href={TRANSIT_LINKS.metro} target="_blank" rel="noopener">Santa Cruz METRO</a>
+        <a href="https://apps.apple.com/us/app/flexigo/id1136183245" target="_blank" rel="noopener">flexigo (iOS)</a>
       </div>
     </GlassModal>
   )

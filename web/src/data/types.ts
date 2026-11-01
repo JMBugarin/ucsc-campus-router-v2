@@ -13,6 +13,8 @@ export interface Place {
   rooms?: number
   source: string
   osm?: string
+  /** GTFS stop ids served here (METRO) */
+  stops?: string[]
 }
 export interface PlacesFile {
   attribution: string

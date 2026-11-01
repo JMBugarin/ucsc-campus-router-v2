@@ -5,6 +5,8 @@ import { formatDistance, formatDuration, type Plan, type PlanError } from '../ro
 import type { Place } from '../data/types'
 import type { SearchIndex } from '../data/search'
 import { PlaceRows } from './Browse'
+import { clockText, type TransitData } from '../transit/schedule'
+import type { BusPlan } from '../transit/plan'
 
 export type Pick = { id: string; name: string } | null
 const LOWER = ['path', 'stairs', 'road', 'bridge']
@@ -68,7 +70,11 @@ export function Directions({
   locating,
   locationError,
   straightMeters,
+  bus,
+  transit,
 }: {
+  bus?: BusPlan | null
+  transit?: TransitData | null
   from: Pick
   to: Pick
   plan: Plan | null
@@ -153,7 +159,30 @@ export function Directions({
                   No route without mapped stairs exists between these places, so the shortest one is shown.
                 </GlassBanner>
               )}
-              <SectionLabel>Route</SectionLabel>
+              {bus && transit && (
+                <>
+                  <SectionLabel>By bus</SectionLabel>
+                  {bus.options.length ? (
+                    <ul className="bus">
+                      {bus.options.map((o) => (
+                        <li key={o.tripId + o.departs}>
+                          <span className="route">{o.route}</span>
+                          <span className="bus__main">
+                            {transit.stops[o.board].name} {clockText(o.departs)} to {transit.stops[o.alight].name}
+                            <small>
+                              Walk {Math.max(1, Math.round(o.walkToStop / 60))} min to the stop, ride, walk {Math.max(1, Math.round(o.walkFromStop / 60))} min. Scheduled.
+                            </small>
+                          </span>
+                          <span className="bus__eta tabular">{clockText(o.arrives)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="note">No direct METRO bus gets there sooner than walking{bus.walkOnlyArrives ? ` (arrive ${clockText(bus.walkOnlyArrives)})` : ''}.</p>
+                  )}
+                </>
+              )}
+              <SectionLabel>On foot</SectionLabel>
               <ol className="steps">
                 {legs(plan).map((l, i) => (
                   <li key={i}>
