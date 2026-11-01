@@ -14,7 +14,7 @@
 
 ## What was reused and what was dropped
 
-Reused: `graph/ucsc` (walking graph with elevation), `data/buildings.json` (32 academic buildings with doors and room points), `data/search_aliases.json` and the building aliases, the data-pipeline scripts that produced them.
+Reused: `graph/ucsc` (walking graph with elevation), `data/buildings.json` (32 curated buildings with doors and room points, plus 53 more teaching buildings from the campus map), `data/search_aliases.json` and the building aliases, the data-pipeline scripts that produced them.
 
 New: everything in `web/`. Added from OpenStreetMap (snapshot in `web/data-src`): colleges, dining, libraries, landmarks and plazas, bus stops, parking lots, and bridge ways (used to mark bridge edges in the graph).
 
@@ -59,7 +59,7 @@ The style is written in code (`src/map/style.ts`) over the OpenMapTiles schema, 
 - Transit: bus stops come from OpenStreetMap; shuttle names come from the [official page](https://transportation.ucsc.edu/buses-shuttles/index.html). No schedules or live arrivals: no authorized free live feed was used.
 - Parking lot names come from OpenStreetMap lot numbers; permit rules are not shown (link to TAPS).
 - "Science Hill" is an OSM locality point, not a boundary. Quarry Plaza is the center of the OSM plaza way.
-- Only 32 academic buildings have schedule nicknames and room counts; other buildings come from OSM names.
+- Only the 32 curated buildings have doors, room counts and the classroom directory's schedule names. The 53 buildings added from the campus map (Communications, Sinsheimer, Theater Arts and Elena Baskin units, college libraries and classroom buildings and others) have names, nicknames and an outline centre, not doors or room lists.
 - Place data is a snapshot (`web/data-src`, October 2026). Refresh with the Overpass queries noted in `web/scripts/build-data.mjs`.
 - Not tested on physical phones or on Safari/Firefox; tested in desktop Chrome with a mobile viewport and touch emulation.
 
