@@ -12,6 +12,14 @@ The app keeps no server and no account. Everything runs on the phone.
 
 _Captured on 2026-10-31 in the iOS Simulator (iPhone 17) with an invented schedule; not a real device._
 
+## Campus map on the web
+
+[`web/`](web/README.md) is a separate, installable web map of campus built on free, open-source parts (MapLibre, OpenFreeMap, OpenStreetMap): search, place pages, walking routes over the campus path network, and a glass interface ported from TileLens. It needs no key, account or server. See [docs/web-app.md](docs/web-app.md).
+
+| Place | Route (dark) | Mobile |
+|---|---|---|
+| <img src="docs/screenshots/web/03-mchenry-library-light.png" width="300" alt="McHenry Library on the web map"> | <img src="docs/screenshots/web/06-kresge-to-baskin-dark.png" width="300" alt="Walking route from Kresge College to Baskin Engineering"> | <img src="docs/screenshots/web/10-mobile-place-light.png" width="130" alt="Place sheet on a phone"> |
+
 ## What it does
 
 - **Today**: the classes of the day with their times, rooms and buildings, the break between them, and what is on now and next. Step to any other day, or open the week.
