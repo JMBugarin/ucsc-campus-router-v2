@@ -2795,6 +2795,20 @@
      "room_known": null
     },
     {
+     "building_id": "humanities-auditorium",
+     "building_name": "Humanities Auditorium",
+     "floor": null,
+     "kind": "building",
+     "label": "Humanities Auditorium",
+     "point": {
+      "lat": 36.9987229,
+      "lon": -122.0554907
+     },
+     "query": "Humanities Auditorium",
+     "room": null,
+     "room_known": null
+    },
+    {
      "building_id": "humanities-and-social-sciences",
      "building_name": "Humanities and Social Sciences",
      "floor": null,
