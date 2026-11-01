@@ -6,8 +6,10 @@ Usage (from data-pipeline/):
 Sources:
   * https://classrooms.ucsc.edu/. Each room page lists an "AIS Display Name"
     (e.g. "Kresge Acad 3201"), which is how UCSC's student system prints the
-    room in class schedules, plus a facility id. Requests are sequential with a
-    delay to stay polite.
+    room in class schedules, plus a facility id. Requests are sequential and wait
+    as long as the site's robots.txt asks (a Crawl-delay of 30 seconds when
+    checked on 2026-10-31), so a full run takes most of an hour. Run it rarely:
+    the result is committed.
   * The campus map's public "General Assignment Classroom Points" layer
     (https://maps.ucsc.edu/, maintained by UCSC PPDO): one query returns a
     coordinate and level for every room, keyed by the same display name.
@@ -28,8 +30,25 @@ BASE = "https://classrooms.ucsc.edu"
 LISTING = f"{BASE}/seating-capacity/150/"
 ROOM_POINTS = ("https://services1.arcgis.com/stBH6xTKFN83oDku/arcgis/rest/services/"
                "GA_Classroom_Points_PPDO/FeatureServer/0/query")
-USER_AGENT = "ucsc-campus-router (personal student project)"
-DELAY_S = 0.5
+USER_AGENT = "classmap data tool (personal student project; see github.com/JMBugarin/ucsc-campus-router-v2)"
+DEFAULT_DELAY_S = 30.0
+
+
+def crawl_delay(robots_txt, default=DEFAULT_DELAY_S):
+    """The Crawl-delay robots.txt asks of every crawler (the `*` group), or [default] if it names none."""
+    in_star_group, delay = False, None
+    for line in robots_txt.splitlines():
+        line = line.split("#", 1)[0].strip()
+        name, _, value = line.partition(":")
+        name, value = name.strip().lower(), value.strip()
+        if name == "user-agent":
+            in_star_group = value == "*"
+        elif name == "crawl-delay" and in_star_group:
+            try:
+                delay = float(value)
+            except ValueError:
+                pass
+    return default if delay is None else max(delay, 0.0)
 
 
 def get(url):
@@ -74,7 +93,16 @@ def candidate_slugs(listing_html):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--out", type=Path, default=ROOT / "data" / "classrooms.json")
+    ap.add_argument("--delay", type=float, default=None,
+                    help="seconds between requests to classrooms.ucsc.edu; never less than its robots.txt Crawl-delay")
     args = ap.parse_args()
+
+    try:
+        asked = crawl_delay(get(f"{BASE}/robots.txt"))
+    except OSError:
+        asked = DEFAULT_DELAY_S
+    delay = max(asked, args.delay or 0.0)
+    print(f"waiting {delay:g} s between requests (robots.txt asks for {asked:g} s)")
 
     slugs = candidate_slugs(get(LISTING))
     print(f"{len(slugs)} candidate links on the listing page")
@@ -84,7 +112,7 @@ def main():
 
     rooms = []
     for slug in slugs:
-        time.sleep(DELAY_S)
+        time.sleep(delay)
         t = text_of(get(f"{BASE}/{slug}/"))
         display = field(t, "AIS Display Name")
         if not display:  # navigation page, not a room
