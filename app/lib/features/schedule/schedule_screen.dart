@@ -4,10 +4,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/api_client.dart';
-import '../../core/waking_note.dart';
-import '../today/today_text.dart';
+import '../today/day_plan.dart';
+import '../../design/floating_bar.dart';
 import 'add_class_dialog.dart';
+import 'import/clean.dart';
 import 'meeting.dart';
 import 'ocr/parsed_row.dart';
 import 'ocr/picture_picker.dart';
@@ -18,7 +18,9 @@ import 'schedule_controller.dart';
 import 'term.dart';
 
 /// Picks a calendar file and returns its text, or null if nothing was chosen. Tests replace this.
-final calendarFilePickerProvider = Provider<Future<String?> Function()>((ref) => pickCalendarFileText);
+final calendarFilePickerProvider = Provider<Future<String?> Function()>(
+  (ref) => pickCalendarFileText,
+);
 
 const _maxCalendarBytes = 1000000;
 
@@ -27,21 +29,26 @@ Future<String?> pickCalendarFileText() async {
   if (file == null) return null;
   final bytes = await file.readAsBytes();
   if (bytes.length > _maxCalendarBytes) {
-    throw const FormatException('That file is too large to be a class calendar.');
+    throw const FormatException(
+      'That file is too large to be a class calendar.',
+    );
   }
   return utf8.decode(bytes, allowMalformed: true);
 }
 
-/// What the screen is waiting on the server for, and what to say if the wait drags on, or null when it
+/// What the screen is busy with, and what to say if it drags on, or null when it
 /// is not waiting.
 class _Busy extends Notifier<({String label, String? note})?> {
   @override
   ({String label, String? note})? build() => null;
 
-  void set(String? label, {String? note}) => state = label == null ? null : (label: label, note: note);
+  void set(String? label, {String? note}) =>
+      state = label == null ? null : (label: label, note: note);
 }
 
-final _busyProvider = NotifierProvider<_Busy, ({String label, String? note})?>(_Busy.new);
+final _busyProvider = NotifierProvider<_Busy, ({String label, String? note})?>(
+  _Busy.new,
+);
 
 class ScheduleScreen extends ConsumerWidget {
   const ScheduleScreen({super.key});
@@ -49,7 +56,8 @@ class ScheduleScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final schedule = ref.watch(scheduleProvider);
-    final locations = ref.watch(locationInfoProvider).value ?? const <LocationInfo>[];
+    final locations =
+        ref.watch(locationInfoProvider).value ?? const <LocationInfo>[];
     final busy = ref.watch(_busyProvider);
 
     return Scaffold(
@@ -112,8 +120,11 @@ class ScheduleScreen extends ConsumerWidget {
                         _MeetingTile(
                           meeting: meetings[i],
                           location: i < locations.length ? locations[i] : null,
-                          onDelete: () => ref.read(scheduleProvider.notifier).removeAt(i),
-                          onRestore: () => ref.read(scheduleProvider.notifier).restoreAllDays(meetings[i]),
+                          onDelete: () =>
+                              ref.read(scheduleProvider.notifier).removeAt(i),
+                          onRestore: () => ref
+                              .read(scheduleProvider.notifier)
+                              .restoreAllDays(meetings[i]),
                         ),
                     ],
                   ),
@@ -124,9 +135,17 @@ class ScheduleScreen extends ConsumerWidget {
   }
 
   Future<void> _paste(BuildContext context, WidgetRef ref) async {
-    final text = await showDialog<String>(context: context, builder: (_) => const _PasteDialog());
+    final text = await showDialog<String>(
+      context: context,
+      builder: (_) => const _PasteDialog(),
+    );
     if (text == null || text.trim().isEmpty || !context.mounted) return;
-    await _run(context, ref, 'Reading your schedule…', () => ref.read(scheduleProvider.notifier).importText(text));
+    await _run(
+      context,
+      ref,
+      'Reading your schedule…',
+      () => ref.read(scheduleProvider.notifier).importText(text),
+    );
   }
 
   Future<void> _calendar(BuildContext context, WidgetRef ref) async {
@@ -139,7 +158,12 @@ class ScheduleScreen extends ConsumerWidget {
     }
     if (text == null) return;
     if (!context.mounted) return;
-    await _run(context, ref, 'Reading your schedule…', () => ref.read(scheduleProvider.notifier).importCalendar(text!));
+    await _run(
+      context,
+      ref,
+      'Reading your schedule…',
+      () => ref.read(scheduleProvider.notifier).importCalendar(text!),
+    );
   }
 
   /// Reads a screenshot or photo of the schedule on this phone, then lets the student check what was found.
@@ -156,12 +180,19 @@ class ScheduleScreen extends ConsumerWidget {
     final busy = ref.read(_busyProvider.notifier)..set('Reading your picture…');
     final ParsedSchedule parsed;
     try {
-      parsed = parseSchedule(await ref.read(textRecognizerProvider).recognize(path));
+      parsed = parseSchedule(
+        await ref.read(textRecognizerProvider).recognize(path),
+      );
     } on PictureException catch (e) {
       if (context.mounted) _say(context, e.message);
       return;
     } on Object {
-      if (context.mounted) _say(context, 'Something went wrong reading that picture. Try a different one.');
+      if (context.mounted) {
+        _say(
+          context,
+          'Something went wrong reading that picture. Try a different one.',
+        );
+      }
       return;
     } finally {
       busy.set(null);
@@ -180,22 +211,33 @@ class ScheduleScreen extends ConsumerWidget {
 
   String _nothingFound(ParsedSchedule parsed) {
     final why = switch (parsed.problem) {
-      ReadProblem.noText => "I couldn't find any text in that picture. Try a clearer screenshot of your schedule.",
-      _ => "I couldn't find any classes in that picture. Try a screenshot of your class list, like MyUCSC's Class "
-          'Schedule page, or paste the text instead.',
+      ReadProblem.noText =>
+        "I couldn't find any text in that picture. Try a clearer screenshot of your schedule.",
+      _ =>
+        "I couldn't find any classes in that picture. Try a screenshot of your class list, like MyUCSC's Class "
+            'Schedule page, or paste the text instead.',
     };
     return [why, ...parsed.notes].join(' ');
   }
 
   Future<void> _add(BuildContext context, WidgetRef ref) async {
-    // A sleeping server must not hold the form back: without the term it just starts with empty dates.
-    final term = await ref.read(termProvider.future).timeout(const Duration(milliseconds: 1500), onTimeout: () => null);
+    final term = await ref
+        .read(termProvider.future)
+        .timeout(const Duration(milliseconds: 1500), onTimeout: () => null);
     if (term == null) ref.invalidate(termProvider);
     if (!context.mounted) return;
-    final meeting = await showDialog<Meeting>(context: context, builder: (_) => AddClassDialog(term: term));
+    final meeting = await showDialog<Meeting>(
+      context: context,
+      builder: (_) => AddClassDialog(term: term),
+    );
     if (meeting == null) return;
     if (!context.mounted) return;
-    await _run(context, ref, 'Checking the class…', () => ref.read(scheduleProvider.notifier).add(meeting));
+    await _run(
+      context,
+      ref,
+      'Checking the class…',
+      () => ref.read(scheduleProvider.notifier).add(meeting),
+    );
   }
 
   Future<void> _confirmClear(BuildContext context, WidgetRef ref) async {
@@ -205,8 +247,14 @@ class ScheduleScreen extends ConsumerWidget {
         title: const Text('Remove all classes?'),
         content: const Text('This clears the schedule saved on this phone.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Remove all')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Remove all'),
+          ),
         ],
       ),
     );
@@ -224,7 +272,7 @@ class ScheduleScreen extends ConsumerWidget {
     String message;
     try {
       message = (await action()).message;
-    } on ApiException catch (e) {
+    } on ScheduleError catch (e) {
       message = e.message;
     } finally {
       busy.set(null);
@@ -235,7 +283,13 @@ class ScheduleScreen extends ConsumerWidget {
   void _say(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message), duration: const Duration(seconds: 8)));
+      ..showSnackBar(
+        floatingSnackBar(
+          inset: FloatingBarInset.of(context),
+          content: Text(message),
+          duration: const Duration(seconds: 8),
+        ),
+      );
   }
 }
 
@@ -255,7 +309,7 @@ class _Working extends StatelessWidget {
           const LinearProgressIndicator(),
           const SizedBox(height: 8),
           Text(label),
-          WakingNote(after: note == null ? const Duration(seconds: 4) : const Duration(seconds: 2), message: note),
+          if (note != null) Text(note!),
         ],
       ),
     );
@@ -267,13 +321,22 @@ class _Empty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 32),
-        child: Center(child: Text('No classes yet. Paste your schedule, import a calendar, or add one.')),
-      );
+    padding: EdgeInsets.symmetric(vertical: 32),
+    child: Center(
+      child: Text(
+        'No classes yet. Paste your schedule, import a calendar, or add one.',
+      ),
+    ),
+  );
 }
 
 class _MeetingTile extends StatelessWidget {
-  const _MeetingTile({required this.meeting, required this.location, required this.onDelete, required this.onRestore});
+  const _MeetingTile({
+    required this.meeting,
+    required this.location,
+    required this.onDelete,
+    required this.onRestore,
+  });
 
   final Meeting meeting;
   final LocationInfo? location;
@@ -287,7 +350,7 @@ class _MeetingTile extends StatelessWidget {
       'building' => info!.buildingName ?? meeting.location,
       'online' => 'Online',
       'tba' => 'No room yet',
-      'unknown' => "Not recognised, so the walk can't be timed",
+      'unknown' => "Not recognised, so it can't be shown on the map",
       _ => null,
     };
     return Card(
@@ -302,7 +365,9 @@ class _MeetingTile extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${meeting.whenLabel}  ${meeting.timeLabel}\n${meeting.location}${place == null ? '' : ' ($place)'}'),
+            Text(
+              '${meeting.whenLabel}  ${meeting.timeLabel}\n${meeting.location}${place == null ? '' : ' ($place)'}',
+            ),
             if (meeting.skipDates.isNotEmpty)
               Row(
                 children: [
@@ -312,7 +377,10 @@ class _MeetingTile extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
-                  TextButton(onPressed: onRestore, child: const Text('Restore')),
+                  TextButton(
+                    onPressed: onRestore,
+                    child: const Text('Restore'),
+                  ),
                 ],
               ),
           ],
@@ -361,13 +429,22 @@ class _PasteDialogState extends State<_PasteDialog> {
             controller: _controller,
             minLines: 5,
             maxLines: 8,
-            decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'Paste here'),
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Paste here',
+            ),
           ),
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        FilledButton(onPressed: () => Navigator.pop(context, _controller.text), child: const Text('Import')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _controller.text),
+          child: const Text('Import'),
+        ),
       ],
     );
   }

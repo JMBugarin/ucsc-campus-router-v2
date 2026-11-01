@@ -38,3 +38,18 @@ class ScrollEdgeFade extends StatelessWidget {
     );
   }
 }
+
+/// A message that floats above the tab bar instead of covering it, so the tabs stay tappable while it shows.
+/// [inset] is `FloatingBarInset.of(context)`, read before any `await`.
+SnackBar floatingSnackBar({
+  required double inset,
+  required Widget content,
+  SnackBarAction? action,
+  Duration duration = const Duration(seconds: 4),
+}) => SnackBar(
+  content: content,
+  action: action,
+  duration: duration,
+  behavior: SnackBarBehavior.floating,
+  margin: EdgeInsets.fromLTRB(Space.md, 0, Space.md, inset + Space.sm),
+);

@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/features/schedule/ocr/text_recognizer.dart';
+import 'package:classmap/features/schedule/ocr/text_recognizer.dart';
 
-const channel = MethodChannel('ucsc_router/text_recognition');
+const channel = MethodChannel('classmap/text_recognition');
 
 void answer(Future<Object?> Function(MethodCall call)? handler) {
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, handler);

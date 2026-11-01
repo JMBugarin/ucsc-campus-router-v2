@@ -1,36 +1,33 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:classmap/app.dart';
+import 'package:classmap/campus/campus_data.dart';
+import 'package:classmap/campus/terms.dart';
+import 'package:classmap/core/clock.dart';
+import 'package:classmap/core/tiles.dart';
+import 'package:classmap/features/directions/directions.dart';
+import 'package:classmap/features/reminders/reminder.dart';
+import 'package:classmap/features/reminders/reminder_scheduler.dart';
+import 'package:classmap/features/schedule/meeting.dart';
+import 'package:classmap/features/schedule/ocr/picture_picker.dart';
+import 'package:classmap/features/schedule/ocr/recognized_text.dart';
+import 'package:classmap/features/schedule/ocr/text_recognizer.dart';
+import 'package:classmap/features/schedule/schedule_repository.dart';
+import 'package:classmap/features/schedule/schedule_screen.dart';
+import 'package:classmap/features/schedule/term.dart';
+import 'package:classmap/features/search/place.dart';
+import 'package:classmap/features/search/search_repository.dart';
+import 'package:classmap/features/settings/settings.dart';
+import 'package:classmap/features/today/today_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ucsc_router/app.dart';
-import 'package:ucsc_router/core/clock.dart';
-import 'package:ucsc_router/core/tiles.dart';
-import 'package:ucsc_router/features/arrive/entry_walks.dart';
-import 'package:ucsc_router/features/handoff/handoff.dart';
-import 'package:ucsc_router/features/location/location_service.dart';
-import 'package:ucsc_router/features/reminders/reminder_scheduler.dart';
-import 'package:ucsc_router/features/route/destination.dart';
-import 'package:ucsc_router/features/search/place.dart';
-import 'package:ucsc_router/features/search/search_repository.dart';
-import 'package:ucsc_router/features/route/route_plan.dart';
-import 'package:ucsc_router/features/route/route_repository.dart';
-import 'package:ucsc_router/features/schedule/meeting.dart';
-import 'package:ucsc_router/features/schedule/ocr/picture_picker.dart';
-import 'package:ucsc_router/features/schedule/ocr/recognized_text.dart';
-import 'package:ucsc_router/features/schedule/ocr/text_recognizer.dart';
-import 'package:ucsc_router/features/schedule/schedule_repository.dart';
-import 'package:ucsc_router/features/schedule/schedule_screen.dart';
-import 'package:ucsc_router/features/schedule/term.dart';
-import 'package:ucsc_router/features/settings/settings.dart';
-import 'package:ucsc_router/features/today/today_controller.dart';
-import 'package:ucsc_router/features/today/today_models.dart';
-import 'package:ucsc_router/features/today/today_repository.dart';
 
 Map<String, dynamic> fixture(String name) =>
-    jsonDecode(File('test/fixtures/$name.json').readAsStringSync()) as Map<String, dynamic>;
+    jsonDecode(File('test/fixtures/$name.json').readAsStringSync())
+        as Map<String, dynamic>;
 
 Meeting meeting({
   String course = 'XYZ 10',
@@ -39,34 +36,35 @@ Meeting meeting({
   String start = '14:40',
   String end = '15:45',
   String location = 'Kresge Acad 3201',
-}) =>
-    Meeting(
-      course: course,
-      component: component,
-      days: days,
-      start: start,
-      end: end,
-      location: location,
-      startDate: '2026-09-24',
-      endDate: '2026-12-04',
-    );
+}) => Meeting(
+  course: course,
+  component: component,
+  days: days,
+  start: start,
+  end: end,
+  location: location,
+  startDate: '2026-09-24',
+  endDate: '2026-12-04',
+);
 
-/// Stands in for the server and for the phone's storage.
+/// Stands in for the phone's storage and the schedule reader.
 class FakeScheduleRepository implements ScheduleRepository {
-  FakeScheduleRepository({List<Meeting> stored = const []}) : stored = [...stored];
+  FakeScheduleRepository({List<Meeting> stored = const []})
+    : stored = [...stored];
 
   List<Meeting> stored;
   ImportResult? nextImport;
   Object? failWith;
   final calls = <String>[];
 
-  /// When set, imports wait for it, like a server that is slow to answer.
+  /// When set, imports wait for it, like a slow reader.
   Future<void>? hold;
 
   Future<ImportResult> _result() async {
     await hold;
     if (failWith != null) throw failWith!;
-    return nextImport ?? const ImportResult(meetings: [], notes: [], locations: []);
+    return nextImport ??
+        const ImportResult(meetings: [], notes: [], locations: []);
   }
 
   @override
@@ -104,46 +102,11 @@ class FakeScheduleRepository implements ScheduleRepository {
         ImportResult(
           meetings: meetings,
           notes: const [],
-          locations: [for (final _ in meetings) const LocationInfo(kind: 'building', buildingName: 'Some Hall')],
+          locations: [
+            for (final _ in meetings)
+              const LocationInfo(kind: 'building', buildingName: 'Some Hall'),
+          ],
         );
-  }
-}
-
-class FakeTodayRepository implements TodayRepository {
-  FakeTodayRepository(this.answer);
-
-  Object answer; // an Analysis, or an exception to throw
-
-  /// When set, answers each request itself (given `at`, null for "now") instead of [answer].
-  Object Function(DateTime? at)? respond;
-  final requests = <({List<Meeting> meetings, GeoPoint? here, int lead, List<String> reminded, DateTime? at})>[];
-
-  @override
-  Future<Analysis> today({
-    required List<Meeting> meetings,
-    GeoPoint? here,
-    int remindLeadMinutes = 5,
-    List<String> reminded = const [],
-    DateTime? at,
-  }) async {
-    requests.add((meetings: meetings, here: here, lead: remindLeadMinutes, reminded: reminded, at: at));
-    final a = respond?.call(at) ?? answer;
-    if (a is Analysis) return a;
-    if (a is Future<Analysis>) return a;
-    throw a;
-  }
-}
-
-class FakeLocationService implements LocationService {
-  FakeLocationService([this.result = const LocationResult.found(GeoPoint(36.9998, -122.0628))]);
-
-  LocationResult result;
-  int calls = 0;
-
-  @override
-  Future<LocationResult> current() async {
-    calls++;
-    return result;
   }
 }
 
@@ -183,65 +146,20 @@ class FakeReminderScheduler implements ReminderScheduler {
   }
 }
 
-class FakeRouteRepository implements RouteRepository {
-  Object answer = RoutePlan.fromJson(fixture('route_to_room'), start: const GeoPoint(36.9998, -122.0628));
-  final requests = <({GeoPoint from, Destination destination})>[];
-
-  @override
-  Future<RoutePlan> to({required GeoPoint from, required Destination destination}) async {
-    requests.add((from: from, destination: destination));
-    final a = answer;
-    if (a is RoutePlan) return a;
-    throw a;
-  }
-}
-
-class FakeEntryWalksRepository implements EntryWalksRepository {
-  Object answer = EntryWalks.fromJson(fixture('entry_walks'));
-
-  /// What each room gets instead of [answer], an [EntryWalks] or an exception to throw.
-  final byRoom = <String, Object>{};
-  final requests = <String>[];
-
-  @override
-  Future<EntryWalks> to(String room) async {
-    requests.add(room);
-    final a = byRoom[room] ?? answer;
-    if (a is EntryWalks) return a;
-    throw a;
-  }
-}
-
-/// Stands in for the system's link opening: [installed] holds the app schemes that "are installed".
-class FakeLinkLauncher implements LinkLauncher {
-  final installed = <String>{'transit'};
-
-  /// Schemes whose links fail to open even though they can be opened.
-  final failing = <String>{};
-  final opened = <Uri>[];
-
-  @override
-  Future<bool> canOpen(Uri uri) async => installed.contains(uri.scheme);
-
-  @override
-  Future<bool> open(Uri uri) async {
-    opened.add(uri);
-    return !failing.contains(uri.scheme);
-  }
-}
-
 class FakeSearchRepository implements SearchRepository {
   Object answer = <Place>[];
   final queries = <String>[];
 
-  /// What the server makes of each room, by the text asked about; a room not listed is a building it knows.
+  /// What the campus data makes of each room, by the text asked about; a room not listed is a building it knows.
   final resolutions = <String, Object>{};
   final resolved = <String>[];
 
   @override
   Future<RoomResolution> resolve(String location) async {
     resolved.add(location);
-    final r = resolutions[location] ?? const RoomResolution(kind: 'building', roomKnown: true);
+    final r =
+        resolutions[location] ??
+        const RoomResolution(kind: 'building', roomKnown: true);
     if (r is RoomResolution) return r;
     throw r;
   }
@@ -291,46 +209,56 @@ class FakeTextRecognizer implements TextRecognizer {
   }
 }
 
+/// Records the links the app tried to open.
+class FakeUrlOpener {
+  final opened = <Uri>[];
+  bool succeeds = true;
+
+  Future<bool> call(Uri uri) async {
+    opened.add(uri);
+    return succeeds;
+  }
+}
+
+/// The campus data and terms the app ships, read from the files so no test waits on the asset bundle.
+final testCampus = campusFromJson(
+  buildings: File('assets/data/buildings.json').readAsStringSync(),
+  rooms: File('assets/data/rooms.json').readAsStringSync(),
+  aliases: File('assets/data/search_aliases.json').readAsStringSync(),
+);
+final testTerms = termsFromJson(
+  jsonDecode(File('assets/data/holidays.json').readAsStringSync())
+      as Map<String, dynamic>,
+);
+
 /// Everything a screen test needs, with the fakes exposed so tests can look at them.
 class TestRig {
   TestRig({
     List<Meeting> stored = const [],
-    Object? analysis,
-    String serverUrl = 'https://router.example',
-    bool useLocation = true,
     bool remindersOn = false,
     this.startTab = tabToday,
     this.now,
     this.pictureImport = true,
     this.term,
     this.stubTerm = false,
+    this.fakeSearch = false,
     Map<String, Object> prefs = const {},
-  })  : schedule = FakeScheduleRepository(stored: stored),
-        today = FakeTodayRepository(analysis ?? Analysis.fromJson(fixture('today_before_class'))),
-        location = FakeLocationService(),
-        scheduler = FakeReminderScheduler(),
-        route = FakeRouteRepository(),
-        entryWalks = FakeEntryWalksRepository(),
-        links = FakeLinkLauncher(),
-        search = FakeSearchRepository(),
-        picker = FakePicturePicker(),
-        recognizer = FakeTextRecognizer() {
+  }) : schedule = FakeScheduleRepository(stored: stored),
+       scheduler = FakeReminderScheduler(),
+       search = FakeSearchRepository(),
+       urls = FakeUrlOpener(),
+       picker = FakePicturePicker(),
+       recognizer = FakeTextRecognizer() {
     SharedPreferences.setMockInitialValues({
-      'server_url': serverUrl,
-      'use_location': useLocation,
       'reminders_on': remindersOn,
       ...prefs,
     });
   }
 
   final FakeScheduleRepository schedule;
-  final FakeTodayRepository today;
-  final FakeLocationService location;
   final FakeReminderScheduler scheduler;
-  final FakeRouteRepository route;
-  final FakeEntryWalksRepository entryWalks;
-  final FakeLinkLauncher links;
   final FakeSearchRepository search;
+  final FakeUrlOpener urls;
   final FakePicturePicker picker;
   final FakeTextRecognizer recognizer;
   final int startTab;
@@ -338,17 +266,17 @@ class TestRig {
   /// Whether this phone can read a picture of a schedule.
   final bool pictureImport;
 
-  /// The term the server reports, if any. Only used when [stubTerm] is set or a term is given.
+  /// The term reported to the add-a-class form, if any. Only used when [stubTerm] is set or a term is given.
   final ({String start, String end})? term;
-
-  /// Answers the term from [term] instead of asking a server.
   final bool stubTerm;
+
+  /// Searches with [search] instead of the bundled campus data.
+  final bool fakeSearch;
 
   /// Pins the app's clock when set (a UTC instant).
   final DateTime? now;
 
   String? pickedCalendarText;
-  int warmUps = 0;
 
   Future<List<Override>> overrides() async {
     final prefs = await SharedPreferences.getInstance();
@@ -356,34 +284,42 @@ class TestRig {
     return [
       sharedPreferencesProvider.overrideWithValue(prefs),
       if (pinned != null) clockProvider.overrideWithValue(() => pinned),
-      serverWarmUpProvider.overrideWithValue(() async => warmUps++),
+      campusProvider.overrideWith((ref) => testCampus),
+      termsProvider.overrideWith((ref) => testTerms),
       scheduleRepositoryProvider.overrideWithValue(schedule),
-      todayRepositoryProvider.overrideWithValue(today),
-      locationServiceProvider.overrideWithValue(location),
       reminderSchedulerProvider.overrideWithValue(scheduler),
-      routeRepositoryProvider.overrideWithValue(route),
-      entryWalksRepositoryProvider.overrideWithValue(entryWalks),
-      linkLauncherProvider.overrideWithValue(links),
-      searchRepositoryProvider.overrideWithValue(search),
+      if (fakeSearch) searchRepositoryProvider.overrideWithValue(search),
+      urlOpenerProvider.overrideWithValue(urls.call),
       selectedTabProvider.overrideWith(() => SelectedTab(startTab)),
       showMapTilesProvider.overrideWithValue(false),
-      todayRefreshIntervalProvider.overrideWithValue(null), // no timers left running after a test
-      calendarFilePickerProvider.overrideWithValue(() async => pickedCalendarText),
+      todayRefreshIntervalProvider.overrideWithValue(
+        null,
+      ), // no timers left running after a test
+      calendarFilePickerProvider.overrideWithValue(
+        () async => pickedCalendarText,
+      ),
       picturePickerProvider.overrideWithValue(picker),
       textRecognizerProvider.overrideWithValue(recognizer),
       pictureImportAvailableProvider.overrideWithValue(pictureImport),
-      if (stubTerm || term != null) termProvider.overrideWith((ref) async => term),
+      if (stubTerm || term != null)
+        termProvider.overrideWith((ref) async => term),
     ];
   }
 
   Future<ProviderContainer> container() async {
-    final container = ProviderContainer(retry: (count, error) => null, overrides: await overrides());
+    final container = ProviderContainer(
+      retry: (count, error) => null,
+      overrides: await overrides(),
+    );
     return container;
   }
 
   Future<Widget> app() async => ProviderScope(
-        retry: (count, error) => null,
-        overrides: await overrides(),
-        child: const UcscRouterApp(),
-      );
+    retry: (count, error) => null,
+    overrides: await overrides(),
+    child: const ClassmapApp(),
+  );
 }
+
+/// Monday 2026-10-12, noon on the campus clock, before the default class at 2:40 PM.
+final mondayNoon = DateTime.utc(2026, 10, 12, 19);

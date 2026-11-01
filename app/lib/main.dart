@@ -14,7 +14,7 @@ Future<void> main() async {
       // message (with a Retry button) instead of silently trying again.
       retry: (retryCount, error) => null,
       overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
-      child: const UcscRouterApp(),
+      child: const ClassmapApp(),
     ),
   );
 }

@@ -4,13 +4,14 @@ import '../../core/format.dart';
 import '../../core/two_up.dart';
 import 'meeting.dart';
 
-String _hhmm(TimeOfDay t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+String _hhmm(TimeOfDay t) =>
+    '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
 String _isoDate(DateTime d) =>
     '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
 /// A form for a class typed in by hand. Returns the [Meeting], or null if cancelled.
-/// The server checks it again when it is saved.
+/// It is checked again when it is saved.
 class AddClassDialog extends StatefulWidget {
   const AddClassDialog({super.key, this.term});
 
@@ -22,7 +23,13 @@ class AddClassDialog extends StatefulWidget {
 }
 
 class _AddClassDialogState extends State<AddClassDialog> {
-  static const _components = ['Lecture', 'Discussion', 'Lab', 'Seminar', 'Event'];
+  static const _components = [
+    'Lecture',
+    'Discussion',
+    'Lab',
+    'Seminar',
+    'Event',
+  ];
 
   final _course = TextEditingController();
   final _location = TextEditingController();
@@ -45,7 +52,8 @@ class _AddClassDialogState extends State<AddClassDialog> {
   Future<void> _pickTime(bool start) async {
     final picked = await showTimePicker(
       context: context,
-      initialTime: (start ? _start : _end) ?? const TimeOfDay(hour: 9, minute: 0),
+      initialTime:
+          (start ? _start : _end) ?? const TimeOfDay(hour: 9, minute: 0),
     );
     if (picked != null) setState(() => start ? _start = picked : _end = picked);
   }
@@ -58,7 +66,9 @@ class _AddClassDialogState extends State<AddClassDialog> {
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
     );
-    if (picked != null) setState(() => from ? _from = _isoDate(picked) : _to = _isoDate(picked));
+    if (picked != null) {
+      setState(() => from ? _from = _isoDate(picked) : _to = _isoDate(picked));
+    }
   }
 
   void _submit() {
@@ -107,18 +117,31 @@ class _AddClassDialogState extends State<AddClassDialog> {
             TextField(
               controller: _course,
               textCapitalization: TextCapitalization.characters,
-              decoration: const InputDecoration(labelText: 'Course', hintText: 'CSE 130'),
+              decoration: const InputDecoration(
+                labelText: 'Course',
+                hintText: 'CSE 130',
+              ),
             ),
             DropdownButtonFormField<String>(
               isExpanded: true,
               initialValue: _component,
               decoration: const InputDecoration(labelText: 'Type'),
-              items: [for (final c in _components) DropdownMenuItem(value: c, child: Text(c, overflow: TextOverflow.ellipsis))],
-              onChanged: (value) => setState(() => _component = value ?? _component),
+              items: [
+                for (final c in _components)
+                  DropdownMenuItem(
+                    value: c,
+                    child: Text(c, overflow: TextOverflow.ellipsis),
+                  ),
+              ],
+              onChanged: (value) =>
+                  setState(() => _component = value ?? _component),
             ),
             TextField(
               controller: _location,
-              decoration: const InputDecoration(labelText: 'Room', hintText: 'Thim Lecture 003'),
+              decoration: const InputDecoration(
+                labelText: 'Room',
+                hintText: 'Thim Lecture 003',
+              ),
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
@@ -134,7 +157,8 @@ class _AddClassDialogState extends State<AddClassDialog> {
                     FilterChip(
                       label: Text(dayCodes[d]),
                       selected: _days.contains(d),
-                      onSelected: (on) => setState(() => on ? _days.add(d) : _days.remove(d)),
+                      onSelected: (on) =>
+                          setState(() => on ? _days.add(d) : _days.remove(d)),
                     ),
                 ],
               ),
@@ -142,18 +166,26 @@ class _AddClassDialogState extends State<AddClassDialog> {
             TwoUp(
               OutlinedButton(
                 onPressed: () => _pickTime(true),
-                child: Text(_start == null ? 'Starts' : clock12(_start!.hour, _start!.minute)),
+                child: Text(
+                  _start == null
+                      ? 'Starts'
+                      : clock12(_start!.hour, _start!.minute),
+                ),
               ),
               OutlinedButton(
                 onPressed: () => _pickTime(false),
-                child: Text(_end == null ? 'Ends' : clock12(_end!.hour, _end!.minute)),
+                child: Text(
+                  _end == null ? 'Ends' : clock12(_end!.hour, _end!.minute),
+                ),
               ),
             ),
             const SizedBox(height: 8),
             TwoUp(
               OutlinedButton(
                 onPressed: () => _pickDate(true),
-                child: Text(_from.isEmpty ? (_oneTime ? 'Date' : 'From') : _from),
+                child: Text(
+                  _from.isEmpty ? (_oneTime ? 'Date' : 'From') : _from,
+                ),
               ),
               _oneTime
                   ? null
@@ -165,13 +197,19 @@ class _AddClassDialogState extends State<AddClassDialog> {
             if (_problem != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
-                child: Text(_problem!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                child: Text(
+                  _problem!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
               ),
           ],
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
         FilledButton(onPressed: _submit, child: const Text('Add')),
       ],
     );

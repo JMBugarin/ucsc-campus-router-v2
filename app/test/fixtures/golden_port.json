@@ -1,0 +1,3470 @@
+{
+ "clean": [
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [
+     0
+    ],
+    "end": "09:05",
+    "end_date": "2026-12-04",
+    "location": "Cowell Acad 113",
+    "start": "08:00",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "meeting": {
+     "class_nbr": "",
+     "component": "",
+     "course": "XYZ 10",
+     "days": [
+      0
+     ],
+     "end": "09:05",
+     "end_date": "2026-12-04",
+     "location": "Cowell Acad 113",
+     "section": "",
+     "start": "08:00",
+     "start_date": "2026-09-24",
+     "title": ""
+    }
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [
+     0
+    ],
+    "end": "07:00",
+    "end_date": "2026-12-04",
+    "location": "Cowell Acad 113",
+    "start": "08:00",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "error": "XYZ 10: the end time must be after the start time"
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [],
+    "end": "09:05",
+    "end_date": "2026-12-04",
+    "location": "Cowell Acad 113",
+    "start": "08:00",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "error": "XYZ 10: pick the days it meets, or use one date for a one-off event"
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [],
+    "end": "09:05",
+    "end_date": "2026-09-24",
+    "location": "Cowell Acad 113",
+    "start": "08:00",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "meeting": {
+     "class_nbr": "",
+     "component": "",
+     "course": "XYZ 10",
+     "days": [],
+     "end": "09:05",
+     "end_date": "2026-09-24",
+     "location": "Cowell Acad 113",
+     "section": "",
+     "start": "08:00",
+     "start_date": "2026-09-24",
+     "title": ""
+    }
+   }
+  },
+  {
+   "input": {
+    "course": "",
+    "days": [
+     0
+    ],
+    "end": "09:05",
+    "end_date": "2026-12-04",
+    "location": "Cowell Acad 113",
+    "start": "08:00",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "error": "course is required"
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [
+     0
+    ],
+    "end": "09:05",
+    "end_date": "2026-12-04",
+    "location": "Cowell Acad 113",
+    "start": "8am",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "error": "start must look like 14:40"
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [
+     0
+    ],
+    "end": "09:05",
+    "end_date": "2026-12-04",
+    "location": "Cowell Acad 113",
+    "start": "08:00",
+    "start_date": "nope"
+   },
+   "out": {
+    "error": "start_date must look like 2026-09-24"
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [
+     3,
+     1,
+     1
+    ],
+    "end": "09:05",
+    "end_date": "2026-12-04",
+    "location": "Cowell Acad 113",
+    "start": "08:00",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "meeting": {
+     "class_nbr": "",
+     "component": "",
+     "course": "XYZ 10",
+     "days": [
+      1,
+      3
+     ],
+     "end": "09:05",
+     "end_date": "2026-12-04",
+     "location": "Cowell Acad 113",
+     "section": "",
+     "start": "08:00",
+     "start_date": "2026-09-24",
+     "title": ""
+    }
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [
+     0
+    ],
+    "end": "09:05",
+    "end_date": "2026-12-04",
+    "location": "Cowell Acad 113",
+    "skip_dates": [
+     "2026-10-05",
+     "2026-10-05"
+    ],
+    "start": "08:00",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "meeting": {
+     "class_nbr": "",
+     "component": "",
+     "course": "XYZ 10",
+     "days": [
+      0
+     ],
+     "end": "09:05",
+     "end_date": "2026-12-04",
+     "location": "Cowell Acad 113",
+     "section": "",
+     "skip_dates": [
+      "2026-10-05"
+     ],
+     "start": "08:00",
+     "start_date": "2026-09-24",
+     "title": ""
+    }
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [
+     0
+    ],
+    "end": "09:05",
+    "end_date": "2026-12-04",
+    "location": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "start": "08:00",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "error": "location is too long"
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [
+     0
+    ],
+    "end": "09:05",
+    "end_date": "2026-01-01",
+    "location": "Cowell Acad 113",
+    "start": "08:00",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "error": "XYZ 10: the end date is before the start date"
+   }
+  },
+  {
+   "input": {
+    "course": "XYZ 10",
+    "days": [
+     0
+    ],
+    "end": "09:05",
+    "end_date": "2026-12-04",
+    "location": "Cowell Acad 113",
+    "start": "08:00:30",
+    "start_date": "2026-09-24"
+   },
+   "out": {
+    "meeting": {
+     "class_nbr": "",
+     "component": "",
+     "course": "XYZ 10",
+     "days": [
+      0
+     ],
+     "end": "09:05",
+     "end_date": "2026-12-04",
+     "location": "Cowell Acad 113",
+     "section": "",
+     "start": "08:00",
+     "start_date": "2026-09-24",
+     "title": ""
+    }
+   }
+  }
+ ],
+ "ics": [
+  {
+   "input": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\nBEGIN:VEVENT\r\nSUMMARY:XYZ 10 - Lecture\r\nLOCATION:Kresge Acad 3201\r\nDTSTART;TZID=America/Los_Angeles:20260925T144000\r\nDTEND;TZID=America/Los_Angeles:20260925T154500\r\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20261205T075959Z\r\nEXDATE;TZID=America/Los_Angeles:20261111T144000\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+   "no_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "Lecture",
+      "course": "XYZ 10",
+      "days": [
+       0,
+       2,
+       4
+      ],
+      "end": "15:45",
+      "end_date": "2026-12-04",
+      "location": "Kresge Acad 3201",
+      "section": "",
+      "skip_dates": [
+       "2026-11-11"
+      ],
+      "start": "14:40",
+      "start_date": "2026-09-25",
+      "title": ""
+     }
+    ],
+    "notes": []
+   },
+   "with_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "Lecture",
+      "course": "XYZ 10",
+      "days": [
+       0,
+       2,
+       4
+      ],
+      "end": "15:45",
+      "end_date": "2026-12-04",
+      "location": "Kresge Acad 3201",
+      "section": "",
+      "skip_dates": [
+       "2026-11-11"
+      ],
+      "start": "14:40",
+      "start_date": "2026-09-25",
+      "title": ""
+     }
+    ],
+    "notes": []
+   }
+  },
+  {
+   "input": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\nBEGIN:VEVENT\r\nSUMMARY:ABC 5 Discussion\r\nLOCATION:Cowell Acad 113\\, Santa Cruz\r\nDTSTART:20260928T150000Z\r\nDTEND:20260928T160000Z\r\nRRULE:FREQ=WEEKLY;COUNT=4\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+   "no_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "Discussion",
+      "course": "ABC 5",
+      "days": [
+       0
+      ],
+      "end": "09:00",
+      "end_date": "2026-10-19",
+      "location": "Cowell Acad 113",
+      "section": "",
+      "start": "08:00",
+      "start_date": "2026-09-28",
+      "title": ""
+     }
+    ],
+    "notes": []
+   },
+   "with_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "Discussion",
+      "course": "ABC 5",
+      "days": [
+       0
+      ],
+      "end": "09:00",
+      "end_date": "2026-10-19",
+      "location": "Cowell Acad 113",
+      "section": "",
+      "start": "08:00",
+      "start_date": "2026-09-28",
+      "title": ""
+     }
+    ],
+    "notes": []
+   }
+  },
+  {
+   "input": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\nBEGIN:VEVENT\r\nSUMMARY:Midterm\r\nLOCATION:Baskin Engr 152\r\nDTSTART;TZID=America/Los_Angeles:20261020T180000\r\nDURATION:PT1H30M\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+   "no_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "",
+      "course": "Midterm",
+      "days": [],
+      "end": "19:30",
+      "end_date": "2026-10-20",
+      "location": "Baskin Engr 152",
+      "section": "",
+      "start": "18:00",
+      "start_date": "2026-10-20",
+      "title": ""
+     }
+    ],
+    "notes": []
+   },
+   "with_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "",
+      "course": "Midterm",
+      "days": [],
+      "end": "19:30",
+      "end_date": "2026-10-20",
+      "location": "Baskin Engr 152",
+      "section": "",
+      "start": "18:00",
+      "start_date": "2026-10-20",
+      "title": ""
+     }
+    ],
+    "notes": []
+   }
+  },
+  {
+   "input": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\nBEGIN:VEVENT\r\nSUMMARY:Open ended\r\nDTSTART:20260929T170000\r\nDTEND:20260929T180000\r\nRRULE:FREQ=WEEKLY\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+   "no_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "",
+      "course": "Open ended",
+      "days": [
+       1
+      ],
+      "end": "18:00",
+      "end_date": "2027-01-19",
+      "location": "",
+      "section": "",
+      "start": "17:00",
+      "start_date": "2026-09-29",
+      "title": ""
+     }
+    ],
+    "notes": [
+     "\"Open ended\" repeats with no end date, so I stopped it after 16 weeks."
+    ]
+   },
+   "with_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "",
+      "course": "Open ended",
+      "days": [
+       1
+      ],
+      "end": "18:00",
+      "end_date": "2026-12-04",
+      "location": "",
+      "section": "",
+      "start": "17:00",
+      "start_date": "2026-09-29",
+      "title": ""
+     }
+    ],
+    "notes": [
+     "\"Open ended\" repeats with no end date, so I ended it with the term."
+    ]
+   }
+  },
+  {
+   "input": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\nBEGIN:VEVENT\r\nSUMMARY:Daily\r\nDTSTART:20260929T170000\r\nDTEND:20260929T180000\r\nRRULE:FREQ=DAILY\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:Biweekly\r\nDTSTART:20260929T170000\r\nDTEND:20260929T180000\r\nRRULE:FREQ=WEEKLY;INTERVAL=2\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:First Monday\r\nDTSTART:20260929T170000\r\nDTEND:20260929T180000\r\nRRULE:FREQ=MONTHLY;BYDAY=1MO\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:Cancelled\r\nSTATUS:CANCELLED\r\nDTSTART:20260929T170000\r\nDTEND:20260929T180000\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:All day\r\nDTSTART;VALUE=DATE:20260929\r\nDTEND;VALUE=DATE:20260930\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:Overnight\r\nDTSTART:20260929T170000\r\nDTEND:20260930T020000\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:Changed\r\nRECURRENCE-ID:20260929T170000\r\nDTSTART:20260929T170000\r\nDTEND:20260929T180000\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:No end\r\nDTSTART:20260929T170000\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:Bad start\r\nDTSTART:garbage\r\nDTEND:20260929T180000\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+   "no_term": {
+    "meetings": [],
+    "notes": [
+     "Skipped \"Daily\" (it repeats daily, and I only handle every week).",
+     "Skipped \"Biweekly\" (it repeats weekly every 2, and I only handle every week).",
+     "Skipped \"First Monday\" (it repeats monthly, and I only handle every week).",
+     "Skipped \"Cancelled\" (cancelled).",
+     "Skipped \"All day\" (an all-day event, not a class).",
+     "Skipped \"Overnight\" (it runs past midnight, so it isn't a class).",
+     "Skipped a changed single day of \"Changed\"; edit that day by hand if you need it.",
+     "Skipped \"No end\" (couldn't read when it ends).",
+     "Skipped \"Bad start\" (couldn't read when it starts)."
+    ]
+   },
+   "with_term": {
+    "meetings": [],
+    "notes": [
+     "Skipped \"Daily\" (it repeats daily, and I only handle every week).",
+     "Skipped \"Biweekly\" (it repeats weekly every 2, and I only handle every week).",
+     "Skipped \"First Monday\" (it repeats monthly, and I only handle every week).",
+     "Skipped \"Cancelled\" (cancelled).",
+     "Skipped \"All day\" (an all-day event, not a class).",
+     "Skipped \"Overnight\" (it runs past midnight, so it isn't a class).",
+     "Skipped a changed single day of \"Changed\"; edit that day by hand if you need it.",
+     "Skipped \"No end\" (couldn't read when it ends).",
+     "Skipped \"Bad start\" (couldn't read when it starts)."
+    ]
+   }
+  },
+  {
+   "input": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\nBEGIN:VEVENT\r\nSUMMARY:Zoomed: DEF 7 Lab\r\nLOCATION:https://zoom.us/j/123\r\nDTSTART;TZID=Mars/Olympus:20260930T090000\r\nDTEND;TZID=Mars/Olympus:20260930T100000\r\nRRULE:FREQ=WEEKLY;BYDAY=WE;COUNT=2\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:Eastern Class Lecture\r\nDTSTART;TZID=America/New_York:20260930T120000\r\nDTEND;TZID=America/New_York:20260930T130000\r\nRRULE:FREQ=WEEKLY;BYDAY=WE;COUNT=3\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:Alarm\r\nDTSTART:20261001T170000Z\r\nDTEND:20261001T180000Z\r\nBEGIN:VALARM\r\nTRIGGER:-PT10M\r\nEND:VALARM\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nSUMMARY:Alarm\r\nDTSTART:20261001T170000Z\r\nDTEND:20261001T180000Z\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+   "no_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "Lab",
+      "course": "Zoomed: DEF 7",
+      "days": [
+       2
+      ],
+      "end": "10:00",
+      "end_date": "2026-10-07",
+      "location": "Online",
+      "section": "",
+      "start": "09:00",
+      "start_date": "2026-09-30",
+      "title": ""
+     },
+     {
+      "class_nbr": "",
+      "component": "Lecture",
+      "course": "Eastern Class",
+      "days": [
+       2
+      ],
+      "end": "10:00",
+      "end_date": "2026-10-14",
+      "location": "",
+      "section": "",
+      "start": "09:00",
+      "start_date": "2026-09-30",
+      "title": ""
+     },
+     {
+      "class_nbr": "",
+      "component": "",
+      "course": "Alarm",
+      "days": [],
+      "end": "11:00",
+      "end_date": "2026-10-01",
+      "location": "",
+      "section": "",
+      "start": "10:00",
+      "start_date": "2026-10-01",
+      "title": ""
+     }
+    ],
+    "notes": [
+     "The calendar uses a time zone I don't know (Mars/Olympus), so I treated those times as Pacific time."
+    ]
+   },
+   "with_term": {
+    "meetings": [
+     {
+      "class_nbr": "",
+      "component": "Lab",
+      "course": "Zoomed: DEF 7",
+      "days": [
+       2
+      ],
+      "end": "10:00",
+      "end_date": "2026-10-07",
+      "location": "Online",
+      "section": "",
+      "start": "09:00",
+      "start_date": "2026-09-30",
+      "title": ""
+     },
+     {
+      "class_nbr": "",
+      "component": "Lecture",
+      "course": "Eastern Class",
+      "days": [
+       2
+      ],
+      "end": "10:00",
+      "end_date": "2026-10-14",
+      "location": "",
+      "section": "",
+      "start": "09:00",
+      "start_date": "2026-09-30",
+      "title": ""
+     },
+     {
+      "class_nbr": "",
+      "component": "",
+      "course": "Alarm",
+      "days": [],
+      "end": "11:00",
+      "end_date": "2026-10-01",
+      "location": "",
+      "section": "",
+      "start": "10:00",
+      "start_date": "2026-10-01",
+      "title": ""
+     }
+    ],
+    "notes": [
+     "The calendar uses a time zone I don't know (Mars/Olympus), so I treated those times as Pacific time."
+    ]
+   }
+  },
+  {
+   "input": "not a calendar",
+   "no_term": {
+    "error": "that doesn't look like a calendar (.ics) file"
+   },
+   "with_term": {
+    "error": "that doesn't look like a calendar (.ics) file"
+   }
+  }
+ ],
+ "paste": [
+  {
+   "input": "XYZ 10 - Sample Calculus Status Units Grading Grade Deadlines Enrolled 5.00 Graded 10002 01 Lecture MoWeFr 1:20PM - 2:25PM Kresge Acad 3201 A Instructor 09/24/2026 - 12/04/2026 10003 01 Lecture TuTh 11:40AM - 1:15PM Mystery Hall 9 B Instructor 09/24/2026 - 12/04/2026",
+   "out": {
+    "meetings": [
+     {
+      "class_nbr": "10002",
+      "component": "Lecture",
+      "course": "XYZ 10",
+      "days": [
+       0,
+       2,
+       4
+      ],
+      "end": "14:25",
+      "end_date": "2026-12-04",
+      "location": "Kresge Acad 3201",
+      "section": "01",
+      "start": "13:20",
+      "start_date": "2026-09-24",
+      "title": "Sample Calculus"
+     },
+     {
+      "class_nbr": "10003",
+      "component": "Lecture",
+      "course": "XYZ 10",
+      "days": [
+       1,
+       3
+      ],
+      "end": "13:15",
+      "end_date": "2026-12-04",
+      "location": "Mystery Hall 9",
+      "section": "01",
+      "start": "11:40",
+      "start_date": "2026-09-24",
+      "title": "Sample Calculus"
+     }
+    ],
+    "notes": []
+   }
+  },
+  {
+   "input": "XYZ 10 - Sample Calculus Status Units Grading Grade Deadlines Enrolled 5.00 Graded\nClass Nbr Section Component Days & Times Room Instructor Start/End Date\n10002 01 Lecture MoTuWeThFrSaSu 2:40PM - 3:45PM Kresge Acad 3201 To be Announced 01/01/2025 - 12/31/2030\nABC 5A - Other Course Status Units Grading Grade Deadlines Dropped 5.00 Graded\n10005 01A Discussion Fr 8:00AM - 9:05AM Cowell Acad 113 Staff 09/24/2026 - 12/04/2026\nDEF 7 - Third Status Units Grading Grade Deadlines Enrolled 2.00 Graded\n10006 02 Laboratory We 3:00PM - 5:00PM Online Staff 09/24/2026 - 12/04/2026\n10007 03 Seminar Th 9:00AM - 8:00AM TBA Staff 09/24/2026 - 12/04/2026\n10009 04 Studio Mo 9:00AM-10:00AM Thimann Lab 003 Staff 09/24/2026-12/04/2026",
+   "out": {
+    "meetings": [
+     {
+      "class_nbr": "10002",
+      "component": "Lecture",
+      "course": "XYZ 10",
+      "days": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6
+      ],
+      "end": "15:45",
+      "end_date": "2030-12-31",
+      "location": "Kresge Acad 3201",
+      "section": "01",
+      "start": "14:40",
+      "start_date": "2025-01-01",
+      "title": "Sample Calculus"
+     },
+     {
+      "class_nbr": "10006",
+      "component": "Laboratory",
+      "course": "DEF 7",
+      "days": [
+       2
+      ],
+      "end": "17:00",
+      "end_date": "2026-12-04",
+      "location": "Online",
+      "section": "02",
+      "start": "15:00",
+      "start_date": "2026-09-24",
+      "title": "Third"
+     },
+     {
+      "class_nbr": "10009",
+      "component": "Studio",
+      "course": "DEF 7",
+      "days": [
+       0
+      ],
+      "end": "10:00",
+      "end_date": "2026-12-04",
+      "location": "Thimann Lab 003",
+      "section": "04",
+      "start": "09:00",
+      "start_date": "2026-09-24",
+      "title": "Third"
+     }
+    ],
+    "notes": [
+     "Skipped ABC 5A (dropped).",
+     "Couldn't read DEF 7 Seminar: DEF 7: the end time must be after the start time."
+    ]
+   }
+  },
+  {
+   "input": "nothing here at all",
+   "out": {
+    "meetings": [],
+    "notes": [
+     "I couldn't find any classes in that text. Copy the whole Class Schedule page, or add classes by hand."
+    ]
+   }
+  },
+  {
+   "input": "10011 01 Lecture Mo 9:00AM - 10:00AM Baskin Engr 152 Staff 09/24/2026 - 12/04/2026",
+   "out": {
+    "meetings": [
+     {
+      "class_nbr": "10011",
+      "component": "Lecture",
+      "course": "Class 10011",
+      "days": [
+       0
+      ],
+      "end": "10:00",
+      "end_date": "2026-12-04",
+      "location": "Baskin Engr 152",
+      "section": "01",
+      "start": "09:00",
+      "start_date": "2026-09-24",
+      "title": ""
+     }
+    ],
+    "notes": []
+   }
+  }
+ ],
+ "resolve": [
+  {
+   "input": "ClassroomUnit 001",
+   "out": {
+    "building_id": "classroom-unit",
+    "entrances": 3,
+    "floor": "L1",
+    "kind": "building",
+    "room": "001",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9978719,
+     "level": "L1",
+     "lon": -122.0570354
+    }
+   }
+  },
+  {
+   "input": "ClassroomUnit 002",
+   "out": {
+    "building_id": "classroom-unit",
+    "entrances": 3,
+    "floor": "L2",
+    "kind": "building",
+    "room": "002",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9979453,
+     "level": "L2",
+     "lon": -122.0567682
+    }
+   }
+  },
+  {
+   "input": "Cowell Acad 113",
+   "out": {
+    "building_id": "cowell-academic",
+    "entrances": 8,
+    "floor": "L1",
+    "kind": "building",
+    "room": "113",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9973273,
+     "level": "L1",
+     "lon": -122.0537424
+    }
+   }
+  },
+  {
+   "input": "Cowell Clrm 131",
+   "out": {
+    "building_id": "cowell-classroom",
+    "entrances": 2,
+    "floor": "L1",
+    "kind": "building",
+    "room": "131",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9972061,
+     "level": "L1",
+     "lon": -122.0537191
+    }
+   }
+  },
+  {
+   "input": "Cowell Com 134",
+   "out": {
+    "building_id": "cowell-com",
+    "entrances": 8,
+    "floor": "L1",
+    "kind": "building",
+    "room": "134",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9973587,
+     "level": "L1",
+     "lon": -122.0530428
+    }
+   }
+  },
+  {
+   "input": "Cowell Acad 216",
+   "out": {
+    "building_id": "cowell-academic",
+    "entrances": 8,
+    "floor": "L2",
+    "kind": "building",
+    "room": "216",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9973023,
+     "level": "L2",
+     "lon": -122.0537418
+    }
+   }
+  },
+  {
+   "input": "Cowell Acad 222",
+   "out": {
+    "building_id": "cowell-academic",
+    "entrances": 8,
+    "floor": "L2",
+    "kind": "building",
+    "room": "222",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9973588,
+     "level": "L2",
+     "lon": -122.0536512
+    }
+   }
+  },
+  {
+   "input": "Cowell Acad 223",
+   "out": {
+    "building_id": "cowell-academic",
+    "entrances": 8,
+    "floor": "L2",
+    "kind": "building",
+    "room": "223",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.99736,
+     "level": "L2",
+     "lon": -122.0535604
+    }
+   }
+  },
+  {
+   "input": "Crown Clrm 104",
+   "out": {
+    "building_id": "crown-classroom",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "104",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0000355,
+     "level": "L1",
+     "lon": -122.0547409
+    }
+   }
+  },
+  {
+   "input": "Crown Clrm 105",
+   "out": {
+    "building_id": "crown-classroom",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "105",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9999811,
+     "level": "L1",
+     "lon": -122.0547387
+    }
+   }
+  },
+  {
+   "input": "Crown Clrm 201",
+   "out": {
+    "building_id": "crown-classroom",
+    "entrances": 4,
+    "floor": "L2",
+    "kind": "building",
+    "room": "201",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0000903,
+     "level": "L2",
+     "lon": -122.0547421
+    }
+   }
+  },
+  {
+   "input": "Crown Clrm 202",
+   "out": {
+    "building_id": "crown-classroom",
+    "entrances": 4,
+    "floor": "L2",
+    "kind": "building",
+    "room": "202",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0000358,
+     "level": "L2",
+     "lon": -122.0547311
+    }
+   }
+  },
+  {
+   "input": "Crown Clrm 203",
+   "out": {
+    "building_id": "crown-classroom",
+    "entrances": 4,
+    "floor": "L2",
+    "kind": "building",
+    "room": "203",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.999981,
+     "level": "L2",
+     "lon": -122.0547288
+    }
+   }
+  },
+  {
+   "input": "Crown Clrm 208",
+   "out": {
+    "building_id": "crown-classroom",
+    "entrances": 4,
+    "floor": "L2",
+    "kind": "building",
+    "room": "208",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0000743,
+     "level": "L2",
+     "lon": -122.0548366
+    }
+   }
+  },
+  {
+   "input": "Earth&Marine B206",
+   "out": {
+    "building_id": "earth-marine-sciences",
+    "entrances": 10,
+    "floor": "L2",
+    "kind": "building",
+    "room": "B206",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9980317,
+     "level": "L2",
+     "lon": -122.0601041
+    }
+   }
+  },
+  {
+   "input": "Earth&Marine B210",
+   "out": {
+    "building_id": "earth-marine-sciences",
+    "entrances": 10,
+    "floor": "L2",
+    "kind": "building",
+    "room": "B210",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9980302,
+     "level": "L2",
+     "lon": -122.0599474
+    }
+   }
+  },
+  {
+   "input": "Earth&Marine B214",
+   "out": {
+    "building_id": "earth-marine-sciences",
+    "entrances": 10,
+    "floor": "L2",
+    "kind": "building",
+    "room": "B214",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9980315,
+     "level": "L2",
+     "lon": -122.0597934
+    }
+   }
+  },
+  {
+   "input": "J Bask Aud 101",
+   "out": {
+    "building_id": "baskin-auditorium",
+    "entrances": 2,
+    "floor": "L1",
+    "kind": "building",
+    "room": "101",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0002137,
+     "level": "L1",
+     "lon": -122.0623619
+    }
+   }
+  },
+  {
+   "input": "J Baskin Engr 152",
+   "out": {
+    "building_id": "baskin-engineering",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "152",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0004301,
+     "level": "L1",
+     "lon": -122.0632849
+    }
+   }
+  },
+  {
+   "input": "J Baskin Engr 156",
+   "out": {
+    "building_id": "baskin-engineering",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "156",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0004344,
+     "level": "L1",
+     "lon": -122.0631921
+    }
+   }
+  },
+  {
+   "input": "J Baskin Engr 165",
+   "out": {
+    "building_id": "baskin-engineering",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "165",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0005733,
+     "level": "L1",
+     "lon": -122.0628931
+    }
+   }
+  },
+  {
+   "input": "J Baskin Engr 169",
+   "out": {
+    "building_id": "baskin-engineering",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "169",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0005809,
+     "level": "L1",
+     "lon": -122.0628178
+    }
+   }
+  },
+  {
+   "input": "Engineer 2 192",
+   "out": {
+    "building_id": "engineering-2",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "192",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0009126,
+     "level": "L1",
+     "lon": -122.0628219
+    }
+   }
+  },
+  {
+   "input": "Engineer 2 194",
+   "out": {
+    "building_id": "engineering-2",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "194",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0009233,
+     "level": "L1",
+     "lon": -122.0627058
+    }
+   }
+  },
+  {
+   "input": "J Baskin Engr 372",
+   "out": {
+    "building_id": "baskin-engineering",
+    "entrances": 4,
+    "floor": "L3",
+    "kind": "building",
+    "room": "372",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0005185,
+     "level": "L3",
+     "lon": -122.0627854
+    }
+   }
+  },
+  {
+   "input": "Humn Lecture Hall",
+   "out": {
+    "building_id": "humanities-lecture-hall",
+    "entrances": 1,
+    "floor": "L2",
+    "kind": "building",
+    "room": "206",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9983957,
+     "level": "L2",
+     "lon": -122.0544679
+    }
+   }
+  },
+  {
+   "input": "Hum & Soc Sci 250",
+   "out": {
+    "building_id": "humanities-and-social-sciences",
+    "entrances": 2,
+    "floor": "L2",
+    "kind": "building",
+    "room": "250",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9983268,
+     "level": "L2",
+     "lon": -122.0547804
+    }
+   }
+  },
+  {
+   "input": "Hum & Soc Sci 350",
+   "out": {
+    "building_id": "humanities-and-social-sciences",
+    "entrances": 2,
+    "floor": "L3",
+    "kind": "building",
+    "room": "350",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9983269,
+     "level": "L3",
+     "lon": -122.0547807
+    }
+   }
+  },
+  {
+   "input": "Kresge Acad 3101",
+   "out": {
+    "building_id": "kresge-academic",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "3101",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9987945,
+     "level": "L1",
+     "lon": -122.0662966
+    }
+   }
+  },
+  {
+   "input": "Kresge Acad 3105",
+   "out": {
+    "building_id": "kresge-academic",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "3105",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9990159,
+     "level": "L1",
+     "lon": -122.066293
+    }
+   }
+  },
+  {
+   "input": "Kresge Acad 3201",
+   "out": {
+    "building_id": "kresge-academic",
+    "entrances": 1,
+    "floor": "L2",
+    "kind": "building",
+    "room": "3201",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.998907,
+     "level": "L2",
+     "lon": -122.0659499
+    }
+   }
+  },
+  {
+   "input": "Kresge Acad 3301",
+   "out": {
+    "building_id": "kresge-academic",
+    "entrances": 1,
+    "floor": "L3",
+    "kind": "building",
+    "room": "3301",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9991765,
+     "level": "L3",
+     "lon": -122.0661311
+    }
+   }
+  },
+  {
+   "input": "McHenry Lib 1340",
+   "out": {
+    "building_id": "mchenry-library",
+    "entrances": 4,
+    "floor": "L3",
+    "kind": "building",
+    "room": "1340",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9955003,
+     "level": "L3",
+     "lon": -122.058966
+    }
+   }
+  },
+  {
+   "input": "McHenry Lib 1350",
+   "out": {
+    "building_id": "mchenry-library",
+    "entrances": 4,
+    "floor": "L3",
+    "kind": "building",
+    "room": "1350",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9954723,
+     "level": "L3",
+     "lon": -122.0588186
+    }
+   }
+  },
+  {
+   "input": "Merrill Acad 002",
+   "out": {
+    "building_id": "merrill-academic",
+    "entrances": 4,
+    "floor": "L0",
+    "kind": "building",
+    "room": "002",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9995716,
+     "level": "L0",
+     "lon": -122.0532869
+    }
+   }
+  },
+  {
+   "input": "Merrill Acad 003",
+   "out": {
+    "building_id": "merrill-academic",
+    "entrances": 4,
+    "floor": "L0",
+    "kind": "building",
+    "room": "003",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9995161,
+     "level": "L0",
+     "lon": -122.053295
+    }
+   }
+  },
+  {
+   "input": "Merrill Acad 102",
+   "out": {
+    "building_id": "merrill-academic",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "102",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9995425,
+     "level": "L1",
+     "lon": -122.053279
+    }
+   }
+  },
+  {
+   "input": "Merrill Acad 130",
+   "out": {
+    "building_id": "merrill-academic",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "130",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9997251,
+     "level": "L1",
+     "lon": -122.0535836
+    }
+   }
+  },
+  {
+   "input": "Merrill Acad 132",
+   "out": {
+    "building_id": "merrill-academic",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "132",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9997804,
+     "level": "L1",
+     "lon": -122.0535808
+    }
+   }
+  },
+  {
+   "input": "N. Sci Annex 101",
+   "out": {
+    "building_id": "natural-sciences-2-annex",
+    "entrances": 2,
+    "floor": "L1",
+    "kind": "building",
+    "room": "101",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9985585,
+     "level": "L1",
+     "lon": -122.0610863
+    }
+   }
+  },
+  {
+   "input": "N. Sci Annex 102",
+   "out": {
+    "building_id": "natural-sciences-2-annex",
+    "entrances": 2,
+    "floor": "L1",
+    "kind": "building",
+    "room": "102",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9984565,
+     "level": "L1",
+     "lon": -122.0611187
+    }
+   }
+  },
+  {
+   "input": "N. Sci Annex 103",
+   "out": {
+    "building_id": "natural-sciences-2-annex",
+    "entrances": 2,
+    "floor": "L1",
+    "kind": "building",
+    "room": "103",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9984579,
+     "level": "L1",
+     "lon": -122.0610472
+    }
+   }
+  },
+  {
+   "input": "Oakes Acad 101",
+   "out": {
+    "building_id": "oakes-academic",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "101",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9899483,
+     "level": "L1",
+     "lon": -122.0627299
+    }
+   }
+  },
+  {
+   "input": "Oakes Acad 102",
+   "out": {
+    "building_id": "oakes-academic",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "102",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9898857,
+     "level": "L1",
+     "lon": -122.0627457
+    }
+   }
+  },
+  {
+   "input": "Oakes Acad 103",
+   "out": {
+    "building_id": "oakes-academic",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "103",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9898309,
+     "level": "L1",
+     "lon": -122.0627511
+    }
+   }
+  },
+  {
+   "input": "Oakes Acad 105",
+   "out": {
+    "building_id": "oakes-academic",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "105",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9896214,
+     "level": "L1",
+     "lon": -122.0627451
+    }
+   }
+  },
+  {
+   "input": "Oakes Acad 106",
+   "out": {
+    "building_id": "oakes-academic",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "106",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.989658,
+     "level": "L1",
+     "lon": -122.0628494
+    }
+   }
+  },
+  {
+   "input": "Oakes Acad 222",
+   "out": {
+    "building_id": "oakes-academic",
+    "entrances": 4,
+    "floor": "L2",
+    "kind": "building",
+    "room": "222",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9896404,
+     "level": "L2",
+     "lon": -122.0628484
+    }
+   }
+  },
+  {
+   "input": "Media Theater M110",
+   "out": {
+    "building_id": "media-theater",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "M110",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9952065,
+     "level": "L1",
+     "lon": -122.0616425
+    }
+   }
+  },
+  {
+   "input": "Porter Acad 144",
+   "out": {
+    "building_id": "porter-academic",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "144",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9940187,
+     "level": "L1",
+     "lon": -122.0654098
+    }
+   }
+  },
+  {
+   "input": "Porter Acad 148",
+   "out": {
+    "building_id": "porter-academic",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "148",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9939215,
+     "level": "L1",
+     "lon": -122.0654337
+    }
+   }
+  },
+  {
+   "input": "Porter Acad 241",
+   "out": {
+    "building_id": "porter-academic",
+    "entrances": 1,
+    "floor": "L2",
+    "kind": "building",
+    "room": "241",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9941221,
+     "level": "L2",
+     "lon": -122.0652922
+    }
+   }
+  },
+  {
+   "input": "Porter Acad 246",
+   "out": {
+    "building_id": "porter-academic",
+    "entrances": 1,
+    "floor": "L2",
+    "kind": "building",
+    "room": "246",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9939846,
+     "level": "L2",
+     "lon": -122.0653234
+    }
+   }
+  },
+  {
+   "input": "Porter Acad 249",
+   "out": {
+    "building_id": "porter-academic",
+    "entrances": 1,
+    "floor": "L2",
+    "kind": "building",
+    "room": "249",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.993924,
+     "level": "L2",
+     "lon": -122.0653369
+    }
+   }
+  },
+  {
+   "input": "Porter Acad 250",
+   "out": {
+    "building_id": "porter-academic",
+    "entrances": 1,
+    "floor": "L2",
+    "kind": "building",
+    "room": "250",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9938631,
+     "level": "L2",
+     "lon": -122.0653504
+    }
+   }
+  },
+  {
+   "input": "PhysSciences 110",
+   "out": {
+    "building_id": "physical-sciences",
+    "entrances": 8,
+    "floor": "L1",
+    "kind": "building",
+    "room": "110",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9993223,
+     "level": "L1",
+     "lon": -122.0616155
+    }
+   }
+  },
+  {
+   "input": "PhysSciences 114",
+   "out": {
+    "building_id": "physical-sciences",
+    "entrances": 8,
+    "floor": "L1",
+    "kind": "building",
+    "room": "114",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9994367,
+     "level": "L1",
+     "lon": -122.0616103
+    }
+   }
+  },
+  {
+   "input": "PhysSciences 130",
+   "out": {
+    "building_id": "physical-sciences",
+    "entrances": 8,
+    "floor": "L1",
+    "kind": "building",
+    "room": "130",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.999507,
+     "level": "L1",
+     "lon": -122.0618489
+    }
+   }
+  },
+  {
+   "input": "PhysSciences 136",
+   "out": {
+    "building_id": "physical-sciences",
+    "entrances": 8,
+    "floor": "L1",
+    "kind": "building",
+    "room": "136",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9995061,
+     "level": "L1",
+     "lon": -122.0619372
+    }
+   }
+  },
+  {
+   "input": "PhysSciences 140",
+   "out": {
+    "building_id": "physical-sciences",
+    "entrances": 8,
+    "floor": "L1",
+    "kind": "building",
+    "room": "140",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9995054,
+     "level": "L1",
+     "lon": -122.0620135
+    }
+   }
+  },
+  {
+   "input": "R Carson Acad 240",
+   "out": {
+    "building_id": "carson-academic",
+    "entrances": 3,
+    "floor": "L2",
+    "kind": "building",
+    "room": "240",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9919246,
+     "level": "L2",
+     "lon": -122.0642997
+    }
+   }
+  },
+  {
+   "input": "R Carson Acad 242",
+   "out": {
+    "building_id": "carson-academic",
+    "entrances": 3,
+    "floor": "L2",
+    "kind": "building",
+    "room": "242",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9919241,
+     "level": "L2",
+     "lon": -122.0644218
+    }
+   }
+  },
+  {
+   "input": "R Carson Acad 250",
+   "out": {
+    "building_id": "carson-academic",
+    "entrances": 3,
+    "floor": "L2",
+    "kind": "building",
+    "room": "250",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9920301,
+     "level": "L2",
+     "lon": -122.0648938
+    }
+   }
+  },
+  {
+   "input": "R Carson Acad 252",
+   "out": {
+    "building_id": "carson-academic",
+    "entrances": 3,
+    "floor": "L2",
+    "kind": "building",
+    "room": "252",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.992046,
+     "level": "L2",
+     "lon": -122.064981
+    }
+   }
+  },
+  {
+   "input": "Sci & Engr Library 206",
+   "out": {
+    "building_id": "science-engineering-library",
+    "entrances": 2,
+    "floor": "L2",
+    "kind": "building",
+    "room": "206",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9991527,
+     "level": "L2",
+     "lon": -122.0609624
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 1 110",
+   "out": {
+    "building_id": "social-sciences-1",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "110",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0019931,
+     "level": "L1",
+     "lon": -122.057944
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 1 145",
+   "out": {
+    "building_id": "social-sciences-1",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "145",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0024799,
+     "level": "L1",
+     "lon": -122.0580274
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 1 149",
+   "out": {
+    "building_id": "social-sciences-1",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "149",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0024165,
+     "level": "L1",
+     "lon": -122.0580116
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 1 153",
+   "out": {
+    "building_id": "social-sciences-1",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "153",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0023492,
+     "level": "L1",
+     "lon": -122.0579932
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 1 161",
+   "out": {
+    "building_id": "social-sciences-1",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "161",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0022793,
+     "level": "L1",
+     "lon": -122.0579727
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 071",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L0",
+    "kind": "building",
+    "room": "071",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0015271,
+     "level": "L0",
+     "lon": -122.0588435
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 075",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L0",
+    "kind": "building",
+    "room": "075",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0016225,
+     "level": "L0",
+     "lon": -122.0589262
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 137",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "137",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0018421,
+     "level": "L1",
+     "lon": -122.0588131
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 141",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "141",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0017911,
+     "level": "L1",
+     "lon": -122.0587867
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 159",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "159",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0015833,
+     "level": "L1",
+     "lon": -122.0586278
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 165",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "165",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0015504,
+     "level": "L1",
+     "lon": -122.0586964
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 167",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "167",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0015167,
+     "level": "L1",
+     "lon": -122.0587664
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 171",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "171",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0014834,
+     "level": "L1",
+     "lon": -122.0588349
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 179",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L1",
+    "kind": "building",
+    "room": "179",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0015612,
+     "level": "L1",
+     "lon": -122.0588813
+    }
+   }
+  },
+  {
+   "input": "Soc Sci 2 363",
+   "out": {
+    "building_id": "social-sciences-2",
+    "entrances": 1,
+    "floor": "L3",
+    "kind": "building",
+    "room": "363",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0015135,
+     "level": "L3",
+     "lon": -122.0587171
+    }
+   }
+  },
+  {
+   "input": "Steven Acad 150",
+   "out": {
+    "building_id": "stevenson-academic",
+    "entrances": 12,
+    "floor": "L1",
+    "kind": "building",
+    "room": "150",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9972153,
+     "level": "L1",
+     "lon": -122.0517158
+    }
+   }
+  },
+  {
+   "input": "Steven Acad 151",
+   "out": {
+    "building_id": "stevenson-academic",
+    "entrances": 12,
+    "floor": "L1",
+    "kind": "building",
+    "room": "151",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9973317,
+     "level": "L1",
+     "lon": -122.0516921
+    }
+   }
+  },
+  {
+   "input": "Steven Acad 152",
+   "out": {
+    "building_id": "stevenson-academic",
+    "entrances": 12,
+    "floor": "L1",
+    "kind": "building",
+    "room": "152",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9973287,
+     "level": "L1",
+     "lon": -122.0517536
+    }
+   }
+  },
+  {
+   "input": "Steven Acad 175",
+   "out": {
+    "building_id": "stevenson-academic",
+    "entrances": 12,
+    "floor": "L1",
+    "kind": "building",
+    "room": "175",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9969967,
+     "level": "L1",
+     "lon": -122.0516972
+    }
+   }
+  },
+  {
+   "input": "Thim Lecture 001",
+   "out": {
+    "building_id": "thimann-lecture-hall",
+    "entrances": 5,
+    "floor": "L1",
+    "kind": "building",
+    "room": "001",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9979258,
+     "level": "L1",
+     "lon": -122.0613113
+    }
+   }
+  },
+  {
+   "input": "Thim Lecture 003",
+   "out": {
+    "building_id": "thimann-lecture-hall",
+    "entrances": 5,
+    "floor": "L1",
+    "kind": "building",
+    "room": "003",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9981184,
+     "level": "L1",
+     "lon": -122.0613151
+    }
+   }
+  },
+  {
+   "input": "Thimann Lab 101",
+   "out": {
+    "building_id": "thimann-labs",
+    "entrances": 3,
+    "floor": "L1",
+    "kind": "building",
+    "room": "101",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9980438,
+     "level": "L1",
+     "lon": -122.0616329
+    }
+   }
+  },
+  {
+   "input": "Baskin Engr 152",
+   "out": {
+    "building_id": "baskin-engineering",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "152",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0004301,
+     "level": "L1",
+     "lon": -122.0632849
+    }
+   }
+  },
+  {
+   "input": "BE 152",
+   "out": {
+    "building_id": null,
+    "entrances": 0,
+    "floor": null,
+    "kind": "unknown",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "kresge college academic building room 3201",
+   "out": {
+    "building_id": "kresge-academic",
+    "entrances": 1,
+    "floor": "L2",
+    "kind": "building",
+    "room": "3201",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.998907,
+     "level": "L2",
+     "lon": -122.0659499
+    }
+   }
+  },
+  {
+   "input": "Online",
+   "out": {
+    "building_id": null,
+    "entrances": 0,
+    "floor": null,
+    "kind": "online",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "TBA",
+   "out": {
+    "building_id": null,
+    "entrances": 0,
+    "floor": null,
+    "kind": "tba",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "Remote Instruction",
+   "out": {
+    "building_id": null,
+    "entrances": 0,
+    "floor": null,
+    "kind": "online",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "",
+   "out": {
+    "building_id": null,
+    "entrances": 0,
+    "floor": null,
+    "kind": "tba",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "Mystery Hall 9",
+   "out": {
+    "building_id": null,
+    "entrances": 0,
+    "floor": null,
+    "kind": "unknown",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "Thimann Lab 003",
+   "out": {
+    "building_id": "thimann-labs",
+    "entrances": 3,
+    "floor": null,
+    "kind": "building",
+    "room": "003",
+    "room_known": false,
+    "room_point": null
+   }
+  },
+  {
+   "input": "Earth&Mar Sci A108",
+   "out": {
+    "building_id": "earth-marine-sciences",
+    "entrances": 10,
+    "floor": null,
+    "kind": "building",
+    "room": "A108",
+    "room_known": false,
+    "room_point": null
+   }
+  },
+  {
+   "input": "Nat Sci 2 Annex 101",
+   "out": {
+    "building_id": "natural-sciences-2-annex",
+    "entrances": 2,
+    "floor": "L1",
+    "kind": "building",
+    "room": "101",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9985585,
+     "level": "L1",
+     "lon": -122.0610863
+    }
+   }
+  },
+  {
+   "input": "Nat Sci 2 101",
+   "out": {
+    "building_id": "natural-sciences-2",
+    "entrances": 7,
+    "floor": null,
+    "kind": "building",
+    "room": "101",
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "Rm 12",
+   "out": {
+    "building_id": null,
+    "entrances": 0,
+    "floor": null,
+    "kind": "unknown",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "Hum Lecture Hall 206",
+   "out": {
+    "building_id": "humanities-lecture-hall",
+    "entrances": 1,
+    "floor": "L2",
+    "kind": "building",
+    "room": "206",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9983957,
+     "level": "L2",
+     "lon": -122.0544679
+    }
+   }
+  },
+  {
+   "input": "Humanities 1 210",
+   "out": {
+    "building_id": "humanities-1",
+    "entrances": 2,
+    "floor": null,
+    "kind": "building",
+    "room": "210",
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "  baskin   ENGR  Rm. 152 ",
+   "out": {
+    "building_id": "baskin-engineering",
+    "entrances": 4,
+    "floor": "L1",
+    "kind": "building",
+    "room": "152",
+    "room_known": true,
+    "room_point": {
+     "lat": 37.0004301,
+     "level": "L1",
+     "lon": -122.0632849
+    }
+   }
+  },
+  {
+   "input": "Stevenson Academic/Administration Building 150",
+   "out": {
+    "building_id": "stevenson-academic",
+    "entrances": 12,
+    "floor": "L1",
+    "kind": "building",
+    "room": "150",
+    "room_known": true,
+    "room_point": {
+     "lat": 36.9972153,
+     "level": "L1",
+     "lon": -122.0517158
+    }
+   }
+  },
+  {
+   "input": "McHenry Library",
+   "out": {
+    "building_id": "mchenry-library",
+    "entrances": 4,
+    "floor": null,
+    "kind": "building",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "Zoom",
+   "out": {
+    "building_id": null,
+    "entrances": 0,
+    "floor": null,
+    "kind": "online",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  },
+  {
+   "input": "Totally Unknown Hall 5",
+   "out": {
+    "building_id": null,
+    "entrances": 0,
+    "floor": null,
+    "kind": "unknown",
+    "room": null,
+    "room_known": null,
+    "room_point": null
+   }
+  }
+ ],
+ "search": [
+  {
+   "input": "BE 152",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 152",
+     "point": {
+      "lat": 37.0004301,
+      "lon": -122.0632849
+     },
+     "query": "Jack Baskin Engineering 152",
+     "room": "152",
+     "room_known": true
+    }
+   ]
+  },
+  {
+   "input": "kresge 3201",
+   "out": [
+    {
+     "building_id": "kresge-academic",
+     "building_name": "Kresge College Academic Building",
+     "floor": "L2",
+     "kind": "room",
+     "label": "Kresge College Academic Building 3201",
+     "point": {
+      "lat": 36.998907,
+      "lon": -122.0659499
+     },
+     "query": "Kresge College Academic Building 3201",
+     "room": "3201",
+     "room_known": true
+    }
+   ]
+  },
+  {
+   "input": "Thimann 101",
+   "out": [
+    {
+     "building_id": "thimann-labs",
+     "building_name": "Thimann Labs",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Thimann Labs 101",
+     "point": {
+      "lat": 36.9980438,
+      "lon": -122.0616329
+     },
+     "query": "Thimann Labs 101",
+     "room": "101",
+     "room_known": true
+    },
+    {
+     "building_id": "thimann-lecture-hall",
+     "building_name": "Thimann Lecture Hall",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Thimann Lecture Hall 001",
+     "point": {
+      "lat": 36.9979258,
+      "lon": -122.0613113
+     },
+     "query": "Thimann Lecture Hall 001",
+     "room": "001",
+     "room_known": true
+    },
+    {
+     "building_id": "thimann-lecture-hall",
+     "building_name": "Thimann Lecture Hall",
+     "floor": null,
+     "kind": "room",
+     "label": "Thimann Lecture Hall 101",
+     "point": {
+      "lat": 36.9980435,
+      "lon": -122.061337
+     },
+     "query": "Thimann Lecture Hall 101",
+     "room": "101",
+     "room_known": false
+    }
+   ]
+  },
+  {
+   "input": "Cowell 113",
+   "out": [
+    {
+     "building_id": "cowell-academic",
+     "building_name": "Cowell College Academic Building",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Cowell College Academic Building 113",
+     "point": {
+      "lat": 36.9973273,
+      "lon": -122.0537424
+     },
+     "query": "Cowell College Academic Building 113",
+     "room": "113",
+     "room_known": true
+    },
+    {
+     "building_id": "cowell-classroom",
+     "building_name": "Cowell Classroom (Cowell 131)",
+     "floor": null,
+     "kind": "room",
+     "label": "Cowell Classroom (Cowell 131) 113",
+     "point": {
+      "lat": 36.9972077,
+      "lon": -122.0537422
+     },
+     "query": "Cowell Classroom (Cowell 131) 113",
+     "room": "113",
+     "room_known": false
+    },
+    {
+     "building_id": "cowell-com",
+     "building_name": "Cowell Com (facility 1C)",
+     "floor": null,
+     "kind": "room",
+     "label": "Cowell Com (facility 1C) 113",
+     "point": {
+      "lat": 36.9973388,
+      "lon": -122.0534089
+     },
+     "query": "Cowell Com (facility 1C) 113",
+     "room": "113",
+     "room_known": false
+    }
+   ]
+  },
+  {
+   "input": "baskin",
+   "out": [
+    {
+     "building_id": "baskin-auditorium",
+     "building_name": "Jack Baskin Auditorium",
+     "floor": null,
+     "kind": "building",
+     "label": "Jack Baskin Auditorium",
+     "point": {
+      "lat": 37.0002296,
+      "lon": -122.0623774
+     },
+     "query": "Jack Baskin Auditorium",
+     "room": null,
+     "room_known": null
+    },
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": null,
+     "kind": "building",
+     "label": "Jack Baskin Engineering",
+     "point": {
+      "lat": 37.0003814,
+      "lon": -122.0632022
+     },
+     "query": "Jack Baskin Engineering",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "bask engr",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": null,
+     "kind": "building",
+     "label": "Jack Baskin Engineering",
+     "point": {
+      "lat": 37.0003814,
+      "lon": -122.0632022
+     },
+     "query": "Jack Baskin Engineering",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "Baskin Engineering 152",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 152",
+     "point": {
+      "lat": 37.0004301,
+      "lon": -122.0632849
+     },
+     "query": "Jack Baskin Engineering 152",
+     "room": "152",
+     "room_known": true
+    }
+   ]
+  },
+  {
+   "input": "kresg 3201",
+   "out": [
+    {
+     "building_id": "kresge-academic",
+     "building_name": "Kresge College Academic Building",
+     "floor": "L2",
+     "kind": "room",
+     "label": "Kresge College Academic Building 3201",
+     "point": {
+      "lat": 36.998907,
+      "lon": -122.0659499
+     },
+     "query": "Kresge College Academic Building 3201",
+     "room": "3201",
+     "room_known": true
+    }
+   ]
+  },
+  {
+   "input": "thiman 101",
+   "out": [
+    {
+     "building_id": "thimann-labs",
+     "building_name": "Thimann Labs",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Thimann Labs 101",
+     "point": {
+      "lat": 36.9980438,
+      "lon": -122.0616329
+     },
+     "query": "Thimann Labs 101",
+     "room": "101",
+     "room_known": true
+    },
+    {
+     "building_id": "thimann-lecture-hall",
+     "building_name": "Thimann Lecture Hall",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Thimann Lecture Hall 001",
+     "point": {
+      "lat": 36.9979258,
+      "lon": -122.0613113
+     },
+     "query": "Thimann Lecture Hall 001",
+     "room": "001",
+     "room_known": true
+    },
+    {
+     "building_id": "thimann-lecture-hall",
+     "building_name": "Thimann Lecture Hall",
+     "floor": null,
+     "kind": "room",
+     "label": "Thimann Lecture Hall 101",
+     "point": {
+      "lat": 36.9980435,
+      "lon": -122.061337
+     },
+     "query": "Thimann Lecture Hall 101",
+     "room": "101",
+     "room_known": false
+    }
+   ]
+  },
+  {
+   "input": "porter",
+   "out": [
+    {
+     "building_id": "porter-academic",
+     "building_name": "Porter Academic Building",
+     "floor": null,
+     "kind": "building",
+     "label": "Porter Academic Building",
+     "point": {
+      "lat": 36.9940114,
+      "lon": -122.0653956
+     },
+     "query": "Porter Academic Building",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "room 152",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 152",
+     "point": {
+      "lat": 37.0004301,
+      "lon": -122.0632849
+     },
+     "query": "Jack Baskin Engineering 152",
+     "room": "152",
+     "room_known": true
+    },
+    {
+     "building_id": "stevenson-academic",
+     "building_name": "Stevenson Academic Building",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Stevenson Academic Building 152",
+     "point": {
+      "lat": 36.9973287,
+      "lon": -122.0517536
+     },
+     "query": "Stevenson Academic Building 152",
+     "room": "152",
+     "room_known": true
+    }
+   ]
+  },
+  {
+   "input": "152",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 152",
+     "point": {
+      "lat": 37.0004301,
+      "lon": -122.0632849
+     },
+     "query": "Jack Baskin Engineering 152",
+     "room": "152",
+     "room_known": true
+    },
+    {
+     "building_id": "stevenson-academic",
+     "building_name": "Stevenson Academic Building",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Stevenson Academic Building 152",
+     "point": {
+      "lat": 36.9973287,
+      "lon": -122.0517536
+     },
+     "query": "Stevenson Academic Building 152",
+     "room": "152",
+     "room_known": true
+    }
+   ]
+  },
+  {
+   "input": "3201",
+   "out": [
+    {
+     "building_id": "kresge-academic",
+     "building_name": "Kresge College Academic Building",
+     "floor": "L2",
+     "kind": "room",
+     "label": "Kresge College Academic Building 3201",
+     "point": {
+      "lat": 36.998907,
+      "lon": -122.0659499
+     },
+     "query": "Kresge College Academic Building 3201",
+     "room": "3201",
+     "room_known": true
+    }
+   ]
+  },
+  {
+   "input": "humn",
+   "out": [
+    {
+     "building_id": "humanities-lecture-hall",
+     "building_name": "Humanities Lecture Hall",
+     "floor": null,
+     "kind": "building",
+     "label": "Humanities Lecture Hall",
+     "point": {
+      "lat": 36.9984339,
+      "lon": -122.0545057
+     },
+     "query": "Humanities Lecture Hall",
+     "room": null,
+     "room_known": null
+    },
+    {
+     "building_id": "humanities-1",
+     "building_name": "Humanities 1",
+     "floor": null,
+     "kind": "building",
+     "label": "Humanities 1",
+     "point": {
+      "lat": 36.9979803,
+      "lon": -122.0546774
+     },
+     "query": "Humanities 1",
+     "room": null,
+     "room_known": null
+    },
+    {
+     "building_id": "humanities-and-social-sciences",
+     "building_name": "Humanities and Social Sciences",
+     "floor": null,
+     "kind": "building",
+     "label": "Humanities and Social Sciences",
+     "point": {
+      "lat": 36.9984171,
+      "lon": -122.0548999
+     },
+     "query": "Humanities and Social Sciences",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "soc sci",
+   "out": [
+    {
+     "building_id": "social-sciences-1",
+     "building_name": "Social Sciences 1",
+     "floor": null,
+     "kind": "building",
+     "label": "Social Sciences 1",
+     "point": {
+      "lat": 37.0022576,
+      "lon": -122.0580759
+     },
+     "query": "Social Sciences 1",
+     "room": null,
+     "room_known": null
+    },
+    {
+     "building_id": "social-sciences-2",
+     "building_name": "Social Sciences 2",
+     "floor": null,
+     "kind": "building",
+     "label": "Social Sciences 2",
+     "point": {
+      "lat": 37.0016653,
+      "lon": -122.0588711
+     },
+     "query": "Social Sciences 2",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "social sciences 2",
+   "out": [
+    {
+     "building_id": "social-sciences-2",
+     "building_name": "Social Sciences 2",
+     "floor": null,
+     "kind": "building",
+     "label": "Social Sciences 2",
+     "point": {
+      "lat": 37.0016653,
+      "lon": -122.0588711
+     },
+     "query": "Social Sciences 2",
+     "room": null,
+     "room_known": null
+    },
+    {
+     "building_id": "social-sciences-1",
+     "building_name": "Social Sciences 1",
+     "floor": null,
+     "kind": "room",
+     "label": "Social Sciences 1 2",
+     "point": {
+      "lat": 37.0022576,
+      "lon": -122.0580759
+     },
+     "query": "Social Sciences 1 2",
+     "room": "2",
+     "room_known": false
+    },
+    {
+     "building_id": "social-sciences-2",
+     "building_name": "Social Sciences 2",
+     "floor": null,
+     "kind": "room",
+     "label": "Social Sciences 2 2",
+     "point": {
+      "lat": 37.0016653,
+      "lon": -122.0588711
+     },
+     "query": "Social Sciences 2 2",
+     "room": "2",
+     "room_known": false
+    },
+    {
+     "building_id": "physical-sciences",
+     "building_name": "Physical Sciences Building",
+     "floor": null,
+     "kind": "room",
+     "label": "Physical Sciences Building 2",
+     "point": {
+      "lat": 36.9995993,
+      "lon": -122.0619231
+     },
+     "query": "Physical Sciences Building 2",
+     "room": "2",
+     "room_known": false
+    }
+   ]
+  },
+  {
+   "input": "earth marine",
+   "out": [
+    {
+     "building_id": "earth-marine-sciences",
+     "building_name": "Earth & Marine Sciences",
+     "floor": null,
+     "kind": "building",
+     "label": "Earth & Marine Sciences",
+     "point": {
+      "lat": 36.9978749,
+      "lon": -122.0596207
+     },
+     "query": "Earth & Marine Sciences",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "nat sci 2 annex",
+   "out": [
+    {
+     "building_id": "natural-sciences-2-annex",
+     "building_name": "Natural Sciences 2 Annex",
+     "floor": null,
+     "kind": "building",
+     "label": "Natural Sciences 2 Annex",
+     "point": {
+      "lat": 36.9985099,
+      "lon": -122.0611175
+     },
+     "query": "Natural Sciences 2 Annex",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "xyzzy",
+   "out": []
+  },
+  {
+   "input": "",
+   "out": []
+  },
+  {
+   "input": "   ",
+   "out": []
+  },
+  {
+   "input": "BE",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": null,
+     "kind": "building",
+     "label": "Jack Baskin Engineering",
+     "point": {
+      "lat": 37.0003814,
+      "lon": -122.0632022
+     },
+     "query": "Jack Baskin Engineering",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "be 15",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 152",
+     "point": {
+      "lat": 37.0004301,
+      "lon": -122.0632849
+     },
+     "query": "Jack Baskin Engineering 152",
+     "room": "152",
+     "room_known": true
+    },
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 156",
+     "point": {
+      "lat": 37.0004344,
+      "lon": -122.0631921
+     },
+     "query": "Jack Baskin Engineering 156",
+     "room": "156",
+     "room_known": true
+    },
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 165",
+     "point": {
+      "lat": 37.0005733,
+      "lon": -122.0628931
+     },
+     "query": "Jack Baskin Engineering 165",
+     "room": "165",
+     "room_known": true
+    },
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": null,
+     "kind": "room",
+     "label": "Jack Baskin Engineering 15",
+     "point": {
+      "lat": 37.0003814,
+      "lon": -122.0632022
+     },
+     "query": "Jack Baskin Engineering 15",
+     "room": "15",
+     "room_known": false
+    }
+   ]
+  },
+  {
+   "input": "baskin 153",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 152",
+     "point": {
+      "lat": 37.0004301,
+      "lon": -122.0632849
+     },
+     "query": "Jack Baskin Engineering 152",
+     "room": "152",
+     "room_known": true
+    },
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 156",
+     "point": {
+      "lat": 37.0004344,
+      "lon": -122.0631921
+     },
+     "query": "Jack Baskin Engineering 156",
+     "room": "156",
+     "room_known": true
+    },
+    {
+     "building_id": "baskin-auditorium",
+     "building_name": "Jack Baskin Auditorium",
+     "floor": null,
+     "kind": "room",
+     "label": "Jack Baskin Auditorium 153",
+     "point": {
+      "lat": 37.0002296,
+      "lon": -122.0623774
+     },
+     "query": "Jack Baskin Auditorium 153",
+     "room": "153",
+     "room_known": false
+    },
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": null,
+     "kind": "room",
+     "label": "Jack Baskin Engineering 153",
+     "point": {
+      "lat": 37.0003814,
+      "lon": -122.0632022
+     },
+     "query": "Jack Baskin Engineering 153",
+     "room": "153",
+     "room_known": false
+    }
+   ]
+  },
+  {
+   "input": "baskin 52",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 152",
+     "point": {
+      "lat": 37.0004301,
+      "lon": -122.0632849
+     },
+     "query": "Jack Baskin Engineering 152",
+     "room": "152",
+     "room_known": true
+    },
+    {
+     "building_id": "baskin-auditorium",
+     "building_name": "Jack Baskin Auditorium",
+     "floor": null,
+     "kind": "room",
+     "label": "Jack Baskin Auditorium 52",
+     "point": {
+      "lat": 37.0002296,
+      "lon": -122.0623774
+     },
+     "query": "Jack Baskin Auditorium 52",
+     "room": "52",
+     "room_known": false
+    },
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": null,
+     "kind": "room",
+     "label": "Jack Baskin Engineering 52",
+     "point": {
+      "lat": 37.0003814,
+      "lon": -122.0632022
+     },
+     "query": "Jack Baskin Engineering 52",
+     "room": "52",
+     "room_known": false
+    }
+   ]
+  },
+  {
+   "input": "classroom unit",
+   "out": [
+    {
+     "building_id": "classroom-unit",
+     "building_name": "Classroom Unit",
+     "floor": null,
+     "kind": "building",
+     "label": "Classroom Unit",
+     "point": {
+      "lat": 36.9979309,
+      "lon": -122.0568421
+     },
+     "query": "Classroom Unit",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "c",
+   "out": []
+  },
+  {
+   "input": "mccHenry",
+   "out": [
+    {
+     "building_id": "mchenry-library",
+     "building_name": "McHenry Library",
+     "floor": null,
+     "kind": "building",
+     "label": "McHenry Library",
+     "point": {
+      "lat": 36.99572,
+      "lon": -122.0589306
+     },
+     "query": "McHenry Library",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "mchenry library",
+   "out": [
+    {
+     "building_id": "mchenry-library",
+     "building_name": "McHenry Library",
+     "floor": null,
+     "kind": "building",
+     "label": "McHenry Library",
+     "point": {
+      "lat": 36.99572,
+      "lon": -122.0589306
+     },
+     "query": "McHenry Library",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "jack baskin 152",
+   "out": [
+    {
+     "building_id": "baskin-engineering",
+     "building_name": "Jack Baskin Engineering",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Jack Baskin Engineering 152",
+     "point": {
+      "lat": 37.0004301,
+      "lon": -122.0632849
+     },
+     "query": "Jack Baskin Engineering 152",
+     "room": "152",
+     "room_known": true
+    },
+    {
+     "building_id": "baskin-auditorium",
+     "building_name": "Jack Baskin Auditorium",
+     "floor": null,
+     "kind": "room",
+     "label": "Jack Baskin Auditorium 152",
+     "point": {
+      "lat": 37.0002296,
+      "lon": -122.0623774
+     },
+     "query": "Jack Baskin Auditorium 152",
+     "room": "152",
+     "room_known": false
+    }
+   ]
+  },
+  {
+   "input": "Rachel Carson 301",
+   "out": [
+    {
+     "building_id": "carson-academic",
+     "building_name": "Rachel Carson College Academic Building",
+     "floor": null,
+     "kind": "room",
+     "label": "Rachel Carson College Academic Building 301",
+     "point": {
+      "lat": 36.9918054,
+      "lon": -122.0644943
+     },
+     "query": "Rachel Carson College Academic Building 301",
+     "room": "301",
+     "room_known": false
+    }
+   ]
+  },
+  {
+   "input": "stevenson 150",
+   "out": [
+    {
+     "building_id": "stevenson-academic",
+     "building_name": "Stevenson Academic Building",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Stevenson Academic Building 150",
+     "point": {
+      "lat": 36.9972153,
+      "lon": -122.0517158
+     },
+     "query": "Stevenson Academic Building 150",
+     "room": "150",
+     "room_known": true
+    }
+   ]
+  },
+  {
+   "input": "oakes 105",
+   "out": [
+    {
+     "building_id": "oakes-academic",
+     "building_name": "Oakes Academic Building",
+     "floor": "L1",
+     "kind": "room",
+     "label": "Oakes Academic Building 105",
+     "point": {
+      "lat": 36.9896214,
+      "lon": -122.0627451
+     },
+     "query": "Oakes Academic Building 105",
+     "room": "105",
+     "room_known": true
+    }
+   ]
+  },
+  {
+   "input": "ucen",
+   "out": []
+  },
+  {
+   "input": "science and eng",
+   "out": [
+    {
+     "building_id": "science-engineering-library",
+     "building_name": "Science & Engineering Library",
+     "floor": null,
+     "kind": "building",
+     "label": "Science & Engineering Library",
+     "point": {
+      "lat": 36.9991206,
+      "lon": -122.0607709
+     },
+     "query": "Science & Engineering Library",
+     "room": null,
+     "room_known": null
+    }
+   ]
+  },
+  {
+   "input": "engineering 2",
+   "out": [
+    {
+     "building_id": "engineering-2",
+     "building_name": "Engineering 2",
+     "floor": null,
+     "kind": "building",
+     "label": "Engineering 2",
+     "point": {
+      "lat": 37.0009823,
+      "lon": -122.0629965
+     },
+     "query": "Engineering 2",
+     "room": null,
+     "room_known": null
+    },
+    {
+     "building_id": "engineering-2",
+     "building_name": "Engineering 2",
+     "floor": null,
+     "kind": "room",
+     "label": "Engineering 2 2",
+     "point": {
+      "lat": 37.0009823,
+      "lon": -122.0629965
+     },
+     "query": "Engineering 2 2",
+     "room": "2",
+     "room_known": false
+    },
+    {
+     "building_id": "baskin-auditorium",
+     "building_name": "Jack Baskin Auditorium",
+     "floor": null,
+     "kind": "room",
+     "label": "Jack Baskin Auditorium 2",
+     "point": {
+      "lat": 37.0002296,
+      "lon": -122.0623774
+     },
+     "query": "Jack Baskin Auditorium 2",
+     "room": "2",
+     "room_known": false
+    }
+   ]
+  }
+ ],
+ "split": [
+  {
+   "input": "Cowell Acad 113 To be Announced",
+   "out": [
+    "Cowell Acad 113",
+    "To be Announced"
+   ]
+  },
+  {
+   "input": "Kresge Acad 3201 A Instructor",
+   "out": [
+    "Kresge Acad 3201",
+    "A Instructor"
+   ]
+  },
+  {
+   "input": "Mystery Hall 9 B Instructor",
+   "out": [
+    "Mystery Hall 9",
+    "B Instructor"
+   ]
+  },
+  {
+   "input": "Online Staff",
+   "out": [
+    "Online",
+    "Staff"
+   ]
+  },
+  {
+   "input": "TBA Staff",
+   "out": [
+    "TBA",
+    "Staff"
+   ]
+  },
+  {
+   "input": "Remote Instruction Smith",
+   "out": [
+    "Remote",
+    "Instruction Smith"
+   ]
+  },
+  {
+   "input": "Humn Lecture Hall Jones",
+   "out": [
+    "Humn Lecture Hall",
+    "Jones"
+   ]
+  },
+  {
+   "input": "Baskin Engr 152",
+   "out": [
+    "Baskin Engr 152",
+    ""
+   ]
+  },
+  {
+   "input": "Thimann Lab 003 Tbd",
+   "out": [
+    "Thimann Lab 003",
+    "Tbd"
+   ]
+  },
+  {
+   "input": "Weird Place Smith",
+   "out": [
+    "Weird Place Smith",
+    ""
+   ]
+  }
+ ],
+ "term": {
+  "terms": [
+   {
+    "end": "2026-12-04",
+    "holidays": [
+     "2026-11-11",
+     "2026-11-26",
+     "2026-11-27"
+    ],
+    "name": "Fall 2026",
+    "start": "2026-09-24"
+   },
+   {
+    "end": "2027-03-12",
+    "holidays": [
+     "2027-01-18",
+     "2027-02-15"
+    ],
+    "name": "Winter 2027",
+    "start": "2027-01-04"
+   },
+   {
+    "end": "2027-06-04",
+    "holidays": [
+     "2027-05-31"
+    ],
+    "name": "Spring 2027",
+    "start": "2027-03-29"
+   }
+  ]
+ }
+}

@@ -11,7 +11,8 @@ import 'class_editor.dart';
 import 'room_finder.dart';
 
 RoomState roomStateOf(RoomResolution resolution) => switch (resolution.kind) {
-  'building' => resolution.roomKnown == false ? RoomState.unlisted : RoomState.found,
+  'building' =>
+    resolution.roomKnown == false ? RoomState.unlisted : RoomState.found,
   'online' || 'tba' => RoomState.none,
   _ => RoomState.notFound,
 };
@@ -32,7 +33,8 @@ class ImportReviewScreen extends ConsumerStatefulWidget {
 
 class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
   late List<ClassDraft> _drafts = [
-    for (var i = 0; i < widget.parsed.rows.length; i++) ClassDraft.fromRow(i, widget.parsed.rows[i]),
+    for (var i = 0; i < widget.parsed.rows.length; i++)
+      ClassDraft.fromRow(i, widget.parsed.rows[i]),
   ];
 
   /// The classes the picture showed no dates for: they take the term's, or the ones the student chooses.
@@ -66,7 +68,10 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
   void _fillUndated(({String start, String end}) dates) {
     _drafts = [
       for (final d in _drafts)
-        if (_undated.contains(d.id)) d.copyWith(startDate: dates.start, endDate: dates.end) else d,
+        if (_undated.contains(d.id))
+          d.copyWith(startDate: dates.start, endDate: dates.end)
+        else
+          d,
     ];
   }
 
@@ -78,7 +83,10 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
       lastDate: DateTime(2100),
       initialDateRange: current == null
           ? null
-          : DateTimeRange(start: DateTime.parse(current.start), end: DateTime.parse(current.end)),
+          : DateTimeRange(
+              start: DateTime.parse(current.start),
+              end: DateTime.parse(current.end),
+            ),
     );
     if (range == null || !mounted) return;
     final dates = (start: _isoDate(range.start), end: _isoDate(range.end));
@@ -93,7 +101,9 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
     final search = ref.read(searchRepositoryProvider);
     final pending = {
       for (final d in _drafts)
-        if (d.location.trim().isNotEmpty && !_rooms.containsKey(d.location.trim())) d.location.trim(),
+        if (d.location.trim().isNotEmpty &&
+            !_rooms.containsKey(d.location.trim()))
+          d.location.trim(),
     };
     if (pending.isEmpty || !mounted) return;
     setState(() {
@@ -116,12 +126,16 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
     ]);
   }
 
-  /// The room the room search puts first for a location the server could not place, offered with one tap.
+  /// The room the room search puts first for a location that could not be placed, offered with one tap.
   Future<void> _suggest(String location) async {
     try {
       final places = await ref.read(searchRepositoryProvider).search(location);
-      final best = places.where((p) => p.isRoom && p.roomKnown != false).firstOrNull;
-      if (best != null && mounted) setState(() => _suggestions[location] = best);
+      final best = places
+          .where((p) => p.isRoom && p.roomKnown != false)
+          .firstOrNull;
+      if (best != null && mounted) {
+        setState(() => _suggestions[location] = best);
+      }
     } on Object {
       // a suggestion is only a convenience: "Find the room" is still there
     }
@@ -132,9 +146,11 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
     _checkRooms();
   }
 
-  RoomState? _roomOf(ClassDraft d) => d.location.trim().isEmpty ? null : _rooms[d.location.trim()];
+  RoomState? _roomOf(ClassDraft d) =>
+      d.location.trim().isEmpty ? null : _rooms[d.location.trim()];
 
-  bool _needsLook(ClassDraft d) => d.problem != null || d.flagged || (_roomOf(d)?.needsLook ?? false);
+  bool _needsLook(ClassDraft d) =>
+      d.problem != null || d.flagged || (_roomOf(d)?.needsLook ?? false);
 
   void _replace(ClassDraft draft) {
     _drafts = [for (final d in _drafts) d.id == draft.id ? draft : d];
@@ -148,7 +164,10 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
       return;
     }
     final own = edit.draft;
-    if (own.startDate != _datesForUndated?.start || own.endDate != _datesForUndated?.end) _undated.remove(own.id);
+    if (own.startDate != _datesForUndated?.start ||
+        own.endDate != _datesForUndated?.end) {
+      _undated.remove(own.id);
+    }
     setState(() => _replace(own));
     _checkRooms();
   }
@@ -168,11 +187,19 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text('Removed ${draft.label.isEmpty ? 'the class' : draft.label}.'),
+          content: Text(
+            'Removed ${draft.label.isEmpty ? 'the class' : draft.label}.',
+          ),
           action: SnackBarAction(
             label: 'Undo',
             onPressed: () {
-              if (mounted) setState(() => _drafts = [..._drafts]..insert(index.clamp(0, _drafts.length), draft));
+              if (mounted) {
+                setState(
+                  () =>
+                      _drafts = [..._drafts]
+                        ..insert(index.clamp(0, _drafts.length), draft),
+                );
+              }
             },
           ),
         ),
@@ -196,8 +223,14 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
         title: const Text('Discard this import?'),
         content: const Text('Nothing has been saved.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Keep checking')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Discard')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Keep checking'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Discard'),
+          ),
         ],
       ),
     );
@@ -214,9 +247,9 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
     } on Object {
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Couldn't save your classes. Try again.")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Couldn't save your classes. Try again.")),
+      );
     }
   }
 
@@ -268,11 +301,22 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
                   style: TextStyle(color: theme.colorScheme.error),
                 ),
               ),
-            for (final note in widget.parsed.notes) Padding(padding: const EdgeInsets.only(top: 4), child: Text(note)),
+            for (final note in widget.parsed.notes)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(note),
+              ),
             if (_rooms.values.contains(RoomState.unchecked))
-              const _Banner("Couldn't check the rooms with the server, so they will be saved as read."),
+              const _Banner(
+                "Couldn't check the rooms, so they will be saved as read.",
+              ),
             if (undated.isNotEmpty)
-              _DatesCard(dates: undated.every((d) => d.hasDates) ? _datesForUndated : null, onChoose: _chooseDates),
+              _DatesCard(
+                dates: undated.every((d) => d.hasDates)
+                    ? _datesForUndated
+                    : null,
+                onChoose: _chooseDates,
+              ),
             for (final draft in _drafts)
               _ClassCard(
                 draft: draft,
@@ -285,7 +329,10 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
               ),
             Align(
               alignment: Alignment.centerLeft,
-              child: TextButton(onPressed: _saving ? null : _cancel, child: const Text('Cancel')),
+              child: TextButton(
+                onPressed: _saving ? null : _cancel,
+                child: const Text('Cancel'),
+              ),
             ),
           ],
         ),
@@ -296,7 +343,11 @@ class _ImportReviewScreenState extends ConsumerState<ImportReviewScreen> {
               width: double.infinity,
               child: FilledButton(
                 onPressed: canSave ? _save : null,
-                child: Text(_drafts.length == 1 ? 'Save 1 class' : 'Save ${_drafts.length} classes'),
+                child: Text(
+                  _drafts.length == 1
+                      ? 'Save 1 class'
+                      : 'Save ${_drafts.length} classes',
+                ),
               ),
             ),
           ),
@@ -349,7 +400,10 @@ class _DatesCard extends StatelessWidget {
                   ? 'The picture shows no dates for some classes. Choose when they run.'
                   : 'The picture shows no dates for some classes, so they run ${known.start} to ${known.end}.',
             ),
-            TextButton(onPressed: onChoose, child: Text(known == null ? 'Choose dates' : 'Change dates')),
+            TextButton(
+              onPressed: onChoose,
+              child: Text(known == null ? 'Choose dates' : 'Change dates'),
+            ),
           ],
         ),
       ),
@@ -380,15 +434,22 @@ class _ClassCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final problem = draft.problem;
-    final attention = problem != null || draft.flagged || (room?.needsLook ?? false);
+    final attention =
+        problem != null || draft.flagged || (room?.needsLook ?? false);
     final warning = Colors.orange.shade800;
-    final when = [draft.daysLabel, draft.timeLabel].where((s) => s.isNotEmpty).join('  ');
+    final when = [
+      draft.daysLabel,
+      draft.timeLabel,
+    ].where((s) => s.isNotEmpty).join('  ');
     return Card(
       margin: const EdgeInsets.only(top: 12),
       shape: attention
           ? RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: problem != null ? theme.colorScheme.error : warning, width: 1.5),
+              side: BorderSide(
+                color: problem != null ? theme.colorScheme.error : warning,
+                width: 1.5,
+              ),
             )
           : null,
       child: InkWell(
@@ -402,10 +463,14 @@ class _ClassCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(draft.label.isEmpty ? '(no course)' : draft.label, style: theme.textTheme.titleMedium),
+                    child: Text(
+                      draft.label.isEmpty ? '(no course)' : draft.label,
+                      style: theme.textTheme.titleMedium,
+                    ),
                   ),
                   IconButton(
-                    tooltip: 'Remove ${draft.label.isEmpty ? 'this class' : draft.label}',
+                    tooltip:
+                        'Remove ${draft.label.isEmpty ? 'this class' : draft.label}',
                     icon: const Icon(Icons.close),
                     onPressed: onRemove,
                   ),
@@ -416,7 +481,10 @@ class _ClassCard extends StatelessWidget {
               if (problem != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 4, right: 12),
-                  child: Text(problem, style: TextStyle(color: theme.colorScheme.error)),
+                  child: Text(
+                    problem,
+                    style: TextStyle(color: theme.colorScheme.error),
+                  ),
                 )
               else if (draft.flagged)
                 for (final reason in draft.reasons)
@@ -427,7 +495,11 @@ class _ClassCard extends StatelessWidget {
               if (room == RoomState.checking)
                 const Padding(
                   padding: EdgeInsets.only(top: 4, right: 12),
-                  child: _Note(Icons.hourglass_empty, null, 'Checking the room…'),
+                  child: _Note(
+                    Icons.hourglass_empty,
+                    null,
+                    'Checking the room…',
+                  ),
                 ),
               if (room == RoomState.notFound || room == RoomState.unlisted)
                 Padding(
@@ -445,13 +517,16 @@ class _ClassCard extends StatelessWidget {
                 child: Wrap(
                   alignment: WrapAlignment.end,
                   children: [
-                    if ((room == RoomState.notFound || room == RoomState.unlisted) && suggestion != null)
+                    if ((room == RoomState.notFound ||
+                            room == RoomState.unlisted) &&
+                        suggestion != null)
                       TextButton.icon(
                         onPressed: () => onUseSuggestion(suggestion!),
                         icon: const Icon(Icons.check),
                         label: Text('Use ${suggestion!.label}'),
                       ),
-                    if (room == RoomState.notFound || room == RoomState.unlisted)
+                    if (room == RoomState.notFound ||
+                        room == RoomState.unlisted)
                       TextButton.icon(
                         onPressed: onFindRoom,
                         icon: const Icon(Icons.search),

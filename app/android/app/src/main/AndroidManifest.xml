@@ -1,21 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- Approximate location is enough to time a walk; asked for only when "Use my location" is on. -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <!-- Leave-now reminders: shown even when the app is closed. Exact alarms keep "leave now" on time
+    <!-- Class reminders: shown even when the app is closed. Exact alarms keep them on time
          (the user is asked to allow them); without it reminders can run a few minutes late. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.VIEW"/>
-            <data android:scheme="transit"/>
-        </intent>
-    </queries>
     <application
-        android:label="UCSC Router"
+        android:label="Classmap"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

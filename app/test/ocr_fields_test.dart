@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/features/schedule/ocr/fields.dart';
+import 'package:classmap/features/schedule/ocr/fields.dart';
 
 (String, String)? range(String text) {
   final r = findTimeRange(text);

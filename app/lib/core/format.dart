@@ -1,6 +1,6 @@
 /// Shows an ISO time such as `2026-10-12T14:40:00-07:00` as `2:40 PM`.
 ///
-/// The server sends Pacific times with their offset. They are read straight out of the
+/// Pacific times come with their offset. They are read straight out of the
 /// text instead of being converted, so the clock on the screen is the campus clock even if
 /// the phone is set to another time zone.
 String clockFromIso(String iso) {

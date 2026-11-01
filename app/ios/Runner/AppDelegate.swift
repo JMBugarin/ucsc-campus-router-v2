@@ -21,7 +21,7 @@ import UserNotifications
 
 /// Tells the app whether Reduce Transparency is on, which Flutter does not report, and when it changes.
 final class AccessibilitySettings {
-  static let channelName = "ucsc_router/accessibility"
+  static let channelName = "classmap/accessibility"
   private static var shared: AccessibilitySettings?
 
   private let channel: FlutterMethodChannel

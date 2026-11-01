@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/features/schedule/ocr/recognized_text.dart';
+import 'package:classmap/features/schedule/ocr/recognized_text.dart';
 
 Map<String, Object?> line(
   String text, {

@@ -54,7 +54,7 @@ class BaseMapLayer extends ConsumerWidget {
     if (!ref.watch(showMapTilesProvider)) return const SizedBox.shrink();
     return TileLayer(
       urlTemplate: tileSource.urlTemplate,
-      userAgentPackageName: 'io.github.jmbugarin.ucsc_router',
+      userAgentPackageName: 'io.github.jmbugarin.classmap',
     );
   }
 }

@@ -22,7 +22,7 @@ abstract class TextRecognizer {
   Future<RecognizedText> recognize(String path);
 }
 
-const _visionChannel = MethodChannel('ucsc_router/text_recognition');
+const _visionChannel = MethodChannel('classmap/text_recognition');
 
 /// Apple's Vision framework, through the app's own platform channel.
 class VisionTextRecognizer implements TextRecognizer {

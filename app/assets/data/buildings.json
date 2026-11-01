@@ -1,0 +1,2134 @@
+{
+  "buildings": [
+    {
+      "id": "baskin-engineering",
+      "name": "Jack Baskin Engineering",
+      "aliases": [
+        "Jack Baskin Engineering",
+        "Baskin Engineering",
+        "Baskin Engr",
+        "J Baskin Engr",
+        "Jack Baskin Engr",
+        "Baskin Eng",
+        "Bask Engr"
+      ],
+      "osm_name": "Jack Baskin Engineering",
+      "facility_ids": [
+        "JB"
+      ],
+      "known_rooms": [
+        "152",
+        "156",
+        "165",
+        "169",
+        "372"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "152": {
+          "lat": 37.0004301,
+          "lon": -122.0632849,
+          "level": "L1"
+        },
+        "156": {
+          "lat": 37.0004344,
+          "lon": -122.0631921,
+          "level": "L1"
+        },
+        "165": {
+          "lat": 37.0005733,
+          "lon": -122.0628931,
+          "level": "L1"
+        },
+        "169": {
+          "lat": 37.0005809,
+          "lon": -122.0628178,
+          "level": "L1"
+        },
+        "372": {
+          "lat": 37.0005185,
+          "lon": -122.0627854,
+          "level": "L3"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 37.0003814,
+        "lon": -122.0632022
+      },
+      "entrances": [
+        {
+          "lat": 37.000213,
+          "lon": -122.0630085,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 37.0003461,
+          "lon": -122.0626591,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 37.00054,
+          "lon": -122.0626883,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 37.0005993,
+          "lon": -122.063034,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "engineering-2",
+      "name": "Engineering 2",
+      "aliases": [
+        "Engineering 2",
+        "Engr 2",
+        "Eng 2",
+        "Engineer 2"
+      ],
+      "osm_name": "Engineering 2",
+      "facility_ids": [
+        "E2"
+      ],
+      "known_rooms": [
+        "192",
+        "194"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "192": {
+          "lat": 37.0009126,
+          "lon": -122.0628219,
+          "level": "L1"
+        },
+        "194": {
+          "lat": 37.0009233,
+          "lon": -122.0627058,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 37.0009823,
+        "lon": -122.0629965
+      },
+      "entrances": [
+        {
+          "lat": 37.0008675,
+          "lon": -122.0630748,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 37.0009654,
+          "lon": -122.0636107,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 37.0009964,
+          "lon": -122.0623212,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 37.0010996,
+          "lon": -122.063069,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "thimann-labs",
+      "name": "Thimann Labs",
+      "aliases": [
+        "Thimann Labs",
+        "Thimann Lab",
+        "Thimann Laboratories"
+      ],
+      "osm_name": "Thimann Labs",
+      "facility_ids": [
+        "TH"
+      ],
+      "known_rooms": [
+        "101"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "101": {
+          "lat": 36.9980438,
+          "lon": -122.0616329,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9981436,
+        "lon": -122.0620301
+      },
+      "entrances": [
+        {
+          "lat": 36.9980625,
+          "lon": -122.062443,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9980841,
+          "lon": -122.0616132,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9982945,
+          "lon": -122.061806,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "thimann-lecture-hall",
+      "name": "Thimann Lecture Hall",
+      "aliases": [
+        "Thimann Lecture Hall",
+        "Thimann Lecture",
+        "Thimann Lec",
+        "Thim Lecture"
+      ],
+      "osm_name": "Thimann Lecture Hall",
+      "facility_ids": [
+        "TL"
+      ],
+      "known_rooms": [
+        "001",
+        "003"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "001": {
+          "lat": 36.9979258,
+          "lon": -122.0613113,
+          "level": "L1"
+        },
+        "003": {
+          "lat": 36.9981184,
+          "lon": -122.0613151,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9980435,
+        "lon": -122.061337
+      },
+      "entrances": [
+        {
+          "lat": 36.9979878,
+          "lon": -122.0612303,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9979963,
+          "lon": -122.0614424,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9980231,
+          "lon": -122.061443,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9980566,
+          "lon": -122.0614438,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.998062,
+          "lon": -122.0612313,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "natural-sciences-2",
+      "name": "Natural Sciences 2",
+      "aliases": [
+        "Natural Sciences 2",
+        "Natural Sci 2",
+        "Nat Sci 2",
+        "NS2"
+      ],
+      "osm_name": "Natural Sciences 2",
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9985491,
+        "lon": -122.0604798
+      },
+      "entrances": [
+        {
+          "lat": 36.9983953,
+          "lon": -122.060783,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9984427,
+          "lon": -122.0601166,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9985654,
+          "lon": -122.0609165,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9986212,
+          "lon": -122.060842,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9986645,
+          "lon": -122.0601205,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9986943,
+          "lon": -122.060687,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9986995,
+          "lon": -122.0603549,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "natural-sciences-2-annex",
+      "name": "Natural Sciences 2 Annex",
+      "aliases": [
+        "Natural Sciences 2 Annex",
+        "Nat Sci 2 Annex",
+        "Nat Sci Annex",
+        "NS2 Annex",
+        "N. Sci Annex"
+      ],
+      "osm_name": "Natural Sciences 2 Annex",
+      "facility_ids": [
+        "NA"
+      ],
+      "known_rooms": [
+        "101",
+        "102",
+        "103"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "101": {
+          "lat": 36.9985585,
+          "lon": -122.0610863,
+          "level": "L1"
+        },
+        "102": {
+          "lat": 36.9984565,
+          "lon": -122.0611187,
+          "level": "L1"
+        },
+        "103": {
+          "lat": 36.9984579,
+          "lon": -122.0610472,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9985099,
+        "lon": -122.0611175
+      },
+      "entrances": [
+        {
+          "lat": 36.9985189,
+          "lon": -122.0612089,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9985415,
+          "lon": -122.0610275,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "social-sciences-1",
+      "name": "Social Sciences 1",
+      "aliases": [
+        "Social Sciences 1",
+        "Social Sci 1",
+        "Soc Sci 1",
+        "SS1"
+      ],
+      "osm_name": "Social Sciences 1",
+      "facility_ids": [
+        "9A"
+      ],
+      "known_rooms": [
+        "110",
+        "145",
+        "149",
+        "153",
+        "161"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "110": {
+          "lat": 37.0019931,
+          "lon": -122.057944,
+          "level": "L1"
+        },
+        "145": {
+          "lat": 37.0024799,
+          "lon": -122.0580274,
+          "level": "L1"
+        },
+        "149": {
+          "lat": 37.0024165,
+          "lon": -122.0580116,
+          "level": "L1"
+        },
+        "153": {
+          "lat": 37.0023492,
+          "lon": -122.0579932,
+          "level": "L1"
+        },
+        "161": {
+          "lat": 37.0022793,
+          "lon": -122.0579727,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 37.0022576,
+        "lon": -122.0580759
+      },
+      "entrances": [
+        {
+          "lat": 37.0021254,
+          "lon": -122.0580715,
+          "kind": "main",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "social-sciences-2",
+      "name": "Social Sciences 2",
+      "aliases": [
+        "Social Sciences 2",
+        "Social Sci 2",
+        "Soc Sci 2",
+        "SS2"
+      ],
+      "osm_name": "Social Sciences 2",
+      "facility_ids": [
+        "S2"
+      ],
+      "known_rooms": [
+        "071",
+        "075",
+        "137",
+        "141",
+        "159",
+        "165",
+        "167",
+        "171",
+        "179",
+        "363"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "071": {
+          "lat": 37.0015271,
+          "lon": -122.0588435,
+          "level": "L0"
+        },
+        "075": {
+          "lat": 37.0016225,
+          "lon": -122.0589262,
+          "level": "L0"
+        },
+        "137": {
+          "lat": 37.0018421,
+          "lon": -122.0588131,
+          "level": "L1"
+        },
+        "141": {
+          "lat": 37.0017911,
+          "lon": -122.0587867,
+          "level": "L1"
+        },
+        "159": {
+          "lat": 37.0015833,
+          "lon": -122.0586278,
+          "level": "L1"
+        },
+        "165": {
+          "lat": 37.0015504,
+          "lon": -122.0586964,
+          "level": "L1"
+        },
+        "167": {
+          "lat": 37.0015167,
+          "lon": -122.0587664,
+          "level": "L1"
+        },
+        "171": {
+          "lat": 37.0014834,
+          "lon": -122.0588349,
+          "level": "L1"
+        },
+        "179": {
+          "lat": 37.0015612,
+          "lon": -122.0588813,
+          "level": "L1"
+        },
+        "363": {
+          "lat": 37.0015135,
+          "lon": -122.0587171,
+          "level": "L3"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 37.0016653,
+        "lon": -122.0588711
+      },
+      "entrances": [
+        {
+          "lat": 37.0014476,
+          "lon": -122.0586475,
+          "kind": "main",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "humanities-1",
+      "name": "Humanities 1",
+      "aliases": [
+        "Humanities 1",
+        "Humanities Bldg 1",
+        "Hum 1"
+      ],
+      "osm_name": "Humanities 1",
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9979803,
+        "lon": -122.0546774
+      },
+      "entrances": [
+        {
+          "lat": 36.9981568,
+          "lon": -122.0546383,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9978057,
+          "lon": -122.0549998,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "humanities-lecture-hall",
+      "name": "Humanities Lecture Hall",
+      "aliases": [
+        "Humanities Lecture Hall",
+        "Humanities Lecture",
+        "Hum Lecture Hall",
+        "Hum Lec Hall",
+        "Hum Lecture",
+        "Humn Lecture Hall"
+      ],
+      "osm_name": "Humanities Lecture Hall",
+      "facility_ids": [
+        "HL"
+      ],
+      "known_rooms": [
+        "206"
+      ],
+      "exact_names": {
+        "Humn Lecture Hall": "206"
+      },
+      "room_points": {
+        "206": {
+          "lat": 36.9983957,
+          "lon": -122.0544679,
+          "level": "L2"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9984339,
+        "lon": -122.0545057
+      },
+      "entrances": [
+        {
+          "lat": 36.9983571,
+          "lon": -122.0546184,
+          "kind": "main",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "earth-marine-sciences",
+      "name": "Earth & Marine Sciences",
+      "aliases": [
+        "Earth and Marine Sciences",
+        "Earth Marine Sciences",
+        "Earth and Marine Sci",
+        "Earth Marine Sci",
+        "Earth and Mar Sci",
+        "EMS",
+        "Earth&Marine"
+      ],
+      "osm_name": "Earth & Marine Sciences",
+      "facility_ids": [
+        "NE"
+      ],
+      "known_rooms": [
+        "B206",
+        "B210",
+        "B214"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "B206": {
+          "lat": 36.9980317,
+          "lon": -122.0601041,
+          "level": "L2"
+        },
+        "B210": {
+          "lat": 36.9980302,
+          "lon": -122.0599474,
+          "level": "L2"
+        },
+        "B214": {
+          "lat": 36.9980315,
+          "lon": -122.0597934,
+          "level": "L2"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9978749,
+        "lon": -122.0596207
+      },
+      "entrances": [
+        {
+          "lat": 36.9975607,
+          "lon": -122.0599789,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9976054,
+          "lon": -122.0596557,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9976064,
+          "lon": -122.0595502,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9976542,
+          "lon": -122.0596811,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.997886,
+          "lon": -122.0597467,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9979067,
+          "lon": -122.05981,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9979243,
+          "lon": -122.0600178,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9979907,
+          "lon": -122.0600188,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9982859,
+          "lon": -122.059678,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9982875,
+          "lon": -122.059579,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "physical-sciences",
+      "name": "Physical Sciences Building",
+      "aliases": [
+        "Physical Sciences Building",
+        "Physical Sciences",
+        "Phys Sci Bldg",
+        "Phys Sci",
+        "PhysSciences"
+      ],
+      "osm_name": "Physical Sciences Building",
+      "facility_ids": [
+        "PS"
+      ],
+      "known_rooms": [
+        "110",
+        "114",
+        "130",
+        "136",
+        "140"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "110": {
+          "lat": 36.9993223,
+          "lon": -122.0616155,
+          "level": "L1"
+        },
+        "114": {
+          "lat": 36.9994367,
+          "lon": -122.0616103,
+          "level": "L1"
+        },
+        "130": {
+          "lat": 36.999507,
+          "lon": -122.0618489,
+          "level": "L1"
+        },
+        "136": {
+          "lat": 36.9995061,
+          "lon": -122.0619372,
+          "level": "L1"
+        },
+        "140": {
+          "lat": 36.9995054,
+          "lon": -122.0620135,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9995993,
+        "lon": -122.0619231
+      },
+      "entrances": [
+        {
+          "lat": 36.9995516,
+          "lon": -122.0616494,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9992943,
+          "lon": -122.0617362,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9993951,
+          "lon": -122.0617387,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9994277,
+          "lon": -122.0620498,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9994314,
+          "lon": -122.061811,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9994475,
+          "lon": -122.06211,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9994483,
+          "lon": -122.0620503,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9996032,
+          "lon": -122.0624288,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "biomedical-sciences",
+      "name": "Biomedical Sciences",
+      "aliases": [
+        "Biomedical Sciences",
+        "Biomed Sci",
+        "Biomed"
+      ],
+      "osm_name": "Biomedical Sciences",
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9997919,
+        "lon": -122.0611287
+      },
+      "entrances": [
+        {
+          "lat": 36.9995898,
+          "lon": -122.061267,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9995357,
+          "lon": -122.0612439,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 37.0000449,
+          "lon": -122.0611465,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "interdisciplinary-sciences",
+      "name": "Interdisciplinary Sciences Building",
+      "aliases": [
+        "Interdisciplinary Sciences Building",
+        "Interdisciplinary Sciences",
+        "Interdisc Sci",
+        "ISB"
+      ],
+      "osm_name": "Interdisciplinary Sciences Building",
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9986514,
+        "lon": -122.0598489
+      },
+      "entrances": [
+        {
+          "lat": 36.9984178,
+          "lon": -122.0597292,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9985318,
+          "lon": -122.0599692,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9985698,
+          "lon": -122.0596494,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9986605,
+          "lon": -122.0600101,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9987906,
+          "lon": -122.0597263,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9988026,
+          "lon": -122.0601061,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9988167,
+          "lon": -122.0598264,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "mchenry-library",
+      "name": "McHenry Library",
+      "aliases": [
+        "McHenry Library",
+        "McHenry Lib",
+        "McHenry"
+      ],
+      "osm_name": "McHenry Library",
+      "facility_ids": [
+        "ML"
+      ],
+      "known_rooms": [
+        "1340",
+        "1350"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "1340": {
+          "lat": 36.9955003,
+          "lon": -122.058966,
+          "level": "L3"
+        },
+        "1350": {
+          "lat": 36.9954723,
+          "lon": -122.0588186,
+          "level": "L3"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.99572,
+        "lon": -122.0589306
+      },
+      "entrances": [
+        {
+          "lat": 36.9959236,
+          "lon": -122.0591566,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9961365,
+          "lon": -122.0591782,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9957675,
+          "lon": -122.0592854,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.995987,
+          "lon": -122.0586679,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "science-engineering-library",
+      "name": "Science & Engineering Library",
+      "aliases": [
+        "Science and Engineering Library",
+        "Sci and Engr Library",
+        "Sci Engr Library",
+        "SEL",
+        "Sci & Engr Library"
+      ],
+      "osm_name": "Science & Engineering Library",
+      "facility_ids": [
+        "SC"
+      ],
+      "known_rooms": [
+        "206"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "206": {
+          "lat": 36.9991527,
+          "lon": -122.0609624,
+          "level": "L2"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9991206,
+        "lon": -122.0607709
+      },
+      "entrances": [
+        {
+          "lat": 36.9989131,
+          "lon": -122.0609294,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.998857,
+          "lon": -122.06085,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "classroom-unit",
+      "name": "Classroom Unit",
+      "aliases": [
+        "Classroom Unit",
+        "Class Unit",
+        "ClassroomUnit"
+      ],
+      "osm_name": "Classroom Unit",
+      "facility_ids": [
+        "CL"
+      ],
+      "known_rooms": [
+        "001",
+        "002"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "001": {
+          "lat": 36.9978719,
+          "lon": -122.0570354,
+          "level": "L1"
+        },
+        "002": {
+          "lat": 36.9979453,
+          "lon": -122.0567682,
+          "level": "L2"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9979309,
+        "lon": -122.0568421
+      },
+      "entrances": [
+        {
+          "lat": 36.9978372,
+          "lon": -122.0566798,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9978741,
+          "lon": -122.0568481,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9980729,
+          "lon": -122.0566731,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "merrill-academic",
+      "name": "Merrill Academic Building",
+      "aliases": [
+        "Merrill Academic Building",
+        "Merrill Academic",
+        "Merrill Acad Bldg",
+        "Merrill Acad"
+      ],
+      "osm_name": "Merrill Academic Building",
+      "facility_ids": [
+        "4A"
+      ],
+      "known_rooms": [
+        "002",
+        "003",
+        "102",
+        "130",
+        "132"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "002": {
+          "lat": 36.9995716,
+          "lon": -122.0532869,
+          "level": "L0"
+        },
+        "003": {
+          "lat": 36.9995161,
+          "lon": -122.053295,
+          "level": "L0"
+        },
+        "102": {
+          "lat": 36.9995425,
+          "lon": -122.053279,
+          "level": "L1"
+        },
+        "130": {
+          "lat": 36.9997251,
+          "lon": -122.0535836,
+          "level": "L1"
+        },
+        "132": {
+          "lat": 36.9997804,
+          "lon": -122.0535808,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9996363,
+        "lon": -122.0535265
+      },
+      "entrances": [
+        {
+          "lat": 36.9995553,
+          "lon": -122.0536585,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9996424,
+          "lon": -122.0532873,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9997146,
+          "lon": -122.0536638,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.999867,
+          "lon": -122.0536598,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "stevenson-academic",
+      "name": "Stevenson Academic Building",
+      "aliases": [
+        "Stevenson Academic Building",
+        "Stevenson Academic Administration Building",
+        "Stevenson Academic",
+        "Stevenson Acad",
+        "Steven Acad"
+      ],
+      "osm_name": "Stevenson Academic/Administration Building",
+      "facility_ids": [
+        "2A"
+      ],
+      "known_rooms": [
+        "150",
+        "151",
+        "152",
+        "175"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "150": {
+          "lat": 36.9972153,
+          "lon": -122.0517158,
+          "level": "L1"
+        },
+        "151": {
+          "lat": 36.9973317,
+          "lon": -122.0516921,
+          "level": "L1"
+        },
+        "152": {
+          "lat": 36.9973287,
+          "lon": -122.0517536,
+          "level": "L1"
+        },
+        "175": {
+          "lat": 36.9969967,
+          "lon": -122.0516972,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9972078,
+        "lon": -122.0518899
+      },
+      "entrances": [
+        {
+          "lat": 36.9971062,
+          "lon": -122.0519703,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.996981,
+          "lon": -122.0517954,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9969975,
+          "lon": -122.051634,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9971061,
+          "lon": -122.0520374,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9971065,
+          "lon": -122.0519012,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9971353,
+          "lon": -122.0520368,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9971738,
+          "lon": -122.0517591,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9972514,
+          "lon": -122.0521435,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9973123,
+          "lon": -122.0516791,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.997381,
+          "lon": -122.052033,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9973845,
+          "lon": -122.0519376,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9974169,
+          "lon": -122.0518665,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "oakes-academic",
+      "name": "Oakes Academic Building",
+      "aliases": [
+        "Oakes Academic Building",
+        "Oakes Academic Administrative Building",
+        "Oakes Academic",
+        "Oakes Acad"
+      ],
+      "osm_name": "Oakes Academic/Administrative Building",
+      "facility_ids": [
+        "7A"
+      ],
+      "known_rooms": [
+        "101",
+        "102",
+        "103",
+        "105",
+        "106",
+        "222"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "101": {
+          "lat": 36.9899483,
+          "lon": -122.0627299,
+          "level": "L1"
+        },
+        "102": {
+          "lat": 36.9898857,
+          "lon": -122.0627457,
+          "level": "L1"
+        },
+        "103": {
+          "lat": 36.9898309,
+          "lon": -122.0627511,
+          "level": "L1"
+        },
+        "105": {
+          "lat": 36.9896214,
+          "lon": -122.0627451,
+          "level": "L1"
+        },
+        "106": {
+          "lat": 36.989658,
+          "lon": -122.0628494,
+          "level": "L1"
+        },
+        "222": {
+          "lat": 36.9896404,
+          "lon": -122.0628484,
+          "level": "L2"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9898279,
+        "lon": -122.0628445
+      },
+      "entrances": [
+        {
+          "lat": 36.9897376,
+          "lon": -122.0628599,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9899878,
+          "lon": -122.0627509,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9899929,
+          "lon": -122.0628991,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9900798,
+          "lon": -122.0631235,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "carson-academic",
+      "name": "Rachel Carson College Academic Building",
+      "aliases": [
+        "Rachel Carson College Academic Building",
+        "Rachel Carson Academic",
+        "Carson Academic",
+        "Carson Acad",
+        "R Carson Acad"
+      ],
+      "osm_name": "Rachel Carson College Academic Building",
+      "facility_ids": [
+        "8A",
+        "8B"
+      ],
+      "known_rooms": [
+        "240",
+        "242",
+        "250",
+        "252"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "240": {
+          "lat": 36.9919246,
+          "lon": -122.0642997,
+          "level": "L2"
+        },
+        "242": {
+          "lat": 36.9919241,
+          "lon": -122.0644218,
+          "level": "L2"
+        },
+        "250": {
+          "lat": 36.9920301,
+          "lon": -122.0648938,
+          "level": "L2"
+        },
+        "252": {
+          "lat": 36.992046,
+          "lon": -122.064981,
+          "level": "L2"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9918054,
+        "lon": -122.0644943
+      },
+      "entrances": [
+        {
+          "lat": 36.9917029,
+          "lon": -122.0647106,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9917337,
+          "lon": -122.0647,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9920029,
+          "lon": -122.0644748,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "porter-academic",
+      "name": "Porter Academic Building",
+      "aliases": [
+        "Porter Academic Building",
+        "Porter Academic",
+        "Porter Acad"
+      ],
+      "osm_name": "Porter Academic Building",
+      "facility_ids": [
+        "5A"
+      ],
+      "known_rooms": [
+        "144",
+        "148",
+        "241",
+        "246",
+        "249",
+        "250"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "144": {
+          "lat": 36.9940187,
+          "lon": -122.0654098,
+          "level": "L1"
+        },
+        "148": {
+          "lat": 36.9939215,
+          "lon": -122.0654337,
+          "level": "L1"
+        },
+        "241": {
+          "lat": 36.9941221,
+          "lon": -122.0652922,
+          "level": "L2"
+        },
+        "246": {
+          "lat": 36.9939846,
+          "lon": -122.0653234,
+          "level": "L2"
+        },
+        "249": {
+          "lat": 36.993924,
+          "lon": -122.0653369,
+          "level": "L2"
+        },
+        "250": {
+          "lat": 36.9938631,
+          "lon": -122.0653504,
+          "level": "L2"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9940114,
+        "lon": -122.0653956
+      },
+      "entrances": [
+        {
+          "lat": 36.9939481,
+          "lon": -122.0653232,
+          "kind": "door",
+          "source": "footprint-edge"
+        }
+      ]
+    },
+    {
+      "id": "music-center",
+      "name": "Music Center",
+      "aliases": [
+        "Music Center",
+        "Music Ctr"
+      ],
+      "osm_name": "Music Center",
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9931896,
+        "lon": -122.0597994
+      },
+      "entrances": [
+        {
+          "lat": 36.9931327,
+          "lon": -122.0600649,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9930334,
+          "lon": -122.0597652,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9930841,
+          "lon": -122.0600387,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9931045,
+          "lon": -122.0595361,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9931492,
+          "lon": -122.059921,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.993183,
+          "lon": -122.059633,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9932199,
+          "lon": -122.060094,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.993235,
+          "lon": -122.05966,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9932976,
+          "lon": -122.0597081,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "digital-arts-research-center",
+      "name": "Digital Arts Research Center",
+      "aliases": [
+        "Digital Arts Research Center",
+        "DARC"
+      ],
+      "osm_name": "Digital Arts Research Center",
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9938834,
+        "lon": -122.0605629
+      },
+      "entrances": [
+        {
+          "lat": 36.9937766,
+          "lon": -122.0606197,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9938818,
+          "lon": -122.0609164,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9939613,
+          "lon": -122.0608093,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "baskin-auditorium",
+      "name": "Jack Baskin Auditorium",
+      "aliases": [
+        "Jack Baskin Auditorium",
+        "Baskin Auditorium",
+        "J Bask Aud"
+      ],
+      "osm_name": "Engineering Auditorium 101",
+      "facility_ids": [
+        "EL"
+      ],
+      "known_rooms": [
+        "101"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "101": {
+          "lat": 37.0002137,
+          "lon": -122.0623619,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 37.0002296,
+        "lon": -122.0623774
+      },
+      "entrances": [
+        {
+          "lat": 37.0001215,
+          "lon": -122.062446,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 37.0003485,
+          "lon": -122.0624643,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "humanities-and-social-sciences",
+      "name": "Humanities and Social Sciences",
+      "aliases": [
+        "Humanities and Social Sciences",
+        "Humanities 2",
+        "Hum 2",
+        "Hum & Soc Sci"
+      ],
+      "osm_name": "Humanities and Social Sciences",
+      "facility_ids": [
+        "HU"
+      ],
+      "known_rooms": [
+        "250",
+        "350"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "250": {
+          "lat": 36.9983268,
+          "lon": -122.0547804,
+          "level": "L2"
+        },
+        "350": {
+          "lat": 36.9983269,
+          "lon": -122.0547807,
+          "level": "L3"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9984171,
+        "lon": -122.0548999
+      },
+      "entrances": [
+        {
+          "lat": 36.9983627,
+          "lon": -122.0547782,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9983031,
+          "lon": -122.0547875,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "media-theater",
+      "name": "Media Theater",
+      "aliases": [
+        "Media Theater",
+        "Performing Arts Media Theater"
+      ],
+      "osm_name": "Media Theater",
+      "facility_ids": [
+        "TM"
+      ],
+      "known_rooms": [
+        "M110"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "M110": {
+          "lat": 36.9952065,
+          "lon": -122.0616425,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9952343,
+        "lon": -122.0616688
+      },
+      "entrances": [
+        {
+          "lat": 36.9951627,
+          "lon": -122.0617551,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9952001,
+          "lon": -122.0615825,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9951835,
+          "lon": -122.0615661,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9953232,
+          "lon": -122.0617795,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "cowell-classroom",
+      "name": "Cowell Classroom (Cowell 131)",
+      "aliases": [
+        "Cowell Classroom",
+        "Cowell 131",
+        "Cowell Clrm"
+      ],
+      "osm_name": "Cowell 131",
+      "facility_ids": [
+        "1B"
+      ],
+      "known_rooms": [
+        "131"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "131": {
+          "lat": 36.9972061,
+          "lon": -122.0537191,
+          "level": "L1"
+        }
+      },
+      "located_by": "osm-name",
+      "centroid": {
+        "lat": 36.9972077,
+        "lon": -122.0537422
+      },
+      "entrances": [
+        {
+          "lat": 36.9971585,
+          "lon": -122.0537096,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9972566,
+          "lon": -122.0537796,
+          "kind": "main",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "cowell-academic",
+      "name": "Cowell College Academic Building",
+      "aliases": [
+        "Cowell College Academic",
+        "Cowell Academic",
+        "Cowell Acad"
+      ],
+      "osm_name": null,
+      "facility_ids": [
+        "1A"
+      ],
+      "known_rooms": [
+        "113",
+        "216",
+        "222",
+        "223"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "113": {
+          "lat": 36.9973273,
+          "lon": -122.0537424,
+          "level": "L1"
+        },
+        "216": {
+          "lat": 36.9973023,
+          "lon": -122.0537418,
+          "level": "L2"
+        },
+        "222": {
+          "lat": 36.9973588,
+          "lon": -122.0536512,
+          "level": "L2"
+        },
+        "223": {
+          "lat": 36.99736,
+          "lon": -122.0535604,
+          "level": "L2"
+        }
+      },
+      "located_by": "room-points",
+      "centroid": {
+        "lat": 36.9973388,
+        "lon": -122.0534089
+      },
+      "entrances": [
+        {
+          "lat": 36.9972687,
+          "lon": -122.053649,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9973255,
+          "lon": -122.0531061,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9973367,
+          "lon": -122.0533597,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.997357,
+          "lon": -122.0531713,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9973582,
+          "lon": -122.0532346,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9974062,
+          "lon": -122.053348,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9972727,
+          "lon": -122.0533859,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9974,
+          "lon": -122.053761,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "cowell-com",
+      "name": "Cowell Com (facility 1C)",
+      "aliases": [
+        "Cowell Com"
+      ],
+      "osm_name": null,
+      "facility_ids": [
+        "1C"
+      ],
+      "known_rooms": [
+        "134"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "134": {
+          "lat": 36.9973587,
+          "lon": -122.0530428,
+          "level": "L1"
+        }
+      },
+      "located_by": "room-points",
+      "centroid": {
+        "lat": 36.9973388,
+        "lon": -122.0534089
+      },
+      "entrances": [
+        {
+          "lat": 36.9972687,
+          "lon": -122.053649,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9973255,
+          "lon": -122.0531061,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9973367,
+          "lon": -122.0533597,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.997357,
+          "lon": -122.0531713,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9973582,
+          "lon": -122.0532346,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9974062,
+          "lon": -122.053348,
+          "kind": "main",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9972727,
+          "lon": -122.0533859,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9974,
+          "lon": -122.053761,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "crown-classroom",
+      "name": "Crown College Classroom Building",
+      "aliases": [
+        "Crown Classroom",
+        "Crown College Classroom",
+        "Crown Clrm"
+      ],
+      "osm_name": null,
+      "facility_ids": [
+        "3A"
+      ],
+      "known_rooms": [
+        "104",
+        "105",
+        "201",
+        "202",
+        "203",
+        "208"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "104": {
+          "lat": 37.0000355,
+          "lon": -122.0547409,
+          "level": "L1"
+        },
+        "105": {
+          "lat": 36.9999811,
+          "lon": -122.0547387,
+          "level": "L1"
+        },
+        "201": {
+          "lat": 37.0000903,
+          "lon": -122.0547421,
+          "level": "L2"
+        },
+        "202": {
+          "lat": 37.0000358,
+          "lon": -122.0547311,
+          "level": "L2"
+        },
+        "203": {
+          "lat": 36.999981,
+          "lon": -122.0547288,
+          "level": "L2"
+        },
+        "208": {
+          "lat": 37.0000743,
+          "lon": -122.0548366,
+          "level": "L2"
+        }
+      },
+      "located_by": "room-points",
+      "centroid": {
+        "lat": 37.0000497,
+        "lon": -122.0548273
+      },
+      "entrances": [
+        {
+          "lat": 36.9999412,
+          "lon": -122.0548591,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 36.9999538,
+          "lon": -122.0548074,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 37.0001412,
+          "lon": -122.0548677,
+          "kind": "door",
+          "source": "osm"
+        },
+        {
+          "lat": 37.0001418,
+          "lon": -122.0548101,
+          "kind": "door",
+          "source": "osm"
+        }
+      ]
+    },
+    {
+      "id": "kresge-academic",
+      "name": "Kresge College Academic Building",
+      "aliases": [
+        "Kresge College Academic",
+        "Kresge Academic",
+        "Kresge Acad"
+      ],
+      "osm_name": null,
+      "facility_ids": [
+        "6A"
+      ],
+      "known_rooms": [
+        "3101",
+        "3105",
+        "3201",
+        "3301"
+      ],
+      "exact_names": {},
+      "room_points": {
+        "3101": {
+          "lat": 36.9987945,
+          "lon": -122.0662966,
+          "level": "L1"
+        },
+        "3105": {
+          "lat": 36.9990159,
+          "lon": -122.066293,
+          "level": "L1"
+        },
+        "3201": {
+          "lat": 36.998907,
+          "lon": -122.0659499,
+          "level": "L2"
+        },
+        "3301": {
+          "lat": 36.9991765,
+          "lon": -122.0661311,
+          "level": "L3"
+        }
+      },
+      "located_by": "room-points",
+      "centroid": {
+        "lat": 36.9989749,
+        "lon": -122.0662544
+      },
+      "entrances": [
+        {
+          "lat": 36.999184,
+          "lon": -122.066123,
+          "kind": "door",
+          "source": "footprint-edge"
+        }
+      ]
+    }
+  ]
+}

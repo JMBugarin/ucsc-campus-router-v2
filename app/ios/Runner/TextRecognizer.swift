@@ -6,12 +6,12 @@ import Vision
 /// Reads the text in a picture on the device and answers the app's `recognize` calls with each line's
 /// text, confidence and position. The picture is read from the path it is given and is never sent anywhere.
 final class TextRecognizer {
-  static let channelName = "ucsc_router/text_recognition"
+  static let channelName = "classmap/text_recognition"
 
   private static let longestSide = 4096
   private static let maxPixels = 120_000_000
 
-  private let queue = DispatchQueue(label: "ucsc_router.text_recognition", qos: .userInitiated)
+  private let queue = DispatchQueue(label: "classmap.text_recognition", qos: .userInitiated)
 
   static func register(with messenger: FlutterBinaryMessenger) {
     let recognizer = TextRecognizer()
