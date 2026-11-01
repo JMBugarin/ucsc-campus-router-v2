@@ -14,3 +14,6 @@ data-pipeline/cache/
 .claude/loop-active
 .claude/settings.local.json
 BLOCKERS.md
+
+# Web map generated output
+docs/gallery/
