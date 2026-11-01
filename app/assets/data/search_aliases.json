@@ -1,0 +1,69 @@
+{
+ "baskin-engineering": [
+  "BE",
+  "B Eng"
+ ],
+ "engineering-2": [
+  "E2"
+ ],
+ "science-engineering-library": [
+  "S&E Library",
+  "SE Library",
+  "Science Library"
+ ],
+ "natural-sciences-2": [
+  "NS 2"
+ ],
+ "social-sciences-1": [
+  "SS 1",
+  "Social Science 1"
+ ],
+ "social-sciences-2": [
+  "SS 2",
+  "Social Science 2"
+ ],
+ "earth-marine-sciences": [
+  "EMS",
+  "E&MS"
+ ],
+ "humanities-and-social-sciences": [
+  "H&SS",
+  "HSS"
+ ],
+ "baskin-auditorium": [
+  "BA",
+  "Baskin Aud"
+ ],
+ "thimann-lecture-hall": [
+  "Thimann Hall"
+ ],
+ "kresge-academic": [
+  "Kresge"
+ ],
+ "cowell-academic": [
+  "Cowell"
+ ],
+ "porter-academic": [
+  "Porter"
+ ],
+ "oakes-academic": [
+  "Oakes"
+ ],
+ "stevenson-academic": [
+  "Stevenson"
+ ],
+ "merrill-academic": [
+  "Merrill"
+ ],
+ "carson-academic": [
+  "Carson",
+  "Rachel Carson"
+ ],
+ "crown-classroom": [
+  "Crown"
+ ],
+ "mchenry-library": [
+  "Library",
+  "Main Library"
+ ]
+}
