@@ -6,6 +6,12 @@
 
 The app keeps no server and no account. Everything runs on the phone.
 
+| Map search | Place card | Today | Schedule | Settings |
+|---|---|---|---|---|
+| <img src="docs/screenshots/01-map-search.png" width="170" alt="Searching BE 152"> | <img src="docs/screenshots/02-map-place.png" width="170" alt="A room with its Walk there button"> | <img src="docs/screenshots/03-today.png" width="170" alt="Today's classes"> | <img src="docs/screenshots/04-schedule.png" width="170" alt="The schedule"> | <img src="docs/screenshots/05-settings.png" width="170" alt="Settings"> |
+
+_Captured on 2026-10-31 in the iOS Simulator (iPhone 17) with an invented schedule; not a real device._
+
 ## What it does
 
 - **Today**: the classes of the day with their times, rooms and buildings, the break between them, and what is on now and next. Step to any other day, or open the week.
