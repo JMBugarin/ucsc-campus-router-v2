@@ -53,12 +53,12 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('Walk there'), findsOneWidget);
     await shot(binding, tester, 'today');
 
     await tester.tap(find.byTooltip('Show XYZ 10 Lecture on the map'));
     await tester.pumpAndSettle();
     expect(find.text('Kresge College Academic Building 3201'), findsWidgets);
+    expect(find.text('Walk there'), findsOneWidget);
     await shot(binding, tester, 'map-class');
 
     await tester.tap(find.byTooltip('Clear search'));
