@@ -1,14 +1,14 @@
 # Status
 
-As of October 2026. The routing engine, server, data pipeline and Android/iOS app code are working and tested (hundreds of automated tests across C, Python and Dart, run in CI). The app is covered by widget tests and by integration tests that run in the iOS Simulator ([how](developer-notes.md#simulator-checks)). It has **not been run on a physical device**, so real GPS accuracy and notification timing are unverified, and notifications were not exercised in the simulator either. Photo import (screenshot to schedule) reads the picture on the phone and has only been tried on invented schedules in the Simulator, see [Reading a schedule from a picture](photo-import.md).
+As of October 2026. The app is feature-complete for its scope and covered by about 400 automated unit and widget tests, a test that replays outputs recorded from the Python code it replaced, and an integration test that runs the whole app on the iOS Simulator (iPhone 17). It has **not been run on a physical device**: notification delivery, opening Apple Maps from a real phone, and photo import on real photos are unverified.
 
 | Area | State |
 |---|---|
-| Room and building search | Working: abbreviations, partial names, typos (`/api/search`) |
-| Routing | Working: real walking paths from OpenStreetMap, elevation-aware effort, optional avoid-stairs. Straight-line distance inside buildings; floors are shown but not routed |
-| Today, week view, schedule import (paste, calendar file, by hand), reminders, day picker | Working. Reminders cover every class over the next week and are planned when the app opens; delivery is not verified on a device |
-| Photo import | iOS only. "Read a photo" on the Schedule tab reads a screenshot or photo on the phone with Apple's Vision framework, then lists the classes for you to check before anything is saved. The picture never leaves the phone, and no account or key is involved. Measured on invented schedules in the Simulator ([results](photo-import.md)); not tried on a real device, a real photo or a real schedule. Not available on Android |
-| Getting to campus from off campus | Working against a local server in the iOS Simulator, with the simulator's location set to campus, downtown Santa Cruz, Westside, Capitola, Scotts Valley and San Francisco, and with the server unreachable or too old to have the new path. Transit itself is not installed in the Simulator, so only the fall-back to Apple Maps was seen opening; the Transit link is checked by tests. **The deployed server needs a redeploy** for this to work: until then the app says it can't plan a trip and Today and routes behave as before. See [Getting to campus](getting-to-campus.md) |
-| Offline | Today works offline; search, map and routes need the server |
-| Data | 32 buildings and the 87 general-assignment classrooms. Other rooms resolve to their building's nearest door |
-| Not built | Saved places, live bus information (Transit has it; this app does not), a map overlay of buildings and doors |
+| Room and building search | Working, offline: abbreviations, partial names, typos. Checked against every official classroom name (87 of 87 resolve to a building, a room and a position) |
+| Today, day picker, week view | Working, offline, from the saved schedule and the clock. Handles holidays, skipped days and clock changes |
+| Walk there | Opens walking directions in Apple Maps (iOS) or Google Maps (Android) to the room's main door. The link format is checked by tests; opening Apple Maps from a simulator build was seen, a real phone was not |
+| Schedule import | Paste, calendar file and by hand work and are checked by tests against the Python behaviour they replaced. Photo import is iOS only and measured on invented schedules ([results](photo-import.md)) |
+| Reminders | Planned from the schedule when the app opens; delivery is not verified on a device |
+| Data | 32 buildings and the 87 general-assignment classrooms. Any other room resolves to its building's main door. Term dates run through Spring 2027 and must be extended by hand each year in `data/holidays.json` |
+| Map tiles | OpenStreetMap's public tile server until a hosted provider key is set (see [app/README.md](../app/README.md)); fine for development, not for a wide release |
+| Not built | Saved places, indoor floor guidance, a map overlay of buildings, Android photo import |
