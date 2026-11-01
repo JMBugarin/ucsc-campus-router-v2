@@ -2,7 +2,8 @@ import '../../../core/format.dart';
 import '../meeting.dart';
 import '../ocr/parsed_row.dart';
 
-String _tidy(String text) => text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).join(' ');
+String _tidy(String text) =>
+    text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).join(' ');
 
 /// A class read from a picture, while the student checks it. Nothing here is saved until they say so.
 class ClassDraft {
@@ -83,9 +84,13 @@ class ClassDraft {
     if (course.trim().isEmpty) return 'Enter the course, like CSE 130.';
     if (days.isEmpty) return 'Pick the days it meets.';
     if (start == null || end == null) return 'Pick a start and end time.';
-    if (end!.compareTo(start!) <= 0) return 'The end time must be after the start time.';
+    if (end!.compareTo(start!) <= 0) {
+      return 'The end time must be after the start time.';
+    }
     if (!hasDates) return 'Pick the first and last dates.';
-    if (endDate!.compareTo(startDate!) < 0) return 'The last date is before the first.';
+    if (endDate!.compareTo(startDate!) < 0) {
+      return 'The last date is before the first.';
+    }
     if (_tidy(course).length > 40 ||
         _tidy(title).length > 80 ||
         _tidy(section).length > 10 ||
@@ -137,24 +142,24 @@ class ClassDraft {
   );
 }
 
-/// What the server made of a room, for showing next to the class.
+/// What the campus data made of a room, for showing next to the class.
 enum RoomState {
-  /// The server is being asked.
+  /// The room is being looked up.
   checking,
 
   /// A building, and the room is on its list or it has no list.
   found,
 
-  /// A building the server knows, but not this room number in it.
+  /// A building we know, but not this room number in it.
   unlisted,
 
-  /// Not a place the server knows.
+  /// Not a place we know.
   notFound,
 
   /// Online or to be announced: not a room to find.
   none,
 
-  /// The server could not be asked.
+  /// The lookup failed.
   unchecked;
 
   /// The student should look at this room.

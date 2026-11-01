@@ -6,9 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'campus.dart';
 import 'terms.dart';
 
-Campus campusFromJson({required String buildings, String? rooms, String? aliases}) {
-  final list = (jsonDecode(buildings) as Map<String, dynamic>)['buildings'] as List;
-  final overrides = rooms == null ? const <String, dynamic>{} : (jsonDecode(rooms) as Map)['overrides'] as Map<String, dynamic>? ?? const {};
+Campus campusFromJson({
+  required String buildings,
+  String? rooms,
+  String? aliases,
+}) {
+  final list =
+      (jsonDecode(buildings) as Map<String, dynamic>)['buildings'] as List;
+  final overrides = rooms == null
+      ? const <String, dynamic>{}
+      : (jsonDecode(rooms) as Map)['overrides'] as Map<String, dynamic>? ??
+            const {};
   final searchAliases = <String, List<String>>{
     if (aliases != null)
       for (final e in (jsonDecode(aliases) as Map<String, dynamic>).entries)
@@ -28,7 +36,11 @@ final campusProvider = FutureProvider<Campus>((ref) async {
     rootBundle.loadString('assets/data/rooms.json'),
     rootBundle.loadString('assets/data/search_aliases.json'),
   ]);
-  return campusFromJson(buildings: texts[0], rooms: texts[1], aliases: texts[2]);
+  return campusFromJson(
+    buildings: texts[0],
+    rooms: texts[1],
+    aliases: texts[2],
+  );
 });
 
 final termsProvider = FutureProvider<List<Term>>((ref) async {

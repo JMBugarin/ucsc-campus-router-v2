@@ -2,116 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/api_client.dart';
+import '../../campus/campus_data.dart';
+import '../../campus/terms.dart';
 import '../../core/clock.dart';
 import '../../core/pacific.dart';
-import 'package:timezone/timezone.dart' as tz;
-import '../arrive/arrival.dart';
-import '../arrive/entry_walks.dart';
-import '../campus/campus_area.dart';
-import '../location/location_service.dart';
-import '../reminders/reminder_planner.dart';
-import '../reminders/reminder_sync.dart';
-import '../schedule/meeting.dart';
 import '../schedule/schedule_controller.dart';
-import '../settings/settings.dart';
-import 'offline_analysis.dart';
-import 'today_models.dart';
-import 'today_text.dart';
-import 'walk_cache.dart';
-import 'today_repository.dart';
-
-/// What the Today screen shows.
-class TodayData {
-  const TodayData({
-    this.analysis,
-    this.locationProblem,
-    this.reminderProblem,
-    this.offline = false,
-    this.updating = false,
-    this.savedNote,
-    this.viewDay,
-    this.place,
-    this.arrivals = const [],
-    this.tripProblem,
-  });
-
-  /// Where the student is relative to campus, when the phone's location is known.
-  final Whereabouts? place;
-
-  /// For a student who is off campus: when to be at an entry point for each class still to come today.
-  final List<Arrival> arrivals;
-
-  /// Why the trip to campus could not be planned, if the student is off campus and that failed.
-  final String? tripProblem;
-
-  bool get offCampus => place != null && place != Whereabouts.onCampus;
-
-  /// Set when the day picker is showing a day other than today.
-  final DateTime? viewDay;
-
-  /// Null when there are no classes yet.
-  final Analysis? analysis;
-
-  /// Why the phone's location could not be used (shown beside the result), if that happened.
-  final String? locationProblem;
-
-  /// Why reminders could not be set up on the phone, if that happened.
-  final String? reminderProblem;
-
-  /// True when the server could not be reached and this was worked out on the phone from the saved
-  /// schedule and the walk times saved from the last time it was reachable.
-  final bool offline;
-
-  /// True while the saved view is on screen and the server has not answered yet.
-  final bool updating;
-
-  /// How old the saved walk times are, shown when [offline] or [updating].
-  final String? savedNote;
-
-  /// Whether the walk times on screen come from the phone's memory rather than the server.
-  bool get fromSaved => offline || updating;
-
-  bool get hasSchedule => analysis != null;
-}
-
-String _savedNote(WalkCache walks, DateTime now) =>
-    savedWalksText(hasWalks: walks.hasAny, savedAt: walks.savedAt, now: now);
-
-/// What Today can show at once from the phone alone while the server is still answering, or null
-/// if the phone has nothing saved to show (no classes, or no walk times yet).
-TodayData? savedToday({required List<Meeting> meetings, required WalkCache walks, required DateTime now}) {
-  if (meetings.isEmpty || !walks.hasAny) return null;
-  return TodayData(
-    analysis: analyzeOffline(
-      meetings: meetings,
-      now: now,
-      holidays: walks.holidays,
-      walks: walks,
-      hasLocation: false,
-      explain: false,
-    ),
-    updating: true,
-    savedNote: _savedNote(walks, now),
-  );
-}
-
-/// The saved class that a timeline entry shows, or null if it is no longer in the schedule.
-Meeting? meetingFor(List<Meeting> meetings, ClassTime t) {
-  final start = RegExp(r'T(\d{2}:\d{2})').firstMatch(t.start)?.group(1);
-  final day = DateTime.tryParse('${t.start.substring(0, 10)}T00:00:00Z');
-  if (day == null) return null;
-  for (final m in meetings) {
-    if (m.course == t.course &&
-        m.component == t.component &&
-        m.location == t.location &&
-        m.start == start &&
-        occursOn(m, day, const {})) {
-      return m;
-    }
-  }
-  return null;
-}
+import 'day_plan.dart';
 
 /// The day the day picker is showing; null means today (whatever today is when you look).
 class ViewedDay extends Notifier<DateTime?> {
@@ -129,262 +25,50 @@ class ViewedDay extends Notifier<DateTime?> {
 
 final viewedDayProvider = NotifierProvider<ViewedDay, DateTime?>(ViewedDay.new);
 
-/// How often Today refreshes itself while it is open. Tests turn this off.
-final todayRefreshIntervalProvider = Provider<Duration?>((ref) => const Duration(minutes: 1));
+/// How often the clock on Today ticks. Tests turn this off.
+final todayRefreshIntervalProvider = Provider<Duration?>(
+  (ref) => const Duration(minutes: 1),
+);
 
-/// Classes planned for in one go when the student is off campus.
-const maxTripClasses = 8;
-
-/// How long a GPS fix is reused instead of asking the phone again (saves battery).
-const locationReuse = Duration(minutes: 2);
-
-class TodayController extends AsyncNotifier<TodayData> {
-  Timer? _timer;
-  GeoPoint? _lastPoint;
-  DateTime? _lastPointAt;
-
-  DateTime Function() get _now => ref.read(clockProvider);
-
+/// The current time, refreshed every minute so "in 40 min" stays right.
+class MinuteClock extends Notifier<DateTime> {
   @override
-  Future<TodayData> build() async {
-    final meetings = await ref.watch(scheduleProvider.future);
-    final settings = ref.watch(settingsProvider);
-    final viewDay = ref.watch(viewedDayProvider);
-    ref.watch(entryChoiceProvider); // another entry point means another time to be there
-
-    _timer?.cancel();
-    final interval = ref.read(todayRefreshIntervalProvider);
-    if (interval != null) _timer = Timer.periodic(interval, (_) => refresh(quiet: true));
-    ref.onDispose(() => _timer?.cancel());
-
-    return _guarded(() => _compute(meetings, settings, viewDay));
-  }
-
-  /// Recomputes now. A [quiet] refresh (the timer) keeps showing the last answer if it fails,
-  /// rather than replacing a useful screen with an error; a manual refresh shows the error.
-  /// A quiet refresh is skipped while another is still waiting, so a server that is slow to wake
-  /// does not collect a pile of identical requests.
-  Future<void> refresh({bool quiet = false}) async {
-    if (quiet && _inFlight > 0) return;
-    final meetings = ref.read(scheduleProvider).value ?? const <Meeting>[];
-    final settings = ref.read(settingsProvider);
-    AsyncValue<TodayData> result;
-    try {
-      result = AsyncData(await _guarded(() => _compute(meetings, settings, ref.read(viewedDayProvider))));
-    } catch (error, stackTrace) {
-      result = AsyncError(error, stackTrace);
-    }
-    if (quiet && result.hasError && state.hasValue) return;
-    state = result;
-  }
-
-  var _inFlight = 0;
-
-  Future<TodayData> _guarded(Future<TodayData> Function() job) async {
-    _inFlight++;
-    try {
-      return await job();
-    } finally {
-      _inFlight--;
-    }
-  }
-
-  Future<TodayData> _compute(List<Meeting> meetings, Settings settings, DateTime? viewDay) async {
-    final sync = ref.read(reminderSyncProvider);
-    if (viewDay != null) return _computeDay(meetings, viewDay);
-    if (meetings.isEmpty) {
-      await _cancelReminders(sync);
-      return const TodayData();
-    }
-
-    final walks = ref.read(walkCacheProvider);
-    GeoPoint? here;
-    String? problem;
-    if (settings.useLocation && walkFromHereMatters(meetings, pacificTime(_now()), walks.holidays)) {
-      final lastAt = _lastPointAt;
-      if (_lastPoint != null && lastAt != null && _now().difference(lastAt) < locationReuse) {
-        here = _lastPoint;
-      } else {
-        final result = await ref.read(locationServiceProvider).current();
-        here = result.point;
-        problem = result.problem;
-        if (here != null) {
-          _lastPoint = here;
-          _lastPointAt = _now();
-        }
-      }
-    }
-
-    final now = _now();
-    final place = here == null ? null : whereIs(here);
-    final away = place != null && place != Whereabouts.onCampus;
-    final Analysis analysis;
-    try {
-      // A location off campus stays on the phone: the server only plans the walk from campus.
-      analysis = await ref.read(todayRepositoryProvider).today(
-            meetings: meetings,
-            here: away ? null : here,
-            remindLeadMinutes: settings.remindLeadMinutes,
-            reminded: settings.remindersOn ? sync.firedKeys(now) : const [],
-          );
-    } on ApiException catch (error) {
-      final unreachable = error.kind == ApiErrorKind.offline ||
-          error.kind == ApiErrorKind.timeout ||
-          error.kind == ApiErrorKind.server;
-      if (!unreachable) rethrow;
-      // Reminders already on the phone stay as they were; nothing new can be planned without the server.
-      final offlineAnalysis = analyzeOffline(
-        meetings: meetings,
-        now: now,
-        holidays: walks.holidays,
-        walks: walks,
-        hasLocation: here != null && !away,
+  DateTime build() {
+    final interval = ref.watch(todayRefreshIntervalProvider);
+    if (interval != null) {
+      final timer = Timer.periodic(
+        interval,
+        (_) => state = ref.read(clockProvider)(),
       );
-      final trip = away ? await _planTrip(offlineAnalysis, here, now) : null;
-      return TodayData(
-        analysis: offlineAnalysis,
-        locationProblem: problem,
-        offline: true,
-        savedNote: _savedNote(walks, now),
-        place: place,
-        arrivals: trip?.arrivals ?? const [],
-        tripProblem: trip?.problem,
-      );
+      ref.onDispose(timer.cancel);
     }
-    await walks.remember(analysis);
-
-    final trip = away ? await _planTrip(analysis, here, now) : null;
-    String? reminderProblem;
-    try {
-      if (settings.remindersOn) {
-        // Today's come from the server; every other class over the coming days is planned from the saved walks.
-        final ahead = planAhead(
-          meetings: meetings,
-          now: now,
-          holidays: walks.holidays,
-          walks: walks,
-          leadMinutes: settings.remindLeadMinutes,
-          sent: sync.firedKeys(now).toSet(),
-        );
-        final today = trip == null || trip.arrivals.isEmpty
-            ? analysis.reminders
-            : arrivalReminders(trip.arrivals, now, sent: sync.firedKeys(now).toSet(), leadMinutes: settings.remindLeadMinutes);
-        await sync.apply(mergeReminderPlans(server: today, ahead: ahead), now);
-        unawaited(_learnUpcomingWalks(meetings));
-      } else {
-        await _cancelReminders(sync);
-      }
-    } on Object {
-      // A notification problem must not hide the schedule.
-      reminderProblem = "Couldn't set up leave-now reminders on this phone.";
-    }
-    return TodayData(
-      analysis: analysis,
-      locationProblem: problem,
-      reminderProblem: reminderProblem,
-      place: place,
-      arrivals: trip?.arrivals ?? const [],
-      tripProblem: trip?.problem,
-    );
+    return ref.read(clockProvider)();
   }
 
-  /// When to be at an entry point for each class still to come today, for a student who is off campus.
-  /// Only room names go to the server; where the student is stays on the phone.
-  Future<({List<Arrival> arrivals, String? problem})> _planTrip(Analysis analysis, GeoPoint? here, DateTime now) async {
-    final service = ref.read(entryWalksServiceProvider);
-    final chosen = ref.read(entryChoiceProvider);
-    final coming = [
-      for (final c in analysis.today)
-        if (c.location.isNotEmpty && DateTime.parse(c.start).isAfter(now)) c,
-    ].take(maxTripClasses).toList();
-
-    final answers = <String, EntryWalks>{};
-    String? problem;
-    await Future.wait([
-      for (final room in {for (final c in coming) c.location})
-        service.forRoom(room).then((walks) => answers[room] = walks).catchError((Object error) {
-          if (error is ApiException && error.kind == ApiErrorKind.rejected) {
-            return EntryWalks.none; // online, no room yet or unknown: nothing to be early for
-          }
-          problem ??= switch (error) {
-            EntryWalksUnavailable() => error.message,
-            ApiException() => error.message,
-            _ => "Couldn't plan your trip to campus.",
-          };
-          return EntryWalks.none;
-        }),
-    ]);
-
-    return (
-      arrivals: [
-        for (final c in coming)
-          if (answers[c.location] case final walks?) planArrival(classTime: c, walks: walks, here: here, chosenId: chosen),
-      ],
-      problem: problem,
-    );
-  }
-
-  final _asked = <String>{};
-  var _learning = false;
-
-  /// Asks the server about the days ahead whose walks between classes the phone has not saved, so their
-  /// reminders can be planned too. It runs in the background, asks about a day at most once per run,
-  /// and plans again if it learned anything.
-  Future<void> _learnUpcomingWalks(List<Meeting> meetings) async {
-    if (_learning) return;
-    _learning = true;
-    try {
-      final walks = ref.read(walkCacheProvider);
-      var learned = false;
-      for (final day in daysMissingWalks(meetings: meetings, now: _now(), holidays: walks.holidays, walks: walks)) {
-        if (!ref.mounted || !_asked.add(isoDate(day))) continue;
-        try {
-          final answer = await ref.read(todayRepositoryProvider).today(
-                meetings: meetings,
-                at: tz.TZDateTime(pacific, day.year, day.month, day.day, 0, 1),
-              );
-          await walks.remember(answer);
-          learned = true;
-        } on ApiException {
-          break;
-        }
-      }
-      if (learned && ref.mounted) await refresh(quiet: true);
-    } finally {
-      _learning = false;
-    }
-  }
-
-  /// Another day's classes. It never touches the phone's location or reminders, which are about now.
-  Future<TodayData> _computeDay(List<Meeting> meetings, DateTime day) async {
-    if (meetings.isEmpty) return TodayData(viewDay: day);
-    final at = tz.TZDateTime(pacific, day.year, day.month, day.day, 0, 1);
-    Analysis analysis;
-    var offline = false;
-    String? savedNote;
-    try {
-      analysis = await ref.read(todayRepositoryProvider).today(meetings: meetings, at: at);
-    } on ApiException catch (error) {
-      final unreachable = error.kind == ApiErrorKind.offline ||
-          error.kind == ApiErrorKind.timeout ||
-          error.kind == ApiErrorKind.server;
-      if (!unreachable) rethrow;
-      final walks = ref.read(walkCacheProvider);
-      analysis = analyzeOffline(meetings: meetings, now: at, holidays: walks.holidays, walks: walks, hasLocation: false);
-      offline = true;
-      savedNote = _savedNote(walks, _now());
-    }
-    return TodayData(analysis: analysis, offline: offline, savedNote: savedNote, viewDay: day);
-  }
-
-  Future<void> _cancelReminders(ReminderSync sync) async {
-    if (!sync.hasAny) return;
-    try {
-      await sync.clear(_now());
-    } on Object {
-      // nothing useful to do; the reminders would just not be cancelled
-    }
-  }
+  void refresh() => state = ref.read(clockProvider)();
 }
 
-final todayProvider = AsyncNotifierProvider<TodayController, TodayData>(TodayController.new);
+final nowProvider = NotifierProvider<MinuteClock, DateTime>(MinuteClock.new);
+
+/// What Today shows: worked out on the phone from the saved schedule and the clock.
+final dayPlanProvider = Provider<AsyncValue<DayPlan>>((ref) {
+  final meetings = ref.watch(scheduleProvider);
+  final terms = ref.watch(termsProvider);
+  final viewDay = ref.watch(viewedDayProvider);
+  final now = ref.watch(nowProvider);
+  if (meetings.hasError) {
+    return AsyncError(
+      meetings.error!,
+      meetings.stackTrace ?? StackTrace.current,
+    );
+  }
+  if (!meetings.hasValue || !terms.hasValue) return const AsyncLoading();
+  return AsyncData(
+    planDay(
+      meetings: meetings.requireValue,
+      now: now,
+      holidays: holidaysOf(terms.requireValue),
+      viewDay: viewDay,
+    ),
+  );
+});

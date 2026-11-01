@@ -2,19 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ucsc_router/app.dart';
-import 'package:ucsc_router/features/schedule/ocr/picture_picker.dart';
-import 'package:ucsc_router/features/settings/settings.dart';
+import 'package:classmap/app.dart';
+import 'package:classmap/features/schedule/ocr/picture_picker.dart';
+import 'package:classmap/features/settings/settings.dart';
 
 import 'support.dart';
 
-/// Reads pictures drawn here with the real Vision framework and checks their rooms against a local server:
-/// `python3 server/server.py` on 127.0.0.1:8000, then `flutter test integration_test/picture_import_test.dart -d <simulator>`.
+/// Reads pictures drawn here with the real Vision framework and checks their rooms against the bundled campus data:
+/// `flutter test integration_test/picture_import_test.dart -d <simulator>`.
 Future<void> openApp(WidgetTester tester, String picture) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.clear();
-  await prefs.setString('server_url', localServer);
-  await prefs.setBool('use_location', false);
   await tester.pumpWidget(
     ProviderScope(
       retry: (count, error) => null,
@@ -22,7 +20,7 @@ Future<void> openApp(WidgetTester tester, String picture) async {
         sharedPreferencesProvider.overrideWithValue(prefs),
         picturePickerProvider.overrideWithValue(SystemPicturePicker(choose: () async => picture)),
       ],
-      child: const UcscRouterApp(),
+      child: const ClassmapApp(),
     ),
   );
   await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -83,7 +81,7 @@ void main() {
     await shot(binding, tester, 'import-saved');
   });
 
-  testWidgets('a room the server does not know is marked, and fixing it clears the mark', (tester) async {
+  testWidgets('a room the campus data does not know is marked, and fixing it clears the mark', (tester) async {
     final picture = await drawPicture(tester, 'import_bad_room', [
       ('BME 160 Lecture', const Offset(60, 60)),
       ('MWF 1:20 PM - 2:25 PM', const Offset(60, 110)),

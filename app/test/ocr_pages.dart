@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:ucsc_router/features/schedule/ocr/recognized_text.dart';
+import 'package:classmap/features/schedule/ocr/recognized_text.dart';
 
 /// Builds what the phone returns for a picture: lines of text, and where each word of them is.
 class OcrPage {

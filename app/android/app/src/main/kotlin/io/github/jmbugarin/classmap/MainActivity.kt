@@ -1,4 +1,4 @@
-package io.github.jmbugarin.ucsc_router
+package io.github.jmbugarin.classmap
 
 import io.flutter.embedding.android.FlutterActivity
 

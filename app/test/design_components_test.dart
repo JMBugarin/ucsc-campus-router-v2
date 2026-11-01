@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/design/accessibility_environment.dart';
-import 'package:ucsc_router/design/controls.dart';
-import 'package:ucsc_router/design/glass.dart';
-import 'package:ucsc_router/design/surfaces.dart';
-import 'package:ucsc_router/design/theme.dart';
+import 'package:classmap/design/accessibility_environment.dart';
+import 'package:classmap/design/controls.dart';
+import 'package:classmap/design/glass.dart';
+import 'package:classmap/design/surfaces.dart';
+import 'package:classmap/design/theme.dart';
 
 class FakeAccessibility implements AccessibilityEnvironment {
   FakeAccessibility([this.reduce = false]);
@@ -119,7 +119,7 @@ void main() {
       ChannelAccessibilityEnvironment().listen((on) => seen = on);
       final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
       await messenger.handlePlatformMessage(
-        'ucsc_router/accessibility',
+        'classmap/accessibility',
         const StandardMethodCodec().encodeMethodCall(const MethodCall('reduceTransparencyChanged', true)),
         (_) {},
       );

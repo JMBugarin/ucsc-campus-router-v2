@@ -1,6 +1,6 @@
 import '../../core/format.dart';
 
-/// One weekly class meeting (or a one-off event), in the same shape the server uses.
+/// One weekly class meeting (or a one-off event).
 ///
 /// `days` are weekday numbers with 0 = Monday. A meeting with no days is a one-off event on
 /// [startDate]. Times are 24-hour `HH:MM`, dates are `YYYY-MM-DD`, all Pacific time.
@@ -41,36 +41,41 @@ class Meeting {
       section: text('section'),
       component: text('component'),
       classNbr: text('class_nbr'),
-      days: [for (final d in (json['days'] as List? ?? const [])) (d as num).toInt()],
+      days: [
+        for (final d in (json['days'] as List? ?? const [])) (d as num).toInt(),
+      ],
       start: text('start'),
       end: text('end'),
       location: text('location'),
       startDate: text('start_date'),
       endDate: text('end_date'),
-      skipDates: [for (final d in (json['skip_dates'] as List? ?? const [])) d as String],
+      skipDates: [
+        for (final d in (json['skip_dates'] as List? ?? const [])) d as String,
+      ],
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'course': course,
-        'title': title,
-        'section': section,
-        'component': component,
-        'class_nbr': classNbr,
-        'days': days,
-        'start': start,
-        'end': end,
-        'location': location,
-        'start_date': startDate,
-        'end_date': endDate,
-        if (skipDates.isNotEmpty) 'skip_dates': skipDates,
-      };
+    'course': course,
+    'title': title,
+    'section': section,
+    'component': component,
+    'class_nbr': classNbr,
+    'days': days,
+    'start': start,
+    'end': end,
+    'location': location,
+    'start_date': startDate,
+    'end_date': endDate,
+    if (skipDates.isNotEmpty) 'skip_dates': skipDates,
+  };
 
   /// `XYZ 10 Lecture`.
   String get label => [course, component].where((s) => s.isNotEmpty).join(' ');
 
   /// `MoWeFr`, or the date for a one-off event.
-  String get whenLabel => days.isEmpty ? startDate : days.map((d) => dayCodes[d]).join();
+  String get whenLabel =>
+      days.isEmpty ? startDate : days.map((d) => dayCodes[d]).join();
 
   /// `2:40 PM–3:45 PM`.
   String get timeLabel => '${clockFromHhmm(start)}–${clockFromHhmm(end)}';
@@ -86,42 +91,51 @@ class Meeting {
       location == other.location &&
       startDate == other.startDate;
 
-  /// The server accepts at most this many skipped dates for one class.
+  /// At most this many skipped dates are kept for one class.
   static const maxSkipDates = 60;
 
   /// This class again, not meeting on [iso] either. Dates before [today] no longer matter and are
   /// dropped. Null when there is no room left for another skipped date.
   Meeting? skipping(String iso, {required String today}) {
-    final dates = {...skipDates.where((d) => d.compareTo(today) >= 0), iso}.toList()..sort();
+    final dates = {
+      ...skipDates.where((d) => d.compareTo(today) >= 0),
+      iso,
+    }.toList()..sort();
     return dates.length > maxSkipDates ? null : _withSkipDates(dates);
   }
 
   /// This class again, meeting on [iso] after all.
-  Meeting meetingOn(String iso) => _withSkipDates([for (final d in skipDates) if (d != iso) d]);
+  Meeting meetingOn(String iso) => _withSkipDates([
+    for (final d in skipDates)
+      if (d != iso) d,
+  ]);
 
   /// True if it does not meet on [iso] because the student skipped that day.
   bool skips(String iso) => skipDates.contains(iso);
 
   Meeting _withSkipDates(List<String> dates) => Meeting(
-        course: course,
-        title: title,
-        section: section,
-        component: component,
-        classNbr: classNbr,
-        days: days,
-        start: start,
-        end: end,
-        location: location,
-        startDate: startDate,
-        endDate: endDate,
-        skipDates: dates,
-      );
+    course: course,
+    title: title,
+    section: section,
+    component: component,
+    classNbr: classNbr,
+    days: days,
+    start: start,
+    end: end,
+    location: location,
+    startDate: startDate,
+    endDate: endDate,
+    skipDates: dates,
+  );
 
   bool _sameDays(Meeting other) =>
-      days.length == other.days.length && [for (var i = 0; i < days.length; i++) days[i] == other.days[i]].every((b) => b);
+      days.length == other.days.length &&
+      [
+        for (var i = 0; i < days.length; i++) days[i] == other.days[i],
+      ].every((b) => b);
 }
 
-/// What the server made of a meeting's location text.
+/// What the campus data made of a meeting's location text.
 class LocationInfo {
   const LocationInfo({required this.kind, this.buildingName, this.roomKnown});
 
@@ -131,25 +145,35 @@ class LocationInfo {
   final bool? roomKnown;
 
   factory LocationInfo.fromJson(Map<String, dynamic> json) => LocationInfo(
-        kind: (json['kind'] as String?) ?? 'unknown',
-        buildingName: json['building_name'] as String?,
-        roomKnown: json['room_known'] as bool?,
-      );
+    kind: (json['kind'] as String?) ?? 'unknown',
+    buildingName: json['building_name'] as String?,
+    roomKnown: json['room_known'] as bool?,
+  );
 
   bool get isUnknown => kind == 'unknown';
 }
 
 /// The result of reading a schedule from text or a calendar file.
 class ImportResult {
-  const ImportResult({required this.meetings, required this.notes, required this.locations});
+  const ImportResult({
+    required this.meetings,
+    required this.notes,
+    required this.locations,
+  });
 
   final List<Meeting> meetings;
   final List<String> notes;
   final List<LocationInfo> locations;
 
   factory ImportResult.fromJson(Map<String, dynamic> json) => ImportResult(
-        meetings: [for (final m in (json['meetings'] as List? ?? const [])) Meeting.fromJson(m as Map<String, dynamic>)],
-        notes: [for (final n in (json['notes'] as List? ?? const [])) n as String],
-        locations: [for (final l in (json['locations'] as List? ?? const [])) LocationInfo.fromJson(l as Map<String, dynamic>)],
-      );
+    meetings: [
+      for (final m in (json['meetings'] as List? ?? const []))
+        Meeting.fromJson(m as Map<String, dynamic>),
+    ],
+    notes: [for (final n in (json['notes'] as List? ?? const [])) n as String],
+    locations: [
+      for (final l in (json['locations'] as List? ?? const []))
+        LocationInfo.fromJson(l as Map<String, dynamic>),
+    ],
+  );
 }

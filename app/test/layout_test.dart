@@ -1,18 +1,13 @@
+import 'package:classmap/app.dart';
+import 'package:classmap/campus/geo_point.dart';
+import 'package:classmap/design/glass.dart';
+import 'package:classmap/features/search/place.dart';
+import 'package:classmap/features/search/search_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/app.dart';
-import 'package:ucsc_router/design/glass.dart';
-import 'package:ucsc_router/core/api_client.dart';
-import 'package:ucsc_router/features/location/location_service.dart';
-import 'package:ucsc_router/features/search/place.dart';
-import 'package:ucsc_router/features/search/search_repository.dart';
-import 'package:ucsc_router/features/today/today_models.dart';
 
 import 'helpers.dart';
 import 'ocr_pages.dart';
-
-/// Monday 2026-10-12, noon on the campus clock.
-final mondayNoon = DateTime.utc(2026, 10, 12, 19);
 
 const phones = {
   'an iPhone 17': (Size(1206, 2622), 3.0),
@@ -70,23 +65,26 @@ const manyPlaces = [
   ),
 ];
 
-TestRig rig({int startTab = tabMap, ({String start, String end})? term}) =>
-    TestRig(
-      stored: [
-        meeting(days: const [0, 1, 2, 3, 4, 5, 6]),
-        meeting(
-          course: 'ABC 20',
-          start: '16:00',
-          end: '17:05',
-          location: 'Thim Lecture 003',
-          days: const [0, 1, 2, 3, 4, 5, 6],
-        ),
-      ],
-      analysis: Analysis.fromJson(fixture('today_before_class')),
-      now: mondayNoon,
-      startTab: startTab,
-      term: term,
-    )..search.answer = manyPlaces;
+TestRig rig({
+  int startTab = tabMap,
+  ({String start, String end})? term,
+  bool fakeSearch = false,
+}) => TestRig(
+  stored: [
+    meeting(days: const [0, 1, 2, 3, 4, 5, 6]),
+    meeting(
+      course: 'ABC 20',
+      start: '16:00',
+      end: '17:05',
+      location: 'Thim Lecture 003',
+      days: const [0, 1, 2, 3, 4, 5, 6],
+    ),
+  ],
+  now: mondayNoon,
+  startTab: startTab,
+  term: term,
+  fakeSearch: fakeSearch,
+)..search.answer = manyPlaces;
 
 void screen(WidgetTester tester, Size size, double ratio, double textScale) {
   tester.view.physicalSize = size;
@@ -116,7 +114,6 @@ void main() {
           await tester.pumpWidget(await rig().app());
           await tester.pumpAndSettle();
           await tester.enterText(find.byType(TextField), 'BE 15');
-          await tester.pump(const Duration(milliseconds: 400));
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
           expect(find.text('Jack Baskin Engineering 152'), findsOneWidget);
@@ -124,36 +121,31 @@ void main() {
           await tester.tap(find.text('Jack Baskin Engineering 152'));
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
-          expect(find.text('Route here'), findsOneWidget);
+          expect(find.text('Walk there'), findsOneWidget);
         });
 
-        testWidgets('a route, and a route that could not be found', (
-          tester,
-        ) async {
-          screen(tester, size, ratio, scale);
-          final r = rig(startTab: tabToday);
-          await tester.pumpWidget(await r.app());
-          await tester.pumpAndSettle();
-          await tester.ensureVisible(find.text('Show route'));
-          await tester.pumpAndSettle();
-          await tester.tap(find.text('Show route'));
-          await tester.pumpAndSettle();
-          expect(find.textContaining('min on foot'), findsOneWidget);
-          expect(tester.takeException(), isNull, reason: 'route');
+        testWidgets(
+          'Today with its classes, a class on the map, and Walk there failing',
+          (tester) async {
+            screen(tester, size, ratio, scale);
+            final r = rig(startTab: tabToday);
+            await tester.pumpWidget(await r.app());
+            await tester.pumpAndSettle();
+            await tester.ensureVisible(find.text('Walk there'));
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull, reason: 'today');
 
-          await tester.tap(find.byTooltip('Back'));
-          await tester.pumpAndSettle();
-          r.route.answer = const ApiException(
-            'I could not find a walking route there, and this sentence is long.',
-            kind: ApiErrorKind.rejected,
-          );
-          await tester.ensureVisible(find.text('Show route'));
-          await tester.pumpAndSettle();
-          await tester.tap(find.text('Show route'));
-          await tester.pumpAndSettle();
-          expect(find.text('Try again'), findsOneWidget);
-          expect(tester.takeException(), isNull, reason: 'no route');
-        });
+            r.urls.succeeds = false;
+            await tester.tap(find.text('Walk there'));
+            await tester.pumpAndSettle();
+            expect(find.text("Couldn't open your maps app."), findsOneWidget);
+            expect(tester.takeException(), isNull, reason: 'failed hand-off');
+
+            await tester.tap(find.byTooltip('Show XYZ 10 Lecture on the map'));
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull, reason: 'class on the map');
+          },
+        );
 
         testWidgets('the paste and add-a-class dialogs', (tester) async {
           screen(tester, size, ratio, scale);
@@ -179,6 +171,7 @@ void main() {
                 rig(
                     startTab: tabSchedule,
                     term: (start: '2026-09-24', end: '2026-12-04'),
+                    fakeSearch: true,
                   )
                   ..picker.path = '/fake/schedule.png'
                   ..recognizer.reading =
@@ -277,7 +270,6 @@ void main() {
       await tester.pumpWidget(await rig().app());
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), 'BE 152');
-      await tester.pump(const Duration(milliseconds: 400));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Jack Baskin Engineering 152'));
       await tester.pumpAndSettle();
@@ -285,7 +277,7 @@ void main() {
       final card = tester.getRect(
         find
             .ancestor(
-              of: find.text('Route here'),
+              of: find.text('Walk there'),
               matching: find.byType(GlassSurface),
             )
             .first,
@@ -297,7 +289,7 @@ void main() {
             'the iPhone 17 is 402 points wide and the card keeps a 16 point margin',
       );
       expect(
-        tester.getSize(find.widgetWithText(FilledButton, 'Route here')).width,
+        tester.getSize(find.widgetWithText(FilledButton, 'Walk there')).width,
         closeTo(402 - 2 * 16 - 2 * 20, 0.5),
       );
     });
@@ -337,13 +329,12 @@ void main() {
       screen(tester, const Size(1206, 2622), 3.0, 1.0);
       await tester.pumpWidget(await rig().app());
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'BE 152');
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.enterText(find.byType(TextField), 'BE 15');
       await tester.pumpAndSettle();
       expect(find.bySemanticsLabel('Campus map'), findsOneWidget);
       expect(
         find.bySemanticsLabel(
-          RegExp(r'Jack Baskin Engineering 156[\s\S]*Not on the building'),
+          RegExp(r'Jack Baskin Engineering 15[\s\S]*Not on the building'),
         ),
         findsOneWidget,
       );
@@ -360,16 +351,25 @@ void main() {
   });
 
   group('Today for a screen reader', () {
-    testWidgets('a class status is a word, not only a colour', (tester) async {
+    testWidgets('the buttons say what they do and for which class', (
+      tester,
+    ) async {
       final semantics = tester.ensureSemantics();
       screen(tester, const Size(1206, 2622), 3.0, 1.0);
       await tester.pumpWidget(await rig(startTab: tabToday).app());
       await tester.pumpAndSettle();
-      expect(find.text('OK'), findsWidgets);
       expect(
-        tester.getSemantics(find.byTooltip('Route to XYZ 10 Lecture')).tooltip,
-        'Route to XYZ 10 Lecture',
+        find.text('Next'),
+        findsOneWidget,
+        reason: 'the role is a word, not a colour',
       );
+      expect(
+        tester
+            .getSemantics(find.byTooltip('Show XYZ 10 Lecture on the map'))
+            .tooltip,
+        'Show XYZ 10 Lecture on the map',
+      );
+      expect(find.bySemanticsLabel(RegExp('Walk there')), findsWidgets);
       semantics.dispose();
     });
   });

@@ -15,7 +15,7 @@ abstract class AccessibilityEnvironment {
 }
 
 class ChannelAccessibilityEnvironment implements AccessibilityEnvironment {
-  static const channel = MethodChannel('ucsc_router/accessibility');
+  static const channel = MethodChannel('classmap/accessibility');
 
   @override
   Future<bool> reduceTransparency() async {

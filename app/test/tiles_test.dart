@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/core/tiles.dart';
+import 'package:classmap/core/tiles.dart';
 
 void main() {
   group('tile source', () {

@@ -3,20 +3,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/api_client.dart';
-import '../../../core/waking_note.dart';
 import '../../search/place.dart';
 import '../../search/search_repository.dart';
 
 /// The room search of the Map tab, to find the room a class from a picture was meant to be in. Returns the
-/// place the student chose, whose `query` is a location the server can place.
-Future<Place?> showRoomFinder(BuildContext context, String initialQuery) => showModalBottomSheet<Place>(
-  context: context,
-  isScrollControlled: true,
-  useSafeArea: true,
-  showDragHandle: true,
-  builder: (_) => RoomFinder(initialQuery: initialQuery),
-);
+/// place the student chose, whose `query` is a location that resolves to it.
+Future<Place?> showRoomFinder(BuildContext context, String initialQuery) =>
+    showModalBottomSheet<Place>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      builder: (_) => RoomFinder(initialQuery: initialQuery),
+    );
 
 class RoomFinder extends ConsumerStatefulWidget {
   const RoomFinder({super.key, required this.initialQuery});
@@ -52,12 +51,20 @@ class _RoomFinderState extends ConsumerState<RoomFinder> {
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 0, 16, keyboard + 16),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.7),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.7,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Semantics(header: true, child: Text('Find the room', style: Theme.of(context).textTheme.titleMedium)),
+            Semantics(
+              header: true,
+              child: Text(
+                'Find the room',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: _controller,
@@ -88,24 +95,24 @@ class _Results extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (query.isEmpty) {
-      return const Padding(padding: EdgeInsets.all(8), child: Text('Type a building and a room number.'));
+      return const Padding(
+        padding: EdgeInsets.all(8),
+        child: Text('Type a building and a room number.'),
+      );
     }
     return ref
         .watch(searchResultsProvider(query))
         .when(
           loading: () => const Padding(
             padding: EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [LinearProgressIndicator(), WakingNote()],
-            ),
+            child: LinearProgressIndicator(),
           ),
           error: (error, _) => Padding(
             padding: const EdgeInsets.all(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(error is ApiException ? error.message : 'The search failed. Try again.'),
+                const Text('The search failed. Try again.'),
                 TextButton(
                   onPressed: () => ref.invalidate(searchResultsProvider(query)),
                   child: const Text('Try again'),
@@ -116,7 +123,9 @@ class _Results extends ConsumerWidget {
           data: (places) => places.isEmpty
               ? const Padding(
                   padding: EdgeInsets.all(8),
-                  child: Text('No match. Try the building name and room, like "Kresge 3201".'),
+                  child: Text(
+                    'No match. Try the building name and room, like "Kresge 3201".',
+                  ),
                 )
               : Column(
                   mainAxisSize: MainAxisSize.min,
@@ -124,9 +133,15 @@ class _Results extends ConsumerWidget {
                     for (final place in places)
                       ListTile(
                         dense: true,
-                        leading: Icon(place.isRoom ? Icons.meeting_room_outlined : Icons.apartment_outlined),
+                        leading: Icon(
+                          place.isRoom
+                              ? Icons.meeting_room_outlined
+                              : Icons.apartment_outlined,
+                        ),
                         title: Text(place.label),
-                        subtitle: place.roomKnown == false ? const Text("Not on the building's room list") : null,
+                        subtitle: place.roomKnown == false
+                            ? const Text("Not on the building's room list")
+                            : null,
                         onTap: () => Navigator.pop(context, place),
                       ),
                   ],

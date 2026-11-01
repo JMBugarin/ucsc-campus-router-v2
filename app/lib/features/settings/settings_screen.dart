@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/api_client.dart';
-import '../../core/server_url.dart';
-import '../../core/waking_note.dart';
+import '../reminders/reminder.dart';
+import '../reminders/reminder_controller.dart';
 import '../reminders/reminder_scheduler.dart';
-import '../today/today_models.dart';
 import 'settings.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -16,25 +14,19 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  late final TextEditingController _url = TextEditingController(text: ref.read(settingsProvider).serverUrl);
-  String? _message;
-  bool _messageIsError = false;
-  bool _testing = false;
-
-  @override
-  void dispose() {
-    _url.dispose();
-    super.dispose();
-  }
-
   String? _reminderMessage;
 
   Future<void> _setReminders(bool on) async {
     if (on) {
-      final allowed = await ref.read(reminderSchedulerProvider).requestPermission();
+      final allowed = await ref
+          .read(reminderSchedulerProvider)
+          .requestPermission();
       if (!mounted) return;
       if (!allowed) {
-        setState(() => _reminderMessage = "Notifications are blocked for this app. Allow them in the phone's settings.");
+        setState(
+          () => _reminderMessage =
+              "Notifications are blocked for this app. Allow them in the phone's settings.",
+        );
         return;
       }
     }
@@ -43,53 +35,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _sendTest() async {
-    await ref.read(reminderSchedulerProvider).show(const Reminder(
-          stage: 'leave',
-          key: 'test',
-          inSeconds: 0,
-          title: 'Time to leave (test)',
-          body: 'This is what a leave-now reminder looks like.',
-        ));
-  }
-
-  Future<void> _saveAndTest() async {
-    final normalized = normalizeServerUrl(_url.text);
-    if (normalized == null) {
-      setState(() {
-        _message = "That doesn't look like a server address. Try something like https://your-server.onrender.com";
-        _messageIsError = true;
-      });
-      return;
-    }
-    _url.text = normalized;
-    await ref.read(settingsProvider.notifier).setServerUrl(normalized);
-    setState(() {
-      _testing = true;
-      _message = null;
-    });
-    try {
-      final meta = await ref.read(apiClientProvider).getJson('/api/meta');
-      final warning = isInsecureRemote(normalized)
-          ? ' Note: this address is not secure (http), so your schedule and location would travel unprotected.'
-          : '';
-      setState(() {
-        _message = 'Connected. The server knows ${meta['nodes']} campus path points.$warning';
-        _messageIsError = isInsecureRemote(normalized);
-      });
-    } on ApiException catch (e) {
-      setState(() {
-        _message = 'Saved, but ${e.message}';
-        _messageIsError = true;
-      });
-    } finally {
-      if (mounted) setState(() => _testing = false);
-    }
+    await ref
+        .read(reminderSchedulerProvider)
+        .show(
+          const Reminder(
+            stage: 'class',
+            key: 'test',
+            inSeconds: 0,
+            title: 'XYZ 10 Lecture in 10 min (test)',
+            body: 'This is what a class reminder looks like.',
+          ),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     final controller = ref.read(settingsProvider.notifier);
+    final planProblem = ref.watch(reminderControllerProvider).value;
+    final theme = Theme.of(context);
+    Widget line(String text) => Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Text(text, style: theme.textTheme.bodyMedium),
+    );
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
@@ -97,26 +65,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Use my location'),
-            subtitle: const Text('Starts your walk to class from where you are. Off campus, your position stays on this phone.'),
-            value: settings.useLocation,
-            onChanged: controller.setUseLocation,
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Leave-now reminders'),
+            title: const Text('Class reminders'),
             subtitle: const Text(
-              'A notification when it is time to leave for each class over the next week, even if the app is '
-              'closed. Off campus, it says when to be at a campus bus stop or parking area. They are planned '
-              'whenever the app opens, from the walk times it has saved, so open it at least once a week.',
+              'A notification before each class over the next week, even if the app is closed. They are planned '
+              'whenever the app opens, so open it at least once a week.',
             ),
             value: settings.remindersOn,
             onChanged: _setReminders,
           ),
-          if (_reminderMessage != null)
+          if (_reminderMessage != null || planProblem != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
-              child: Text(_reminderMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              child: Text(
+                _reminderMessage ?? planProblem!,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
             ),
           if (settings.remindersOn)
             Align(
@@ -127,106 +90,52 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 label: const Text('Send a test notification'),
               ),
             ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Heads-up before leaving'),
-            subtitle: const Text('How long before it is time to leave you get a heads-up, as a notification and on Today.'),
-            trailing: DropdownButton<int>(
-              value: settings.remindLeadMinutes,
-              items: const [
-                DropdownMenuItem(value: 0, child: Text('None')),
-                DropdownMenuItem(value: 5, child: Text('5 min')),
-                DropdownMenuItem(value: 10, child: Text('10 min')),
-              ],
-              onChanged: (value) => controller.setRemindLead(value ?? 5),
-            ),
-          ),
-          const Divider(height: 32),
-          _PrivacyNote(serverUrl: settings.serverUrl),
-          const Divider(height: 32),
-          Semantics(header: true, child: Text('Advanced: server', style: Theme.of(context).textTheme.titleMedium)),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _url,
-            keyboardType: TextInputType.url,
-            autocorrect: false,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Server address',
-              hintText: 'https://your-server.onrender.com',
-            ),
-            onSubmitted: (_) => _saveAndTest(),
-          ),
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: FilledButton(
-              onPressed: _testing ? null : _saveAndTest,
-              child: Text(_testing ? 'Connecting…' : 'Save and test'),
-            ),
-          ),
-          if (_testing) const WakingNote(),
-          if (_message != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                _message!,
-                style: TextStyle(color: _messageIsError ? Theme.of(context).colorScheme.error : null),
-              ),
-            ),
-          const SizedBox(height: 4),
+          Text('Remind me before class', style: theme.textTheme.titleMedium),
           Text(
-            'The server works out walking times. It keeps nothing: it is sent your classes (and location, if '
-            'you allow it) each time and forgets them straight away.',
-            style: Theme.of(context).textTheme.bodySmall,
+            'How long before a class starts the reminder comes.',
+            style: theme.textTheme.bodyMedium,
+          ),
+          DropdownButton<int>(
+            isExpanded: true,
+            value: settings.remindLeadMinutes,
+            items: const [
+              DropdownMenuItem(value: 0, child: Text('At the start')),
+              DropdownMenuItem(value: 5, child: Text('5 min')),
+              DropdownMenuItem(value: 10, child: Text('10 min')),
+              DropdownMenuItem(value: 15, child: Text('15 min')),
+              DropdownMenuItem(value: 30, child: Text('30 min')),
+            ],
+            onChanged: (value) => controller.setRemindLead(value ?? 10),
+          ),
+          const Divider(height: 32),
+          Semantics(
+            header: true,
+            child: Text('Your data', style: theme.textTheme.titleMedium),
+          ),
+          line(
+            'Your schedule is saved only on this phone. There is no account and no server.',
+          ),
+          line(
+            'The app never asks for your location. Walk there hands the destination to your maps app, which finds where you are.',
+          ),
+          line(
+            'When you read a schedule from a picture, the phone reads it and the picture goes nowhere.',
+          ),
+          line(
+            'The map downloads its tiles from a map provider, which sees the area you look at and your network address.',
+          ),
+          const Divider(height: 32),
+          Semantics(
+            header: true,
+            child: Text('About the data', style: theme.textTheme.titleMedium),
+          ),
+          line(
+            'Not affiliated with or endorsed by UC Santa Cruz. Room names and positions come from the public UCSC '
+            'classroom directory and campus map; building outlines and doors are © OpenStreetMap contributors (ODbL). '
+            'A pin can be wrong: check the room number on your schedule.',
           ),
         ],
       ),
-    );
-  }
-}
-
-/// What the app sends to the server, in plain words, and where it goes.
-class _PrivacyNote extends StatelessWidget {
-  const _PrivacyNote({required this.serverUrl});
-
-  final String serverUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final host = Uri.tryParse(serverUrl)?.host ?? '';
-    Widget line(String text) => Padding(padding: const EdgeInsets.only(top: 6), child: Text(text, style: theme.textTheme.bodyMedium));
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Semantics(header: true, child: Text('What leaves your phone', style: theme.textTheme.titleMedium)),
-        line(
-          'Classes: to time a walk, the app sends your classes (course, days, times and room) to the server. '
-          'A schedule you paste or a calendar you import is sent as text once so the server can read it; '
-          'instructor names in it are dropped there.',
-        ),
-        line(
-          'Location on campus: your position goes with a request only when Use my location is on, or when you ask for a route.',
-        ),
-        line(
-          "Location off campus: it never leaves your phone. The server is only asked how long it takes to walk from "
-          "campus bus stops and parking to a room, never where you are. Transit and Apple Maps find where you are "
-          "themselves; the app gives them only the campus entry point you picked.",
-        ),
-        line('Entry point: the last one you pick is remembered on this phone.'),
-        line('Searches: what you type in Map search.'),
-        line(
-          'Pictures: when you read a schedule from a picture, your phone reads it and the picture is never sent '
-          'anywhere. The classes it finds are then treated like any others, and their room names are checked with the server.',
-        ),
-        line(
-          'The server uses each request for that one answer, keeps nothing and does not log queries or '
-          'locations. Your schedule is saved only on this phone.',
-        ),
-        if (host.isNotEmpty)
-          line('Right now this goes to $host. A server you do not run can still see these requests, so only use one you trust.'),
-      ],
     );
   }
 }

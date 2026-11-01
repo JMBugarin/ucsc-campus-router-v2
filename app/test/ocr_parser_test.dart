@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/features/schedule/ocr/layout.dart';
-import 'package:ucsc_router/features/schedule/ocr/parsed_row.dart';
-import 'package:ucsc_router/features/schedule/ocr/recognized_text.dart';
-import 'package:ucsc_router/features/schedule/ocr/schedule_parser.dart';
+import 'package:classmap/features/schedule/ocr/layout.dart';
+import 'package:classmap/features/schedule/ocr/parsed_row.dart';
+import 'package:classmap/features/schedule/ocr/recognized_text.dart';
+import 'package:classmap/features/schedule/ocr/schedule_parser.dart';
 
 import 'ocr_pages.dart';
 

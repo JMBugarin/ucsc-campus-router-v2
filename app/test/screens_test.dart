@@ -1,19 +1,15 @@
+import 'package:classmap/app.dart';
+import 'package:classmap/features/directions/directions.dart';
+import 'package:classmap/features/schedule/import/clean.dart';
+import 'package:classmap/features/schedule/meeting.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
-import 'package:ucsc_router/core/api_client.dart';
-import 'package:ucsc_router/features/location/location_service.dart';
-import 'package:ucsc_router/features/schedule/meeting.dart';
-import 'package:ucsc_router/features/settings/settings.dart';
-import 'package:ucsc_router/features/settings/settings_screen.dart';
-import 'package:ucsc_router/features/today/today_models.dart';
 
 import 'helpers.dart';
 
 Future<void> open(WidgetTester tester, TestRig rig) async {
-  tester.view.physicalSize = const Size(900, 1800);
+  tester.view.physicalSize = const Size(900, 2400);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(await rig.app());
@@ -21,23 +17,32 @@ Future<void> open(WidgetTester tester, TestRig rig) async {
 }
 
 Future<void> goToTab(WidgetTester tester, String label) async {
-  await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text(label)));
+  await tester.tap(
+    find.descendant(of: find.byType(NavigationBar), matching: find.text(label)),
+  );
   await tester.pumpAndSettle();
 }
 
+Meeting everyDay({
+  String course = 'XYZ 10',
+  String start = '14:40',
+  String end = '15:45',
+  String location = 'Kresge Acad 3201',
+}) => Meeting(
+  course: course,
+  component: 'Lecture',
+  days: const [0, 1, 2, 3, 4, 5, 6],
+  start: start,
+  end: end,
+  location: location,
+  startDate: '2000-01-01',
+  endDate: '2100-01-01',
+);
+
 void main() {
   group('Today', () {
-    testWidgets('asks for a server address first', (tester) async {
-      await open(tester, TestRig(serverUrl: ''));
-      expect(find.text('Connect to the server'), findsOneWidget);
-
-      await tester.tap(find.text('Open Settings'));
-      await tester.pumpAndSettle();
-      expect(find.text('Server address'), findsOneWidget);
-    });
-
     testWidgets('with no classes it points to the schedule', (tester) async {
-      await open(tester, TestRig());
+      await open(tester, TestRig(now: mondayNoon));
       expect(find.text('Add your classes'), findsOneWidget);
 
       await tester.tap(find.text('Go to Schedule'));
@@ -45,95 +50,223 @@ void main() {
       expect(find.text('My schedule'), findsOneWidget);
     });
 
-    testWidgets('shows the day: headline, walk, banner and a verdict on each gap', (tester) async {
-      final rig = TestRig(stored: [meeting()], analysis: Analysis.fromJson(fixture('today_late')));
-      await open(tester, rig);
-
-      expect(find.text('Next: XYZ 10 Lecture at 2:40 PM in 10 min.'), findsOneWidget);
-      expect(find.textContaining('Leave now for XYZ 10 Lecture'), findsOneWidget); // the banner
-      expect(find.textContaining("you'd arrive about 2 min late"), findsOneWidget);
-      expect(find.text('Late'), findsWidgets, reason: 'status is a word, not just a colour');
-      expect(find.text("Today's classes"), findsOneWidget);
-      expect(find.text('XYZ 10 Discussion'), findsOneWidget);
-      expect(find.textContaining('2:40 PM–3:45 PM'), findsOneWidget, reason: 'the next class is on its card, not repeated in the day');
-      expect(find.text('Next'), findsOneWidget, reason: 'the next class is marked on its card');
-    });
-
-    testWidgets('with no connection it still lists the day and says it is working offline', (tester) async {
-      final rig = TestRig(stored: [meeting(days: [0, 1, 2, 3, 4, 5, 6])]);
-      rig.today.answer = const ApiException("Can't reach the server.", kind: ApiErrorKind.offline);
-      await open(tester, rig);
-
-      expect(find.textContaining("Can't reach the server, so this is worked out on your phone"), findsOneWidget);
-      expect(find.textContaining('XYZ 10 Lecture'), findsWidgets);
-      expect(find.text("Couldn't work out your day"), findsNothing);
-
-      rig.today.answer = Analysis.fromJson(fixture('today_before_class'));
-      await tester.tap(find.byTooltip('Refresh'));
+    testWidgets('with no classes it still offers the map', (tester) async {
+      await open(tester, TestRig(now: mondayNoon));
+      await tester.tap(find.text('Find a room on the map'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('worked out on your phone'), findsNothing);
+      expect(
+        find.byType(TextField),
+        findsOneWidget,
+        reason: 'the map search is showing',
+      );
     });
 
-    testWidgets('the day picker shows another day and goes back to today', (tester) async {
-      final always = Meeting(
-        course: 'XYZ 10',
-        component: 'Lecture',
-        days: const [0, 1, 2, 3, 4, 5, 6],
-        start: '14:40',
-        end: '15:45',
-        location: 'Kresge Acad 3201',
-        startDate: '2000-01-01',
-        endDate: '2100-01-01',
-      );
-      final rig = TestRig(stored: [always]);
+    testWidgets(
+      'shows what is on today: the headline, each class, its room, and the break between them',
+      (tester) async {
+        final rig = TestRig(
+          stored: [
+            meeting(start: '09:00', end: '09:50', days: const [0]),
+            meeting(
+              course: 'ABC 20',
+              start: '14:40',
+              end: '15:45',
+              days: const [0],
+              location: 'Cowell Acad 113',
+            ),
+          ],
+          now: mondayNoon,
+        );
+        await open(tester, rig);
+
+        expect(
+          find.text('Next: ABC 20 Lecture at 2:40 PM in 2 h 40 min.'),
+          findsOneWidget,
+        );
+        expect(find.text("Today's classes"), findsOneWidget);
+        expect(find.text('XYZ 10 Lecture'), findsOneWidget);
+        expect(find.text('ABC 20 Lecture'), findsOneWidget);
+        expect(
+          find.textContaining('Cowell Acad 113 · '),
+          findsOneWidget,
+          reason: 'the room, then the building it is in',
+        );
+        expect(find.textContaining('after your last class'), findsOneWidget);
+        expect(
+          find.text('Next'),
+          findsOneWidget,
+          reason: 'the next class is marked',
+        );
+      },
+    );
+
+    testWidgets(
+      'Walk there opens walking directions in Apple Maps on an iPhone',
+      (tester) async {
+        final rig = TestRig(stored: [meeting()], now: mondayNoon);
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        try {
+          await open(tester, rig);
+          await tester.tap(find.text('Walk there'));
+          await tester.pumpAndSettle();
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+        final target = walkTarget(testCampus, 'Kresge Acad 3201')!;
+        expect(rig.urls.opened, [walkingDirectionsUri(target, android: false)]);
+        expect(rig.urls.opened.single.host, 'maps.apple.com');
+        expect(rig.urls.opened.single.queryParameters['dirflg'], 'w');
+      },
+    );
+
+    testWidgets('and in Google Maps on Android', (tester) async {
+      final rig = TestRig(stored: [meeting()], now: mondayNoon);
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        await open(tester, rig);
+        await tester.tap(find.text('Walk there'));
+        await tester.pumpAndSettle();
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+      expect(rig.urls.opened.single.host, 'www.google.com');
+      expect(rig.urls.opened.single.queryParameters['travelmode'], 'walking');
+    });
+
+    testWidgets('when the maps app cannot be opened it says so', (
+      tester,
+    ) async {
+      final rig = TestRig(stored: [meeting()], now: mondayNoon)
+        ..urls.succeeds = false;
       await open(tester, rig);
+      await tester.tap(find.text('Walk there'));
+      await tester.pumpAndSettle();
+      expect(find.text("Couldn't open your maps app."), findsOneWidget);
+    });
+
+    testWidgets('an online class has nothing to walk to', (tester) async {
+      final rig = TestRig(
+        stored: [meeting(location: 'Online')],
+        now: mondayNoon,
+      );
+      await open(tester, rig);
+      expect(find.text('XYZ 10 Lecture'), findsOneWidget);
+      expect(find.text('Walk there'), findsNothing);
+      expect(find.byTooltip('Show XYZ 10 Lecture on the map'), findsNothing);
+    });
+
+    testWidgets(
+      'a room that is not on the campus map is flagged and sends you to the search',
+      (tester) async {
+        final rig = TestRig(
+          stored: [meeting(location: 'Mystery Hall 9')],
+          now: mondayNoon,
+        );
+        await open(tester, rig);
+        expect(
+          find.text("We can't find this room on the campus map."),
+          findsOneWidget,
+        );
+        expect(find.text('Walk there'), findsNothing);
+
+        await tester.tap(find.text('Search the map'));
+        await tester.pumpAndSettle();
+        expect(find.byType(TextField), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'a class can be shown on the map, with its own Walk there button',
+      (tester) async {
+        final rig = TestRig(stored: [meeting()], now: mondayNoon);
+        await open(tester, rig);
+
+        await tester.tap(find.byTooltip('Show XYZ 10 Lecture on the map'));
+        await tester.pumpAndSettle();
+        expect(
+          find.text('Kresge College Academic Building 3201'),
+          findsNWidgets(2),
+          reason: 'the search box and the place card',
+        );
+        expect(find.text('Walk there'), findsOneWidget);
+      },
+    );
+
+    testWidgets('the day picker shows another day and goes back to today', (
+      tester,
+    ) async {
+      await open(tester, TestRig(stored: [everyDay()], now: mondayNoon));
       expect(find.textContaining('Today, '), findsOneWidget);
-      expect(find.text('Show route'), findsOneWidget);
+      expect(find.text('Walk there'), findsOneWidget);
 
       await tester.tap(find.byTooltip('Next day'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Today, '), findsNothing);
-      expect(find.text('Show route'), findsNothing, reason: 'there is no walk to talk about on another day');
-      expect(find.textContaining(' to '), findsWidgets);
-      expect(rig.today.requests.last.at, isNotNull);
+      expect(
+        find.text('Walk there'),
+        findsNothing,
+        reason: 'there is no "next" class on another day',
+      );
+      expect(find.text('1 class, 2:40 PM to 3:45 PM.'), findsOneWidget);
+      expect(find.text('Classes on Tue, Oct 13'), findsOneWidget);
 
       await tester.tap(find.widgetWithText(TextButton, 'Today'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Today, '), findsOneWidget);
-      expect(rig.today.requests.last.at, isNull);
+      expect(find.text("Today's classes"), findsOneWidget);
     });
 
-    testWidgets('a failure says what happened and offers to retry', (tester) async {
-      final rig = TestRig(stored: [meeting()]);
-      rig.today.answer = const ApiException('Too many requests. Please slow down.', kind: ApiErrorKind.rateLimited);
+    testWidgets('after the last class it says so and names the next one', (
+      tester,
+    ) async {
+      final rig = TestRig(
+        stored: [
+          meeting(days: const [0]),
+        ],
+        now: DateTime.utc(2026, 10, 13, 2),
+      ); // Monday 7 PM
       await open(tester, rig);
-
-      expect(find.text("Couldn't work out your day"), findsOneWidget);
-      expect(find.textContaining('Too many requests'), findsOneWidget);
-
-      rig.today.answer = Analysis.fromJson(fixture('today_before_class'));
-      await tester.tap(find.text('Try again'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('Next: XYZ 10 Lecture at 2:40 PM'), findsOneWidget);
+      expect(
+        find.text('Done for today. Next class: Mon 2:40 PM, XYZ 10 Lecture.'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('a location problem is shown beside the answer', (tester) async {
-      final rig = TestRig(stored: [meeting()], now: DateTime.utc(2026, 10, 12, 19));
-      rig.location.result = const LocationResult.unavailable('Location permission was not given.');
+    testWidgets('on a day with no class it says so and names the next one', (
+      tester,
+    ) async {
+      final rig = TestRig(
+        stored: [
+          meeting(days: const [0]),
+        ],
+        now: DateTime.utc(2026, 10, 13, 19),
+      ); // Tuesday noon
       await open(tester, rig);
-      expect(find.text('Location permission was not given.'), findsOneWidget);
-      expect(find.textContaining('Next: XYZ 10 Lecture'), findsOneWidget);
+      expect(
+        find.text('No classes today. Next class: Mon 2:40 PM, XYZ 10 Lecture.'),
+        findsOneWidget,
+      );
     });
   });
 
   group('Schedule', () {
-    testWidgets('lists the classes and flags a room it cannot place', (tester) async {
-      final rig = TestRig(stored: [meeting(), meeting(course: 'NEW 1', location: 'Nowhere Hall 9')]);
+    testWidgets('lists the classes and flags a room it cannot place', (
+      tester,
+    ) async {
+      final rig = TestRig(
+        stored: [
+          meeting(),
+          meeting(course: 'NEW 1', location: 'Nowhere Hall 9'),
+        ],
+      );
       rig.schedule.nextImport = const ImportResult(
         meetings: [],
         notes: [],
         locations: [
-          LocationInfo(kind: 'building', buildingName: 'Kresge College Academic Building'),
+          LocationInfo(
+            kind: 'building',
+            buildingName: 'Kresge College Academic Building',
+          ),
           LocationInfo(kind: 'unknown'),
         ],
       );
@@ -142,16 +275,31 @@ void main() {
 
       expect(find.text('XYZ 10 Lecture'), findsOneWidget);
       expect(find.textContaining('MoWeFr  2:40 PM–3:45 PM'), findsNWidgets(2));
-      expect(find.textContaining('Kresge Acad 3201 (Kresge College Academic Building)'), findsOneWidget);
-      expect(find.textContaining("Not recognised, so the walk can't be timed"), findsOneWidget);
+      expect(
+        find.textContaining(
+          'Kresge Acad 3201 (Kresge College Academic Building)',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining("Not recognised, so it can't be shown on the map"),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('pasting a schedule imports it and says what happened', (tester) async {
+    testWidgets('pasting a schedule imports it and says what happened', (
+      tester,
+    ) async {
       final rig = TestRig();
       rig.schedule.nextImport = ImportResult(
         meetings: [meeting()],
         notes: const ['Skipped DEF 30 (dropped).'],
-        locations: const [LocationInfo(kind: 'building', buildingName: 'Kresge College Academic Building')],
+        locations: const [
+          LocationInfo(
+            kind: 'building',
+            buildingName: 'Kresge College Academic Building',
+          ),
+        ],
       );
       await open(tester, rig);
       await goToTab(tester, 'Schedule');
@@ -163,13 +311,43 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(rig.schedule.calls, contains('text:my schedule text'));
-      expect(find.textContaining('Added 1 class. Skipped DEF 30 (dropped).'), findsOneWidget);
+      expect(
+        find.textContaining('Added 1 class. Skipped DEF 30 (dropped).'),
+        findsOneWidget,
+      );
       expect(find.text('XYZ 10 Lecture'), findsOneWidget);
     });
 
-    testWidgets('a calendar file is read and cancelling does nothing', (tester) async {
+    testWidgets('the message after an import floats above the tab bar, so the tabs stay tappable', (tester) async {
       final rig = TestRig();
       rig.schedule.nextImport = ImportResult(meetings: [meeting()], notes: const [], locations: const []);
+      await open(tester, rig);
+      await goToTab(tester, 'Schedule');
+      await tester.tap(find.text('Paste from MyUCSC'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'my schedule text');
+      await tester.tap(find.text('Import'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(
+        tester.getRect(find.textContaining('Added 1 class')).bottom,
+        lessThanOrEqualTo(tester.getRect(find.byType(NavigationBar)).top),
+      );
+      await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text('Today')));
+      await tester.pumpAndSettle();
+      expect(find.text("Today's classes"), findsNothing, reason: 'Monday noon is before the default class, so Today shows it as the next');
+    });
+
+    testWidgets('a calendar file is read and cancelling does nothing', (
+      tester,
+    ) async {
+      final rig = TestRig();
+      rig.schedule.nextImport = ImportResult(
+        meetings: [meeting()],
+        notes: const [],
+        locations: const [],
+      );
       await open(tester, rig);
       await goToTab(tester, 'Schedule');
 
@@ -181,14 +359,18 @@ void main() {
       rig.pickedCalendarText = 'BEGIN:VCALENDAR\nEND:VCALENDAR';
       await tester.tap(find.text('Calendar file'));
       await tester.pumpAndSettle();
-      expect(rig.schedule.calls, contains('ics:BEGIN:VCALENDAR\nEND:VCALENDAR'));
+      expect(
+        rig.schedule.calls,
+        contains('ics:BEGIN:VCALENDAR\nEND:VCALENDAR'),
+      );
       expect(find.textContaining('Added 1 class'), findsOneWidget);
     });
 
-    testWidgets("an import the server rejects shows the server's reason", (tester) async {
+    testWidgets('an import that is refused shows the reason', (tester) async {
       final rig = TestRig();
-      rig.schedule.failWith = const ApiException("That doesn't look like a calendar (.ics) file.",
-          kind: ApiErrorKind.rejected);
+      rig.schedule.failWith = const ScheduleError(
+        "That doesn't look like a calendar (.ics) file.",
+      );
       await open(tester, rig);
       await goToTab(tester, 'Schedule');
 
@@ -197,11 +379,21 @@ void main() {
       await tester.enterText(find.byType(TextField), 'hello');
       await tester.tap(find.text('Import'));
       await tester.pumpAndSettle();
-      expect(find.textContaining("doesn't look like a calendar"), findsOneWidget);
+      expect(
+        find.textContaining("doesn't look like a calendar"),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('a class can be removed, and all of them after confirming', (tester) async {
-      final rig = TestRig(stored: [meeting(), meeting(course: 'ABC 20')]);
+    testWidgets('a class can be removed, and all of them after confirming', (
+      tester,
+    ) async {
+      final rig = TestRig(
+        stored: [
+          meeting(),
+          meeting(course: 'ABC 20'),
+        ],
+      );
       await open(tester, rig);
       await goToTab(tester, 'Schedule');
 
@@ -219,120 +411,74 @@ void main() {
       expect(rig.schedule.stored, isEmpty);
     });
 
-    testWidgets('the add-a-class form checks its fields before sending anything', (tester) async {
-      final rig = TestRig();
-      await open(tester, rig);
-      await goToTab(tester, 'Schedule');
+    testWidgets(
+      'the add-a-class form checks its fields before saving anything',
+      (tester) async {
+        final rig = TestRig();
+        await open(tester, rig);
+        await goToTab(tester, 'Schedule');
 
-      await tester.tap(find.text('Add a class'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Add'));
-      await tester.pumpAndSettle();
-      expect(find.text('Enter the course, like CSE 130.'), findsOneWidget);
+        await tester.tap(find.text('Add a class'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Add'));
+        await tester.pumpAndSettle();
+        expect(find.text('Enter the course, like CSE 130.'), findsOneWidget);
 
-      await tester.enterText(find.widgetWithText(TextField, 'Course'), 'cse 130');
-      await tester.tap(find.text('Add'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('Pick the days it meets'), findsOneWidget);
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Course'),
+          'cse 130',
+        );
+        await tester.tap(find.text('Add'));
+        await tester.pumpAndSettle();
+        expect(find.textContaining('Pick the days it meets'), findsOneWidget);
 
-      await tester.tap(find.text('Mo'));
-      await tester.tap(find.text('We'));
-      await tester.tap(find.text('Add'));
-      await tester.pumpAndSettle();
-      expect(find.text('Pick a start and end time.'), findsOneWidget);
-      expect(rig.schedule.calls, isEmpty, reason: 'nothing is sent until the form is complete');
-    });
+        await tester.tap(find.text('Mo'));
+        await tester.tap(find.text('We'));
+        await tester.tap(find.text('Add'));
+        await tester.pumpAndSettle();
+        expect(find.text('Pick a start and end time.'), findsOneWidget);
+        expect(
+          rig.schedule.calls,
+          isEmpty,
+          reason: 'nothing is saved until the form is complete',
+        );
+      },
+    );
   });
 
   group('Settings', () {
-    Future<TestRig> openSettings(WidgetTester tester, {Map<String, http.Response>? server, String url = ''}) async {
-      final rig = TestRig(serverUrl: url);
-      final overrides = await rig.overrides();
-      tester.view.physicalSize = const Size(900, 1800);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(ProviderScope(
-        retry: (count, error) => null,
-        overrides: [
-          ...overrides,
-          apiClientProvider.overrideWith((ref) => ApiClient(
-                baseUrl: ref.watch(settingsProvider).serverUrl,
-                client: MockClient((request) async =>
-                    server?[request.url.path] ?? http.Response('{"error":"nope"}', 404)),
-              )),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
-      ));
-      await tester.pumpAndSettle();
-      return rig;
-    }
+    testWidgets(
+      'has no server or location settings, and says the data stays on the phone',
+      (tester) async {
+        await open(tester, TestRig(startTab: tabSettings));
+        expect(
+          find.textContaining('server address', findRichText: true),
+          findsNothing,
+        );
+        expect(find.text('Use my location'), findsNothing);
+        expect(
+          find.textContaining('There is no account and no server'),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining('never asks for your location'),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining(
+            'Not affiliated with or endorsed by UC Santa Cruz',
+          ),
+          findsOneWidget,
+        );
+      },
+    );
 
-    testWidgets('a nonsense address is refused and not saved', (tester) async {
-      await openSettings(tester);
-      await tester.enterText(find.byType(TextField), 'not a url');
-      await tester.tap(find.text('Save and test'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining("doesn't look like a server address"), findsOneWidget);
-    });
-
-    testWidgets('a good address is tidied, saved and tested', (tester) async {
-      await openSettings(tester, server: {'/api/meta': http.Response('{"nodes": 1960}', 200)});
-      await tester.enterText(find.byType(TextField), 'router.example/');
-      await tester.tap(find.text('Save and test'));
-      await tester.pumpAndSettle();
-      expect(find.text('https://router.example'), findsOneWidget);
-      expect(find.textContaining('Connected. The server knows 1960 campus path points.'), findsOneWidget);
-    });
-
-    testWidgets('a server that does not answer properly is reported', (tester) async {
-      await openSettings(tester);
-      await tester.enterText(find.byType(TextField), 'https://router.example');
-      await tester.tap(find.text('Save and test'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('Saved, but'), findsOneWidget);
-    });
-
-    testWidgets('plain http to the internet gets a warning', (tester) async {
-      await openSettings(tester, server: {'/api/meta': http.Response('{"nodes": 1}', 200)});
-      await tester.enterText(find.byType(TextField), 'http://router.example');
-      await tester.tap(find.text('Save and test'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('not secure (http)'), findsOneWidget);
-    });
-
-    testWidgets('says what leaves the phone, and which server gets it', (tester) async {
-      await openSettings(tester, url: 'https://router.example');
-      await tester.scrollUntilVisible(find.text('What leaves your phone'), 300, scrollable: find.byType(Scrollable).first);
-      expect(find.textContaining('Classes: to time a walk'), findsOneWidget);
-      expect(find.textContaining('instructor names in it are dropped there'), findsOneWidget);
-      expect(find.textContaining('Location on campus: your position goes with a request only when Use my location is on'), findsOneWidget);
-      expect(find.textContaining('Location off campus: it never leaves your phone'), findsOneWidget);
-      expect(find.textContaining('never where you are'), findsOneWidget);
-      expect(find.textContaining('Entry point: the last one you pick is remembered on this phone.'), findsOneWidget);
-      expect(find.textContaining('Searches: what you type in Map search.'), findsOneWidget);
-      expect(find.textContaining('Pictures: when you read a schedule from a picture, your phone reads it and the picture is never sent anywhere'), findsOneWidget);
-      expect(find.textContaining('their room names are checked with the server'), findsOneWidget);
-      expect(find.textContaining('keeps nothing and does not log queries or locations'), findsOneWidget);
-      expect(find.textContaining('Right now this goes to router.example.'), findsOneWidget);
-    });
-
-    testWidgets('with no server address it names none', (tester) async {
-      await openSettings(tester);
-      await tester.scrollUntilVisible(find.text('What leaves your phone'), 300, scrollable: find.byType(Scrollable).first);
-      expect(find.textContaining('Right now this goes to'), findsNothing);
-    });
-
-    testWidgets('the location switch is remembered', (tester) async {
-      await openSettings(tester);
-      final location = find.widgetWithText(SwitchListTile, 'Use my location');
-      await tester.tap(location);
-      await tester.pumpAndSettle();
-      expect(tester.widget<SwitchListTile>(location).value, isFalse);
-    });
-
-    testWidgets('reminders turn on only once notifications are allowed', (tester) async {
-      final rig = await openSettings(tester);
-      final reminders = find.widgetWithText(SwitchListTile, 'Leave-now reminders');
+    testWidgets('reminders turn on only once notifications are allowed', (
+      tester,
+    ) async {
+      final rig = TestRig(startTab: tabSettings);
+      await open(tester, rig);
+      final reminders = find.widgetWithText(SwitchListTile, 'Class reminders');
 
       rig.scheduler.allowed = false;
       await tester.tap(reminders);
@@ -347,15 +493,30 @@ void main() {
       expect(find.textContaining('Notifications are blocked'), findsNothing);
     });
 
-    testWidgets('a test notification can be sent once reminders are on', (tester) async {
-      final rig = await openSettings(tester);
+    testWidgets('a test notification can be sent once reminders are on', (
+      tester,
+    ) async {
+      final rig = TestRig(startTab: tabSettings);
+      await open(tester, rig);
       expect(find.text('Send a test notification'), findsNothing);
 
-      await tester.tap(find.widgetWithText(SwitchListTile, 'Leave-now reminders'));
+      await tester.tap(find.widgetWithText(SwitchListTile, 'Class reminders'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Send a test notification'));
       await tester.pumpAndSettle();
       expect(rig.scheduler.shown, ['test']);
+    });
+
+    testWidgets('the lead time is chosen from a list and remembered', (
+      tester,
+    ) async {
+      final rig = TestRig(startTab: tabSettings);
+      await open(tester, rig);
+      await tester.tap(find.text('10 min'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('30 min').last);
+      await tester.pumpAndSettle();
+      expect(find.text('30 min'), findsOneWidget);
     });
   });
 }

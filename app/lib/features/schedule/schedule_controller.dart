@@ -5,7 +5,11 @@ import 'schedule_repository.dart';
 
 /// What an import did, for the message shown afterwards.
 class ImportSummary {
-  const ImportSummary({required this.added, required this.alreadyThere, required this.notes});
+  const ImportSummary({
+    required this.added,
+    required this.alreadyThere,
+    required this.notes,
+  });
 
   final int added;
   final int alreadyThere;
@@ -28,21 +32,31 @@ class ScheduleController extends AsyncNotifier<List<Meeting>> {
 
   List<Meeting> get _current => state.value ?? const [];
 
-  Future<ImportSummary> importText(String text) async => _merge(await _repo.importText(text));
+  Future<ImportSummary> importText(String text) async =>
+      _merge(await _repo.importText(text));
 
-  Future<ImportSummary> importCalendar(String text) async => _merge(await _repo.importCalendar(text));
+  Future<ImportSummary> importCalendar(String text) async =>
+      _merge(await _repo.importCalendar(text));
 
-  /// Adds classes the student has checked one by one, after reading them from a picture. They were read on the
-  /// phone, so no server has seen them yet.
-  Future<ImportSummary> addChecked(List<Meeting> meetings, {List<String> notes = const []}) =>
-      _merge(ImportResult(meetings: meetings, notes: notes, locations: const []));
+  /// Adds classes the student has checked one by one, after reading them from a picture.
+  Future<ImportSummary> addChecked(
+    List<Meeting> meetings, {
+    List<String> notes = const [],
+  }) => _merge(
+    ImportResult(meetings: meetings, notes: notes, locations: const []),
+  );
 
-  /// Adds one hand-typed class after the server has checked it.
-  Future<ImportSummary> add(Meeting meeting) async => _merge(await _repo.clean([meeting]));
+  /// Adds one hand-typed class after checking it.
+  Future<ImportSummary> add(Meeting meeting) async =>
+      _merge(await _repo.clean([meeting]));
 
   /// Marks [iso] (`2026-10-21`) as a day [meeting] does not meet. Returns false if there is no room
   /// for another skipped date, or the class is no longer in the schedule.
-  Future<bool> skipDay(Meeting meeting, String iso, {required String today}) async {
+  Future<bool> skipDay(
+    Meeting meeting,
+    String iso, {
+    required String today,
+  }) async {
     final i = _current.indexWhere(meeting.sameClassAs);
     final updated = i < 0 ? null : _current[i].skipping(iso, today: today);
     if (updated == null) return false;
@@ -95,15 +109,18 @@ class ScheduleController extends AsyncNotifier<List<Meeting>> {
   }
 }
 
-final scheduleProvider = AsyncNotifierProvider<ScheduleController, List<Meeting>>(ScheduleController.new);
+final scheduleProvider =
+    AsyncNotifierProvider<ScheduleController, List<Meeting>>(
+      ScheduleController.new,
+    );
 
-/// What the server made of each class's room, to flag the ones it can't place. Best effort:
-/// if the server can't be reached the list is empty and nothing is flagged.
+/// What the campus data made of each class's room, to flag the ones it can't place.
 final locationInfoProvider = FutureProvider<List<LocationInfo>>((ref) async {
   final meetings = await ref.watch(scheduleProvider.future);
   if (meetings.isEmpty) return const [];
   try {
-    return (await ref.read(scheduleRepositoryProvider).clean(meetings)).locations;
+    return (await ref.read(scheduleRepositoryProvider).clean(meetings))
+        .locations;
   } on Object {
     return const [];
   }

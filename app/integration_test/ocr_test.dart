@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:ucsc_router/features/schedule/ocr/recognized_text.dart';
-import 'package:ucsc_router/features/schedule/ocr/text_recognizer.dart';
+import 'package:classmap/features/schedule/ocr/recognized_text.dart';
+import 'package:classmap/features/schedule/ocr/text_recognizer.dart';
 
 import 'support.dart';
 

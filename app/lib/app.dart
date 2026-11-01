@@ -9,12 +9,12 @@ import 'design/theme.dart';
 import 'design/tokens.dart';
 import 'features/map/map_screen.dart';
 import 'features/schedule/schedule_screen.dart';
-import 'features/settings/settings.dart';
+import 'features/reminders/reminder_controller.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/today/today_controller.dart';
 import 'features/today/today_screen.dart';
 
-/// Which tab is showing. Screens change it to send you somewhere (for example "set up the server").
+/// Which tab is showing. Screens change it to send you somewhere (for example "go to Schedule").
 class SelectedTab extends Notifier<int> {
   SelectedTab([this.initial = tabMap]);
 
@@ -33,13 +33,13 @@ const tabToday = 1;
 const tabSchedule = 2;
 const tabSettings = 3;
 
-class UcscRouterApp extends StatelessWidget {
-  const UcscRouterApp({super.key});
+class ClassmapApp extends StatelessWidget {
+  const ClassmapApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'UCSC Router',
+      title: 'Classmap',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
@@ -61,13 +61,13 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   @override
   void initState() {
     super.initState();
-    ref.read(serverWarmUpProvider)();
-    // A new day, or a long time in the background, means yesterday's reminder plan is stale, and a
-    // free host may have gone back to sleep.
-    _lifecycle = AppLifecycleListener(onResume: () {
-      ref.read(serverWarmUpProvider)();
-      ref.read(todayProvider.notifier).refresh(quiet: true);
-    });
+    // A new day, or a long time in the background, means yesterday's reminder plan is stale.
+    _lifecycle = AppLifecycleListener(
+      onResume: () {
+        ref.read(nowProvider.notifier).refresh();
+        ref.invalidate(reminderControllerProvider);
+      },
+    );
   }
 
   @override
@@ -78,8 +78,19 @@ class _HomeShellState extends ConsumerState<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(
+      reminderControllerProvider,
+    ); // keeps the phone's reminders in step with the schedule
+    ref.watch(
+      reminderControllerProvider,
+    ); // keeps the phone's reminders in step with the schedule
     final index = ref.watch(selectedTabProvider);
-    const screens = [MapScreen(), TodayScreen(), ScheduleScreen(), SettingsScreen()];
+    const screens = [
+      MapScreen(),
+      TodayScreen(),
+      ScheduleScreen(),
+      SettingsScreen(),
+    ];
     final barBottom = math.max(MediaQuery.paddingOf(context).bottom, Space.sm);
     final inset = GlassTabBar.height + barBottom + Space.sm;
     return Scaffold(
@@ -92,11 +103,21 @@ class _HomeShellState extends ConsumerState<HomeShell> {
               bottom: inset,
               child: IndexedStack(
                 index: index,
-                children: [for (var i = 0; i < screens.length; i++) TickerMode(enabled: i == index, child: screens[i])],
+                children: [
+                  for (var i = 0; i < screens.length; i++)
+                    TickerMode(enabled: i == index, child: screens[i]),
+                ],
               ),
             ),
           ),
-          if (index != tabMap) Positioned(left: 0, right: 0, bottom: 0, height: inset + Space.xl, child: const ScrollEdgeFade()),
+          if (index != tabMap)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: inset + Space.xl,
+              child: const ScrollEdgeFade(),
+            ),
           Positioned(
             left: Space.md,
             right: Space.md,
@@ -105,12 +126,26 @@ class _HomeShellState extends ConsumerState<HomeShell> {
               selectedIndex: index,
               onSelected: ref.read(selectedTabProvider.notifier).select,
               destinations: const [
-                NavigationDestination(icon: Icon(Icons.map_outlined), selectedIcon: Icon(Icons.map), label: 'Map'),
-                NavigationDestination(icon: Icon(Icons.today_outlined), selectedIcon: Icon(Icons.today), label: 'Today'),
                 NavigationDestination(
-                    icon: Icon(Icons.calendar_month_outlined), selectedIcon: Icon(Icons.calendar_month), label: 'Schedule'),
+                  icon: Icon(Icons.map_outlined),
+                  selectedIcon: Icon(Icons.map),
+                  label: 'Map',
+                ),
                 NavigationDestination(
-                    icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: 'Settings'),
+                  icon: Icon(Icons.today_outlined),
+                  selectedIcon: Icon(Icons.today),
+                  label: 'Today',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.calendar_month_outlined),
+                  selectedIcon: Icon(Icons.calendar_month),
+                  label: 'Schedule',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.settings_outlined),
+                  selectedIcon: Icon(Icons.settings),
+                  label: 'Settings',
+                ),
               ],
             ),
           ),

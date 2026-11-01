@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/features/schedule/ocr/picture_picker.dart';
-import 'package:ucsc_router/features/schedule/ocr/text_recognizer.dart';
+import 'package:classmap/features/schedule/ocr/picture_picker.dart';
+import 'package:classmap/features/schedule/ocr/text_recognizer.dart';
 
 Future<PictureException> failure(Future<Object?> future) async {
   try {

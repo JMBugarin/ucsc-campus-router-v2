@@ -2,23 +2,27 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/campus/campus.dart';
-import 'package:ucsc_router/campus/campus_data.dart';
-import 'package:ucsc_router/campus/terms.dart';
-import 'package:ucsc_router/features/schedule/import/clean.dart';
-import 'package:ucsc_router/features/schedule/import/ics.dart';
-import 'package:ucsc_router/features/schedule/import/paste.dart';
+import 'package:classmap/campus/campus_data.dart';
+import 'package:classmap/campus/terms.dart';
+import 'package:classmap/features/schedule/import/clean.dart';
+import 'package:classmap/features/schedule/import/ics.dart';
+import 'package:classmap/features/schedule/import/paste.dart';
 
 /// The Dart campus, schedule and calendar code against outputs recorded from the Python code it replaced
 /// (`test/fixtures/golden_port.json`).
 void main() {
-  final golden = jsonDecode(File('test/fixtures/golden_port.json').readAsStringSync()) as Map<String, dynamic>;
+  final golden =
+      jsonDecode(File('test/fixtures/golden_port.json').readAsStringSync())
+          as Map<String, dynamic>;
   final campus = campusFromJson(
     buildings: File('assets/data/buildings.json').readAsStringSync(),
     rooms: File('assets/data/rooms.json').readAsStringSync(),
     aliases: File('assets/data/search_aliases.json').readAsStringSync(),
   );
-  final terms = termsFromJson(jsonDecode(File('assets/data/holidays.json').readAsStringSync()) as Map<String, dynamic>);
+  final terms = termsFromJson(
+    jsonDecode(File('assets/data/holidays.json').readAsStringSync())
+        as Map<String, dynamic>,
+  );
   List cases(String key) => golden[key] as List;
 
   test('room resolution matches', () {
@@ -43,7 +47,11 @@ void main() {
       final hits = campus.search(c['input'] as String, 6);
       final want = c['out'] as List;
       final label = 'search "${c['input']}"';
-      expect([for (final h in hits) h.label], [for (final w in want) w['label']], reason: label);
+      expect(
+        [for (final h in hits) h.label],
+        [for (final w in want) w['label']],
+        reason: label,
+      );
       for (var i = 0; i < want.length; i++) {
         final h = hits[i];
         final w = want[i] as Map<String, dynamic>;
@@ -70,11 +78,23 @@ void main() {
       final want = c['out'] as Map<String, dynamic>;
       final label = '${c['input']}';
       if (want.containsKey('error')) {
-        expect(() => cleanMeetingJson(c['input'] as Map<String, dynamic>),
-            throwsA(isA<ScheduleError>().having((e) => e.message, 'message', want['error'])),
-            reason: label);
+        expect(
+          () => cleanMeetingJson(c['input'] as Map<String, dynamic>),
+          throwsA(
+            isA<ScheduleError>().having(
+              (e) => e.message,
+              'message',
+              want['error'],
+            ),
+          ),
+          reason: label,
+        );
       } else {
-        expect(cleanMeetingJson(c['input'] as Map<String, dynamic>).toJson(), want['meeting'], reason: label);
+        expect(
+          cleanMeetingJson(c['input'] as Map<String, dynamic>).toJson(),
+          want['meeting'],
+          reason: label,
+        );
       }
     }
   });
@@ -83,7 +103,11 @@ void main() {
     for (final c in cases('paste')) {
       final want = c['out'] as Map<String, dynamic>;
       final got = parsePasted(c['input'] as String, campus);
-      expect([for (final m in got.meetings) m.toJson()], want['meetings'], reason: '${c['input']}');
+      expect(
+        [for (final m in got.meetings) m.toJson()],
+        want['meetings'],
+        reason: '${c['input']}',
+      );
       expect(got.notes, want['notes'], reason: '${c['input']}');
     }
   });
@@ -92,16 +116,30 @@ void main() {
     for (final c in cases('ics')) {
       final text = c['input'] as String;
       for (final withTerm in [true, false]) {
-        final want = c[withTerm ? 'with_term' : 'no_term'] as Map<String, dynamic>;
-        final label = '${withTerm ? 'term' : 'no term'}: ${text.substring(0, text.length > 80 ? 80 : text.length)}';
+        final want =
+            c[withTerm ? 'with_term' : 'no_term'] as Map<String, dynamic>;
+        final label =
+            '${withTerm ? 'term' : 'no term'}: ${text.substring(0, text.length > 80 ? 80 : text.length)}';
         if (want.containsKey('error')) {
-          expect(() => parseIcs(text, term: withTerm ? terms.first : null),
-              throwsA(isA<ScheduleError>().having((e) => e.message, 'message', want['error'])),
-              reason: label);
+          expect(
+            () => parseIcs(text, term: withTerm ? terms.first : null),
+            throwsA(
+              isA<ScheduleError>().having(
+                (e) => e.message,
+                'message',
+                want['error'],
+              ),
+            ),
+            reason: label,
+          );
           continue;
         }
         final got = parseIcs(text, term: withTerm ? terms.first : null);
-        expect([for (final m in got.meetings) m.toJson()], want['meetings'], reason: label);
+        expect(
+          [for (final m in got.meetings) m.toJson()],
+          want['meetings'],
+          reason: label,
+        );
         expect(got.notes, want['notes'], reason: label);
       }
     }

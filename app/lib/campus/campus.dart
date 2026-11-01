@@ -1,4 +1,4 @@
-import '../features/location/location_service.dart';
+import 'geo_point.dart';
 import 'sequence_matcher.dart';
 
 const _online = {
@@ -16,12 +16,24 @@ const _tba = {'', 'tba', 'tbd', 'to be announced', 'no room', 'none'};
 const _roomWords = {'room', 'rm'};
 const _minSearchScore = 0.5;
 
-String normalize(String text) =>
-    text.toLowerCase().replaceAll('&', ' and ').replaceAll(RegExp('[^a-z0-9]+'), ' ').trim();
+String normalize(String text) => text
+    .toLowerCase()
+    .replaceAll('&', ' and ')
+    .replaceAll(RegExp('[^a-z0-9]+'), ' ')
+    .trim();
 
-List<String> _words(String normalized) => normalized.isEmpty ? const [] : normalized.split(' ');
+List<String> _words(String normalized) =>
+    normalized.isEmpty ? const [] : normalized.split(' ');
 
 bool _hasDigit(String s) => RegExp('[0-9]').hasMatch(s);
+
+/// A door into a building. `kind` is `main` for the one OpenStreetMap marks as the main entrance.
+class Entrance {
+  const Entrance(this.point, this.kind);
+
+  final GeoPoint point;
+  final String kind;
+}
 
 class RoomPoint {
   const RoomPoint(this.lat, this.lon, this.level);
@@ -56,19 +68,26 @@ class Building {
   final List<String> knownRooms;
   final Map<String, RoomPoint> roomPoints;
   final GeoPoint? centroid;
-  final List<GeoPoint> entrances;
+  final List<Entrance> entrances;
 
   factory Building.fromJson(Map<String, dynamic> json) {
-    GeoPoint? point(Object? v) => v is Map ? GeoPoint((v['lat'] as num).toDouble(), (v['lon'] as num).toDouble()) : null;
+    GeoPoint? point(Object? v) => v is Map
+        ? GeoPoint((v['lat'] as num).toDouble(), (v['lon'] as num).toDouble())
+        : null;
     return Building(
       id: json['id'] as String,
       name: json['name'] as String,
       osmName: json['osm_name'] as String?,
-      aliases: [for (final a in (json['aliases'] as List? ?? const [])) a as String],
+      aliases: [
+        for (final a in (json['aliases'] as List? ?? const [])) a as String,
+      ],
       exactNames: {
-        for (final e in ((json['exact_names'] as Map?) ?? const {}).entries) e.key as String: e.value as String,
+        for (final e in ((json['exact_names'] as Map?) ?? const {}).entries)
+          e.key as String: e.value as String,
       },
-      knownRooms: [for (final r in (json['known_rooms'] as List? ?? const [])) r as String],
+      knownRooms: [
+        for (final r in (json['known_rooms'] as List? ?? const [])) r as String,
+      ],
       roomPoints: {
         for (final e in ((json['room_points'] as Map?) ?? const {}).entries)
           e.key as String: RoomPoint(
@@ -78,7 +97,10 @@ class Building {
           ),
       },
       centroid: point(json['centroid']),
-      entrances: [for (final e in (json['entrances'] as List? ?? const [])) point(e)!],
+      entrances: [
+        for (final e in (json['entrances'] as List? ?? const []))
+          Entrance(point(e)!, ((e as Map)['kind'] as String?) ?? ''),
+      ],
     );
   }
 }
@@ -103,7 +125,7 @@ class Resolution {
   final String kind;
   final String? buildingId;
   final String? room;
-  final List<GeoPoint> entrances;
+  final List<Entrance> entrances;
   final String? floor;
   final String? note;
 
@@ -160,26 +182,37 @@ bool _oneEditApart(String a, String b) {
 class Campus {
   Campus(
     List<Building> buildings, {
-    Map<String, dynamic> overrides = const {},
+    this.overrides = const {},
     Map<String, List<String>> searchAliases = const {},
-  }) : overrides = overrides {
+  }) {
     for (final b in buildings) {
-      if (this.buildings.containsKey(b.id)) throw StateError('duplicate building id ${b.id}');
+      if (this.buildings.containsKey(b.id)) {
+        throw StateError('duplicate building id ${b.id}');
+      }
       this.buildings[b.id] = b;
     }
     for (final b in buildings) {
       final names = <String>{};
-      for (final a in [b.name, b.osmName ?? '', ...b.aliases, ...(searchAliases[b.id] ?? const <String>[])]) {
+      for (final a in [
+        b.name,
+        b.osmName ?? '',
+        ...b.aliases,
+        ...(searchAliases[b.id] ?? const <String>[]),
+      ]) {
         final n = normalize(a);
         if (n.isNotEmpty) names.add(n);
       }
       _searchNames[b.id] = [for (final n in names) _words(n)];
-      b.exactNames.forEach((name, room) => _exact[normalize(name)] = (b.id, room));
+      b.exactNames.forEach(
+        (name, room) => _exact[normalize(name)] = (b.id, room),
+      );
       for (final alias in [b.name, b.osmName ?? '', ...b.aliases]) {
         final key = normalize(alias);
         if (key.isEmpty) continue;
         final owner = _index.putIfAbsent(key, () => b.id);
-        if (owner != b.id) throw StateError('alias "$alias" belongs to both $owner and ${b.id}');
+        if (owner != b.id) {
+          throw StateError('alias "$alias" belongs to both $owner and ${b.id}');
+        }
       }
     }
   }
@@ -192,15 +225,21 @@ class Campus {
 
   /// Splits a location followed by other words (a schedule row's room and instructor).
   (String, String) splitLocation(String text) {
-    final words = text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+    final words = text
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList();
     final norm = [for (final w in words) normalize(w)];
 
     String phrase(int k) => norm.take(k).where((n) => n.isNotEmpty).join(' ');
-    (String, String) cut(int k) => (words.take(k).join(' '), words.skip(k).join(' '));
+    (String, String) cut(int k) =>
+        (words.take(k).join(' '), words.skip(k).join(' '));
 
     for (var k = 1; k <= (words.length < 3 ? words.length : 3); k++) {
       final p = phrase(k);
-      if (_online.contains(p) || (_tba.contains(p) && p.isNotEmpty)) return cut(k);
+      if (_online.contains(p) || (_tba.contains(p) && p.isNotEmpty)) {
+        return cut(k);
+      }
     }
     for (var k = words.length; k > 0; k--) {
       if (_exact.containsKey(phrase(k))) return cut(k);
@@ -222,11 +261,15 @@ class Campus {
     final text = normalize(location ?? '');
     final raw = location ?? '';
     if (_tba.contains(text)) return Resolution(raw, 'tba');
-    if (_online.contains(text) || text.startsWith('online ') || text.startsWith('remote ')) {
+    if (_online.contains(text) ||
+        text.startsWith('online ') ||
+        text.startsWith('remote ')) {
       return Resolution(raw, 'online');
     }
     final exact = _exact[text];
-    if (exact != null) return _building(raw, exact.$1, [exact.$2.toLowerCase()]);
+    if (exact != null) {
+      return _building(raw, exact.$1, [exact.$2.toLowerCase()]);
+    }
 
     final tokens = _words(text);
     for (var k = tokens.length; k > 0; k--) {
@@ -237,21 +280,37 @@ class Campus {
   }
 
   Resolution _building(String raw, String buildingId, List<String> rest) {
-    final words = rest.isNotEmpty && _roomWords.contains(rest.first) ? rest.skip(1).toList() : rest;
+    final words = rest.isNotEmpty && _roomWords.contains(rest.first)
+        ? rest.skip(1).toList()
+        : rest;
     final joined = words.join(' ').toUpperCase();
     final room = joined.isEmpty ? null : joined;
     final building = buildings[buildingId]!;
-    var entrances = List<GeoPoint>.of(building.entrances);
+    var entrances = List<Entrance>.of(building.entrances);
     String? floor, note;
-    final override = room == null ? null : (overrides['$buildingId:$room'] as Map?);
+    final override = room == null
+        ? null
+        : (overrides['$buildingId:$room'] as Map?);
     if (override != null) {
       final e = override['entrance'];
-      if (e is Map) entrances = [GeoPoint((e['lat'] as num).toDouble(), (e['lon'] as num).toDouble())];
+      if (e is Map) {
+        entrances = [
+          Entrance(
+            GeoPoint(
+              (e['lat'] as num).toDouble(),
+              (e['lon'] as num).toDouble(),
+            ),
+            'override',
+          ),
+        ];
+      }
       floor = override['floor'] as String?;
       note = override['note'] as String?;
     }
     final known = building.knownRooms;
-    final roomKnown = known.isNotEmpty && room != null ? known.contains(room) : null;
+    final roomKnown = known.isNotEmpty && room != null
+        ? known.contains(room)
+        : null;
     final roomPoint = room == null ? null : building.roomPoints[room];
     floor ??= roomPoint?.level;
     return Resolution(
@@ -270,7 +329,9 @@ class Campus {
   /// Ranks buildings and rooms for a typed query such as "BE 152", "kresge 3201" or "Thimann 101".
   List<SearchHit> search(String? query, [int limit = 5]) {
     var tokens = _words(normalize(query ?? ''));
-    if (tokens.length > 1 && _roomWords.contains(tokens.first)) tokens = tokens.skip(1).toList();
+    if (tokens.length > 1 && _roomWords.contains(tokens.first)) {
+      tokens = tokens.skip(1).toList();
+    }
     if (tokens.isEmpty) return const [];
     final found = <(String, String?), (double, String?)>{};
 
@@ -282,7 +343,10 @@ class Campus {
 
     for (var k = 1; k <= tokens.length; k++) {
       final roomTokens = tokens.skip(k).toList();
-      if (roomTokens.length > 1 || (roomTokens.isNotEmpty && !_hasDigit(roomTokens.first))) continue;
+      if (roomTokens.length > 1 ||
+          (roomTokens.isNotEmpty && !_hasDigit(roomTokens.first))) {
+        continue;
+      }
       final room = roomTokens.isEmpty ? null : roomTokens.first.toUpperCase();
       _matchNames(tokens.take(k).toList()).forEach((buildingId, nameScore) {
         final known = buildings[buildingId]!.knownRooms;
@@ -309,10 +373,16 @@ class Campus {
       ..sort((x, y) {
         final byScore = y.value.$1.compareTo(x.value.$1);
         if (byScore != 0) return byScore;
-        final byName = buildings[x.key.$1]!.name.compareTo(buildings[y.key.$1]!.name);
-        return byName != 0 ? byName : (x.key.$2 ?? '').compareTo(y.key.$2 ?? '');
+        final byName = buildings[x.key.$1]!.name.compareTo(
+          buildings[y.key.$1]!.name,
+        );
+        return byName != 0
+            ? byName
+            : (x.key.$2 ?? '').compareTo(y.key.$2 ?? '');
       });
-    return [for (final e in ranked.take(limit)) _hit(e.key.$1, e.key.$2, e.value.$1)];
+    return [
+      for (final e in ranked.take(limit)) _hit(e.key.$1, e.key.$2, e.value.$1),
+    ];
   }
 
   Map<String, double> _matchNames(List<String> nameTokens) {
@@ -330,7 +400,10 @@ class Campus {
           final head = alias.take(n).toList();
           var digitsAgree = true;
           for (var i = 0; i < n; i++) {
-            if (_hasDigit(nameTokens[i] + head[i]) && nameTokens[i] != head[i]) digitsAgree = false;
+            if (_hasDigit(nameTokens[i] + head[i]) &&
+                nameTokens[i] != head[i]) {
+              digitsAgree = false;
+            }
           }
           if (digitsAgree) {
             final ratio = similarity(joined, head.join(' '));
@@ -353,7 +426,10 @@ class Campus {
 
   bool _prefixTokens(List<String> typed, List<String> alias) {
     for (var i = 0; i < typed.length; i++) {
-      if (typed[i] != alias[i] && !(typed[i].length >= 3 && alias[i].startsWith(typed[i]))) return false;
+      if (typed[i] != alias[i] &&
+          !(typed[i].length >= 3 && alias[i].startsWith(typed[i]))) {
+        return false;
+      }
     }
     return true;
   }

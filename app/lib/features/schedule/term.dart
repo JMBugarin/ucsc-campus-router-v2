@@ -1,16 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../settings/settings.dart';
+import '../../campus/campus_data.dart';
+import '../../campus/terms.dart';
+import '../../core/clock.dart';
+import '../../core/pacific.dart';
 
-/// The term's first and last day, so the "add a class" form can start with them filled in.
+/// The current term's first and last day, so the "add a class" form can start with them filled in.
 final termProvider = FutureProvider<({String start, String end})?>((ref) async {
-  try {
-    final term = (await ref.read(apiClientProvider).getJson('/api/meta'))['term'];
-    if (term is Map && term['start'] is String && term['end'] is String) {
-      return (start: term['start'] as String, end: term['end'] as String);
-    }
-  } on Object {
-    // no server yet, or it is asleep: the form just starts with empty dates
-  }
-  return null;
+  final terms = await ref.watch(termsProvider.future);
+  final term = termFor(terms, isoDate(pacificTime(ref.read(clockProvider)())));
+  return term == null ? null : (start: term.start, end: term.end);
 });

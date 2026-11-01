@@ -12,13 +12,15 @@ tz.Location get pacific {
   return tz.getLocation('America/Los_Angeles');
 }
 
-tz.TZDateTime pacificTime(DateTime moment) => tz.TZDateTime.from(moment, pacific);
+tz.TZDateTime pacificTime(DateTime moment) =>
+    tz.TZDateTime.from(moment, pacific);
 
 String _two(int n) => n.toString().padLeft(2, '0');
 
-String isoDate(DateTime d) => '${d.year.toString().padLeft(4, '0')}-${_two(d.month)}-${_two(d.day)}';
+String isoDate(DateTime d) =>
+    '${d.year.toString().padLeft(4, '0')}-${_two(d.month)}-${_two(d.day)}';
 
-/// `2026-10-12T14:40:00-07:00`, the shape the server sends.
+/// `2026-10-12T14:40:00-07:00`: a Pacific time with its offset.
 String isoWithOffset(tz.TZDateTime t) {
   final offset = t.timeZoneOffset;
   final minutes = offset.inMinutes.abs();

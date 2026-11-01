@@ -2,9 +2,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-import '../today/today_models.dart';
+import 'reminder.dart';
 
-/// Shows or schedules "time to leave" notifications. The real one talks to Android; tests use a fake.
+/// Shows or schedules class reminders. The real one talks to Android; tests use a fake.
 abstract class ReminderScheduler {
   /// Asks for permission to show notifications (and to be on time). True if notifications are allowed.
   Future<bool> requestPermission();
@@ -33,9 +33,9 @@ class LocalNotificationScheduler implements ReminderScheduler {
 
   static const _details = NotificationDetails(
     android: AndroidNotificationDetails(
-      'leave_now',
-      'Time to leave',
-      channelDescription: 'Tells you when to leave for your next class',
+      'class_reminders',
+      'Class reminders',
+      channelDescription: 'Tells you when a class is about to start',
       importance: Importance.high,
       priority: Priority.high,
     ),
@@ -56,18 +56,24 @@ class LocalNotificationScheduler implements ReminderScheduler {
       )
       .then((_) {});
 
-  AndroidFlutterLocalNotificationsPlugin? get _android =>
-      _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+  AndroidFlutterLocalNotificationsPlugin? get _android => _plugin
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+      >();
 
-  IOSFlutterLocalNotificationsPlugin? get _ios =>
-      _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+  IOSFlutterLocalNotificationsPlugin? get _ios => _plugin
+      .resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin
+      >();
 
   @override
   Future<bool> requestPermission() async {
     await _init();
-    if (_ios != null) return await _ios!.requestPermissions(alert: true, sound: true) ?? false;
+    if (_ios != null) {
+      return await _ios!.requestPermissions(alert: true, sound: true) ?? false;
+    }
     final allowed = await _android?.requestNotificationsPermission() ?? false;
-    // Exact alarms keep "leave now" on time. Android may open its settings page for this; if it is
+    // Exact alarms keep reminders on time. Android may open its settings page for this; if it is
     // refused, reminders still work but can arrive a few minutes late.
     if (allowed && await _android?.canScheduleExactNotifications() == false) {
       await _android?.requestExactAlarmsPermission();
@@ -97,7 +103,9 @@ class LocalNotificationScheduler implements ReminderScheduler {
       // UTC is a fixed point in time, so no time zone database is needed.
       scheduledDate: tz.TZDateTime.from(at, tz.UTC),
       notificationDetails: _details,
-      androidScheduleMode: exact ? AndroidScheduleMode.exactAllowWhileIdle : AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: exact
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle,
     );
   }
 
@@ -108,4 +116,6 @@ class LocalNotificationScheduler implements ReminderScheduler {
   }
 }
 
-final reminderSchedulerProvider = Provider<ReminderScheduler>((ref) => LocalNotificationScheduler());
+final reminderSchedulerProvider = Provider<ReminderScheduler>(
+  (ref) => LocalNotificationScheduler(),
+);

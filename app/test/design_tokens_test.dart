@@ -2,9 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ucsc_router/design/theme.dart';
-import 'package:ucsc_router/design/tokens.dart';
-import 'package:ucsc_router/design/type.dart';
+import 'package:classmap/design/theme.dart';
+import 'package:classmap/design/tokens.dart';
+import 'package:classmap/design/type.dart';
 
 double _lin(double v) => v <= 0.03928 ? v / 12.92 : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
 
