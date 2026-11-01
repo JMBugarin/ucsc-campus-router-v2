@@ -1,11 +1,15 @@
 import json
+import sys
 import unittest
 from pathlib import Path
 
-import build_facility_buildings as fb
-from room_parser import load_campus, normalize
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent))
 
-ROOT = Path(__file__).resolve().parents[2]
+import build_facility_buildings as fb  # noqa: E402
+from room_parser import load_campus, normalize  # noqa: E402
+
+ROOT = HERE.parents[1]
 
 
 def fac(**kw):
