@@ -60,7 +60,7 @@ python3 -m unittest discover -s ../data-pipeline/tests     # the data tools
 | Directory | What it is |
 |---|---|
 | `app/` | The Flutter app (`classmap`, Riverpod). Campus search, schedule parsing, calendar import and day logic are plain Dart in `lib/campus`, `lib/features/schedule/import` and `lib/features/today`. See [app/README.md](app/README.md). |
-| `data/` | The campus data the app ships: 32 buildings and their doors, the 87 general-assignment classrooms, search aliases, term dates and holidays. Copied into `app/assets/data` by `scripts/sync_app_data.sh`; a test fails if they differ. |
+| `data/` | The campus data the app ships: 32 hand-checked buildings with their doors, 53 more teaching buildings from the campus map (outline centre, no door), the 87 general-assignment classrooms, search aliases, term dates and holidays. Copied into `app/assets/data` by `scripts/sync_app_data.sh`; a test fails if they differ. |
 | `data-pipeline/`, `graph/` | The tools that built the data from public sources, and the OpenStreetMap walking graph they use to place doors. Run rarely. |
 | `docs/` | [Status](docs/status.md), [developer notes](docs/developer-notes.md), [data sources](docs/data-sources.md), [photo import](docs/photo-import.md). |
 

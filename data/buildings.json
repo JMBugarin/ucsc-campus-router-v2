@@ -2129,6 +2129,1866 @@
           "source": "footprint-edge"
         }
       ]
+    },
+    {
+      "id": "academic-resource-center-multipurpose-building",
+      "name": "Academic Resource Center Multipurpose Building",
+      "aliases": [
+        "Acad Resource Center Multipurpose",
+        "Acad Resource Center Multipurpose Bldg",
+        "Acad Resource Center Multipurpose Building",
+        "Academic Resource Center Multipurpose",
+        "Academic Resource Center Multipurpose Bldg",
+        "ARC Multipurpose Building",
+        "ARC Multipurpose",
+        "ARC Multipurpose Bldg",
+        "Student Press Center"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9942001,
+        "lon": -122.0592213
+      },
+      "entrances": [
+        {
+          "lat": 36.9942001,
+          "lon": -122.0592213,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7755",
+      "primary_use": "GEN",
+      "region": "Central Core",
+      "departments": [
+        "Student Media"
+      ]
+    },
+    {
+      "id": "cowell-college-commons",
+      "name": "Cowell College Commons",
+      "aliases": [
+        "Cowell Commons",
+        "Cowell Coffee Shop",
+        "Eloise Pickard Smith Gallery"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9970235,
+        "lon": -122.0528747
+      },
+      "entrances": [
+        {
+          "lat": 36.9970235,
+          "lon": -122.0528747,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7134",
+      "primary_use": "GEN",
+      "region": "Cowell College",
+      "departments": [
+        "Colleges Housing Administration",
+        "Cowell College Administration",
+        "Dining Services Administration",
+        "Food Services",
+        "General Assignment Classrooms",
+        "History Department",
+        "Housing Commercial Services",
+        "Literature Department",
+        "Student Activities - Housing",
+        "Student Living Quarters - Single"
+      ]
+    },
+    {
+      "id": "cowell-college-library",
+      "name": "Cowell College Library",
+      "aliases": [
+        "Cowell College Lib",
+        "Cowell Lib",
+        "Cowell Library",
+        "Page Smith Gallery"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9967692,
+        "lon": -122.0531561
+      },
+      "entrances": [
+        {
+          "lat": 36.9967692,
+          "lon": -122.0531561,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7131",
+      "primary_use": "LIB",
+      "region": "Cowell College",
+      "departments": [
+        "Cowell College Administration",
+        "Writing Program"
+      ]
+    },
+    {
+      "id": "crown-college-library",
+      "name": "Crown College Library",
+      "aliases": [
+        "Crown College Lib",
+        "Crown Lib",
+        "Crown Library"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9995611,
+        "lon": -122.0541817
+      },
+      "entrances": [
+        {
+          "lat": 36.9995611,
+          "lon": -122.0541817,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7162",
+      "primary_use": "LIB",
+      "region": "Crown College",
+      "departments": [
+        "Crown College Administration",
+        "Crown College SLRS Administration",
+        "Instructional Computing Laboratories"
+      ]
+    },
+    {
+      "id": "elena-baskin-building-a",
+      "name": "Elena Baskin Building A",
+      "aliases": [
+        "Elena Baskin A",
+        "Elena Baskin Bldg A",
+        "Elena Baskin Unit A"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9937828,
+        "lon": -122.0576296
+      },
+      "entrances": [
+        {
+          "lat": 36.9937828,
+          "lon": -122.0576296,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7493",
+      "primary_use": "LAB",
+      "region": "Elena Baskin Visual Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "elena-baskin-building-c",
+      "name": "Elena Baskin Building C",
+      "aliases": [
+        "Elena Baskin Bldg C",
+        "Elena Baskin C",
+        "E Baskin Woodshop",
+        "Elena Baskin Unit C"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9939299,
+        "lon": -122.0579515
+      },
+      "entrances": [
+        {
+          "lat": 36.9939299,
+          "lon": -122.0579515,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7495",
+      "primary_use": "LAB",
+      "region": "Elena Baskin Visual Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "elena-baskin-building-f",
+      "name": "Elena Baskin Building F",
+      "aliases": [
+        "Elena Baskin Bldg F",
+        "Elena Baskin F",
+        "Elena Baskin Unit F"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9953329,
+        "lon": -122.0632148
+      },
+      "entrances": [
+        {
+          "lat": 36.9953329,
+          "lon": -122.0632148,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7498",
+      "primary_use": "LAB",
+      "region": "Elena Baskin Visual Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "elena-baskin-building-g",
+      "name": "Elena Baskin Building G",
+      "aliases": [
+        "Elena Baskin Bldg G",
+        "Elena Baskin G",
+        "Elena Baskin Unit G"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9942325,
+        "lon": -122.0599933
+      },
+      "entrances": [
+        {
+          "lat": 36.9942325,
+          "lon": -122.0599933,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7499",
+      "primary_use": "LAB",
+      "region": "Elena Baskin Visual Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "elena-baskin-building-i",
+      "name": "Elena Baskin Building I",
+      "aliases": [
+        "Elena Baskin Bldg I",
+        "Elena Baskin I",
+        "Elena Baskin Unit I"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9951702,
+        "lon": -122.0620152
+      },
+      "entrances": [
+        {
+          "lat": 36.9951702,
+          "lon": -122.0620152,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7815",
+      "primary_use": "LAB",
+      "region": "Elena Baskin Visual Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "elena-baskin-building-j",
+      "name": "Elena Baskin Building J",
+      "aliases": [
+        "Elena Baskin Bldg J",
+        "Elena Baskin J",
+        "Elena Baskin Unit J"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9945372,
+        "lon": -122.0608844
+      },
+      "entrances": [
+        {
+          "lat": 36.9945372,
+          "lon": -122.0608844,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7822",
+      "primary_use": "LAB",
+      "region": "Elena Baskin Visual Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "elena-baskin-building-l",
+      "name": "Elena Baskin Building L",
+      "aliases": [
+        "Elena Baskin Bldg L",
+        "Elena Baskin L",
+        "Elena Baskin Unit L"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9936273,
+        "lon": -122.0586415
+      },
+      "entrances": [
+        {
+          "lat": 36.9936273,
+          "lon": -122.0586415,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7926",
+      "primary_use": "CLS",
+      "region": "Elena Baskin Visual Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "elena-baskin-building-m",
+      "name": "Elena Baskin Building M",
+      "aliases": [
+        "Elena Baskin Bldg M",
+        "Elena Baskin M",
+        "Elena Baskin Unit M"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9944558,
+        "lon": -122.0606217
+      },
+      "entrances": [
+        {
+          "lat": 36.9944558,
+          "lon": -122.0606217,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7927",
+      "primary_use": "CLS",
+      "region": "Elena Baskin Visual Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "elena-baskin-building-p",
+      "name": "Elena Baskin Building P",
+      "aliases": [
+        "Elena Baskin Bldg P",
+        "Elena Baskin P",
+        "Elena Baskin Unit P"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9948623,
+        "lon": -122.0606674
+      },
+      "entrances": [
+        {
+          "lat": 36.9948623,
+          "lon": -122.0606674,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7929",
+      "primary_use": "CLS",
+      "region": "Elena Baskin Visual Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "humanities-auditorium",
+      "name": "Humanities Auditorium",
+      "aliases": [
+        "Hum Aud",
+        "Hum Auditorium",
+        "Humanities Aud"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9987229,
+        "lon": -122.0554907
+      },
+      "entrances": [
+        {
+          "lat": 36.9987229,
+          "lon": -122.0554907,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7711",
+      "primary_use": "CLS",
+      "region": "Humanities Center",
+      "departments": [
+        "General Assignment Classrooms"
+      ]
+    },
+    {
+      "id": "kresge-college-academic-center",
+      "name": "Kresge College Academic Center",
+      "aliases": [
+        "Kresge Acad Center",
+        "Kresge Academic Center",
+        "Kresge College Acad Center",
+        "Owl's Nest",
+        "Kresge Owl's Nest"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9987024,
+        "lon": -122.0652444
+      },
+      "entrances": [
+        {
+          "lat": 36.9987024,
+          "lon": -122.0652444,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7874",
+      "primary_use": "GEN",
+      "region": "Kresge College",
+      "departments": []
+    },
+    {
+      "id": "kresge-college-annex-building-b",
+      "name": "Kresge College Annex Building B",
+      "aliases": [
+        "Kresge Annex B",
+        "Kresge Annex Bldg B",
+        "Kresge Annex Building B",
+        "Kresge College Annex B",
+        "Kresge College Annex Bldg B",
+        "Annex B",
+        "Annex Bldg B"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9978062,
+        "lon": -122.0674334
+      },
+      "entrances": [
+        {
+          "lat": 36.9978062,
+          "lon": -122.0674334,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7808",
+      "primary_use": "LAB",
+      "region": "Kresge College",
+      "departments": [
+        "Film and Digital Media Department"
+      ]
+    },
+    {
+      "id": "kresge-college-classroom-building",
+      "name": "Kresge College Classroom Building",
+      "aliases": [
+        "Kresge Classroom",
+        "Kresge Classroom Bldg",
+        "Kresge Classroom Building",
+        "Kresge Clrm",
+        "Kresge Clrm Bldg",
+        "Kresge Clrm Building",
+        "Kresge College Classroom",
+        "Kresge College Classroom Bldg",
+        "Kresge College Clrm",
+        "Kresge College Clrm Bldg",
+        "Kresge College Clrm Building"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9975358,
+        "lon": -122.0646841
+      },
+      "entrances": [
+        {
+          "lat": 36.9975358,
+          "lon": -122.0646841,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7378",
+      "primary_use": "CLS",
+      "region": "Kresge College",
+      "departments": [
+        "General Assignment Classrooms",
+        "Instructional Computing Laboratories"
+      ]
+    },
+    {
+      "id": "kresge-college-library",
+      "name": "Kresge College Library",
+      "aliases": [
+        "Kresge College Lib",
+        "Kresge Lib",
+        "Kresge Library"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9985337,
+        "lon": -122.067382
+      },
+      "entrances": [
+        {
+          "lat": 36.9985337,
+          "lon": -122.067382,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7380",
+      "primary_use": "LIB",
+      "region": "Kresge College",
+      "departments": [
+        "Film and Digital Media Department",
+        "Kresge College SLRS Administration"
+      ]
+    },
+    {
+      "id": "kresge-college-lounge",
+      "name": "Kresge College Lounge",
+      "aliases": [
+        "Kresge Lounge",
+        "Kresge College Triplets",
+        "Kresge Triplets"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9970848,
+        "lon": -122.0657308
+      },
+      "entrances": [
+        {
+          "lat": 36.9970848,
+          "lon": -122.0657308,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7397",
+      "primary_use": "GEN",
+      "region": "Kresge College",
+      "departments": [
+        "Retention Services Office",
+        "Student Activities - Housing"
+      ]
+    },
+    {
+      "id": "merrill-college-common",
+      "name": "Merrill College Common",
+      "aliases": [
+        "Merrill Common",
+        "Merrill Commons",
+        "Baobob Lounge",
+        "Merrill Baobob Lounge"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 37.0012736,
+        "lon": -122.0572811
+      },
+      "entrances": [
+        {
+          "lat": 37.0012736,
+          "lon": -122.0572811,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7186",
+      "primary_use": "GEN",
+      "region": "Merrill College",
+      "departments": [
+        "Student Activities - Housing"
+      ]
+    },
+    {
+      "id": "merrill-college-faculty-common",
+      "name": "Merrill College Faculty Common",
+      "aliases": [
+        "Merrill Faculty Common",
+        "Merrill Lounge"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9998227,
+        "lon": -122.0549202
+      },
+      "entrances": [
+        {
+          "lat": 36.9998227,
+          "lon": -122.0549202,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7310",
+      "primary_use": "GEN",
+      "region": "Merrill College",
+      "departments": [
+        "Merrill College Administration"
+      ]
+    },
+    {
+      "id": "merrill-college-library",
+      "name": "Merrill College Library",
+      "aliases": [
+        "Merrill College Lib",
+        "Merrill Lib",
+        "Merrill Library",
+        "Casa Latina",
+        "Merrill College Casa Latina",
+        "Merrill Casa Latina"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9993448,
+        "lon": -122.0532131
+      },
+      "entrances": [
+        {
+          "lat": 36.9993448,
+          "lon": -122.0532131,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7309",
+      "primary_use": "GEN",
+      "region": "Merrill College",
+      "departments": [
+        "ITS Core Technologies and Eng",
+        "Latin American and Latino Studies Department",
+        "Merrill College Administration",
+        "UE Advising & Honors",
+        "Writing Program"
+      ]
+    },
+    {
+      "id": "merrill-college-plaza",
+      "name": "Merrill College Plaza",
+      "aliases": [
+        "Merrill Plaza"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 37.0001344,
+        "lon": -122.0532558
+      },
+      "entrances": [
+        {
+          "lat": 37.0001344,
+          "lon": -122.0532558,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7415",
+      "primary_use": "GEN",
+      "region": "Merrill College",
+      "departments": []
+    },
+    {
+      "id": "merrill-college-recreation-room",
+      "name": "Merrill College Recreation Room",
+      "aliases": [
+        "Merrill Recreation Room",
+        "Cantu Queer Center",
+        "Merrill Rec Building",
+        "Merrill Rec",
+        "Merrill Rec Bldg",
+        "GLBTI"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 37.0010801,
+        "lon": -122.0554595
+      },
+      "entrances": [
+        {
+          "lat": 37.0010801,
+          "lon": -122.0554595,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7375",
+      "primary_use": "GEN",
+      "region": "Merrill College",
+      "departments": [
+        "Cantu Queer Center",
+        "KZSC Radio Station"
+      ]
+    },
+    {
+      "id": "merrill-garden-house",
+      "name": "Merrill Garden House",
+      "aliases": [
+        "Garden House",
+        "Chadwick Garden Chalet",
+        "Up-Farm Chalet",
+        "Merrill Garden Chalet"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9999396,
+        "lon": -122.0545701
+      },
+      "entrances": [
+        {
+          "lat": 36.9999396,
+          "lon": -122.0545701,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7169",
+      "primary_use": "SPC",
+      "region": "Merrill College",
+      "departments": [
+        "Agroecology Program ORA"
+      ]
+    },
+    {
+      "id": "merrill-ming-ong-computer-lab",
+      "name": "Merrill Ming Ong Computer Lab",
+      "aliases": [
+        "Ming Ong Computer Lab"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 37.0002967,
+        "lon": -122.054219
+      },
+      "entrances": [
+        {
+          "lat": 37.0002967,
+          "lon": -122.054219,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7806",
+      "primary_use": "SPC",
+      "region": "Merrill College",
+      "departments": [
+        "Instructional Computing Laboratories"
+      ]
+    },
+    {
+      "id": "gamelan-studio",
+      "name": "Gamelan Studio",
+      "aliases": [
+        "Music Center Gamelan Studio"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.993523,
+        "lon": -122.0610008
+      },
+      "entrances": [
+        {
+          "lat": 36.993523,
+          "lon": -122.0610008,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7925",
+      "primary_use": "CLS",
+      "region": "Music Center Neighborhood",
+      "departments": [
+        "Music Department"
+      ]
+    },
+    {
+      "id": "environmental-health-and-safety-facility",
+      "name": "Environmental Health and Safety Facility",
+      "aliases": [
+        "EH&S Facility"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9962485,
+        "lon": -122.0631945
+      },
+      "entrances": [
+        {
+          "lat": 36.9962485,
+          "lon": -122.0631945,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7166",
+      "primary_use": "SPC",
+      "region": "North Campus",
+      "departments": []
+    },
+    {
+      "id": "athletics-and-recreation-activities-building",
+      "name": "Athletics & Recreation Activities Building",
+      "aliases": [
+        "Athletics & Recreation Activities",
+        "Athletics & Recreation Activities Bldg",
+        "East Fieldhouse Activities",
+        "OPERS Multipurpose Building",
+        "OPERS Multipurpose",
+        "OPERS Multipurpose Bldg"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9938997,
+        "lon": -122.0551156
+      },
+      "entrances": [
+        {
+          "lat": 36.9938997,
+          "lon": -122.0551156,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7406",
+      "primary_use": "SPC",
+      "region": "OPERS Eastside",
+      "departments": [
+        "OPERS Recreation",
+        "Physical Plant Services"
+      ]
+    },
+    {
+      "id": "athletics-and-recreation-fitness-center",
+      "name": "Athletics & Recreation Fitness Center",
+      "aliases": [
+        "OPERS Fitness Center",
+        "Fitness Center",
+        "Wellness Center"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9936703,
+        "lon": -122.0548175
+      },
+      "entrances": [
+        {
+          "lat": 36.9936703,
+          "lon": -122.0548175,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7726",
+      "primary_use": "SPC",
+      "region": "OPERS Eastside",
+      "departments": [
+        "OPERS Recreation"
+      ]
+    },
+    {
+      "id": "athletics-and-recreation-tennis-building",
+      "name": "Athletics & Recreation Tennis Building",
+      "aliases": [
+        "Athletics & Recreation Tennis",
+        "Athletics & Recreation Tennis Bldg",
+        "OPERS Tennis"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9955127,
+        "lon": -122.0576938
+      },
+      "entrances": [
+        {
+          "lat": 36.9955127,
+          "lon": -122.0576938,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7753",
+      "primary_use": "SPC",
+      "region": "OPERS Eastside",
+      "departments": [
+        "OPERS Physical Education",
+        "OPERS Recreation"
+      ]
+    },
+    {
+      "id": "east-field-house",
+      "name": "East Field House",
+      "aliases": [],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9944947,
+        "lon": -122.054996
+      },
+      "entrances": [
+        {
+          "lat": 36.9944947,
+          "lon": -122.054996,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7119",
+      "primary_use": "SPC",
+      "region": "OPERS Eastside",
+      "departments": [
+        "OPERS Physical Education",
+        "OPERS Recreation"
+      ]
+    },
+    {
+      "id": "oakes-college-tutorial-commons",
+      "name": "Oakes College Tutorial Commons",
+      "aliases": [
+        "Oakes Tutorial Commons",
+        "Tutorial Commons",
+        "Oakes Café",
+        "Oakes Learning Center"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9893633,
+        "lon": -122.0635174
+      },
+      "entrances": [
+        {
+          "lat": 36.9893633,
+          "lon": -122.0635174,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7419",
+      "primary_use": "SPC",
+      "region": "Oakes College",
+      "departments": [
+        "Housing Commercial Services",
+        "Instructional Computing Laboratories",
+        "Oakes College SLRS Administration",
+        "Student Activities - Housing"
+      ]
+    },
+    {
+      "id": "bay-tree-bookstore",
+      "name": "Bay Tree Bookstore",
+      "aliases": [],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9979046,
+        "lon": -122.0552218
+      },
+      "entrances": [
+        {
+          "lat": 36.9979046,
+          "lon": -122.0552218,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7300",
+      "primary_use": "SPC",
+      "region": "Quarry Plaza",
+      "departments": [
+        "Bay Tree Bookstore",
+        "Career Center",
+        "Ethnic Resource Center"
+      ]
+    },
+    {
+      "id": "graduate-commons",
+      "name": "Graduate Commons",
+      "aliases": [
+        "Joe's",
+        "Joe's Pizza",
+        "Iveta"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9981542,
+        "lon": -122.0557776
+      },
+      "entrances": [
+        {
+          "lat": 36.9981542,
+          "lon": -122.0557776,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7302",
+      "primary_use": "GEN",
+      "region": "Quarry Plaza",
+      "departments": [
+        "Campus Commercial Enterprises",
+        "Graduate Student Commons"
+      ]
+    },
+    {
+      "id": "student-union",
+      "name": "Student Union",
+      "aliases": [],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9980608,
+        "lon": -122.0564892
+      },
+      "entrances": [
+        {
+          "lat": 36.9980608,
+          "lon": -122.0564892,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7373",
+      "primary_use": "GEN",
+      "region": "Quarry Plaza",
+      "departments": [
+        "Dean of Students Office",
+        "SOMeCA"
+      ]
+    },
+    {
+      "id": "fieldhouse-west",
+      "name": "Fieldhouse West",
+      "aliases": [
+        "West Fieldhouse",
+        "West Field House"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9915725,
+        "lon": -122.0646822
+      },
+      "entrances": [
+        {
+          "lat": 36.9915725,
+          "lon": -122.0646822,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7435",
+      "primary_use": "SPC",
+      "region": "Rachel Carson College",
+      "departments": [
+        "OPERS Physical Education",
+        "OPERS Recreation"
+      ]
+    },
+    {
+      "id": "visual-arts-research-facility",
+      "name": "Visual Arts Research Facility",
+      "aliases": [],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9916059,
+        "lon": -122.0617712
+      },
+      "entrances": [
+        {
+          "lat": 36.9916059,
+          "lon": -122.0617712,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7474",
+      "primary_use": "LAB",
+      "region": "Rachel Carson College",
+      "departments": [
+        "Art Department",
+        "Colleges Housing Administration",
+        "General Arts",
+        "ITS Core Technologies and Eng"
+      ]
+    },
+    {
+      "id": "communications-building",
+      "name": "Communications Building",
+      "aliases": [
+        "Communications",
+        "Communications Bldg"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 37.0007179,
+        "lon": -122.0610013
+      },
+      "entrances": [
+        {
+          "lat": 37.0007179,
+          "lon": -122.0610013,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7175",
+      "primary_use": "LAB",
+      "region": "Science and Engineering Hill",
+      "departments": [
+        "Cellular Carriers",
+        "Film and Digital Media Department",
+        "ITS Academic Divisional Computing",
+        "ITS Core Technologies and Eng",
+        "ITS VC Information Technology"
+      ]
+    },
+    {
+      "id": "nat-sci-paleo-magnetic-lab",
+      "name": "Nat Sci Paleo-Magnetic Lab",
+      "aliases": [
+        "Paleo-Magnetic Lab",
+        "Surge #2",
+        "Surge 2",
+        "Paleomagnetic Laboratory",
+        "Paleomagnetic Lab"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 37.0018805,
+        "lon": -122.0621118
+      },
+      "entrances": [
+        {
+          "lat": 37.0018805,
+          "lon": -122.0621118,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7481",
+      "primary_use": "LAB",
+      "region": "Science and Engineering Hill",
+      "departments": [
+        "Earth & Planetary Sciences Department"
+      ]
+    },
+    {
+      "id": "sinsheimer-laboratories",
+      "name": "Sinsheimer Laboratories",
+      "aliases": [
+        "Sinsheimer Lab",
+        "Sinsheimer Labs",
+        "Natural Sciences 3",
+        "Nat Sci 3",
+        "Nat Sciences 3",
+        "Natural Sci 3",
+        "NS3"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9988059,
+        "lon": -122.0618977
+      },
+      "entrances": [
+        {
+          "lat": 36.9988059,
+          "lon": -122.0618977,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7744",
+      "primary_use": "LAB",
+      "region": "Science and Engineering Hill",
+      "departments": [
+        "Biomolecular Engineering Dept",
+        "Campus Commercial Enterprises",
+        "Chemistry and Biochemistry",
+        "Environmental Health and Safety",
+        "General Physical and Biological Sciences",
+        "ITS Academic Divisional Computing",
+        "ITS Core Technologies and Eng",
+        "Molecular",
+        "Cell",
+        "and Developmental Biology",
+        "Office of Research",
+        "Physical and Biological Sciences Division Administration",
+        "Physical and Biological Sciences Division Core Facilities",
+        "Physical Plant Services"
+      ]
+    },
+    {
+      "id": "hahn-art-facility",
+      "name": "Hahn Art Facility",
+      "aliases": [
+        "Art East"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9981178,
+        "lon": -122.0534012
+      },
+      "entrances": [
+        {
+          "lat": 36.9981178,
+          "lon": -122.0534012,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7199",
+      "primary_use": "LAB",
+      "region": "Stevenson College",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "stevenson-college-commons",
+      "name": "Stevenson College Commons",
+      "aliases": [
+        "Stevenson Commons",
+        "Stevenson Event Center",
+        "Stevenson Activity Center",
+        "Stevenson Dining Commons"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9970738,
+        "lon": -122.0521968
+      },
+      "entrances": [
+        {
+          "lat": 36.9970738,
+          "lon": -122.0521968,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7144",
+      "primary_use": "GEN",
+      "region": "Stevenson College",
+      "departments": [
+        "Colleges Housing Administration",
+        "Cowell College Administration",
+        "Dining Services Administration",
+        "Food Services",
+        "General Assignment Classrooms",
+        "History Department",
+        "Housing Commercial Services",
+        "Literature Department",
+        "Student Activities - Housing",
+        "Student Living Quarters - Single"
+      ]
+    },
+    {
+      "id": "stevenson-college-library",
+      "name": "Stevenson College Library",
+      "aliases": [
+        "Stevenson College Lib",
+        "Stevenson Lib",
+        "Stevenson Library"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9977751,
+        "lon": -122.0536704
+      },
+      "entrances": [
+        {
+          "lat": 36.9977751,
+          "lon": -122.0536704,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7197",
+      "primary_use": "LIB",
+      "region": "Stevenson College",
+      "departments": [
+        "Linguistics Department",
+        "Stevenson College Administration"
+      ]
+    },
+    {
+      "id": "theater-arts-a-main-stage",
+      "name": "Theater Arts A Main Stage",
+      "aliases": [
+        "Theater Arts A",
+        "Theater Arts Unit A"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9947412,
+        "lon": -122.0623758
+      },
+      "entrances": [
+        {
+          "lat": 36.9947412,
+          "lon": -122.0623758,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7311",
+      "primary_use": "GEN",
+      "region": "Theater Arts Center",
+      "departments": [
+        "Theater Arts Assembly Space",
+        "Theater Arts Department"
+      ]
+    },
+    {
+      "id": "theater-arts-b-drama",
+      "name": "Theater Arts B Drama",
+      "aliases": [
+        "Theater Arts B",
+        "Theater Arts Unit B"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9946192,
+        "lon": -122.0613568
+      },
+      "entrances": [
+        {
+          "lat": 36.9946192,
+          "lon": -122.0613568,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7312",
+      "primary_use": "LAB",
+      "region": "Theater Arts Center",
+      "departments": [
+        "Theater Arts Department"
+      ]
+    },
+    {
+      "id": "theater-arts-c-studio",
+      "name": "Theater Arts C Studio",
+      "aliases": [
+        "Theater Arts C",
+        "Theater Arts Unit C"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9950746,
+        "lon": -122.0620686
+      },
+      "entrances": [
+        {
+          "lat": 36.9950746,
+          "lon": -122.0620686,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7313",
+      "primary_use": "LAB",
+      "region": "Theater Arts Center",
+      "departments": [
+        "Theater Arts Department"
+      ]
+    },
+    {
+      "id": "theater-arts-d-student-production",
+      "name": "Theater Arts D Student Production",
+      "aliases": [
+        "Theater Arts D",
+        "Theater Arts Unit D"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9943575,
+        "lon": -122.0599905
+      },
+      "entrances": [
+        {
+          "lat": 36.9943575,
+          "lon": -122.0599905,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7314",
+      "primary_use": "LAB",
+      "region": "Theater Arts Center",
+      "departments": [
+        "Theater Arts Department"
+      ]
+    },
+    {
+      "id": "theater-arts-e-classroom",
+      "name": "Theater Arts E Classroom",
+      "aliases": [
+        "Theater Arts E Clrm",
+        "Theater Arts E",
+        "Theater Arts Unit E"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9948607,
+        "lon": -122.0613863
+      },
+      "entrances": [
+        {
+          "lat": 36.9948607,
+          "lon": -122.0613863,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7315",
+      "primary_use": "CLS",
+      "region": "Theater Arts Center",
+      "departments": [
+        "Theater Arts Department"
+      ]
+    },
+    {
+      "id": "theater-arts-foundry",
+      "name": "Theater Arts Foundry",
+      "aliases": [],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9953834,
+        "lon": -122.0620806
+      },
+      "entrances": [
+        {
+          "lat": 36.9953834,
+          "lon": -122.0620806,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7405",
+      "primary_use": "LAB",
+      "region": "Theater Arts Center",
+      "departments": [
+        "Art Department"
+      ]
+    },
+    {
+      "id": "theater-arts-h-2nd-stage",
+      "name": "Theater Arts H 2nd Stage",
+      "aliases": [
+        "Theater Arts H",
+        "Theater Arts Unit H"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9946193,
+        "lon": -122.0617431
+      },
+      "entrances": [
+        {
+          "lat": 36.9946193,
+          "lon": -122.0617431,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7318",
+      "primary_use": "LAB",
+      "region": "Theater Arts Center",
+      "departments": [
+        "Theater Arts Department"
+      ]
+    },
+    {
+      "id": "theater-arts-k-costume",
+      "name": "Theater Arts K Costume",
+      "aliases": [
+        "Theater Arts K",
+        "Theater Arts Unit K"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9940157,
+        "lon": -122.0605954
+      },
+      "entrances": [
+        {
+          "lat": 36.9940157,
+          "lon": -122.0605954,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7534",
+      "primary_use": "SPC",
+      "region": "Theater Arts Center",
+      "departments": [
+        "Theater Arts Assembly Space"
+      ]
+    },
+    {
+      "id": "theater-arts-l-experimental-theater",
+      "name": "Theater Arts L Experimental Theater",
+      "aliases": [
+        "Experimental Theater",
+        "Theater Arts L",
+        "Theater Arts Unit L"
+      ],
+      "osm_name": null,
+      "facility_ids": [],
+      "known_rooms": [],
+      "exact_names": {},
+      "room_points": {},
+      "located_by": "ucsc-facilities",
+      "centroid": {
+        "lat": 36.9952947,
+        "lon": -122.0620923
+      },
+      "entrances": [
+        {
+          "lat": 36.9952947,
+          "lon": -122.0620923,
+          "kind": "approach",
+          "source": "ucsc-facilities"
+        }
+      ],
+      "source": "ucsc-facilities",
+      "asset": "7923",
+      "primary_use": "CLS",
+      "region": "Theater Arts Center",
+      "departments": [
+        "Theater Arts Department"
+      ]
     }
   ]
 }

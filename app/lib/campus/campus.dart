@@ -369,6 +369,18 @@ class Campus {
       });
     }
 
+    // A room the directory lists beats guesses at the same number in buildings with no room list.
+    bool listed(String b, String? r) =>
+        r != null && buildings[b]!.knownRooms.contains(r);
+    if (found.keys.any((k) => listed(k.$1, k.$2))) {
+      found.removeWhere(
+        (k, _) =>
+            k.$2 != null &&
+            !listed(k.$1, k.$2) &&
+            buildings[k.$1]!.knownRooms.isEmpty,
+      );
+    }
+
     final ranked = found.entries.toList()
       ..sort((x, y) {
         final byScore = y.value.$1.compareTo(x.value.$1);

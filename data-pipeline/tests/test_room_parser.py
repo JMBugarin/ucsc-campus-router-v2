@@ -214,8 +214,9 @@ class TestDataFiles(unittest.TestCase):
 
     def test_generated_file_matches_sources(self):
         """Fails if building_sources.json was edited without re-running build_buildings.py."""
-        self.assertEqual([b["id"] for b in self.buildings], [s["id"] for s in self.sources])
-        for built, src in zip(self.buildings, self.sources):
+        curated = [b for b in self.buildings if b.get("source") != "ucsc-facilities"]
+        self.assertEqual([b["id"] for b in curated], [s["id"] for s in self.sources])
+        for built, src in zip(curated, self.sources):
             self.assertTrue(set(src["aliases"]) <= set(built["aliases"]), built["id"])
 
     def test_every_room_is_near_an_entrance_of_its_building(self):
@@ -270,7 +271,10 @@ class TestDataFiles(unittest.TestCase):
                 continue
             # At least one entrance per building must be a short walk from a path.
             best = min(min(meters((e["lat"], e["lon"]), n) for n in nodes) for e in b["entrances"])
-            self.assertLess(best, 30, b["id"])  # nodes are sparse; see the README known gaps
+            # nodes are sparse; see the README known gaps. Buildings located from the campus map's
+            # outline have no door, so they get the looser limit build_facility_buildings applies.
+            limit = 150 if b.get("source") == "ucsc-facilities" else 30
+            self.assertLess(best, limit, b["id"])
 
     def test_no_alias_collisions(self):
         load_campus()  # raises ValueError on a collision

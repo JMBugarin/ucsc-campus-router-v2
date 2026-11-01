@@ -1,0 +1,3334 @@
+{
+ "source": "https://maps.ucsc.edu/ (facilities layer, UCSC PPDO)",
+ "buildings": [
+  {
+   "asset": "NoInfo",
+   "name": null,
+   "label": null,
+   "aliases": [],
+   "departments": [],
+   "category": null,
+   "primary_use": null,
+   "region": null,
+   "floors": null,
+   "lat": 36.9490957,
+   "lon": -122.0629205
+  },
+  {
+   "asset": "NoInfo",
+   "name": null,
+   "label": null,
+   "aliases": [],
+   "departments": [],
+   "category": null,
+   "primary_use": null,
+   "region": null,
+   "floors": null,
+   "lat": 36.9514601,
+   "lon": -122.0702194
+  },
+  {
+   "asset": "7299",
+   "name": null,
+   "label": null,
+   "aliases": [],
+   "departments": [],
+   "category": null,
+   "primary_use": null,
+   "region": null,
+   "floors": null,
+   "lat": 37.3422921,
+   "lon": -121.6314765
+  },
+  {
+   "asset": "7433",
+   "name": "Arboretum 1",
+   "label": "1",
+   "aliases": [
+    "Arboretum Lower Office"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.9846233,
+   "lon": -122.0643067
+  },
+  {
+   "asset": "7646",
+   "name": "Arboretum Dome 1",
+   "label": "Dome 1",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.9879492,
+   "lon": -122.0766551
+  },
+  {
+   "asset": "7647",
+   "name": "Arboretum Dome 2",
+   "label": "Dome 2",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.9846793,
+   "lon": -122.0653189
+  },
+  {
+   "asset": "7648",
+   "name": "Arboretum Dome 3",
+   "label": "Dome 3",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.981305,
+   "lon": -122.0542143
+  },
+  {
+   "asset": "7735",
+   "name": "Arboretum Gift Shop",
+   "label": "Gift Shop",
+   "aliases": [
+    "Norrie's"
+   ],
+   "departments": [
+    "Arboretum"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.9826395,
+   "lon": -122.061773
+  },
+  {
+   "asset": "7434",
+   "name": "Arboretum Horticulture 1",
+   "label": "Horticulture 1",
+   "aliases": [],
+   "departments": [
+    "Arboretum"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.9833267,
+   "lon": -122.0598
+  },
+  {
+   "asset": "7734",
+   "name": "Arboretum Horticulture 2",
+   "label": "Horticulture 2",
+   "aliases": [],
+   "departments": [
+    "Arboretum"
+   ],
+   "category": "G - General",
+   "primary_use": "LIB - Library / Study",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.9840398,
+   "lon": -122.0614443
+  },
+  {
+   "asset": "7283",
+   "name": "Arboretum Kiosk",
+   "label": "Arboretum Kiosk",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.9835656,
+   "lon": -122.0653692
+  },
+  {
+   "asset": "7278",
+   "name": "Arboretum Restroom",
+   "label": "Restroom",
+   "aliases": [],
+   "departments": [
+    "Arboretum"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.9834718,
+   "lon": -122.0598706
+  },
+  {
+   "asset": "7290",
+   "name": "Arboretum Sign Shop",
+   "label": "Sign Shop",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.984248,
+   "lon": -122.062944
+  },
+  {
+   "asset": "7097",
+   "name": "Emergency Response Storage",
+   "label": "ERS",
+   "aliases": [],
+   "departments": [
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Arboretum Neighborhood",
+   "floors": 1,
+   "lat": 36.9794159,
+   "lon": -122.0574829
+  },
+  {
+   "asset": "7754",
+   "name": "Academic Resource Center",
+   "label": "Academic Resource Center",
+   "aliases": [],
+   "departments": [
+    "Educational Opportunity Programs",
+    "Retention Services Office"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Central Core",
+   "floors": 2,
+   "lat": 36.994398,
+   "lon": -122.0596905
+  },
+  {
+   "asset": "7755",
+   "name": "Academic Resource Center Multipurpose Building",
+   "label": "ARC Multipurpose Building",
+   "aliases": [
+    "Student Press Center"
+   ],
+   "departments": [
+    "Student Media"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Central Core",
+   "floors": 1,
+   "lat": 36.9942001,
+   "lon": -122.0592213
+  },
+  {
+   "asset": "7376",
+   "name": "Kerr Hall",
+   "label": "Kerr Hall",
+   "aliases": [
+    "Clark Kerr Hall"
+   ],
+   "departments": [
+    "Academic Affairs",
+    "Academic Human Resources",
+    "Academic Senate",
+    "Business and Administrative Services Office",
+    "Campus Provost and EVC Administration",
+    "Campus Sustainability Office",
+    "Chancellor's Office",
+    "Equal Employment Opportunity/Affirmative Action",
+    "Graduate Studies Division",
+    "Human Resources",
+    "ITS Client Relationship Management",
+    "ITS Client Services and Security",
+    "ITS Core Technologies and Eng",
+    "ITS Learning Technologies",
+    "ITS VC Information Technology",
+    "Office of Research",
+    "Office of Sponsored Projects",
+    "Planning and Budget",
+    "Silicon Valley Initiative",
+    "Student Success Division Office",
+    "Title IX",
+    "University Relations",
+    "UR Philanthropy",
+    "Vice Provost and Dean",
+    "Undergraduate Education"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Central Core",
+   "floors": 5,
+   "lat": 36.9969294,
+   "lon": -122.0617463
+  },
+  {
+   "asset": "7145",
+   "name": "McHenry Library",
+   "label": "McHenry Library",
+   "aliases": [
+    "Global Vilalge Caf̩ at McHenry",
+    "Library",
+    "McHenry"
+   ],
+   "departments": [
+    "Academic Affairs",
+    "Campus Commercial Enterprises",
+    "Dean of Students Office",
+    "Education Department",
+    "History of Art and Visual Culture Department",
+    "Instructional Computing Laboratories",
+    "ITS Academic Divisional Computing",
+    "ITS Learning Technologies",
+    "Mathematics Department",
+    "Physical Plant Services",
+    "University Library",
+    "University Police",
+    "UR Communications and Marketing"
+   ],
+   "category": "G - General",
+   "primary_use": "LIB - Library / Study",
+   "region": "Central Core",
+   "floors": 5,
+   "lat": 36.9957245,
+   "lon": -122.0589354
+  },
+  {
+   "asset": "7920",
+   "name": "Social Sciences 1",
+   "label": "Social Sciences 1",
+   "aliases": [
+    "College 9 Academic",
+    "College Nine Academic"
+   ],
+   "departments": [
+    "Anthropology Department",
+    "College Nine Administration",
+    "College Ten Administration",
+    "Counseling and Psychological Services",
+    "General Assignment Classrooms",
+    "General Social Sciences",
+    "Instructional Computing Laboratories",
+    "Mailroom",
+    "Office of Sponsored Projects",
+    "Psychology Department",
+    "Social Sciences Division Administration",
+    "Student Activities - Housing"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "College Nine",
+   "floors": 5,
+   "lat": 37.0023582,
+   "lon": -122.0583544
+  },
+  {
+   "asset": "7130",
+   "name": "Cowell College Academic Building",
+   "label": "Academic Building",
+   "aliases": [
+    "Cowell Administrative Office",
+    "Cowell College Admin Office"
+   ],
+   "departments": [
+    "Cowell College Administration",
+    "Cowell College SLRS Adminstration",
+    "General Assignment Classrooms",
+    "Humanities Division Administration",
+    "Language and Applied Linguistics",
+    "Philosophy Department"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Cowell College",
+   "floors": 2,
+   "lat": 36.9970072,
+   "lon": -122.0525039
+  },
+  {
+   "asset": "7132",
+   "name": "Cowell College Classroom Building",
+   "label": "Classroom Building",
+   "aliases": [],
+   "departments": [
+    "General Assignment Classrooms"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Cowell College",
+   "floors": 1,
+   "lat": 36.9967583,
+   "lon": -122.0522417
+  },
+  {
+   "asset": "7134",
+   "name": "Cowell College Commons",
+   "label": "Cowell Commons",
+   "aliases": [
+    "Faculty Wing",
+    "Pickard Smith Gallery",
+    "Coffee Shop",
+    "Cowell Coffee Shop",
+    "Eloise Pickard Smith Gallery"
+   ],
+   "departments": [
+    "Colleges Housing Administration",
+    "Cowell College Administration",
+    "Dining Services Administration",
+    "Food Services",
+    "General Assignment Classrooms",
+    "History Department",
+    "Housing Commercial Services",
+    "Literature Department",
+    "Student Activities - Housing",
+    "Student Living Quarters - Single"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Cowell College",
+   "floors": 3,
+   "lat": 36.9970235,
+   "lon": -122.0528747
+  },
+  {
+   "asset": "7566",
+   "name": "Cowell College Faculty Office Addition",
+   "label": "Faculty Office Addition",
+   "aliases": [
+    "Cowell Faculty Annex"
+   ],
+   "departments": [
+    "Cowell College Administration",
+    "Philosophy Department"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Cowell College",
+   "floors": 2,
+   "lat": 36.996731,
+   "lon": -122.053528
+  },
+  {
+   "asset": "7133",
+   "name": "Cowell College Faculty Wing",
+   "label": "Faculty Wing",
+   "aliases": [
+    "Cowell Administrative Office"
+   ],
+   "departments": [
+    "Cowell College Administration",
+    "Cowell College SLRS Adminstration",
+    "General Assignment Classrooms",
+    "Humanities Division Administration",
+    "Language and Applied Linguistics",
+    "Philosophy Department"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Cowell College",
+   "floors": 2,
+   "lat": 36.9980498,
+   "lon": -122.0554921
+  },
+  {
+   "asset": "7131",
+   "name": "Cowell College Library",
+   "label": "Library",
+   "aliases": [
+    "Page Smith Gallery"
+   ],
+   "departments": [
+    "Cowell College Administration",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "LIB - Library / Study",
+   "region": "Cowell College",
+   "floors": 1,
+   "lat": 36.9967692,
+   "lon": -122.0531561
+  },
+  {
+   "asset": "7678",
+   "name": "Cowell Surge Trailer 1",
+   "label": "Surge 1",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Cowell College",
+   "floors": 1,
+   "lat": 36.9962563,
+   "lon": -122.0551425
+  },
+  {
+   "asset": "7679",
+   "name": "Cowell Surge Trailer 2",
+   "label": "Surge 2",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Cowell College",
+   "floors": 1,
+   "lat": 36.9967877,
+   "lon": -122.0570201
+  },
+  {
+   "asset": "7159",
+   "name": "Crown College Admin Building",
+   "label": "Admin Building",
+   "aliases": [],
+   "departments": [
+    "Crown College Administration",
+    "Crown College SLRS Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Crown College",
+   "floors": 2,
+   "lat": 37.0002673,
+   "lon": -122.0548166
+  },
+  {
+   "asset": "7155",
+   "name": "Crown College Classroom Building",
+   "label": "Classroom Building",
+   "aliases": [],
+   "departments": [
+    "Counseling and Psychological Services",
+    "Crown College Administration",
+    "General Assignment Classrooms",
+    "Latin American and Latino Studies Department",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Crown College",
+   "floors": 3,
+   "lat": 36.9998856,
+   "lon": -122.0542806
+  },
+  {
+   "asset": "7156",
+   "name": "Crown College Faculty Wing",
+   "label": "Faculty Wing",
+   "aliases": [
+    "Ivan Vallier Hall",
+    "Crown Faculty Offices",
+    "Vallier Hall",
+    "Crown Ivan Vallier Hall"
+   ],
+   "departments": [
+    "General Humanities",
+    "Latin American and Latino Studies Department",
+    "Politics Department",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Crown College",
+   "floors": 2,
+   "lat": 37.0003078,
+   "lon": -122.055972
+  },
+  {
+   "asset": "7158",
+   "name": "Crown College Gatehouse",
+   "label": "Gatehouse",
+   "aliases": [
+    "Crown Mailroom",
+    "Cronw College Mailroom"
+   ],
+   "departments": [
+    "Mailroom"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Crown College",
+   "floors": 1,
+   "lat": 37.0022438,
+   "lon": -122.0610674
+  },
+  {
+   "asset": "7162",
+   "name": "Crown College Library",
+   "label": "Library",
+   "aliases": [],
+   "departments": [
+    "Crown College Administration",
+    "Crown College SLRS Administration",
+    "Instructional Computing Laboratories"
+   ],
+   "category": "G - General",
+   "primary_use": "LIB - Library / Study",
+   "region": "Crown College",
+   "floors": 4,
+   "lat": 36.9995611,
+   "lon": -122.0541817
+  },
+  {
+   "asset": "7404",
+   "name": "Fire House",
+   "label": "Fire House",
+   "aliases": [],
+   "departments": [
+    "SC Fire Department"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Crown-Merrill Neighborhood",
+   "floors": 1,
+   "lat": 37.0018545,
+   "lon": -122.0556859
+  },
+  {
+   "asset": "7163",
+   "name": "Student Music East-KZSC Radio Station",
+   "label": "KZSC Radio",
+   "aliases": [
+    "Student Music East",
+    "Radio",
+    "KZSC",
+    "Radio Station"
+   ],
+   "departments": [
+    "KZSC Radio Station"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Crown-Merrill Neighborhood",
+   "floors": 2,
+   "lat": 37.0004475,
+   "lon": -122.0534653
+  },
+  {
+   "asset": "7717",
+   "name": "Digital Arts Research Center",
+   "label": "DARC",
+   "aliases": [
+    "Digital Arts Research Facility",
+    "Digital Arts Facility"
+   ],
+   "departments": [
+    "Art Department",
+    "Arts Division Administration",
+    "Digital Arts and New Media",
+    "General Arts",
+    "ITS Academic Divisional Computing",
+    "Music Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 3,
+   "lat": 36.9939546,
+   "lon": -122.0606619
+  },
+  {
+   "asset": "7493",
+   "name": "Elena Baskin Building A",
+   "label": "A",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9937828,
+   "lon": -122.0576296
+  },
+  {
+   "asset": "7494",
+   "name": "Elena Baskin Building B",
+   "label": "B",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9945854,
+   "lon": -122.0599804
+  },
+  {
+   "asset": "7495",
+   "name": "Elena Baskin Building C",
+   "label": "C",
+   "aliases": [
+    "E Baskin Woodshop",
+    "Woodshop"
+   ],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 2,
+   "lat": 36.9939299,
+   "lon": -122.0579515
+  },
+  {
+   "asset": "7496",
+   "name": "Elena Baskin Building D",
+   "label": "D",
+   "aliases": [],
+   "departments": [
+    "Art Department",
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 2,
+   "lat": 36.9944907,
+   "lon": -122.0597397
+  },
+  {
+   "asset": "7497",
+   "name": "Elena Baskin Building E",
+   "label": "E",
+   "aliases": [],
+   "departments": [
+    "Art Department",
+    "ITS Academic Divisional Computing"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9946989,
+   "lon": -122.0614428
+  },
+  {
+   "asset": "7498",
+   "name": "Elena Baskin Building F",
+   "label": "F",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9953329,
+   "lon": -122.0632148
+  },
+  {
+   "asset": "7499",
+   "name": "Elena Baskin Building G",
+   "label": "G",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9942325,
+   "lon": -122.0599933
+  },
+  {
+   "asset": "7784",
+   "name": "Elena Baskin Building H",
+   "label": "H",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 2,
+   "lat": 36.9948807,
+   "lon": -122.060369
+  },
+  {
+   "asset": "7815",
+   "name": "Elena Baskin Building I",
+   "label": "I",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 2,
+   "lat": 36.9951702,
+   "lon": -122.0620152
+  },
+  {
+   "asset": "7822",
+   "name": "Elena Baskin Building J",
+   "label": "J",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9945372,
+   "lon": -122.0608844
+  },
+  {
+   "asset": "7833",
+   "name": "Elena Baskin Building K",
+   "label": "K",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9934214,
+   "lon": -122.0570157
+  },
+  {
+   "asset": "7926",
+   "name": "Elena Baskin Building L",
+   "label": "L",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9936273,
+   "lon": -122.0586415
+  },
+  {
+   "asset": "7927",
+   "name": "Elena Baskin Building M",
+   "label": "M",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9944558,
+   "lon": -122.0606217
+  },
+  {
+   "asset": "7928",
+   "name": "Elena Baskin Building N",
+   "label": "N",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9935266,
+   "lon": -122.0570965
+  },
+  {
+   "asset": "7929",
+   "name": "Elena Baskin Building P",
+   "label": "P",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Elena Baskin Visual Arts Center",
+   "floors": 1,
+   "lat": 36.9948623,
+   "lon": -122.0606674
+  },
+  {
+   "asset": "7710",
+   "name": "Humanities & Social Sciences Building",
+   "label": "H2",
+   "aliases": [
+    "Humanities 2",
+    "Humanities Building 2"
+   ],
+   "departments": [
+    "General Assignment Classrooms",
+    "General Humanities",
+    "History Department",
+    "History of Consciousness Department",
+    "ITS Academic Divisional Computing",
+    "Literature Department",
+    "Philosophy Department",
+    "Physical Plant Services",
+    "Social Sciences Division Administration",
+    "UR Communications and Marketing"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Humanities Center",
+   "floors": 5,
+   "lat": 36.9981112,
+   "lon": -122.0538974
+  },
+  {
+   "asset": "7711",
+   "name": "Humanities Auditorium",
+   "label": "Auditorium",
+   "aliases": [],
+   "departments": [
+    "General Assignment Classrooms"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Humanities Center",
+   "floors": 2,
+   "lat": 36.9987229,
+   "lon": -122.0554907
+  },
+  {
+   "asset": "7706",
+   "name": "Humanities Building 1",
+   "label": "H1",
+   "aliases": [
+    "Humanities 1",
+    "H1"
+   ],
+   "departments": [
+    "Feminist Studies Department",
+    "General Humanities",
+    "History Department",
+    "History of Consciousness Department",
+    "Humanities Division Administration",
+    "Language and Applied Linguistics",
+    "Literature Department",
+    "Philosophy Department",
+    "Physical Plant Services",
+    "The Humanities Institute ORA",
+    "UR Communications and Marketing",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Humanities Center",
+   "floors": 7,
+   "lat": 36.9982836,
+   "lon": -122.055634
+  },
+  {
+   "asset": "7704",
+   "name": "Humanities Building Rest Rooms",
+   "label": "Restrooms",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Humanities Center",
+   "floors": 1,
+   "lat": 36.9988243,
+   "lon": -122.055616
+  },
+  {
+   "asset": "7200",
+   "name": "Cowell Student Health Center",
+   "label": "Student Health Center",
+   "aliases": [
+    "CSHC",
+    "Health Center",
+    "Student Health Center",
+    "Clinic"
+   ],
+   "departments": [
+    "Student Health Services"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "John R. Lewis College Neighborhood",
+   "floors": 3,
+   "lat": 36.9995704,
+   "lon": -122.0578885
+  },
+  {
+   "asset": "7201",
+   "name": "Cowell Student Health Center Addition",
+   "label": "CSHC East Wing",
+   "aliases": [
+    "CSHC",
+    "Health Center",
+    "Health Center East Wing",
+    "Student Health Center Addition"
+   ],
+   "departments": [
+    "Counseling and Psychological Services",
+    "Student Health Services"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "John R. Lewis College Neighborhood",
+   "floors": 2,
+   "lat": 36.9995312,
+   "lon": -122.0569742
+  },
+  {
+   "asset": "7921",
+   "name": "Social Sciences 2",
+   "label": "Social Sciences 2",
+   "aliases": [
+    "College 10 Academic"
+   ],
+   "departments": [
+    "Colleges Housing Administration",
+    "Ctr for Global",
+    "International",
+    "& Regional Studies ORA",
+    "General Assignment Classrooms",
+    "General Social Sciences",
+    "ITS Academic Divisional Computing",
+    "ITS Client Services and Security",
+    "Mailroom",
+    "Physical Planning and Construction",
+    "Psychology Department",
+    "Social Sciences Division Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "John R. Lewis College Neighborhood",
+   "floors": 5,
+   "lat": 37.0015504,
+   "lon": -122.0584947
+  },
+  {
+   "asset": "7377",
+   "name": "Kresge College Academic Building",
+   "label": "Kresge College House",
+   "aliases": [
+    "Kresge Administration Building"
+   ],
+   "departments": [
+    "Provost- Univ House- Housing"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Kresge College",
+   "floors": 3,
+   "lat": 36.9975387,
+   "lon": -122.0670244
+  },
+  {
+   "asset": "7393",
+   "name": "Kresge College Academic Building West Wing",
+   "label": "West Wing",
+   "aliases": [
+    "Kresge Seminar Room",
+    "Kresge College Seminar Room",
+    "Kresge Student Commons"
+   ],
+   "departments": [
+    "Film and Digital Media Department",
+    "Kresge College Administration",
+    "Student Activities - Housing"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Kresge College",
+   "floors": 2,
+   "lat": 36.9969188,
+   "lon": -122.0656728
+  },
+  {
+   "asset": "7874",
+   "name": "Kresge College Academic Center",
+   "label": "Academic Center",
+   "aliases": [
+    "Owl's Nest",
+    "Kresge Owl's Nest"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Kresge College",
+   "floors": 2,
+   "lat": 36.9987024,
+   "lon": -122.0652444
+  },
+  {
+   "asset": "7807",
+   "name": "Kresge College Annex Building A",
+   "label": "Annex Building A",
+   "aliases": [],
+   "departments": [
+    "General Physical and Biological Sciences"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Kresge College",
+   "floors": 1,
+   "lat": 36.9972048,
+   "lon": -122.0659293
+  },
+  {
+   "asset": "7808",
+   "name": "Kresge College Annex Building B",
+   "label": "Annex Building B",
+   "aliases": [],
+   "departments": [
+    "Film and Digital Media Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Kresge College",
+   "floors": 1,
+   "lat": 36.9978062,
+   "lon": -122.0674334
+  },
+  {
+   "asset": "7378",
+   "name": "Kresge College Classroom Building",
+   "label": "Classroom Building",
+   "aliases": [],
+   "departments": [
+    "General Assignment Classrooms",
+    "Instructional Computing Laboratories"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Kresge College",
+   "floors": 2,
+   "lat": 36.9975358,
+   "lon": -122.0646841
+  },
+  {
+   "asset": "7380",
+   "name": "Kresge College Library",
+   "label": "Library",
+   "aliases": [],
+   "departments": [
+    "Film and Digital Media Department",
+    "Kresge College SLRS Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "LIB - Library / Study",
+   "region": "Kresge College",
+   "floors": 2,
+   "lat": 36.9985337,
+   "lon": -122.067382
+  },
+  {
+   "asset": "7397",
+   "name": "Kresge College Lounge",
+   "label": "Lounge",
+   "aliases": [
+    "Kresge College Triplets"
+   ],
+   "departments": [
+    "Retention Services Office",
+    "Student Activities - Housing"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Kresge College",
+   "floors": 2,
+   "lat": 36.9970848,
+   "lon": -122.0657308
+  },
+  {
+   "asset": "7110",
+   "name": "Barn G",
+   "label": "Barn G",
+   "aliases": [
+    "Barn G",
+    "Campus Facilities",
+    "Shop Office",
+    "Tack House",
+    "Shop Barn",
+    "G Barn"
+   ],
+   "departments": [
+    "Physical Planning and Construction",
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 2,
+   "lat": 36.9805038,
+   "lon": -122.0527981
+  },
+  {
+   "asset": "7114",
+   "name": "Blacksmith Shop",
+   "label": "Blacksmith Shop",
+   "aliases": [],
+   "departments": [
+    "Business and Administrative Services Office",
+    "Physical Planning and Construction",
+    "Physical Plant Services",
+    "TAPS Transportation Systems Management"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9810088,
+   "lon": -122.0538295
+  },
+  {
+   "asset": "7323",
+   "name": "Campus Fleet Garage and TSM Office",
+   "label": "Fleet Garage and TSM Office",
+   "aliases": [],
+   "departments": [
+    "Fleet Operations",
+    "TAPS Transportation Systems Management"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9804792,
+   "lon": -122.0548808
+  },
+  {
+   "asset": "7324",
+   "name": "Campus Fleet Washbay",
+   "label": "Fleet Washbay",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9792864,
+   "lon": -122.051458
+  },
+  {
+   "asset": "7108",
+   "name": "Cardiff House Women's Center",
+   "label": "Cardiff House",
+   "aliases": [
+    "Womens Center",
+    "Cowell Housse"
+   ],
+   "departments": [
+    "Women's Center"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 2,
+   "lat": 36.9789875,
+   "lon": -122.0500336
+  },
+  {
+   "asset": "7106",
+   "name": "Carriage House",
+   "label": "Carriage House",
+   "aliases": [],
+   "departments": [
+    "Business and Administrative Services Office",
+    "Campus Orientation",
+    "Copier Services",
+    "Human Resources",
+    "ITS Client Relationship Management",
+    "Office of Emergency Services",
+    "Risk and Safety Services",
+    "TAPS Parking",
+    "TAPS Transportation Systems Management"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 2,
+   "lat": 36.9797418,
+   "lon": -122.0509602
+  },
+  {
+   "asset": "7109",
+   "name": "Carriage House Annex",
+   "label": "CH Annex",
+   "aliases": [
+    "Cowell House Garage"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9729207,
+   "lon": -122.0301988
+  },
+  {
+   "asset": "7105",
+   "name": "Cook House",
+   "label": "Cook House",
+   "aliases": [
+    "Admissions Office"
+   ],
+   "departments": [
+    "Admissions"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 2,
+   "lat": 36.9788232,
+   "lon": -122.0541824
+  },
+  {
+   "asset": "7073",
+   "name": "Cooperage",
+   "label": "Cooperage",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.979789,
+   "lon": -122.0546181
+  },
+  {
+   "asset": "7099",
+   "name": "EH&S Storage Unit 1",
+   "label": "Storage Unit 1",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9728248,
+   "lon": -122.0316036
+  },
+  {
+   "asset": "7100",
+   "name": "EH&S Storage Unit 2",
+   "label": "Storage Unit 2",
+   "aliases": [],
+   "departments": [
+    "Environmental Health and Safety"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.982185,
+   "lon": -122.0624793
+  },
+  {
+   "asset": "7096",
+   "name": "Emergency Response Center",
+   "label": "ERC",
+   "aliases": [
+    "Police Station",
+    "Police",
+    "Police Department",
+    "UCSC Police",
+    "PD"
+   ],
+   "departments": [
+    "Dispatch Center",
+    "University Police"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Main Entrance Area",
+   "floors": 2,
+   "lat": 36.9793669,
+   "lon": -122.0527836
+  },
+  {
+   "asset": "7113",
+   "name": "Hay Barn",
+   "label": "Hay Barn",
+   "aliases": [
+    "J Barn",
+    "Barn J"
+   ],
+   "departments": [
+    "Social Sciences Division Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9810335,
+   "lon": -122.0543835
+  },
+  {
+   "asset": "7533",
+   "name": "Physical Planning & Construction Trailer 1",
+   "label": "Trailer 1",
+   "aliases": [
+    "Comm Trailer",
+    "PP&C Contracts Trailer"
+   ],
+   "departments": [
+    "Physical Planning and Construction"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9792416,
+   "lon": -122.0480936
+  },
+  {
+   "asset": "7565",
+   "name": "Physical Planning & Construction Trailer 2",
+   "label": "Trailer 2",
+   "aliases": [
+    "PP&C Records Trailer"
+   ],
+   "departments": [
+    "Physical Planning and Construction"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9808596,
+   "lon": -122.0534846
+  },
+  {
+   "asset": "7787",
+   "name": "Physical Planning & Construction Trailer 3",
+   "label": "PPC Trailer 3",
+   "aliases": [
+    "Work Management Trailer"
+   ],
+   "departments": [
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9800185,
+   "lon": -122.0524028
+  },
+  {
+   "asset": "7745",
+   "name": "Physical Plant Trailer 1",
+   "label": "PPS Trailer 1",
+   "aliases": [
+    "Grounds Trailer 1"
+   ],
+   "departments": [
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9784036,
+   "lon": -122.0469392
+  },
+  {
+   "asset": "7785",
+   "name": "Physical Plant Trailer 2",
+   "label": "PPS Trailer 2",
+   "aliases": [
+    "Grounds Trailer 2"
+   ],
+   "departments": [
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9779576,
+   "lon": -122.0456973
+  },
+  {
+   "asset": "7786",
+   "name": "Physical Plant Trailer 3",
+   "label": "PPS Trailer 3",
+   "aliases": [
+    "TAPS trailer",
+    "Parking Services Trailer"
+   ],
+   "departments": [
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9784937,
+   "lon": -122.0475752
+  },
+  {
+   "asset": "7371",
+   "name": "Powder House",
+   "label": "Powder House",
+   "aliases": [],
+   "departments": [
+    "Environmental Health and Safety"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9816425,
+   "lon": -122.0530813
+  },
+  {
+   "asset": "7111",
+   "name": "Receiving Barn",
+   "label": "Barn H",
+   "aliases": [
+    "Receiving Barn",
+    "Barn H",
+    "H Barn"
+   ],
+   "departments": [
+    "Environmental Health and Safety",
+    "Receiving",
+    "Risk Management",
+    "TAPS Parking"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Main Entrance Area",
+   "floors": 3,
+   "lat": 36.9795427,
+   "lon": -122.0534809
+  },
+  {
+   "asset": "7227",
+   "name": "Shop Office Building",
+   "label": "Shop Office",
+   "aliases": [
+    "Paint Shop",
+    "Structural Trades"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9808877,
+   "lon": -122.055547
+  },
+  {
+   "asset": "7475",
+   "name": "Shop Stores & EH&S",
+   "label": "Shop Stores",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9792147,
+   "lon": -122.0514829
+  },
+  {
+   "asset": "7228",
+   "name": "Sign Shop",
+   "label": "Sign Shop",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9806674,
+   "lon": -122.0545545
+  },
+  {
+   "asset": "7064",
+   "name": "South Campus Core Building",
+   "label": "South Campus Core Building",
+   "aliases": [
+    "South Core"
+   ],
+   "departments": [
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Main Entrance Area",
+   "floors": 1,
+   "lat": 36.9794308,
+   "lon": -122.0511957
+  },
+  {
+   "asset": "7189",
+   "name": "Merrill College Academic Building",
+   "label": "Academic Building",
+   "aliases": [],
+   "departments": [
+    "CHES Administration",
+    "Counseling and Psychological Services",
+    "General Assignment Classrooms",
+    "Latin American and Latino Studies Department",
+    "Merrill College SLRS Administration",
+    "Physical Plant Services",
+    "Politics Department",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Merrill College",
+   "floors": 2,
+   "lat": 36.9997593,
+   "lon": -122.0538802
+  },
+  {
+   "asset": "7190",
+   "name": "Merrill College Administration Building",
+   "label": "Administration Building",
+   "aliases": [
+    "Merrill College Office"
+   ],
+   "departments": [
+    "Mailroom",
+    "Merrill College Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Merrill College",
+   "floors": 1,
+   "lat": 36.9996684,
+   "lon": -122.0529958
+  },
+  {
+   "asset": "7186",
+   "name": "Merrill College Common",
+   "label": "Merrill Commons",
+   "aliases": [
+    "Baobob Lounge",
+    "Merrill Baobob Lounge"
+   ],
+   "departments": [
+    "Student Activities - Housing"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Merrill College",
+   "floors": 1,
+   "lat": 37.0012736,
+   "lon": -122.0572811
+  },
+  {
+   "asset": "7310",
+   "name": "Merrill College Faculty Common",
+   "label": "Faculty Common",
+   "aliases": [
+    "Merrill Lounge"
+   ],
+   "departments": [
+    "Merrill College Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Merrill College",
+   "floors": 1,
+   "lat": 36.9998227,
+   "lon": -122.0549202
+  },
+  {
+   "asset": "7730",
+   "name": "Merrill College Faculty Office Annex",
+   "label": "Faculty Office Annex",
+   "aliases": [],
+   "departments": [
+    "Politics Department",
+    "UE Advising & Honors"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Merrill College",
+   "floors": 2,
+   "lat": 36.9986292,
+   "lon": -122.0510555
+  },
+  {
+   "asset": "7309",
+   "name": "Merrill College Library",
+   "label": "Library",
+   "aliases": [
+    "Casa Latina",
+    "Merrill College Casa Latina"
+   ],
+   "departments": [
+    "ITS Core Technologies and Eng",
+    "Latin American and Latino Studies Department",
+    "Merrill College Administration",
+    "UE Advising & Honors",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Merrill College",
+   "floors": 2,
+   "lat": 36.9993448,
+   "lon": -122.0532131
+  },
+  {
+   "asset": "7415",
+   "name": "Merrill College Plaza",
+   "label": "Merrill Plaza",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Merrill College",
+   "floors": 3,
+   "lat": 37.0001344,
+   "lon": -122.0532558
+  },
+  {
+   "asset": "7375",
+   "name": "Merrill College Recreation Room",
+   "label": "Recreation Room",
+   "aliases": [
+    "Cantu Queer Center",
+    "Merrill Rec Building",
+    "GLBTI"
+   ],
+   "departments": [
+    "Cantu Queer Center",
+    "KZSC Radio Station"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Merrill College",
+   "floors": 2,
+   "lat": 37.0010801,
+   "lon": -122.0554595
+  },
+  {
+   "asset": "7169",
+   "name": "Merrill Garden House",
+   "label": "Garden House",
+   "aliases": [
+    "Chadwick Garden Chalet",
+    "Up-Farm Chalet",
+    "Merrill Garden Chalet"
+   ],
+   "departments": [
+    "Agroecology Program ORA"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Merrill College",
+   "floors": 1,
+   "lat": 36.9999396,
+   "lon": -122.0545701
+  },
+  {
+   "asset": "7664",
+   "name": "Merrill Material Recovery Enclosure",
+   "label": "Material Recovery Enclosure",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Merrill College",
+   "floors": 1,
+   "lat": 36.9996205,
+   "lon": -122.0512681
+  },
+  {
+   "asset": "7806",
+   "name": "Merrill Ming Ong Computer Lab",
+   "label": "Ming Ong Computer Lab",
+   "aliases": [],
+   "departments": [
+    "Instructional Computing Laboratories"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Merrill College",
+   "floors": 1,
+   "lat": 37.0002967,
+   "lon": -122.054219
+  },
+  {
+   "asset": "7925",
+   "name": "Gamelan Studio",
+   "label": "Gamelan Studio",
+   "aliases": [
+    "Music Center Gamelan Studio"
+   ],
+   "departments": [
+    "Music Department"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Music Center Neighborhood",
+   "floors": 1,
+   "lat": 36.993523,
+   "lon": -122.0610008
+  },
+  {
+   "asset": "7922",
+   "name": "Music Center",
+   "label": "Music Center",
+   "aliases": [
+    "Recital Hall",
+    "Music Center"
+   ],
+   "departments": [
+    "Arts Division Administration",
+    "Instructional Computing Laboratories",
+    "Music Department"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Music Center Neighborhood",
+   "floors": 3,
+   "lat": 36.9929171,
+   "lon": -122.0604087
+  },
+  {
+   "asset": "7166",
+   "name": "Environmental Health and Safety Facility",
+   "label": "EH&S Facility",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "North Campus",
+   "floors": 1,
+   "lat": 36.9962485,
+   "lon": -122.0631945
+  },
+  {
+   "asset": "7406",
+   "name": "Athletics & Recreation Activities Building",
+   "label": "Activities",
+   "aliases": [
+    "East Fieldhouse Activities",
+    "OPERS Multipurpose Building"
+   ],
+   "departments": [
+    "OPERS Recreation",
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "OPERS Eastside",
+   "floors": 1,
+   "lat": 36.9938997,
+   "lon": -122.0551156
+  },
+  {
+   "asset": "7726",
+   "name": "Athletics & Recreation Fitness Center",
+   "label": "OPERS Fitness Center",
+   "aliases": [
+    "Fitness Center",
+    "Gym",
+    "Wellness Center"
+   ],
+   "departments": [
+    "OPERS Recreation"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "OPERS Eastside",
+   "floors": 2,
+   "lat": 36.9936703,
+   "lon": -122.0548175
+  },
+  {
+   "asset": "7743",
+   "name": "Athletics & Recreation Offices & Support Space",
+   "label": "Offices and Support Space",
+   "aliases": [
+    "East Fieldhouse Pool Building",
+    "Pool Building"
+   ],
+   "departments": [
+    "OPERS Physical Education",
+    "OPERS Recreation"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "OPERS Eastside",
+   "floors": 2,
+   "lat": 36.9949712,
+   "lon": -122.0539328
+  },
+  {
+   "asset": "7753",
+   "name": "Athletics & Recreation Tennis Building",
+   "label": "OPERS Tennis",
+   "aliases": [],
+   "departments": [
+    "OPERS Physical Education",
+    "OPERS Recreation"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "OPERS Eastside",
+   "floors": 1,
+   "lat": 36.9955127,
+   "lon": -122.0576938
+  },
+  {
+   "asset": "7119",
+   "name": "East Field House",
+   "label": "East Field House",
+   "aliases": [],
+   "departments": [
+    "OPERS Physical Education",
+    "OPERS Recreation"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "OPERS Eastside",
+   "floors": 4,
+   "lat": 36.9944947,
+   "lon": -122.054996
+  },
+  {
+   "asset": "7425",
+   "name": "Oakes Co Recycling Ctr",
+   "label": "Recycling Ctr",
+   "aliases": [
+    "Recycling",
+    "Oakes College Storage B"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Oakes College",
+   "floors": 1,
+   "lat": 36.9901182,
+   "lon": -122.0657593
+  },
+  {
+   "asset": "7416",
+   "name": "Oakes College Academic Building",
+   "label": "Academic Building",
+   "aliases": [],
+   "departments": [
+    "Agroecology Program ORA",
+    "Chancellor's Office",
+    "Counseling and Psychological Services",
+    "Educational Partnership Center",
+    "General Assignment Classrooms",
+    "General Social Sciences",
+    "Mailroom",
+    "Oakes College Administration",
+    "Oakes College SLRS Administration",
+    "Sociology Department",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Oakes College",
+   "floors": 3,
+   "lat": 36.9900138,
+   "lon": -122.0634513
+  },
+  {
+   "asset": "7419",
+   "name": "Oakes College Tutorial Commons",
+   "label": "Tutorial Commons",
+   "aliases": [
+    "Oakes Café",
+    "Oakes Learning Center",
+    "Learning Center",
+    "Oakes Caf̩"
+   ],
+   "departments": [
+    "Housing Commercial Services",
+    "Instructional Computing Laboratories",
+    "Oakes College SLRS Administration",
+    "Student Activities - Housing"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Oakes College",
+   "floors": 2,
+   "lat": 36.9893633,
+   "lon": -122.0635174
+  },
+  {
+   "asset": "7075",
+   "name": "CAPS Porter Annex Modular",
+   "label": "CAPS Porter Annex",
+   "aliases": [],
+   "departments": [],
+   "category": "M - Medical",
+   "primary_use": null,
+   "region": "Porter College",
+   "floors": null,
+   "lat": 36.9927357,
+   "lon": -122.0625798
+  },
+  {
+   "asset": "7306",
+   "name": "Porter College Academic",
+   "label": "Porter Academic",
+   "aliases": [
+    "Porter College Building D",
+    "Porter College Administration",
+    "Sesnon Art Gallery"
+   ],
+   "departments": [
+    "Art Galleries",
+    "Arts Division Administration",
+    "Counseling and Psychological Services",
+    "General Assignment Classrooms",
+    "History of Art and Visual Culture Department",
+    "Instructional Computing Laboratories",
+    "ITS Academic Divisional Computing",
+    "Physical Plant Services",
+    "Porter College Administration",
+    "Porter College SLRS Administration",
+    "Student Activities - Housing",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Porter College",
+   "floors": 3,
+   "lat": 36.994269,
+   "lon": -122.0655384
+  },
+  {
+   "asset": "7305",
+   "name": "Porter College Dining Common",
+   "label": "Porter/Kresge Dining Commons",
+   "aliases": [
+    "Building C",
+    "Porter Slug Grill & Café",
+    "Porter College Dining Commons",
+    "Porter College Building C",
+    "Porter Slug Grill & Caf̩"
+   ],
+   "departments": [
+    "Art Galleries",
+    "Campus Commercial Enterprises",
+    "Food Services",
+    "Mailroom",
+    "Student Activities - Housing",
+    "Student Residential General",
+    "Student Residential Maintenance"
+   ],
+   "category": "G - General",
+   "primary_use": "RES - Residential",
+   "region": "Porter College",
+   "floors": 3,
+   "lat": 36.9942896,
+   "lon": -122.0657622
+  },
+  {
+   "asset": "7300",
+   "name": "Bay Tree Bookstore",
+   "label": "Bay Tree Bookstore",
+   "aliases": [],
+   "departments": [
+    "Bay Tree Bookstore",
+    "Career Center",
+    "Ethnic Resource Center"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Quarry Plaza",
+   "floors": 3,
+   "lat": 36.9979046,
+   "lon": -122.0552218
+  },
+  {
+   "asset": "7301",
+   "name": "Classroom Unit 1",
+   "label": "Classroom Unit 1",
+   "aliases": [
+    "Classroom Unit",
+    "Classroom Unit 2",
+    "Classroom Building"
+   ],
+   "departments": [
+    "General Assignment Classrooms",
+    "International Education",
+    "ITS Learning Technologies"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Quarry Plaza",
+   "floors": 3,
+   "lat": 36.9980211,
+   "lon": -122.0571273
+  },
+  {
+   "asset": "7302",
+   "name": "Graduate Commons",
+   "label": "Graduate Commons",
+   "aliases": [
+    "Joe's",
+    "Joe's Pizza",
+    "Iveta"
+   ],
+   "departments": [
+    "Campus Commercial Enterprises",
+    "Graduate Student Commons"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Quarry Plaza",
+   "floors": 2,
+   "lat": 36.9981542,
+   "lon": -122.0557776
+  },
+  {
+   "asset": "7115",
+   "name": "Hahn Student Services",
+   "label": "Hahn Student Services",
+   "aliases": [
+    "Central Servcies"
+   ],
+   "departments": [
+    "Admissions",
+    "Cashier",
+    "Dean of Students Office",
+    "Disability Resource Center",
+    "Enrollment Management Office",
+    "Financial Aid",
+    "Housing Services Administration",
+    "Registrar",
+    "Student Business Services",
+    "Student Success Division Office",
+    "Summer Session",
+    "Vice Provost and Dean",
+    "Undergraduate Education"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Quarry Plaza",
+   "floors": 3,
+   "lat": 36.9960974,
+   "lon": -122.0570764
+  },
+  {
+   "asset": "7399",
+   "name": "Quarry Amphitheater Storage",
+   "label": "Storage",
+   "aliases": [],
+   "departments": [
+    "Dean of Students Office",
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Quarry Plaza",
+   "floors": 1,
+   "lat": 36.9987914,
+   "lon": -122.0554178
+  },
+  {
+   "asset": "7373",
+   "name": "Student Union",
+   "label": "Student Union",
+   "aliases": [],
+   "departments": [
+    "Dean of Students Office",
+    "SOMeCA"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Quarry Plaza",
+   "floors": 2,
+   "lat": 36.9980608,
+   "lon": -122.0564892
+  },
+  {
+   "asset": "7182",
+   "name": "Student Union Redwood",
+   "label": "Student Union Redwood",
+   "aliases": [
+    "Redwood Building"
+   ],
+   "departments": [
+    "BIKE COOP",
+    "SOMeCA"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Quarry Plaza",
+   "floors": 2,
+   "lat": 36.9975798,
+   "lon": -122.0560548
+  },
+  {
+   "asset": "7435",
+   "name": "Fieldhouse West",
+   "label": "West Fieldhouse",
+   "aliases": [
+    "West Field House"
+   ],
+   "departments": [
+    "OPERS Physical Education",
+    "OPERS Recreation"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Rachel Carson College",
+   "floors": 2,
+   "lat": 36.9915725,
+   "lon": -122.0646822
+  },
+  {
+   "asset": "7766",
+   "name": "Rachel Carson College Academic Building",
+   "label": "Academic Building",
+   "aliases": [],
+   "departments": [
+    "Counseling and Psychological Services",
+    "General Assignment Classrooms",
+    "Instructional Computing Laboratories",
+    "Rachel Carson College Administration",
+    "Rachel Carson College SLRS Administration",
+    "Sociology Department",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Rachel Carson College",
+   "floors": 3,
+   "lat": 36.9918499,
+   "lon": -122.064691
+  },
+  {
+   "asset": "7756",
+   "name": "Rachel Carson College Kitchen",
+   "label": "Kitchen",
+   "aliases": [],
+   "departments": [
+    "Food Services",
+    "General Assignment Classrooms",
+    "ITS Client Relationship Management",
+    "Mailroom"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Rachel Carson College",
+   "floors": 2,
+   "lat": 36.9920006,
+   "lon": -122.0653188
+  },
+  {
+   "asset": "7474",
+   "name": "Visual Arts Research Facility",
+   "label": "Visual Arts Research Facility",
+   "aliases": [],
+   "departments": [
+    "Art Department",
+    "Colleges Housing Administration",
+    "General Arts",
+    "ITS Core Technologies and Eng"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Rachel Carson College",
+   "floors": 2,
+   "lat": 36.9916059,
+   "lon": -122.0617712
+  },
+  {
+   "asset": "7171",
+   "name": "Astronomy Shop A",
+   "label": "Shop A",
+   "aliases": [
+    "Lick Insturment Lab",
+    "UCO Lick Shop A",
+    "Lick Engineering Lab"
+   ],
+   "departments": [
+    "UCO Lick Santa Cruz MRU"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0015344,
+   "lon": -122.0616355
+  },
+  {
+   "asset": "7172",
+   "name": "Astronomy Shop B",
+   "label": "Shop B",
+   "aliases": [
+    "Lick Insturment Lab",
+    "UCO Lick Shop B",
+    "Lick Engineering Lab"
+   ],
+   "departments": [
+    "UCO Lick Santa Cruz MRU"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0016892,
+   "lon": -122.0610496
+  },
+  {
+   "asset": "7947",
+   "name": "Biomedical Sciences",
+   "label": "Biomed",
+   "aliases": [],
+   "departments": [
+    "Biomolecular Engineering Dept",
+    "Ecology and Evolutionary Biology",
+    "Environmental Health and Safety",
+    "General Physical and Biological Sciences",
+    "Microbiology and Environmental Toxicology",
+    "Molecular",
+    "Cell",
+    "and Developmental Biology",
+    "Physical and Biological Sciences Academic Support",
+    "Physical and Biological Sciences Division Core Facilities",
+    "Physics Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 6,
+   "lat": 36.9998405,
+   "lon": -122.0612691
+  },
+  {
+   "asset": "7693",
+   "name": "Center for Adaptive Optics",
+   "label": "Center for Adaptive Optics",
+   "aliases": [
+    "CfAO",
+    "CAO"
+   ],
+   "departments": [
+    "Astronomy and Astrophysics",
+    "UCO Lick Santa Cruz MRU",
+    "UR Communications and Marketing"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Science and Engineering Hill",
+   "floors": 2,
+   "lat": 36.9978575,
+   "lon": -122.0593849
+  },
+  {
+   "asset": "7816",
+   "name": "Central Heat Trailer 1",
+   "label": "Trailer 1",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0015227,
+   "lon": -122.0617208
+  },
+  {
+   "asset": "7146",
+   "name": "Central Heating Plant",
+   "label": "Central Heating Plant",
+   "aliases": [
+    "Central Heat Plant",
+    "CHP",
+    "Heat Plant",
+    "Physical Plant"
+   ],
+   "departments": [
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Science and Engineering Hill",
+   "floors": 2,
+   "lat": 37.0010239,
+   "lon": -122.0607204
+  },
+  {
+   "asset": "7939",
+   "name": "Central Heating Plant 2",
+   "label": "Central Heating Plant 2",
+   "aliases": [
+    "Heat Plant 2",
+    "Boiler Plant",
+    "CHP-2"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0004705,
+   "lon": -122.0600079
+  },
+  {
+   "asset": "7206",
+   "name": "Cogen Mechanical Electrical Structure",
+   "label": "Cogen MES",
+   "aliases": [
+    "Mechanical Electrical Structure",
+    "MES"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0005001,
+   "lon": -122.0588005
+  },
+  {
+   "asset": "7175",
+   "name": "Communications Building",
+   "label": "Communications Building",
+   "aliases": [],
+   "departments": [
+    "Cellular Carriers",
+    "Film and Digital Media Department",
+    "ITS Academic Divisional Computing",
+    "ITS Core Technologies and Eng",
+    "ITS VC Information Technology"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 3,
+   "lat": 37.0007179,
+   "lon": -122.0610013
+  },
+  {
+   "asset": "7529",
+   "name": "Communications Trailer 1",
+   "label": "Trailer 1",
+   "aliases": [
+    "Comm Trailer",
+    "ITS Network Telecommunications"
+   ],
+   "departments": [
+    "ITS Core Technologies and Eng"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0026564,
+   "lon": -122.0669956
+  },
+  {
+   "asset": "7727",
+   "name": "Communications Trailer 2",
+   "label": "Trailer 2",
+   "aliases": [
+    "ITS Telecommunication Services",
+    "ITS Network Telecommunications"
+   ],
+   "departments": [
+    "ITS Core Technologies and Eng"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.000553,
+   "lon": -122.0599045
+  },
+  {
+   "asset": "7487",
+   "name": "Communications Trailer 3",
+   "label": "Trailer 3",
+   "aliases": [
+    "Applied Sciences Trailer",
+    "Surge Trailer #1",
+    "Applied Sciences Trailer 9",
+    "Surge Trailer 1",
+    "Nat Sci Stor Bldg"
+   ],
+   "departments": [
+    "ITS Core Technologies and Eng"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0011924,
+   "lon": -122.0611056
+  },
+  {
+   "asset": "7396",
+   "name": "Cooling Tower 1",
+   "label": "Cooling Tower 1",
+   "aliases": [
+    "Heat Plant Cooling Tower",
+    "CT-1"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0008112,
+   "lon": -122.0592121
+  },
+  {
+   "asset": "7067",
+   "name": "Cooling Tower 4 EMS",
+   "label": "Cooling Tower 4",
+   "aliases": [],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Science and Engineering Hill",
+   "floors": 2,
+   "lat": 36.998061,
+   "lon": -122.058757
+  },
+  {
+   "asset": "7935",
+   "name": "Core West Parking Structure",
+   "label": "Core West Parking Structure",
+   "aliases": [
+    "Parking Garage",
+    "Parking Structure 1"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Science and Engineering Hill",
+   "floors": 6,
+   "lat": 36.9991449,
+   "lon": -122.0637314
+  },
+  {
+   "asset": "7775",
+   "name": "Earth & Marine Sciences",
+   "label": "Earth & Marine Sciences",
+   "aliases": [
+    "Natural Sciences 4",
+    "NS4",
+    "NatSci 4"
+   ],
+   "departments": [
+    "Biomolecular Engineering Dept",
+    "Chemistry and Biochemistry",
+    "Earth & Planetary Sciences Department",
+    "General Assignment Classrooms",
+    "Institute of Marine Sciences ORU",
+    "ITS Academic Divisional Computing",
+    "Molecular",
+    "Cell",
+    "and Developmental Biology",
+    "Ocean Sciences Department",
+    "Physical and Biological Sciences Division Administration",
+    "Physical and Biological Sciences Division Core Facilities"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 7,
+   "lat": 36.9978945,
+   "lon": -122.0597752
+  },
+  {
+   "asset": "7940",
+   "name": "Engineering Building 2",
+   "label": "Engineering 2",
+   "aliases": [
+    "E2"
+   ],
+   "departments": [
+    "Biomolecular Engineering Dept",
+    "Center for Research in Open Source Software ORA",
+    "Computational Media Department",
+    "Computer Science & Engineering Department",
+    "Ctr for Info Tech Research in the Interest of Society ORA",
+    "Cyber Physical Systems Research Center ORA",
+    "Economics Department",
+    "Electrical and Computer Engineering Department",
+    "Engineering Applied Math",
+    "Engineering School Administration",
+    "General Assignment Classrooms",
+    "General Engineering",
+    "Institute for Quantitative Biomedical Research ORA",
+    "ITS Academic Divisional Computing",
+    "ITS Research and Faculty Partnerships",
+    "Physical Plant Services",
+    "Statistics"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 6,
+   "lat": 37.0009583,
+   "lon": -122.0629593
+  },
+  {
+   "asset": "7813",
+   "name": "Environmental Health & Safety Trailer",
+   "label": "EH&S Trailer",
+   "aliases": [
+    "EH&S",
+    "EHS"
+   ],
+   "departments": [
+    "Environmental Health and Safety"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0017072,
+   "lon": -122.0620173
+  },
+  {
+   "asset": "7164",
+   "name": "Fackler Cogeneration Plant",
+   "label": "Fackler Cogen",
+   "aliases": [
+    "Cogen"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Science and Engineering Hill",
+   "floors": 2,
+   "lat": 37.0008878,
+   "lon": -122.0607026
+  },
+  {
+   "asset": "7098",
+   "name": "Interdisciplinary Sciences Building",
+   "label": "Interdisciplinary Sciences",
+   "aliases": [
+    "ISB"
+   ],
+   "departments": [
+    "Astronomy and Astrophysics",
+    "Chancellor's Office",
+    "Chemistry and Biochemistry",
+    "Environmental Studies Department",
+    "ITS Client Services and Security",
+    "Natural Reserve System",
+    "Physics Department",
+    "Santa Cruz Institute for Particle Physics ORU",
+    "UCO Lick Santa Cruz MRU"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Science and Engineering Hill",
+   "floors": 5,
+   "lat": 36.9984494,
+   "lon": -122.0591798
+  },
+  {
+   "asset": "7942",
+   "name": "Jack Baskin Engineering Auditorium",
+   "label": "Jack Baskin Engineering Auditorium",
+   "aliases": [
+    "Baskin Lecture Hall",
+    "Baskin Engineering Lecture Hall",
+    "Engineering Auditorium",
+    "Baskin Auditorium"
+   ],
+   "departments": [
+    "General Assignment Classrooms"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0003591,
+   "lon": -122.0628417
+  },
+  {
+   "asset": "7194",
+   "name": "Jack Baskin Engineering Building",
+   "label": "Baskin Engineering",
+   "aliases": [
+    "Applied Sciences",
+    "Baskin Engineering",
+    "Engineering 1",
+    "JBEB"
+   ],
+   "departments": [
+    "Biomolecular Engineering Dept",
+    "Computational Media Department",
+    "Computer Science & Engineering Department",
+    "Copier Services",
+    "Electrical and Computer Engineering Department",
+    "Engineering Applied Math",
+    "Engineering School Administration",
+    "Environmental Health and Safety",
+    "General Assignment Classrooms",
+    "General Engineering",
+    "General Physical and Biological Sciences",
+    "General Social Sciences",
+    "Housing Commercial Services",
+    "Instructional Computing Laboratories",
+    "ITS Academic Divisional Computing",
+    "ITS Client Relationship Management",
+    "ITS Core Technologies and Eng",
+    "ITS Learning Technologies",
+    "Mail Services",
+    "Molecular",
+    "Cell",
+    "and Developmental Biology",
+    "Physical and Biological Sciences Division Administration",
+    "Physical and Biological Sciences Division Core Facilities",
+    "Physics Department",
+    "Statistics"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 6,
+   "lat": 37.0003529,
+   "lon": -122.0630789
+  },
+  {
+   "asset": "7180",
+   "name": "Nat Sci 2 Annex",
+   "label": "Annex",
+   "aliases": [],
+   "departments": [
+    "Astronomy and Astrophysics",
+    "Center For Adaptive Optics ORA",
+    "General Assignment Classrooms",
+    "Physical and Biological Sciences Division Administration",
+    "Physics Department",
+    "UCO Lick Santa Cruz MRU",
+    "UR Philanthropy"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Science and Engineering Hill",
+   "floors": 2,
+   "lat": 36.9984245,
+   "lon": -122.0608289
+  },
+  {
+   "asset": "7179",
+   "name": "Nat Sci 2 Main Building",
+   "label": "Natural Sciences 2",
+   "aliases": [
+    "Nat Sci 2"
+   ],
+   "departments": [
+    "Astronomy and Astrophysics",
+    "Chancellor's Office",
+    "Chemistry and Biochemistry",
+    "Environmental Studies Department",
+    "ITS Client Services and Security",
+    "Natural Reserve System",
+    "Physics Department",
+    "Santa Cruz Institute for Particle Physics ORU",
+    "UCO Lick Santa Cruz MRU"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 5,
+   "lat": 36.9985812,
+   "lon": -122.0605461
+  },
+  {
+   "asset": "7781",
+   "name": "Nat Sci Greenhouse",
+   "label": "Greenhouse",
+   "aliases": [],
+   "departments": [
+    "Ecology and Evolutionary Biology"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0012461,
+   "lon": -122.060696
+  },
+  {
+   "asset": "7481",
+   "name": "Nat Sci Paleo-Magnetic Lab",
+   "label": "Paleo-Magnetic Lab",
+   "aliases": [
+    "Surge #2",
+    "Surge 2",
+    "Paleomagnetic Laboratory"
+   ],
+   "departments": [
+    "Earth & Planetary Sciences Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0018805,
+   "lon": -122.0621118
+  },
+  {
+   "asset": "7478",
+   "name": "Nat Sci Storage 1",
+   "label": "Storage 1",
+   "aliases": [
+    "Surge #1",
+    "Surge Building"
+   ],
+   "departments": [
+    "Physical and Biological Sciences Division Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0016801,
+   "lon": -122.0611556
+  },
+  {
+   "asset": "7783",
+   "name": "Nat Sci Woodshop",
+   "label": "Woodshop",
+   "aliases": [],
+   "departments": [
+    "Physical and Biological Sciences Division Core Facilities"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 37.0021731,
+   "lon": -122.0630394
+  },
+  {
+   "asset": "7919",
+   "name": "Physical Sciences Building",
+   "label": "PSB",
+   "aliases": [
+    "PSB",
+    "Natural Sciences 5"
+   ],
+   "departments": [
+    "Biomolecular Engineering Dept",
+    "Chemistry and Biochemistry",
+    "Ecology and Evolutionary Biology",
+    "Environmental Health and Safety",
+    "General Assignment Classrooms",
+    "Housing Commercial Services",
+    "ITS Academic Divisional Computing",
+    "Microbiology and Environmental Toxicology",
+    "Physical and Biological Sciences Division Administration",
+    "Physical and Biological Sciences Division Core Facilities",
+    "Physical Plant Services",
+    "Physics Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 5,
+   "lat": 36.9996038,
+   "lon": -122.0619117
+  },
+  {
+   "asset": "7782",
+   "name": "Science and Engineering Library",
+   "label": "Science and Engineering Library",
+   "aliases": [
+    "Science Library",
+    "SciLib"
+   ],
+   "departments": [
+    "General Physical and Biological Sciences",
+    "ITS Academic Divisional Computing",
+    "ITS Client Services and Security",
+    "Physical and Biological Sciences Division Administration",
+    "Student Success Division Office",
+    "University Library"
+   ],
+   "category": "G - General",
+   "primary_use": "LIB - Library / Study",
+   "region": "Science and Engineering Hill",
+   "floors": 4,
+   "lat": 36.9990019,
+   "lon": -122.0603428
+  },
+  {
+   "asset": "7744",
+   "name": "Sinsheimer Laboratories",
+   "label": "Sinsheimer Laboratories",
+   "aliases": [
+    "Natural Sciences 3",
+    "NS3"
+   ],
+   "departments": [
+    "Biomolecular Engineering Dept",
+    "Campus Commercial Enterprises",
+    "Chemistry and Biochemistry",
+    "Environmental Health and Safety",
+    "General Physical and Biological Sciences",
+    "ITS Academic Divisional Computing",
+    "ITS Core Technologies and Eng",
+    "Molecular",
+    "Cell",
+    "and Developmental Biology",
+    "Office of Research",
+    "Physical and Biological Sciences Division Administration",
+    "Physical and Biological Sciences Division Core Facilities",
+    "Physical Plant Services"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 6,
+   "lat": 36.9988059,
+   "lon": -122.0618977
+  },
+  {
+   "asset": "7116",
+   "name": "Thimann Laboratories",
+   "label": "Thimann Labs",
+   "aliases": [],
+   "departments": [
+    "Anthropology Department",
+    "Astronomy and Astrophysics",
+    "Chemistry and Biochemistry",
+    "Ecology and Evolutionary Biology",
+    "Educational Opportunity Programs",
+    "Educational Partnership Center",
+    "Environmental Health and Safety",
+    "General Assignment Classrooms",
+    "General Physical and Biological Sciences",
+    "ITS Academic Divisional Computing",
+    "ITS Client Services and Security",
+    "ITS Core Technologies and Eng",
+    "Microbiology and Environmental Toxicology",
+    "Molecular",
+    "Cell",
+    "and Developmental Biology",
+    "Ocean Sciences Department",
+    "Physical and Biological Sciences Academic Support",
+    "Physical and Biological Sciences Division Administration",
+    "Physics Department",
+    "UCO Lick Santa Cruz MRU"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 4,
+   "lat": 36.9981337,
+   "lon": -122.0619676
+  },
+  {
+   "asset": "7117",
+   "name": "Thimann Lecture Hall",
+   "label": "Thimann Lecture Hall",
+   "aliases": [],
+   "departments": [
+    "General Assignment Classrooms",
+    "Physics Department"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 36.9981775,
+   "lon": -122.061783
+  },
+  {
+   "asset": "7118",
+   "name": "Thimann Receiving Building",
+   "label": "Thimann Receiving",
+   "aliases": [
+    "Chemical Stores",
+    "Thimann Receiving"
+   ],
+   "departments": [
+    "Physical and Biological Sciences Division Core Facilities"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Science and Engineering Hill",
+   "floors": 1,
+   "lat": 36.9978962,
+   "lon": -122.0622498
+  },
+  {
+   "asset": "7199",
+   "name": "Hahn Art Facility",
+   "label": "Hahn Art Facility",
+   "aliases": [
+    "Art East"
+   ],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Stevenson College",
+   "floors": 1,
+   "lat": 36.9981178,
+   "lon": -122.0534012
+  },
+  {
+   "asset": "7143",
+   "name": "Stevenson College Academic Building",
+   "label": "Academic Building",
+   "aliases": [
+    "Stevenson Administrative Offices"
+   ],
+   "departments": [
+    "Counseling and Psychological Services",
+    "General Assignment Classrooms",
+    "General Humanities",
+    "History Department",
+    "Humanities Division Administration",
+    "Language and Applied Linguistics",
+    "Linguistics Department",
+    "Stevenson College Administration",
+    "Stevenson College SLRS Administration",
+    "Student Activities - Housing",
+    "Writing Program"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Stevenson College",
+   "floors": 3,
+   "lat": 36.9974045,
+   "lon": -122.0522417
+  },
+  {
+   "asset": "7144",
+   "name": "Stevenson College Commons",
+   "label": "Stevenson Commons",
+   "aliases": [
+    "Faculty Wing",
+    "Pickard Smith Gallery",
+    "Coffee Shop",
+    "Stevenson Event Center",
+    "Stevenson Activity Center",
+    "Stevenson Dining Commons"
+   ],
+   "departments": [
+    "Colleges Housing Administration",
+    "Cowell College Administration",
+    "Dining Services Administration",
+    "Food Services",
+    "General Assignment Classrooms",
+    "History Department",
+    "Housing Commercial Services",
+    "Literature Department",
+    "Student Activities - Housing",
+    "Student Living Quarters - Single"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Stevenson College",
+   "floors": 1,
+   "lat": 36.9970738,
+   "lon": -122.0521968
+  },
+  {
+   "asset": "7197",
+   "name": "Stevenson College Library",
+   "label": "Library",
+   "aliases": [],
+   "departments": [
+    "Linguistics Department",
+    "Stevenson College Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "LIB - Library / Study",
+   "region": "Stevenson College",
+   "floors": 2,
+   "lat": 36.9977751,
+   "lon": -122.0536704
+  },
+  {
+   "asset": "7430",
+   "name": "Stevenson College Music Practice",
+   "label": "Music Practice",
+   "aliases": [
+    "Stevenson College Study Rooms",
+    "Music Practice"
+   ],
+   "departments": [
+    "Linguistics Department",
+    "Stevenson College SLRS Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "LIB - Library / Study",
+   "region": "Stevenson College",
+   "floors": 1,
+   "lat": 36.9944561,
+   "lon": -122.0391651
+  },
+  {
+   "asset": "7311",
+   "name": "Theater Arts A Main Stage",
+   "label": "A Main Stage",
+   "aliases": [
+    "Unit A"
+   ],
+   "departments": [
+    "Theater Arts Assembly Space",
+    "Theater Arts Department"
+   ],
+   "category": "G - General",
+   "primary_use": "GEN - General Use",
+   "region": "Theater Arts Center",
+   "floors": 4,
+   "lat": 36.9947412,
+   "lon": -122.0623758
+  },
+  {
+   "asset": "7312",
+   "name": "Theater Arts B Drama",
+   "label": "B Drama",
+   "aliases": [
+    "Unit B"
+   ],
+   "departments": [
+    "Theater Arts Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Theater Arts Center",
+   "floors": 2,
+   "lat": 36.9946192,
+   "lon": -122.0613568
+  },
+  {
+   "asset": "7313",
+   "name": "Theater Arts C Studio",
+   "label": "Studio",
+   "aliases": [
+    "Unit C"
+   ],
+   "departments": [
+    "Theater Arts Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Theater Arts Center",
+   "floors": 2,
+   "lat": 36.9950746,
+   "lon": -122.0620686
+  },
+  {
+   "asset": "7314",
+   "name": "Theater Arts D Student Production",
+   "label": "Student Production",
+   "aliases": [
+    "Unit D"
+   ],
+   "departments": [
+    "Theater Arts Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Theater Arts Center",
+   "floors": 2,
+   "lat": 36.9943575,
+   "lon": -122.0599905
+  },
+  {
+   "asset": "7315",
+   "name": "Theater Arts E Classroom",
+   "label": "E Classroom",
+   "aliases": [
+    "Unit E"
+   ],
+   "departments": [
+    "Theater Arts Department"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Theater Arts Center",
+   "floors": 2,
+   "lat": 36.9948607,
+   "lon": -122.0613863
+  },
+  {
+   "asset": "7316",
+   "name": "Theater Arts F Ticket Office",
+   "label": "Ticket Office",
+   "aliases": [
+    "Unit F"
+   ],
+   "departments": [
+    "Arts Division Administration"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Theater Arts Center",
+   "floors": 1,
+   "lat": 36.9939167,
+   "lon": -122.0586037
+  },
+  {
+   "asset": "7405",
+   "name": "Theater Arts Foundry",
+   "label": "Foundry",
+   "aliases": [],
+   "departments": [
+    "Art Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Theater Arts Center",
+   "floors": 1,
+   "lat": 36.9953834,
+   "lon": -122.0620806
+  },
+  {
+   "asset": "7317",
+   "name": "Theater Arts G Toilet Room",
+   "label": "Toilet Room",
+   "aliases": [
+    "Unit G"
+   ],
+   "departments": [],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Theater Arts Center",
+   "floors": 1,
+   "lat": 36.9941657,
+   "lon": -122.0605619
+  },
+  {
+   "asset": "7318",
+   "name": "Theater Arts H 2nd Stage",
+   "label": "2nd Stage",
+   "aliases": [
+    "Unit H"
+   ],
+   "departments": [
+    "Theater Arts Department"
+   ],
+   "category": "G - General",
+   "primary_use": "LAB - Lab / Research",
+   "region": "Theater Arts Center",
+   "floors": 2,
+   "lat": 36.9946193,
+   "lon": -122.0617431
+  },
+  {
+   "asset": "7319",
+   "name": "Theater Arts I 2nd Stage Annex",
+   "label": "Annex",
+   "aliases": [],
+   "departments": [
+    "Theater Arts Department"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "Theater Arts Center",
+   "floors": 1,
+   "lat": 36.9941738,
+   "lon": -122.0606679
+  },
+  {
+   "asset": "7320",
+   "name": "Theater Arts J Offices",
+   "label": "Offices",
+   "aliases": [
+    "Unit J"
+   ],
+   "departments": [
+    "Theater Arts Department"
+   ],
+   "category": "G - General",
+   "primary_use": "OFF - Office",
+   "region": "Theater Arts Center",
+   "floors": 2,
+   "lat": 36.9942703,
+   "lon": -122.0616268
+  },
+  {
+   "asset": "7534",
+   "name": "Theater Arts K Costume",
+   "label": "Costume",
+   "aliases": [
+    "Unit K"
+   ],
+   "departments": [
+    "Theater Arts Assembly Space"
+   ],
+   "category": "G - General",
+   "primary_use": "SPC - Special Use",
+   "region": "Theater Arts Center",
+   "floors": 3,
+   "lat": 36.9940157,
+   "lon": -122.0605954
+  },
+  {
+   "asset": "7923",
+   "name": "Theater Arts L Experimental Theater",
+   "label": "Experimental Theater",
+   "aliases": [
+    "Unit L"
+   ],
+   "departments": [
+    "Theater Arts Department"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Theater Arts Center",
+   "floors": 4,
+   "lat": 36.9952947,
+   "lon": -122.0620923
+  },
+  {
+   "asset": "7924",
+   "name": "Theater Arts M Media Theater",
+   "label": "M Media",
+   "aliases": [
+    "Unit M"
+   ],
+   "departments": [
+    "General Assignment Classrooms"
+   ],
+   "category": "G - General",
+   "primary_use": "CLS - Classroom",
+   "region": "Theater Arts Center",
+   "floors": 2,
+   "lat": 36.9952574,
+   "lon": -122.0618103
+  },
+  {
+   "asset": "7321",
+   "name": "Kiosk for West Entrance",
+   "label": "West Entrance Kiosk",
+   "aliases": [],
+   "departments": [
+    "University Police"
+   ],
+   "category": "G - General",
+   "primary_use": "SUP - Support",
+   "region": "West Entrance",
+   "floors": 1,
+   "lat": 36.9820299,
+   "lon": -122.048203
+  }
+ ]
+}

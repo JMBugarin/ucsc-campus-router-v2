@@ -176,6 +176,7 @@ class Campus:
         an alias exactly, as a word-by-word prefix ("kresge"), or approximately (a typo; a number
         in the name must still match). Rooms the building lists rank above ones it does not, and
         a room one edit away from a listed room is offered as a correction.
+        A room listed by one building hides guesses at that number in buildings with no room list.
         Each result: building_id, building_name, room, room_known, floor, point, query (a
         schedule-style string that resolve() maps back to this result), label, score, kind.
         """
@@ -210,6 +211,13 @@ class Campus:
             for building_id, building in self.buildings.items():
                 if tokens[0].upper() in building.get("known_rooms", []):
                     offer(building_id, tokens[0].upper(), 0.6)
+
+        # A room the directory lists beats guesses at the same number in buildings with no room list.
+        def listed(b, r):
+            return r is not None and r in (self.buildings[b].get("known_rooms") or [])
+        if any(listed(b, r) for b, r in found):
+            found = {k: v for k, v in found.items()
+                     if k[1] is None or listed(*k) or self.buildings[k[0]].get("known_rooms")}
 
         ranked = sorted(found.items(), key=lambda kv: (-kv[1][0], self.buildings[kv[0][0]]["name"], kv[0][1] or ""))
         return [self._search_result(b, r, score, was) for (b, r), (score, was) in ranked[:limit]]
