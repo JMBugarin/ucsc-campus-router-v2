@@ -8,6 +8,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 4173",
     "data": "node scripts/build-data.mjs",
+    "transit": "node scripts/build-transit.mjs",
     "test": "vitest run",
     "e2e": "playwright test",
     "gallery": "node scripts/gallery.mjs",

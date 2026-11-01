@@ -100,10 +100,10 @@ test('location permission denied is explained', async ({ page }) => {
   await expect(page.getByText(/Location permission was denied/)).toBeVisible({ timeout: 15_000 })
 })
 
-test('transit info states that there is no live data', async ({ page }) => {
+test('transit info says campus shuttles have no public live feed', async ({ page }) => {
   await ready(page)
   await page.getByRole('option', { name: /Shuttles and buses/ }).click()
-  await expect(page.getByRole('dialog', { name: 'Shuttles and buses' })).toContainText('No live times here')
+  await expect(page.getByRole('dialog', { name: 'Shuttles and buses' })).toContainText('No live shuttle times here')
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toHaveCount(0)
 })
@@ -134,4 +134,20 @@ test('keyboard: slash focuses search, arrows move, enter opens', async ({ page }
   await search(page).press('ArrowDown')
   await search(page).press('Enter')
   await expect(page).toHaveURL(/#\/p\//)
+})
+
+test('a METRO stop lists scheduled buses and says live tracking is not connected', async ({ page }) => {
+  await page.addInitScript(() => {
+    const R = Date
+    const off = new R('2026-11-04T18:00:00Z').getTime() - R.now()
+    globalThis.Date = class extends R {
+      constructor(...a: unknown[]) { if (a.length) super(...(a as [string])); else super(R.now() + off) }
+      static now() { return R.now() + off }
+    } as DateConstructor
+  })
+  await ready(page, '#/p/stop-science-hill')
+  await expect(page.getByRole('region', { name: 'Next buses' })).toBeVisible()
+  await expect(page.getByLabel(/^Route (11|16|18|19|20)$/).first()).toBeVisible()
+  await expect(page.getByText(/Live tracking is not connected/)).toBeVisible()
+  await expect(page.getByText(/flexigo/)).toBeVisible()
 })

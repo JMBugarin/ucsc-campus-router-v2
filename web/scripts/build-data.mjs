@@ -181,6 +181,24 @@ for (const e of osm) {
   if (t.building === 'dormitory' && e.type !== 'node' && /house|hall$/i.test(name) && false) continue
 }
 
+// METRO stops from the GTFS schedule (built by build-transit.mjs); OSM stops they cover are dropped
+try {
+  const transit = JSON.parse(readFileSync(join(out, 'transit.json'), 'utf8'))
+  const groups = new Map()
+  for (const st of transit.stops) groups.set(st.name, [...(groups.get(st.name) ?? []), st])
+  const near = (p) => transit.stops.some((st) => metres([p.lat, p.lon], [st.lat, st.lon]) < 100)
+  places.splice(0, places.length, ...places.filter((p) => !(p.kind === 'transit' && p.source === 'osm' && near(p))))
+  for (const [name, g] of groups) {
+    add({
+      id: 'stop-' + slug(name), name: `${name} stop`, kind: 'transit',
+      lat: g.reduce((a, b) => a + b.lat, 0) / g.length, lon: g.reduce((a, b) => a + b.lon, 0) / g.length,
+      aliases: [name, `${name} bus`], subtitle: 'METRO bus', stops: g.map((x) => x.id), source: 'metro-gtfs',
+    })
+  }
+} catch {
+  console.log('no transit.json: run npm run transit first for METRO stops')
+}
+
 // OSM features that restate a curated building (same words, within 120 m) are dropped
 const words = (n) => slug(n).replace(/-(building|bldg|college|hall)\b/g, '').replace('laboratories', 'labs')
 const curatedPlaces = places.filter((p) => p.source.startsWith('ucsc'))

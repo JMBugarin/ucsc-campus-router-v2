@@ -389,3 +389,59 @@ ul.plain.note li {
     gap: 24px;
   }
 }
+
+/* transit */
+.route {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  min-width: 34px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  font-size: var(--t-footnote);
+  font-variant-numeric: tabular-nums;
+}
+.deps,
+.bus {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.deps li,
+.bus li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 4px 6px;
+}
+.deps li + li,
+.bus li + li {
+  border-top: 1px solid var(--divider);
+}
+.deps__main,
+.bus__main {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+}
+.deps__main small,
+.bus__main small {
+  display: block;
+  font-weight: 400;
+  color: var(--text-2);
+  font-size: var(--t-caption);
+}
+.deps__eta,
+.bus__eta {
+  font-weight: 700;
+  flex: none;
+}
+.departures {
+  display: grid;
+  gap: 6px;
+}

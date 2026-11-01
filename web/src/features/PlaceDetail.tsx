@@ -3,8 +3,11 @@ import { CATEGORY_LABEL } from '../design/tokens'
 import type { Place } from '../data/types'
 import { TRANSIT_LINKS } from '../data/campus'
 import { kindName } from './Browse'
+import { Departures } from './Departures'
+import type { TransitData, Clock } from '../transit/schedule'
+import type { LiveState } from '../transit/useTransit'
 
-export function PlaceDetail({ place, onBack, onDirections, onShare, onTransit, nearGraph }: { place: Place; onBack: () => void; onDirections: () => void; onShare: () => void; onTransit: () => void; nearGraph: boolean }) {
+export function PlaceDetail({ place, onBack, onDirections, onShare, onTransit, nearGraph, transit, now, live }: { transit?: TransitData | null; now?: Clock; live?: LiveState; place: Place; onBack: () => void; onDirections: () => void; onShare: () => void; onTransit: () => void; nearGraph: boolean }) {
   return (
     <article aria-label={place.name} className="detail">
       <div className="detail__head">
@@ -44,19 +47,20 @@ export function PlaceDetail({ place, onBack, onDirections, onShare, onTransit, n
           {place.lat.toFixed(5)}, {place.lon.toFixed(5)}
         </dd>
         <dt>Source</dt>
-        <dd>{place.source === 'osm' ? 'OpenStreetMap' : 'UCSC classroom data + OpenStreetMap'}</dd>
+        <dd>{place.source === 'osm' ? 'OpenStreetMap' : place.source === 'metro-gtfs' ? 'Santa Cruz METRO GTFS' : place.source === 'ucsc-facilities' ? 'UCSC campus map' : 'UCSC classroom data + OpenStreetMap'}</dd>
       </dl>
-      {place.kind === 'transit' && (
+      {place.stops && transit && now && live && <Departures data={transit} stopIds={place.stops} now={now} live={live} />}
+      {place.kind === 'transit' && !place.stops && (
         <GlassBanner title="Schedules and live arrivals">
-          This map does not show arrival times. Use the{' '}
+          Live positions for campus shuttles are only in UCSC's flexigo app. See the{' '}
+          <button className="linkbtn" onClick={onTransit}>
+            shuttle information
+          </button>
+          , or{' '}
           <a href={TRANSIT_LINKS.metro} target="_blank" rel="noopener">
             METRO
           </a>{' '}
-          or{' '}
-          <button className="linkbtn" onClick={onTransit}>
-            campus shuttle
-          </button>{' '}
-          information.
+          for buses.
         </GlassBanner>
       )}
       {place.kind === 'parking' && (

@@ -306,6 +306,7 @@ export function buildStyle(theme: Theme): StyleSpecification {
     },
     { id: 'endpoint-from', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'from'], paint: { 'circle-radius': 7, 'circle-color': '#ffffff', 'circle-stroke-color': c.accent, 'circle-stroke-width': 4 } },
     { id: 'endpoint-to', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'to'], paint: { 'circle-radius': 8, 'circle-color': c.accent, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
+    { id: 'endpoint-bus', type: 'circle', source: 'endpoints', filter: ['in', ['get', 'role'], ['literal', ['board', 'alight']]], paint: { 'circle-radius': 7, 'circle-color': '#2a8fa8', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
     { id: 'you-halo', type: 'circle', source: 'you', paint: { 'circle-radius': ['get', 'accuracy_px'], 'circle-color': '#0a84ff', 'circle-opacity': 0.14 } },
     { id: 'you', type: 'circle', source: 'you', paint: { 'circle-radius': 8, 'circle-color': '#0a84ff', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
   ]

@@ -15,6 +15,9 @@ import { CategoryChips, Featured, PlaceRows } from './features/Browse'
 import { PlaceDetail } from './features/PlaceDetail'
 import { Directions, type Pick } from './features/Directions'
 import { AboutModal, TransitModal } from './features/Modals'
+import { busOptions } from './transit/plan'
+import { loadTransit, useClock, useLive } from './transit/useTransit'
+import type { TransitData } from './transit/schedule'
 
 const FEATURED = ['mchenry-library', 'quarry-plaza', 'science-hill', 'baskin-engineering', 'science-engineering-library', 'kresge-college']
 
@@ -23,6 +26,7 @@ export function App() {
   const mobile = useMedia(MOBILE_QUERY)
   const [places, setPlaces] = useState<Place[] | null>(null)
   const [graph, setGraph] = useState<Graph | null>(null)
+  const [transit, setTransit] = useState<TransitData | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [route, go] = useHashRoute()
   const [q, setQ] = useState('')
@@ -52,6 +56,7 @@ export function App() {
         setPlaces(p.places)
         setGraph(buildGraph(g))
       })
+      .then(() => loadTransit().then(setTransit, () => undefined))
       .catch((e) => setLoadError(String(e.message ?? e)))
   }, [])
 
@@ -86,6 +91,15 @@ export function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route, graph, avoidStairs, dFrom.ep?.id, dFrom.ep?.lat, dTo.ep?.id])
 
+  const showsTimes = route.name === 'directions' || (route.name === 'place' && !!byId.get(route.id)?.stops)
+  const clock = useClock(showsTimes)
+  const live = useLive(showsTimes)
+  const bus = useMemo(
+    () => (graph && transit && dFrom.ep && dTo.ep && !planError && plan ? busOptions(graph, transit, dFrom.ep, dTo.ep, clock, avoidStairs) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [graph, transit, plan, clock.secs, avoidStairs],
+  )
+
   const routeJson = useMemo(() => (plan && graph ? routeGeoJSON(graph, plan) : null), [plan, graph])
   const endpoints = useMemo((): GeoJSON.FeatureCollection | null => {
     if (!plan) return null
@@ -94,9 +108,12 @@ export function App() {
       features: [
         { type: 'Feature', properties: { role: 'from' }, geometry: { type: 'Point', coordinates: [plan.originPoint[1], plan.originPoint[0]] } },
         { type: 'Feature', properties: { role: 'to' }, geometry: { type: 'Point', coordinates: [plan.destPoint[1], plan.destPoint[0]] } },
+        ...(bus?.options[0] && transit
+          ? ([['board', bus.options[0].board], ['alight', bus.options[0].alight]] as const).map(([role, i]) => ({ type: 'Feature' as const, properties: { role }, geometry: { type: 'Point' as const, coordinates: [transit.stops[i].lon, transit.stops[i].lat] } }))
+          : []),
       ],
     }
-  }, [plan])
+  }, [plan, bus, transit])
 
   /* ---- camera */
   const sheetPad = detent === 'peek' ? 160 : Math.round(window.innerHeight * (detent === 'half' ? 0.46 : 0.46))
@@ -196,7 +213,7 @@ export function App() {
   if (loadError) content = <GlassBanner tone="danger" title="Campus data failed to load">{loadError}. Check your connection and reload.</GlassBanner>
   else if (!places || !index) content = <div className="center"><Spinner label="Loading campus data" /></div>
   else if (route.name === 'place' && selected)
-    content = <PlaceDetail place={selected} nearGraph={nearGraph(selected)} onBack={home} onDirections={() => directionsFor(selected.id)} onShare={share} onTransit={() => setModal('transit')} />
+    content = <PlaceDetail place={selected} transit={transit} now={clock} live={live} nearGraph={nearGraph(selected)} onBack={home} onDirections={() => directionsFor(selected.id)} onShare={share} onTransit={() => setModal('transit')} />
   else if (route.name === 'place')
     content = <GlassBanner tone="warning" title="Place not found" action={<GlassIconButton icon="close" label="Back" size="s" onClick={home} />}>No place has the id "{route.id}".</GlassBanner>
   else if (route.name === 'directions')
@@ -218,6 +235,8 @@ export function App() {
         locating={locating}
         locationError={locError}
         straightMeters={dFrom.ep && dTo.ep ? straightMeters(dFrom.ep, dTo.ep) : null}
+        bus={bus}
+        transit={transit}
       />
     )
   else if (showResults)

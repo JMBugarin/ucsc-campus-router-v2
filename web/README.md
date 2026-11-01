@@ -20,6 +20,7 @@ npm run dev        # http://localhost:5173
 | `npm run e2e` | Browser tests in Chrome with Playwright (builds and serves first) |
 | `npm run gallery` | Render every component state over real map backdrops to `../docs/gallery` (needs `npm run preview` running) |
 | `node scripts/screenshots.mjs` | Screenshots of the real app at real campus locations |
+| `npm run transit` | Rebuild `public/data/transit.json` from METRO's GTFS (needs network and `unzip`) |
 | `npm run data` | Rebuild `public/data/*.json` from `../graph`, `../data` and `data-src/` |
 
 Playwright drives your installed Google Chrome, so no browser download is needed.
