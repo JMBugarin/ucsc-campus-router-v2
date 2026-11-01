@@ -77,6 +77,11 @@ const add = (p) => {
 }
 const slug = (s) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
+const kindOf = (b) => {
+  if (/library/i.test(b.name) || b.primary_use === 'LIB') return 'library'
+  if (!b.primary_use || b.primary_use === 'CLS' || b.primary_use === 'LAB') return 'academic'
+  return 'landmark'
+}
 // curated academic buildings first: they carry schedule aliases and entrances
 const claimed = new Set()
 for (const b of curated) {
@@ -85,13 +90,14 @@ for (const b of curated) {
   add({
     id: b.id,
     name: b.name,
-    kind: /library/i.test(b.name) ? 'library' : 'academic',
+    kind: kindOf(b),
     lat: b.centroid.lat,
     lon: b.centroid.lon,
     aliases: [...new Set([...(b.aliases || []), ...(extra[b.id] || [])])].filter((a) => a !== b.name),
     entrances: (b.entrances || []).map((e) => [round(e.lat), round(e.lon)]),
     rooms: Object.keys(b.room_points || {}).length || undefined,
-    source: 'ucsc-dataset',
+    source: b.source === 'ucsc-facilities' ? 'ucsc-facilities' : 'ucsc-dataset',
+    subtitle: b.region && b.source === 'ucsc-facilities' ? b.region : undefined,
   })
 }
 
@@ -174,6 +180,19 @@ for (const e of osm) {
   }
   if (t.building === 'dormitory' && e.type !== 'node' && /house|hall$/i.test(name) && false) continue
 }
+
+// OSM features that restate a curated building (same words, within 120 m) are dropped
+const words = (n) => slug(n).replace(/-(building|bldg|college|hall)\b/g, '').replace('laboratories', 'labs')
+const curatedPlaces = places.filter((p) => p.source.startsWith('ucsc'))
+const similar = (a, b) => {
+  const [short, long] = a.length <= b.length ? [a, b] : [b, a]
+  return short === long || (long.startsWith(short) && short.length / long.length >= 0.6)
+}
+const restates = (p) =>
+  p.source === 'osm' &&
+  ['landmark', 'library'].includes(p.kind) &&
+  curatedPlaces.some((c) => metres([p.lat, p.lon], [c.lat, c.lon]) < 120 && similar(words(c.name), words(p.name)))
+places.splice(0, places.length, ...places.filter((p) => !restates(p)))
 
 // de-duplicate near-identical names (curated wins because it was added first)
 const seen = new Map()
