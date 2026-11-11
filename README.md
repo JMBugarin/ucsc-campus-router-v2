@@ -14,7 +14,7 @@ _Captured on 2026-10-31 in the iOS Simulator (iPhone 17) with an invented schedu
 
 ## Campus map on the web
 
-[`web/`](web/README.md) is a separate, installable web map of campus built on free, open-source parts (MapLibre, OpenFreeMap, OpenStreetMap): search, place pages, walking routes over the campus path network, and a glass interface ported from TileLens. It needs no key, account or server. See [docs/web-app.md](docs/web-app.md).
+[`web/`](web/README.md) is a separate, installable web map of campus built on free, open-source parts (MapLibre, OpenFreeMap, OpenStreetMap): search, place pages, walking routes over the campus path network, scheduled METRO bus times at campus stops, and a glass interface ported from TileLens. It needs no key, account or server. See [docs/web-app.md](docs/web-app.md).
 
 | Place | Route (dark) | Mobile |
 |---|---|---|
@@ -32,7 +32,7 @@ See [status](docs/status.md) for what is verified and what is not.
 
 ## What it does not do
 
-It does not plan routes, show bus times, or know where you are. Use Apple Maps, Google Maps or Transit to get to campus; this app tells you where on campus to go.
+The phone app does not plan routes, show bus times, or know where you are (the web map has walking routes and scheduled bus times). Use Apple Maps, Google Maps or Transit to get to campus; this app tells you where on campus to go.
 
 ## Run it (macOS)
 
