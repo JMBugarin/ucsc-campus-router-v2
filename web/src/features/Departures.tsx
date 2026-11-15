@@ -3,10 +3,15 @@ import { GlassBanner, SectionLabel } from '../design/components'
 import { clockText, DAY_NAMES, upcoming, feedCovers, type Clock, type TransitData } from '../transit/schedule'
 import { delayAt } from '../transit/realtime'
 import type { LiveState } from '../transit/useTransit'
+import { useServiceDepartures } from '../transit/useServiceDepartures'
+import { freshPredictions, predictedDelay, serviceState, SERVICE_NOTES } from '../transit/serviceState'
 
 const minutes = (s: number) => Math.round(s / 60)
 
 export function Departures({ data, stopIds, now, live }: { data: TransitData; stopIds: string[]; now: Clock; live: LiveState }) {
+  const service = useServiceDepartures(stopIds)
+  const predictions = freshPredictions(service.value)
+  const state = serviceState(service.enabled, service.loaded, service.failed, service.value)
   const idx = useMemo(() => stopIds.flatMap((id) => data.stops.flatMap((s, i) => (s.id === id ? [i] : []))), [data, stopIds])
   const { list, today, day } = useMemo(() => upcoming(data, idx, now, 8), [data, idx, now])
   const covered = feedCovers(data, now)
@@ -15,6 +20,7 @@ export function Departures({ data, stopIds, now, live }: { data: TransitData; st
   return (
     <section aria-label="Next buses" className="departures">
       <SectionLabel>Next buses</SectionLabel>
+      {state !== 'off' && <p role="status" className="note">{SERVICE_NOTES[state]}</p>}
       {!covered && (
         <GlassBanner tone="warning" title="Schedule out of date">
           The bundled METRO schedule covers {data.feed.start.slice(4, 6)}/{data.feed.start.slice(6)} to {data.feed.end.slice(4, 6)}/{data.feed.end.slice(6)}. Check scmetro.org for current times.
@@ -32,7 +38,9 @@ export function Departures({ data, stopIds, now, live }: { data: TransitData; st
           const stop = data.stops[d.stop]
           const upd = live.trips.get(d.trip.i)
           const seq = undefined
-          const delay = live.status === 'live' ? delayAt(upd, stop.id, seq) : null
+          const delay = service.enabled
+            ? today ? predictedDelay(predictions, d.trip.i, stop.id, d.secs, now.secs, Math.floor(Date.now() / 1000)) : null
+            : live.status === 'live' ? delayAt(upd, stop.id, seq) : null
           const eta = d.secs + (delay ?? 0)
           const away = today ? minutes(eta - now.secs) : null
           return (
@@ -51,7 +59,9 @@ export function Departures({ data, stopIds, now, live }: { data: TransitData; st
         })}
       </ul>
       <p className="note">
-        {live.status === 'live'
+        {service.enabled
+          ? 'Scheduled times from METRO, adjusted by fresh service predictions when available.'
+          : live.status === 'live'
           ? 'Live delays from METRO. Times in Pacific time.'
           : live.enabled && live.status === 'error'
             ? 'Live feed unavailable; showing the schedule.'

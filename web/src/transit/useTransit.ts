@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchRealtime, REALTIME_BASE, type Alert, type TripUpdate } from './realtime'
 import { pacificClock, type Clock, type TransitData } from './schedule'
+import { SERVICE_BASE } from './useServiceDepartures'
 
 export async function loadTransit(): Promise<TransitData> {
   const r = await fetch(`${import.meta.env.BASE_URL}data/transit.json`)
@@ -32,7 +33,7 @@ export interface LiveState {
 export function useLive(active: boolean): LiveState {
   const [s, setS] = useState<LiveState>({ enabled: !!REALTIME_BASE, status: REALTIME_BASE ? 'loading' : 'off', trips: new Map(), alerts: [] })
   useEffect(() => {
-    if (!active || !REALTIME_BASE) return
+    if (!active || !REALTIME_BASE || SERVICE_BASE) return
     const ctl = new AbortController()
     const tick = async () => {
       try {

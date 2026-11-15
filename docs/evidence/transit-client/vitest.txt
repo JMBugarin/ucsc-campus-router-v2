@@ -1,0 +1,9 @@
+
+ RUN  v5.0.5 /Users/josh/Developer/my-workspace/personal/ucsc-map/web
+
+
+ Test Files  5 passed (5)
+      Tests  36 passed (36)
+   Start at  20:20:30
+   Duration  229ms (tests 63%, import 23%, transform 9%, worker 5%)
+

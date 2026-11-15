@@ -1,0 +1,553 @@
+Resolving dependencies...
+Downloading packages...
+  android_file_picker 2.1.1 (2.1.6 available)
+  archive 4.5.2 (4.7.1 available)
+  code_assets 1.2.1 (2.2.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  crypto 3.0.7 (3.0.8 available)
+  cupertino_icons 1.0.9 (2.0.0 available)
+  dbus 0.7.15 (0.8.0 available)
+  file_picker 13.1.0 (13.3.3 available)
+  file_picker_darwin 2.3.2 (2.5.1 available)
+  file_picker_linux 2.0.0 (2.0.4 available)
+  file_picker_web 4.2.0 (4.2.1 available)
+  flutter_local_notifications 22.3.2 (23.0.2 available)
+  flutter_local_notifications_linux 8.0.2 (9.0.0 available)
+  flutter_local_notifications_platform_interface 12.2.0 (13.0.0 available)
+  flutter_local_notifications_web 1.0.0 (2.0.0 available)
+  flutter_local_notifications_windows 3.1.1 (4.0.1 available)
+  flutter_riverpod 3.4.3 (3.5.0 available)
+  hooks 2.0.2 (2.2.0 available)
+  jni 1.1.0 (1.1.2 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  objective_c 9.5.0 (9.6.4 available)
+  petitparser 7.0.2 (7.1.0 available)
+  posix 6.5.2 (6.5.4 available)
+  record_use 0.6.0 (1.1.1 available)
+  riverpod 3.4.3 (3.5.0 available)
+  shared_preferences_android 2.5.0 (2.5.5 available)
+  shared_preferences_foundation 2.5.7 (2.6.2 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  web 1.1.1 (1.1.2 available)
+  windows_file_picker 2.0.1 (2.0.2 available)
+  xml 7.0.1 (7.1.0 available)
+Got dependencies!
+33 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/text_recognizer_test.dart
+00:00 +0: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: a week from the saved schedule counts the classes of each day and says why a day has none
+00:00 +1: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: a week from the saved schedule counts the classes of each day and says why a day has none
+00:00 +2: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: a week from the saved schedule counts the classes of each day and says why a day has none
+00:00 +3: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: a week from the saved schedule counts the classes of each day and says why a day has none
+00:00 +4: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: a week from the saved schedule counts the classes of each day and says why a day has none
+00:00 +5: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: a week from the saved schedule counts the classes of each day and says why a day has none
+00:00 +6: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +7: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +8: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +9: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +10: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +11: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +12: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +13: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +14: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +15: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +16: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +17: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +18: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +19: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +20: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +21: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +22: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +23: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +24: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +25: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +26: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +27: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +28: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +29: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +30: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:00 +31: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +32: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +33: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +34: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +35: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +36: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +37: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +38: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +39: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +40: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +41: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +42: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +43: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +44: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +45: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +46: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +47: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +48: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +49: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +50: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +51: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +52: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +53: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +54: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +55: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +56: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +57: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +58: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +59: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +60: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +61: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +62: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +63: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +64: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +65: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +66: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +67: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +68: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +69: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +70: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +71: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +72: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +73: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +74: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:01 +75: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: the button is not offered where the phone cannot read pictures, and the other ways in stay
+00:02 +76: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/map_test.dart: Map tab is the first thing a fresh install shows, with no schedule
+00:02 +77: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/map_test.dart: Map tab is the first thing a fresh install shows, with no schedule
+00:02 +78: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: the Week screen lists seven days from today, with the classes of each
+00:02 +79: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: the Week screen lists seven days from today, with the classes of each
+00:02 +80: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: the Week screen lists seven days from today, with the classes of each
+00:02 +81: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: the Week screen lists seven days from today, with the classes of each
+00:02 +82: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: the Week screen lists seven days from today, with the classes of each
+00:02 +83: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/week_view_test.dart: the Week screen lists seven days from today, with the classes of each
+00:02 +84: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/skip_day_test.dart: Today Skip this day takes the class off the day, and Undo puts it back
+00:02 +85: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/skip_day_test.dart: Today Skip this day takes the class off the day, and Undo puts it back
+00:02 +86: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/skip_day_test.dart: Today Skip this day takes the class off the day, and Undo puts it back
+00:03 +87: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/skip_day_test.dart: Today Skip this day takes the class off the day, and Undo puts it back
+00:03 +88: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/skip_day_test.dart: Today Skip this day takes the class off the day, and Undo puts it back
+00:03 +89: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/skip_day_test.dart: Today Skip this day takes the class off the day, and Undo puts it back
+00:03 +90: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/skip_day_test.dart: Today Skip this day takes the class off the day, and Undo puts it back
+00:03 +91: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/skip_day_test.dart: Today Skip this day takes the class off the day, and Undo puts it back
+00:03 +92: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +93: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +94: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +95: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +96: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +97: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +98: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +99: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +100: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +101: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +102: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +103: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +104: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +105: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +106: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +107: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +108: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +109: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +110: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +111: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +112: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +113: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +114: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +115: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +116: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +117: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +118: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +119: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +120: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +121: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +122: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +123: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +124: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +125: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +126: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +127: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +128: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +129: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +130: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +131: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +132: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +133: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +134: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +135: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +136: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +137: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +138: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +139: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +140: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +141: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +142: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +143: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +144: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +145: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +146: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:03 +147: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +148: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +149: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +150: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +151: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +152: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +153: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +154: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +155: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +156: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +157: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +158: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +159: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +160: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +161: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +162: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +163: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +164: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:04 +165: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +166: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +167: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +168: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +169: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +170: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +171: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +172: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +173: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +174: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +175: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +176: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +177: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +178: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +179: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +180: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +181: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the Map with a long list of results and a place picked
+00:05 +182: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +183: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +184: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +185: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +186: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +187: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +188: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +189: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +190: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +191: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +192: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +193: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +194: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:05 +195: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:06 +196: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:06 +197: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:06 +198: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:06 +199: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:06 +200: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:06 +201: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:06 +202: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:06 +203: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today with no classes it points to the schedule
+00:06 +204: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found the classes are listed with what was read, and nothing is saved yet
+00:06 +205: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found the classes are listed with what was read, and nothing is saved yet
+00:06 +206: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found the classes are listed with what was read, and nothing is saved yet
+00:06 +207: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found the classes are listed with what was read, and nothing is saved yet
+00:06 +208: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found the classes are listed with what was read, and nothing is saved yet
+00:06 +209: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found the classes are listed with what was read, and nothing is saved yet
+00:06 +210: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found the classes are listed with what was read, and nothing is saved yet
+00:06 +211: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found the classes are listed with what was read, and nothing is saved yet
+00:06 +212: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found the classes are listed with what was read, and nothing is saved yet
+00:06 +213: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +214: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +215: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +216: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +217: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +218: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +219: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +220: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +221: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +222: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +223: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +224: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +225: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +226: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +227: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +228: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +229: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +230: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +231: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +232: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +233: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +234: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +235: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +236: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +237: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +238: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +239: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +240: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +241: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +242: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +243: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +244: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +245: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +246: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the paste and add-a-class dialogs
+00:06 +247: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found Save adds the classes, with the dates the picture showed, and says how many
+00:07 +248: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found Save adds the classes, with the dates the picture showed, and says how many
+00:07 +249: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found Save adds the classes, with the dates the picture showed, and says how many
+00:07 +250: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +251: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +252: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +253: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +254: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +255: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +256: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +257: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +258: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +259: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +260: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +261: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +262: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +263: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +264: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +265: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +266: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +267: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +268: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +269: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +270: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +271: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +272: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +273: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +274: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +275: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +276: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +277: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +278: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +279: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +280: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +281: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +282: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +283: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +284: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +285: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +286: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +287: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +288: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +289: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +290: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +291: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +292: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +293: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +294: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +295: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +296: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +297: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +298: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +299: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +300: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +301: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +302: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +303: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +304: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +305: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +306: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +307: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +308: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +309: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +310: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +311: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +312: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +313: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +314: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +315: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +316: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +317: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +318: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +319: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +320: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +321: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +322: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +323: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:07 +324: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x the classes read from a picture, a class being edited, and the room finder
+00:08 +325: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/ocr_parser_test.dart: bad input a great many lines are read in good time
+00:08 +326: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/ocr_parser_test.dart: bad input a great many lines are read in good time
+00:09 +327: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/ocr_parser_test.dart: bad input a great many lines are read in good time
+00:09 +328: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/ocr_parser_test.dart: bad input a great many lines are read in good time
+00:09 +329: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 1.0x Today, the Schedule, the Settings and the Week
+00:09 +330: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today a room that is not on the campus map is flagged and sends you to the search
+00:09 +331: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found classes that are already saved are not added twice
+00:09 +332: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found classes that are already saved are not added twice
+00:09 +333: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/ocr_parser_test.dart: bad input a very long line
+00:09 +334: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/ocr_parser_test.dart: bad input a very long line
+00:09 +334: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 2.0x Today with its classes, a class on the map, and Walk there failing
+
+Warning: A call to tap() with finder "Found 1 widget with widget matching predicate: [
+  RawTooltip-[LabeledGlobalKey<RawTooltipState>#e523f]("Show XYZ 10 Lecture on the map", hover delay: 0:00:00.000000, touch delay: 0:00:01.500000, dismiss delay: 0:00:00.100000, triggerMode: TooltipTriggerMode.longPress, enableFeedback: true, positionDelegate: Closure: (TooltipPositionContext) => Offset from Function '_getDefaultPositionDelegate@1241220820':., state: RawTooltipState#f2d42(ticker inactive)),
+]" derived an Offset (Offset(298.0, -25.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(298.0, -25.0) is outside the bounds of the root of the render tree, Size(402.0, 874.0).
+The finder corresponds to this RenderBox: _RenderLayoutSurrogateProxyBox#3a4f9 relayoutBoundary=up24
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#ed4e6(_ReusableRenderView#9be54), HitTestEntry<HitTestTarget>#68cf4(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure>.<anonymous closure> (file:///Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart:144:26)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:09 +335: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/ocr_parser_test.dart: bad input a very long line
+00:09 +336: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found notes about the reading are shown with the classes and again after saving
+00:10 +337: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Today the day picker shows another day and goes back to today
+00:10 +338: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 2.0x the paste and add-a-class dialogs
+00:10 +339: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 2.0x the paste and add-a-class dialogs
+00:10 +340: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found Cancel, the close button and going back each ask first, and nothing is saved
+00:10 +341: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found Cancel, the close button and going back each ask first, and nothing is saved
+00:10 +342: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found Cancel, the close button and going back each ask first, and nothing is saved
+00:10 +343: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found Cancel, the close button and going back each ask first, and nothing is saved
+00:10 +344: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: checking what was found Cancel, the close button and going back each ask first, and nothing is saved
+00:10 +345: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Schedule pasting a schedule imports it and says what happened
+00:10 +346: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Schedule pasting a schedule imports it and says what happened
+00:10 +347: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Schedule pasting a schedule imports it and says what happened
+00:10 +348: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look editing a class clears what the reading was unsure of
+00:11 +349: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look editing a class clears what the reading was unsure of
+00:11 +349: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 3.0x Today with its classes, a class on the map, and Walk there failing
+
+Warning: A call to tap() with finder "Found 1 widget with widget matching predicate: [
+  RawTooltip-[LabeledGlobalKey<RawTooltipState>#bd23d]("Show XYZ 10 Lecture on the map", hover delay: 0:00:00.000000, touch delay: 0:00:01.500000, dismiss delay: 0:00:00.100000, triggerMode: TooltipTriggerMode.longPress, enableFeedback: true, positionDelegate: Closure: (TooltipPositionContext) => Offset from Function '_getDefaultPositionDelegate@1241220820':., state: RawTooltipState#adb59(ticker inactive)),
+]" derived an Offset (Offset(298.0, -100.5)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(298.0, -100.5) is outside the bounds of the root of the render tree, Size(402.0, 874.0).
+The finder corresponds to this RenderBox: _RenderLayoutSurrogateProxyBox#0b558 relayoutBoundary=up24
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#af373(_ReusableRenderView#9be54), HitTestEntry<HitTestTarget>#952e0(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure>.<anonymous closure> (file:///Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart:144:26)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:11 +350: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look editing a class clears what the reading was unsure of
+00:11 +351: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look editing a class clears what the reading was unsure of
+00:11 +352: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look editing a class clears what the reading was unsure of
+00:11 +353: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Schedule a calendar file is read and cancelling does nothing
+00:11 +354: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 3.0x the classes read from a picture, a class being edited, and the room finder
+00:11 +355: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 3.0x the classes read from a picture, a class being edited, and the room finder
+00:11 +356: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look a class with a time that was not read cannot be saved until it is fixed or removed
+00:11 +357: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Schedule a class can be removed, and all of them after confirming
+00:12 +358: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone 17 at text size 3.0x Today, the Schedule, the Settings and the Week
+00:12 +359: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look removing a class can be undone
+00:12 +360: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look removing a class can be undone
+00:12 +361: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Schedule the add-a-class form checks its fields before saving anything
+00:12 +362: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Schedule the add-a-class form checks its fields before saving anything
+00:12 +363: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Schedule the add-a-class form checks its fields before saving anything
+00:12 +364: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Schedule the add-a-class form checks its fields before saving anything
+00:12 +365: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look the editor says what is wrong before it lets go of a class
+00:12 +366: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look the editor says what is wrong before it lets go of a class
+00:13 +367: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look the editor says what is wrong before it lets go of a class
+00:13 +368: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rows that need a look the editor says what is wrong before it lets go of a class
+00:13 +369: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/screens_test.dart: Settings a test notification can be sent once reminders are on
+00:13 +370: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone SE at text size 1.0x Today, the Schedule, the Settings and the Week
+00:13 +371: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms a room the campus data does not know is marked, and the room search finds the right one
+00:13 +372: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms a room the campus data does not know is marked, and the room search finds the right one
+00:13 +373: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms a room the campus data does not know is marked, and the room search finds the right one
+00:13 +374: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone SE at text size 2.0x Today with its classes, a class on the map, and Walk there failing
+
+Warning: A call to tap() with finder "Found 1 widget with widget matching predicate: [
+  RawTooltip-[LabeledGlobalKey<RawTooltipState>#a6684]("Show XYZ 10 Lecture on the map", hover delay: 0:00:00.000000, touch delay: 0:00:01.500000, dismiss delay: 0:00:00.100000, triggerMode: TooltipTriggerMode.longPress, enableFeedback: true, positionDelegate: Closure: (TooltipPositionContext) => Offset from Function '_getDefaultPositionDelegate@1241220820':., state: RawTooltipState#2eeb7(ticker inactive)),
+]" derived an Offset (Offset(271.0, -25.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(271.0, -25.0) is outside the bounds of the root of the render tree, Size(375.0, 667.0).
+The finder corresponds to this RenderBox: _RenderLayoutSurrogateProxyBox#65f9e relayoutBoundary=up24
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#9db4c(_ReusableRenderView#9be54), HitTestEntry<HitTestTarget>#6e355(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure>.<anonymous closure> (file:///Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart:144:26)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:13 +375: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms the first match of the room search is offered on the card, and using it fixes the room
+00:13 +376: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone SE at text size 2.0x the paste and add-a-class dialogs
+00:13 +377: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms nothing is offered when the search finds no room, a room its building does not list, or fails
+00:13 +378: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms nothing is offered when the search finds no room, a room its building does not list, or fails
+00:13 +379: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms nothing is offered when the search finds no room, a room its building does not list, or fails
+00:14 +380: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms nothing is offered when the search finds no room, a room its building does not list, or fails
+00:14 +381: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone SE at text size 3.0x Today with its classes, a class on the map, and Walk there failing
+
+Warning: A call to tap() with finder "Found 1 widget with widget matching predicate: [
+  RawTooltip-[LabeledGlobalKey<RawTooltipState>#c6f02]("Show XYZ 10 Lecture on the map", hover delay: 0:00:00.000000, touch delay: 0:00:01.500000, dismiss delay: 0:00:00.100000, triggerMode: TooltipTriggerMode.longPress, enableFeedback: true, positionDelegate: Closure: (TooltipPositionContext) => Offset from Function '_getDefaultPositionDelegate@1241220820':., state: RawTooltipState#e7b9f(ticker inactive)),
+]" derived an Offset (Offset(271.0, -9.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(271.0, -9.0) is outside the bounds of the root of the render tree, Size(375.0, 667.0).
+The finder corresponds to this RenderBox: _RenderLayoutSurrogateProxyBox#a996d relayoutBoundary=up24
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#6e73e(_ReusableRenderView#9be54), HitTestEntry<HitTestTarget>#b3a7b(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure>.<anonymous closure> (file:///Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart:144:26)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:14 +382: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms a building we know with a room number it does not list says so
+00:14 +383: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone SE at text size 3.0x the paste and add-a-class dialogs
+
+Warning: A call to tap() with finder "Found 1 widget with text "Add a class": [
+  Text("Add a class", dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+]" derived an Offset (Offset(198.5, 822.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(198.5, 822.0) is outside the bounds of the root of the render tree, Size(375.0, 667.0).
+The finder corresponds to this RenderBox: RenderParagraph#eaf69 relayoutBoundary=up19
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#43a03(_ReusableRenderView#9be54), HitTestEntry<HitTestTarget>#fbca2(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure>.<anonymous closure> (file:///Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart:161:24)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:14 +384: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms online and to-be-announced rooms are not looked for
+00:14 +385: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone SE at text size 3.0x the classes read from a picture, a class being edited, and the room finder
+00:14 +386: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms each distinct room is asked about once, and again when it is changed
+00:14 +387: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: an iPhone SE at text size 3.0x Today, the Schedule, the Settings and the Week
+00:14 +388: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: rooms when the rooms cannot be checked they are saved as read, and that is said
+00:14 +389: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: the Map shows the clear button only when there is something to clear
+00:14 +390: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: dates a class with no dates in the picture takes the current term, and says so
+00:14 +391: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: dates a class with no dates in the picture takes the current term, and says so
+00:14 +392: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/layout_test.dart: the Map the search bar sits below the status bar while the map fills the screen
+00:15 +393: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: dates a class given its own dates keeps them when the shared dates change
+00:15 +394: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: dates a class given its own dates keeps them when the shared dates change
+00:15 +395: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: dates a class given its own dates keeps them when the shared dates change
+00:15 +396: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: dates with no term to use, the dates must be chosen before the classes can be saved
+00:15 +397: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: dates a page that shows its dates needs no term
+00:15 +398: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: looks the review and the editor at 1.0x text
+00:16 +399: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: looks the review and the editor at 2.0x text
+00:16 +400: /Users/josh/Developer/my-workspace/personal/ucsc-map/app/test/picture_import_test.dart: looks the review and the editor at 3.0x text
+00:16 +401: All tests passed!
