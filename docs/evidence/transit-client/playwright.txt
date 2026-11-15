@@ -1,0 +1,27 @@
+
+Running 22 tests using 2 workers
+
+  ✓   2 e2e/app.spec.ts:9:1 › map and campus data load (6.8s)
+  ✓   1 e2e/mobile.spec.ts:5:1 › mobile: bottom sheet search to place to directions (7.0s)
+  ✓   3 e2e/app.spec.ts:20:1 › typo-tolerant search opens a place and fills the share link (2.9s)
+  ✓   4 e2e/mobile.spec.ts:21:1 › mobile: sheet resizes by tapping the grabber (3.3s)
+  ✓   6 e2e/service.spec.ts:20:1 › fresh service predictions are labeled (708ms)
+  ✓   7 e2e/service.spec.ts:26:1 › stale service falls back to the bundled schedule (415ms)
+  ✓   8 e2e/service.spec.ts:33:1 › service outage keeps offline schedule and rooms usable (593ms)
+  ✓   5 e2e/app.spec.ts:30:1 › nicknames and landmarks resolve (2.7s)
+  ✓   9 e2e/service.spec.ts:42:1 › malformed service response is treated as unavailable (589ms)
+  ✓  10 e2e/app.spec.ts:40:1 › category filter lists only that category (2.7s)
+  ✓  11 e2e/service.spec.ts:48:1 › service worker never caches transit responses (3.1s)
+  ✓  12 e2e/app.spec.ts:49:1 › shared place link opens directly (2.1s)
+  ✓  13 e2e/app.spec.ts:54:1 › walking route follows mapped paths and reports time and distance (2.1s)
+  ✓  14 e2e/app.spec.ts:64:1 › avoid stairs either removes stair legs or explains that none exists (2.6s)
+  ✓  15 e2e/app.spec.ts:81:1 › current location off campus gives an honest message, not a straight line (2.2s)
+  ✓  16 e2e/app.spec.ts:89:1 › current location on campus routes from here (2.2s)
+  ✓  17 e2e/app.spec.ts:96:1 › location permission denied is explained (2.2s)
+  ✓  18 e2e/app.spec.ts:103:1 › transit info says campus shuttles have no public live feed (2.1s)
+  ✓  19 e2e/app.spec.ts:111:1 › dark mode switches the map style and design tokens (2.3s)
+  ✓  20 e2e/app.spec.ts:122:1 › reduced motion zeroes UI transition tokens (2.1s)
+  ✓  21 e2e/app.spec.ts:129:1 › keyboard: slash focuses search, arrows move, enter opens (2.4s)
+  ✓  22 e2e/app.spec.ts:139:1 › a METRO stop lists scheduled buses and says live tracking is not connected (1.8s)
+
+  22 passed (41.3s)
