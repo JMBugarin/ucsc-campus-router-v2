@@ -1,5 +1,6 @@
-// App shell and campus data are cached; map tiles are never stored (provider policy).
-const CACHE = 'ucsc-map-v1'
+// App shell and campus data are cached; map tiles and transit API responses are never stored.
+const CACHE = 'ucsc-map-v2'
+const STATIC = /\/(assets|data|maplibre)\/[^?]*$|\.(svg|png|webmanifest)$/
 const SHELL = ['./', 'manifest.webmanifest', 'icon.svg', 'data/places.json', 'data/graph.json', 'maplibre/maplibre-gl-worker.mjs', 'maplibre/maplibre-gl-shared.mjs']
 
 self.addEventListener('install', (e) => {
@@ -12,6 +13,7 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url)
   if (e.request.method !== 'GET' || url.origin !== location.origin) return
   const isPage = e.request.mode === 'navigate'
+  if (!isPage && (url.search || !STATIC.test(url.pathname))) return
   e.respondWith(
     isPage
       ? fetch(e.request).then((r) => (caches.open(CACHE).then((c) => c.put(e.request, r.clone())), r)).catch(() => caches.match(e.request).then((r) => r || caches.match('./')))
