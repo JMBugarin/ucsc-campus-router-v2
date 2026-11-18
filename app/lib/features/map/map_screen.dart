@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +14,7 @@ import '../../design/map_markers.dart';
 import '../../design/surfaces.dart';
 import '../../design/tokens.dart';
 import '../../design/type.dart';
+import '../activity/activity.dart';
 import '../directions/directions.dart';
 import '../search/place.dart';
 import '../search/search_repository.dart';
@@ -53,6 +56,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     });
     final point = place.point;
     if (point != null) _map.move(LatLng(point.lat, point.lon), 18);
+    unawaited(ref.read(activityProvider.notifier).meaningfulAction());
   }
 
   void _clear() => setState(() {

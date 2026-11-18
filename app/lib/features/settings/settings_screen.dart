@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../activity/activity.dart';
 import '../reminders/reminder.dart';
 import '../reminders/reminder_controller.dart';
 import '../reminders/reminder_scheduler.dart';
@@ -53,6 +54,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final settings = ref.watch(settingsProvider);
     final controller = ref.read(settingsProvider.notifier);
     final planProblem = ref.watch(reminderControllerProvider).value;
+    final counting = ref.watch(activitySenderProvider) != null;
+    final activity = ref.watch(activityProvider);
     final theme = Theme.of(context);
     Widget line(String text) => Padding(
       padding: const EdgeInsets.only(top: 6),
@@ -113,7 +116,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Text('Your data', style: theme.textTheme.titleMedium),
           ),
           line(
-            'Your schedule is saved only on this phone. There is no account and no server.',
+            counting
+                ? 'Your schedule is saved only on this phone. There is no account.'
+                : 'Your schedule is saved only on this phone. There is no account and no server.',
           ),
           line(
             'The app never asks for your location. Walk there hands the destination to your maps app, which finds where you are.',
@@ -124,6 +129,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           line(
             'The map downloads its tiles from a map provider, which sees the area you look at and your network address.',
           ),
+          if (counting) ...[
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Count my weekly use'),
+              subtitle: const Text(
+                'Off unless you turn it on. Once a week, after you find a room or open a class on the map, '
+                'the phone sends a random id and the week, nothing else: no schedule, searches, location or name. '
+                'Turning it off deletes what was sent.',
+              ),
+              value: activity.on,
+              onChanged: ref.read(activityProvider.notifier).setOn,
+            ),
+            if (activity.participantCode case final code?)
+              line('Participant code: $code'),
+          ],
           const Divider(height: 32),
           Semantics(
             header: true,
