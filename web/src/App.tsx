@@ -15,6 +15,7 @@ import { CategoryChips, Featured, PlaceRows } from './features/Browse'
 import { PlaceDetail } from './features/PlaceDetail'
 import { Directions, type Pick } from './features/Directions'
 import { AboutModal, TransitModal } from './features/Modals'
+import { activity } from './state/activity'
 import { busOptions } from './transit/plan'
 import { loadTransit, useClock, useLive } from './transit/useTransit'
 import type { TransitData } from './transit/schedule'
@@ -123,7 +124,9 @@ export function App() {
 
   useEffect(() => {
     if (selected) mapRef.current?.flyToPlace(selected)
+    if (selected) void activity.meaningfulAction()
   }, [selected?.id])
+  useEffect(() => void activity.flush(), [])
   useEffect(() => {
     if (!plan || !graph) return
     const coords = plan.route.nodes.map((n) => [graph.lon[n], graph.lat[n]] as [number, number])

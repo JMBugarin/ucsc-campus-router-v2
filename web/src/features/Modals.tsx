@@ -1,3 +1,4 @@
+import { useActivity } from '../state/activity'
 import { GlassBanner, GlassModal, GlassSegmentedControl, GlassSwitch, Divider } from '../design/components'
 import { SHUTTLES, TRANSIT_LINKS } from '../data/campus'
 import type { ThemeMode } from '../state/prefs'
@@ -48,6 +49,7 @@ export function AboutModal({
   solid: boolean
   onSolid: (v: boolean) => void
 }) {
+  const counting = useActivity()
   return (
     <GlassModal open={open} onClose={onClose} title="Settings and about">
       <div className="setrow">
@@ -74,6 +76,21 @@ export function AboutModal({
         </span>
         <GlassSwitch label="Opaque panels" checked={solid} onChange={onSolid} />
       </div>
+      {counting.available && (
+        <>
+          <div className="setrow">
+            <span>
+              Count my weekly use
+              <small>
+                Off unless you turn it on. Once a week, after you open a place, this browser sends a random id and the week, nothing else: no searches,
+                routes, location or name. Turning it off deletes what was sent.
+              </small>
+            </span>
+            <GlassSwitch label="Count my weekly use" checked={counting.on} onChange={counting.setOn} />
+          </div>
+          {counting.code && <p className="note">Participant code: {counting.code}</p>}
+        </>
+      )}
       <Divider />
       <h3>Data and credits</h3>
       <p className="note">

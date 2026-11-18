@@ -59,3 +59,32 @@ test('service worker never caches transit responses', async ({ page }) => {
   await expect(note(page)).toHaveText(/stale; showing the bundled schedule/)
   expect(await page.evaluate(async () => (await caches.keys()).length && (await Promise.all((await caches.keys()).map(async k => (await (await caches.open(k)).keys()).filter(r => r.url.includes('/svc/')).length))).reduce((a, b) => a + b, 0))).toBe(0)
 })
+
+test('weekly counting is off until chosen, sends only an id and week, and withdrawal deletes it', async ({ page }) => {
+  const posts: unknown[] = []
+  const deletes: string[] = []
+  await page.route('**/svc/v1/departures?**', r => r.fulfill({ json: { status: status('fresh'), departures: [] } }))
+  await page.route('**/svc/v1/activity**', r => {
+    const req = r.request()
+    if (req.method() === 'POST') posts.push(req.postDataJSON())
+    if (req.method() === 'DELETE') deletes.push(new URL(req.url()).searchParams.get('install') ?? '')
+    return r.fulfill({ status: 204 })
+  })
+  await open(page)
+  expect(posts).toEqual([])
+  await page.getByRole('button', { name: 'Settings and about' }).click()
+  const toggle = page.getByRole('switch', { name: 'Count my weekly use' })
+  await expect(toggle).toHaveAttribute('aria-checked', 'false')
+  await toggle.click()
+  await expect(toggle).toHaveAttribute('aria-checked', 'true')
+  const code = (await page.getByText(/^Participant code: /).textContent())!.slice(-8)
+  await page.keyboard.press('Escape')
+  await page.getByRole('combobox', { name: 'Search UCSC' }).fill('mchenry library')
+  await page.getByRole('option').first().click()
+  await expect.poll(() => posts.length).toBe(1)
+  expect(posts[0]).toEqual({ install: expect.stringMatching(new RegExp(`^${code}-`)), week: '2026-11-02' })
+  await page.getByRole('button', { name: 'Settings and about' }).click()
+  await page.getByRole('switch', { name: 'Count my weekly use' }).click()
+  await expect.poll(() => deletes.length).toBe(1)
+  expect(deletes[0]).toBe((posts[0] as { install: string }).install)
+})
