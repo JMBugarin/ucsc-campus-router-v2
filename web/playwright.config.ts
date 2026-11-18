@@ -13,6 +13,6 @@ export default defineConfig({
   },
   webServer: [
     { command: 'npm run build && npx vite preview --port 4173 --strictPort', url: 'http://localhost:4173', reuseExistingServer: true, timeout: 120_000 },
-    { command: 'node scripts/copy-worker.mjs && VITE_TRANSIT_API=/svc npx vite build --outDir dist-service && npx vite preview --outDir dist-service --port 4174 --strictPort', url: 'http://localhost:4174', reuseExistingServer: true, timeout: 120_000 },
+    { command: 'node scripts/copy-worker.mjs && VITE_TRANSIT_API=/svc VITE_ACTIVITY_URL=/svc/v1/activity npx vite build --outDir dist-service && npx vite preview --outDir dist-service --port 4174 --strictPort', url: 'http://localhost:4174', reuseExistingServer: true, timeout: 120_000 },
   ],
 })

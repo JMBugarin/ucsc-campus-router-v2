@@ -32,7 +32,18 @@ Playwright drives your installed Google Chrome, so no browser download is needed
 - **GitHub Pages**: build, then publish `web/dist` (for example with the `actions/upload-pages-artifact` and `actions/deploy-pages` actions).
 - **Cloudflare Pages / Netlify**: build command `npm run build`, root `web`, output `dist`.
 
-All routes use the URL hash (`#/p/<place>`, `#/r/<from>/<to>`), so no rewrite rules are needed. Nothing is deployed or pushed by this repository's scripts.
+All routes use the URL hash (`#/p/<place>`, `#/r/<from>/<to>`), so no rewrite rules are needed.
+
+### Hosted beta
+
+`.github/workflows/pages.yml` builds `web/` and publishes it to GitHub Pages at https://jmbugarin.github.io/ucsc-campus-router-v2/ on every push to main that touches `web/`. Two repository variables feed the build:
+
+- `TRANSIT_API`: the classmap-transit public ingress (`https://32-188-109-110.sslip.io`), for live departures.
+- `ACTIVITY_URL`: the same host plus `/v1/activity`, for opt-in weekly counting.
+
+If either is unset, that feature is off: departures fall back to the bundled schedule, and the counting switch is hidden.
+
+Weekly counting is off until someone turns on "Count my weekly use" in Settings and about. The browser then makes a random id (`crypto.randomUUID`) and keeps it in localStorage. The first place opened in each Pacific week (a building, a room or a stop's departures) sends `{install, week}` and nothing else. Pings made offline are retried for up to 5 weeks. Turning the switch off deletes the server rows for that id, retrying until it succeeds. Settings shows the first 8 characters as a participant code for the private consent record. A different browser, a private window or clearing site data makes a new id.
 
 ## Layout
 
