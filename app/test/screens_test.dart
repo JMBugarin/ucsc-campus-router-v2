@@ -319,7 +319,7 @@ void main() {
     });
 
     testWidgets('the message after an import floats above the tab bar, so the tabs stay tappable', (tester) async {
-      final rig = TestRig();
+      final rig = TestRig(now: mondayNoon);
       rig.schedule.nextImport = ImportResult(meetings: [meeting()], notes: const [], locations: const []);
       await open(tester, rig);
       await goToTab(tester, 'Schedule');
@@ -334,9 +334,10 @@ void main() {
         tester.getRect(find.textContaining('Added 1 class')).bottom,
         lessThanOrEqualTo(tester.getRect(find.byType(NavigationBar)).top),
       );
+      expect(find.text("Today's classes"), findsNothing);
       await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text('Today')));
       await tester.pumpAndSettle();
-      expect(find.text("Today's classes"), findsNothing, reason: 'Monday noon is before the default class, so Today shows it as the next');
+      expect(find.text("Today's classes"), findsOneWidget, reason: 'Monday noon is before the default class, so Today lists it');
     });
 
     testWidgets('a calendar file is read and cancelling does nothing', (

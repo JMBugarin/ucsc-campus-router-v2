@@ -1,4 +1,5 @@
 {
   "TILE_PROVIDER": "maptiler",
-  "TILE_KEY": "your-key-here"
+  "TILE_KEY": "your-key-here",
+  "ACTIVITY_URL": ""
 }
