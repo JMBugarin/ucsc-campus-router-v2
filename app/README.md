@@ -25,6 +25,8 @@ Your UCSC class schedule on an interactive campus map. Everything runs on the ph
 
 Without configuration the map uses OpenStreetMap's public tile server, which is fine for development but not for wide release (see their tile usage policy). For a real build use a hosted provider with your own key: copy `dart_defines.example.json` to `dart_defines.json` (git-ignored), set `TILE_PROVIDER` (`maptiler` or `stadia`) and `TILE_KEY`, and run with `--dart-define-from-file=dart_defines.json`. Both are needed; a key with no provider is ignored and never sent anywhere. The key is compiled into the app, so restrict it to the app's bundle id in the provider's dashboard. The tile provider sees the area the map shows and the phone's network address.
 
+`ACTIVITY_URL` (for example `https://<host>/v1/activity`, served by classmap-transit) turns on the opt-in weekly usage count. When it's empty, as in every build so far, the Settings switch is hidden and nothing is ever sent. When it's set, counting still starts off. A student who turns it on gets a random install id. After the first room found or class opened on the map each Pacific week, the phone sends that id and the week's Monday. Pings made offline are retried for up to 5 weeks. Turning the switch off deletes the server's rows for that id, retrying until it succeeds, and the next opt-in gets a new id. Settings shows the first 8 characters as a participant code for the private consent record.
+
 ### App icon
 
 The icon and launch image are drawn by `scripts/make_icon.swift` and written at every size by `scripts/make_icons.sh` (macOS; needs `swift` and `sips`).

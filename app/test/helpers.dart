@@ -6,6 +6,7 @@ import 'package:classmap/campus/campus_data.dart';
 import 'package:classmap/campus/terms.dart';
 import 'package:classmap/core/clock.dart';
 import 'package:classmap/core/tiles.dart';
+import 'package:classmap/features/activity/activity.dart';
 import 'package:classmap/features/directions/directions.dart';
 import 'package:classmap/features/reminders/reminder.dart';
 import 'package:classmap/features/reminders/reminder_scheduler.dart';
@@ -231,6 +232,24 @@ final testTerms = termsFromJson(
       as Map<String, dynamic>,
 );
 
+class FakeActivitySender implements ActivitySender {
+  final recorded = <(String, String)>[];
+  final withdrawn = <String>[];
+  Sent next = Sent.ok;
+
+  @override
+  Future<Sent> record(String install, String week) async {
+    if (next == Sent.ok) recorded.add((install, week));
+    return next;
+  }
+
+  @override
+  Future<Sent> withdraw(String install) async {
+    if (next == Sent.ok) withdrawn.add(install);
+    return next;
+  }
+}
+
 /// Everything a screen test needs, with the fakes exposed so tests can look at them.
 class TestRig {
   TestRig({
@@ -242,6 +261,7 @@ class TestRig {
     this.term,
     this.stubTerm = false,
     this.fakeSearch = false,
+    this.activity,
     Map<String, Object> prefs = const {},
   }) : schedule = FakeScheduleRepository(stored: stored),
        scheduler = FakeReminderScheduler(),
@@ -273,6 +293,9 @@ class TestRig {
   /// Searches with [search] instead of the bundled campus data.
   final bool fakeSearch;
 
+  /// Stands in for the usage-count server; null is a build without counting.
+  final FakeActivitySender? activity;
+
   /// Pins the app's clock when set (a UTC instant).
   final DateTime? now;
 
@@ -301,6 +324,7 @@ class TestRig {
       picturePickerProvider.overrideWithValue(picker),
       textRecognizerProvider.overrideWithValue(recognizer),
       pictureImportAvailableProvider.overrideWithValue(pictureImport),
+      activitySenderProvider.overrideWithValue(activity),
       if (stubTerm || term != null)
         termProvider.overrideWith((ref) async => term),
     ];
