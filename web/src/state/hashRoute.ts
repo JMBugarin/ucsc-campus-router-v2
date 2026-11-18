@@ -6,10 +6,18 @@ export type Route =
   | { name: 'directions'; from?: string; to?: string }
   | { name: 'gallery' }
 
+function decode(s: string): string {
+  try {
+    return decodeURIComponent(s)
+  } catch {
+    return s
+  }
+}
+
 /** #/ · #/p/<id> · #/r/<from>/<to> (either may be empty; "me" is current location) · #/gallery */
 export function parseHash(h: string): Route {
   const path = h.replace(/^#/, '').split('?')[0]
-  const seg = path.replace(/^\/+/, '').split('/').map(decodeURIComponent)
+  const seg = path.replace(/^\/+/, '').split('/').map(decode)
   if (seg[0] === 'p' && seg[1]) return { name: 'place', id: seg[1] }
   if (seg[0] === 'r') return { name: 'directions', from: seg[1] || undefined, to: seg[2] || undefined }
   if (seg[0] === 'gallery') return { name: 'gallery' }
