@@ -17,7 +17,7 @@ import { MissingRoom } from './features/Feedback'
 import { Today } from './features/classes/Today'
 import { Schedule } from './features/classes/Schedule'
 import { ClassEditor } from './features/classes/ClassEditor'
-import { ImportReview, PasteImport, toMeetings } from './features/classes/Import'
+import { ImportReview, PasteImport, PictureImport, toMeetings } from './features/classes/Import'
 import { loadClassesData, makeWalk, placeFor, useNow, type ClassesData } from './schedule/data'
 import { schedule, useReminderPrefs, useSchedule } from './schedule/store'
 import { useClassReminders, askToNotify } from './schedule/notify'
@@ -86,7 +86,7 @@ export function App() {
   const meetings = useSchedule()
   const reminderPrefs = useReminderPrefs()
   const now = useNow()
-  const [sheet, setSheet] = useState<null | { kind: 'paste' } | { kind: 'review'; drafts: ClassDraft[]; notes: string[] } | { kind: 'edit'; index: number | null; draft: ClassDraft }>(null)
+  const [sheet, setSheet] = useState<null | { kind: 'paste' } | { kind: 'picture'; file: File } | { kind: 'review'; drafts: ClassDraft[]; notes: string[] } | { kind: 'edit'; index: number | null; draft: ClassDraft }>(null)
   const mapRef = useRef<MapHandle>(null)
   const searchRef = useRef<HTMLInputElement>(null)
 
@@ -350,6 +350,7 @@ export function App() {
         reminderLead={reminderPrefs.lead}
         now={now}
         onPaste={() => setSheet({ kind: 'paste' })}
+        onPicture={(file) => setSheet({ kind: 'picture', file })}
         onAdd={() => setSheet({ kind: 'edit', index: null, draft: newDraft(termDates()) })}
         onEdit={(i) => setSheet({ kind: 'edit', index: i, draft: draftFromMeeting(meetings[i]) })}
         onReminders={async (lead) => {
@@ -497,6 +498,7 @@ export function App() {
       )}
       <TransitModal open={modal === 'transit'} onClose={() => setModal(null)} />
       {classes && index && sheet?.kind === 'paste' && <PasteImport campus={classes.campus} onClose={() => setSheet(null)} onRead={(drafts, notes) => setSheet({ kind: 'review', drafts: drafts.map((d) => ({ ...d, ...(d.startDate ? {} : termDates()) })), notes })} />}
+      {classes && sheet?.kind === 'picture' && <PictureImport file={sheet.file} onClose={() => setSheet(null)} onRead={(drafts, notes) => setSheet({ kind: 'review', drafts: drafts.map((d) => ({ ...d, ...(d.startDate ? {} : termDates()) })), notes })} />}
       {classes && index && sheet?.kind === 'review' && (
         <ImportReview
           drafts={sheet.drafts}

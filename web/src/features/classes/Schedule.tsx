@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { GlassBanner, GlassButton, GlassSegmentedControl, SectionLabel } from '../../design/components'
 import type { Meeting } from '../../schedule/meeting'
 import { meetingLabel, timeLabel } from '../../schedule/meeting'
@@ -10,6 +10,7 @@ export function Schedule({
   persistent,
   reminderLead,
   onPaste,
+  onPicture,
   onAdd,
   onEdit,
   onReminders,
@@ -20,6 +21,7 @@ export function Schedule({
   persistent: boolean
   reminderLead: number | null
   onPaste: () => void
+  onPicture: (file: File) => void
   onAdd: () => void
   onEdit: (index: number) => void
   onReminders: (lead: number | null) => void
@@ -27,6 +29,7 @@ export function Schedule({
   now: number
 }) {
   const [confirm, setConfirm] = useState(false)
+  const picker = useRef<HTMLInputElement>(null)
   const days = WEEKDAY_NAMES.map((name, d) => ({
     name,
     list: meetings
@@ -40,7 +43,22 @@ export function Schedule({
     <section className="schedule" aria-label="Schedule">
       <h1 className="detail__title">Schedule</h1>
       <div className="schedule__add">
-        <GlassButton variant="primary" icon="layers" onClick={onPaste}>
+        <GlassButton variant="primary" icon="pin" onClick={() => picker.current?.click()}>
+          Take or upload a picture
+        </GlassButton>
+        <input
+          ref={picker}
+          type="file"
+          accept="image/*"
+          hidden
+          aria-label="Picture of your schedule"
+          onChange={(e) => {
+            const f = e.target.files?.[0]
+            e.target.value = ''
+            if (f) onPicture(f)
+          }}
+        />
+        <GlassButton icon="layers" onClick={onPaste}>
           Paste from MyUCSC
         </GlassButton>
         <GlassButton icon="plus" onClick={onAdd}>
@@ -52,7 +70,7 @@ export function Schedule({
           Private browsing or blocked site data means your classes disappear when you close this page.
         </GlassBanner>
       )}
-      {!meetings.length && <p className="note">No classes yet. Paste the Class Schedule page from MyUCSC, or add each class by hand.</p>}
+      {!meetings.length && <p className="note">No classes yet. Take a screenshot of your Class Schedule page in MyUCSC, paste the page, or add each class by hand. You check every class before it's saved.</p>}
       {days.map(({ name, list }) => (
         <div key={name}>
           <SectionLabel>{name}</SectionLabel>

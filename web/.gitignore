@@ -4,5 +4,6 @@ test-results
 playwright-report
 *.local
 public/maplibre
+public/tesseract
 .vite
 dist-service/
