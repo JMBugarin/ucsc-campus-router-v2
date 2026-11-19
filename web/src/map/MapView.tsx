@@ -37,6 +37,8 @@ export interface MapViewProps {
   places: Place[]
   selected: Place | null
   focus?: MapFocus | null
+  /** today's classes, pinned with their start times */
+  classPins?: { id: string; lat: number; lon: number; label: string; next: boolean }[]
   route: GeoJSON.FeatureCollection | null
   endpoints: GeoJSON.FeatureCollection | null
   you: { lat: number; lon: number; accuracy: number } | null
@@ -104,6 +106,10 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     const f = focusFeatures(p.focus, p.selected)
     set('rooms', f.rooms)
     set('doors', f.doors)
+    set('classes', {
+      type: 'FeatureCollection',
+      features: (p.classPins ?? []).map((c) => ({ type: 'Feature', properties: { id: c.id, label: c.label, next: c.next ? 1 : 0 }, geometry: { type: 'Point', coordinates: [c.lon, c.lat] } })),
+    })
     set('parking', placeFeatures(p.places.filter((x) => x.kind === 'parking')))
     set('route', p.route ?? EMPTY)
     set('endpoints', p.endpoints ?? EMPTY)
@@ -168,7 +174,7 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
       const id = e.features?.[0]?.properties?.id as string | undefined
       if (id) propsRef.current.onSelect(id)
     }
-    for (const layer of ['place-pin', 'place-pin-minor', 'parking-pin', 'selected-pin', 'room-dot']) {
+    for (const layer of ['place-pin', 'place-pin-minor', 'parking-pin', 'selected-pin', 'room-dot', 'class-pin']) {
       map.on('click', layer, hit)
       map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'))
       map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''))
@@ -199,7 +205,7 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     }
   }, [props.theme])
 
-  useEffect(apply, [props.places, props.route, props.endpoints, props.selected, props.you, props.focus])
+  useEffect(apply, [props.places, props.route, props.endpoints, props.selected, props.you, props.focus, props.classPins])
 
   useImperativeHandle(ref, () => ({
     flyToPlace(p, zoom = 17.2) {
@@ -217,8 +223,13 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
       const b = new maplibregl.LngLatBounds(coords[0], coords[0])
       coords.forEach((c) => b.extend(c))
       const pad = propsRef.current.padding
-      const m = 36
-      map.fitBounds(b, { padding: { top: (pad.top ?? 0) + m, bottom: (pad.bottom ?? 0) + m, left: (pad.left ?? 0) + m, right: (pad.right ?? 0) + m }, maxZoom, duration: prefersReducedMotion() ? 0 : CameraMotion.fly })
+      const full = { top: pad.top ?? 0, bottom: pad.bottom ?? 0, left: pad.left ?? 0, right: pad.right ?? 0 }
+      // the map keeps the padding of its last move and fitBounds adds its own on top, so measure with the panel's padding alone
+      const prev = map.getPadding()
+      map.setPadding(full)
+      const cam = map.cameraForBounds(b, { padding: 36, maxZoom })
+      map.setPadding(prev)
+      if (cam) map.flyTo({ ...cam, padding: full, duration: prefersReducedMotion() ? 0 : CameraMotion.fly, essential: false })
     },
     resetNorth() {
       mapRef.current?.easeTo({ bearing: 0, pitch: 0, duration: prefersReducedMotion() ? 0 : CameraMotion.ease })

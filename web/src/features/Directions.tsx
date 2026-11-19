@@ -8,9 +8,54 @@ import { PlaceRows } from './Browse'
 import { clockText, type TransitData } from '../transit/schedule'
 import type { BusPlan } from '../transit/plan'
 import { ACCESS_LABEL, checkedText, doorSentence, relation } from '../data/rooms'
+import { GlassSegmentedControl, StatusPill } from '../design/components'
+import { clockAt, pacificDate, pacificInstant } from '../schedule/time'
 
 export type Pick = { id: string; name: string } | null
 
+/** "Leave by" for a class: when to set off to make it, on foot or by one of the buses that gets there in time. */
+function ArriveBy({ plan, at, label, now, bus, transit }: { plan: Plan; at: number; label: string; now: number; bus?: BusPlan | null; transit?: TransitData | null }) {
+  const [mode, setMode] = useState<'arrive' | 'now'>('arrive')
+  const walkMs = plan.seconds * 1000
+  const leaveBy = at - walkMs
+  const lateMin = Math.ceil((now + walkMs - at) / 60000)
+  const midnight = pacificInstant(pacificDate(now), '00:00')
+  const deadline = (at - midnight) / 1000
+  const buses = (bus?.options ?? []).filter((o) => o.arrives <= deadline && o.departs - o.walkToStop >= (now - midnight) / 1000)
+  return (
+    <section className="arrive arrive--plan" aria-label="When to leave">
+      <GlassSegmentedControl<'arrive' | 'now'>
+        label="Plan for"
+        value={mode}
+        onChange={setMode}
+        options={[
+          { value: 'arrive', label: `Arrive by ${clockAt(at)}` },
+          { value: 'now', label: 'Leave now' },
+        ]}
+      />
+      {mode === 'arrive' ? (
+        lateMin > 0 ? (
+          <p className="arrive__note">
+            Leave now: walking gets you there about {lateMin} min late. <StatusPill tone="danger">Late</StatusPill>
+          </p>
+        ) : (
+          <p className="arrive__note">
+            Leave by {clockAt(leaveBy)} · Arrive around {clockAt(at)} {at - (now + walkMs) < 5 * 60000 ? <StatusPill tone="warning">Tight</StatusPill> : <StatusPill tone="success">On time</StatusPill>}
+          </p>
+        )
+      ) : (
+        <p className="arrive__note">
+          Leave now · Arrive around {clockAt(now + walkMs)} for {label} at {clockAt(at)}
+        </p>
+      )}
+      {mode === 'arrive' && transit && buses.length > 0 && (
+        <p className="arrive__line">
+          Or by bus: leave by {clockText(buses[0].departs - buses[0].walkToStop)}, take route {buses[0].route} from {transit.stops[buses[0].board].name} at {clockText(buses[0].departs)}, arrive around {clockText(buses[0].arrives)}. Scheduled time.
+        </p>
+      )}
+    </section>
+  )
+}
 function Arrival({ room, end }: { room: Place; end: [number, number] }) {
   const info = room.room!
   const g = info.guide
@@ -104,7 +149,11 @@ export function Directions({
   bus,
   transit,
   toRoom,
+  arriveBy,
+  now = Date.now(),
 }: {
+  arriveBy?: { at: number; label: string } | null
+  now?: number
   toRoom?: Place | null
   bus?: BusPlan | null
   transit?: TransitData | null
@@ -146,6 +195,7 @@ export function Directions({
           Walking directions
         </h1>
       </div>
+      {arriveBy && plan && !editing && <ArriveBy plan={plan} at={arriveBy.at} label={arriveBy.label} now={now} bus={bus} transit={transit} />}
       <div className="dfields">
         <div className="dfields__col">
           <Field label="From" value={from?.name ?? ''} placeholder="Choose starting point" query={q} onQuery={setQ} active={editing === 'from'} onFocus={() => (setEditing('from'), setQ(''))} />

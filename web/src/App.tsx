@@ -14,6 +14,18 @@ import { usePref, useTheme } from './state/prefs'
 import { CategoryChips, Featured, PlaceRows } from './features/Browse'
 import { PlaceDetail } from './features/PlaceDetail'
 import { MissingRoom } from './features/Feedback'
+import { Today } from './features/classes/Today'
+import { Schedule } from './features/classes/Schedule'
+import { ClassEditor } from './features/classes/ClassEditor'
+import { ImportReview, PasteImport, toMeetings } from './features/classes/Import'
+import { loadClassesData, makeWalk, placeFor, useNow, type ClassesData } from './schedule/data'
+import { schedule, useReminderPrefs, useSchedule } from './schedule/store'
+import { useClassReminders, askToNotify } from './schedule/notify'
+import { draftFromMeeting, newDraft, toMeeting, type ClassDraft } from './schedule/draft'
+import { label as classLabel, planDay } from './schedule/dayPlan'
+import { termFor } from './schedule/terms'
+import { clockAt, pacificDate } from './schedule/time'
+import { GlassSegmentedControl } from './design/components'
 import { Directions, type Pick } from './features/Directions'
 import { AboutModal, TransitModal } from './features/Modals'
 import { activity } from './state/activity'
@@ -70,6 +82,11 @@ export function App() {
   const [modal, setModal] = useState<'about' | 'transit' | null>(null)
   const [recentIds, setRecentIds] = useState<string[]>(() => recents.get())
   const [auditMode] = useState(auditRequested)
+  const [classes, setClasses] = useState<ClassesData | null>(null)
+  const meetings = useSchedule()
+  const reminderPrefs = useReminderPrefs()
+  const now = useNow()
+  const [sheet, setSheet] = useState<null | { kind: 'paste' } | { kind: 'review'; drafts: ClassDraft[]; notes: string[] } | { kind: 'edit'; index: number | null; draft: ClassDraft }>(null)
   const mapRef = useRef<MapHandle>(null)
   const searchRef = useRef<HTMLInputElement>(null)
 
@@ -84,6 +101,7 @@ export function App() {
         setPlaces(p.places)
         setGraph(buildGraph(g))
       })
+      .then(() => loadClassesData().then(setClasses, () => undefined))
       .then(() => loadTransit().then(setTransit, () => undefined))
       .catch((e) => setLoadError(String(e.message ?? e)))
   }, [])
@@ -195,8 +213,37 @@ export function App() {
   }, [plan])
 
   useEffect(() => {
-    setDetent(route.name === 'home' ? (mobile ? 'peek' : 'half') : 'half')
+    setDetent(route.name === 'home' ? (mobile ? 'peek' : 'half') : route.name === 'schedule' ? 'full' : 'half')
   }, [route.name, mobile])
+  useEffect(() => {
+    if (!location.hash && schedule.all.length) go({ name: 'today' }, undefined, true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  useClassReminders(meetings, classes?.holidays ?? null, reminderPrefs.lead, (t) => flash(t))
+  const walk = useMemo(() => (classes ? makeWalk(graph, classes.campus, byId, you, avoidStairs) : () => null), [graph, classes, byId, you, avoidStairs])
+  const arriveBy = useMemo(() => {
+    if (route.name !== 'directions') return null
+    const p = hashParams()
+    const at = Number(p.get('arrive'))
+    return at > 0 ? { at, label: p.get('cls') ?? 'class' } : null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route])
+  const classPins = useMemo(() => {
+    if (route.name !== 'today' || !classes) return []
+    const plan = planDay(meetings, now, classes.holidays, route.day && route.day !== pacificDate(now) ? route.day : null)
+    return plan.classes.flatMap((o) => {
+      const p = placeFor(o.meeting.location, classes.campus, byId)
+      return p ? [{ id: p.id, lat: p.lat, lon: p.lon, label: `${clockAt(o.start)} ${classLabel(o)}`, next: plan.next === o }] : []
+    })
+  }, [route, classes, meetings, now, byId])
+  useEffect(() => {
+    if (route.name === 'today' && classPins.length) mapRef.current?.fitCoords(classPins.map((c) => [c.lon, c.lat] as [number, number]), 16.5)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route.name, route.name === 'today' ? route.day : null, classPins.length])
+  const termDates = () => {
+    const t = classes ? termFor(classes.terms, pacificDate(Date.now())) : null
+    return { startDate: t?.start ?? null, endDate: t?.end ?? null }
+  }
 
   /* ---- actions */
   const openPlace = (p: Place) => {
@@ -208,9 +255,9 @@ export function App() {
     go({ name: 'home' })
     setQ('')
   }
-  const flash = (m: string) => {
+  function flash(m: string) {
     setToast(m)
-    window.setTimeout(() => setToast(null), 2400)
+    window.setTimeout(() => setToast(null), m.length > 60 ? 6000 : 2400)
   }
   const share = async () => {
     const url = location.href
@@ -276,6 +323,46 @@ export function App() {
   let content
   if (loadError) content = <GlassBanner tone="danger" title="Campus data failed to load">{loadError}. Check your connection and reload.</GlassBanner>
   else if (!places || !index) content = <div className="center"><Spinner label="Loading campus data" /></div>
+  else if (route.name === 'today' && classes)
+    content = (
+      <Today
+        meetings={meetings}
+        data={classes}
+        byId={byId}
+        now={now}
+        day={route.day ?? null}
+        walk={walk}
+        hasLocation={!!you}
+        onDay={(d) => go(d ? { name: 'today', day: d } : { name: 'today' }, undefined, true)}
+        onOpen={openPlace}
+        onGetThere={(o, p) => {
+          void activity.meaningfulAction()
+          go({ name: 'directions', from: you ? 'me' : undefined, to: p.id }, { arrive: String(o.start), cls: classLabel(o) })
+        }}
+        onSchedule={() => go({ name: 'schedule' })}
+      />
+    )
+  else if (route.name === 'schedule' && classes)
+    content = (
+      <Schedule
+        meetings={meetings}
+        persistent={schedule.persistent}
+        reminderLead={reminderPrefs.lead}
+        now={now}
+        onPaste={() => setSheet({ kind: 'paste' })}
+        onAdd={() => setSheet({ kind: 'edit', index: null, draft: newDraft(termDates()) })}
+        onEdit={(i) => setSheet({ kind: 'edit', index: i, draft: draftFromMeeting(meetings[i]) })}
+        onReminders={async (lead) => {
+          if (lead !== null) {
+            const perm = await askToNotify()
+            if (perm === 'denied') flash('Notifications are blocked for this site, so reminders will only show on this page.')
+          }
+          schedule.setReminderLead(lead)
+        }}
+        onClear={() => schedule.clear()}
+      />
+    )
+  else if ((route.name === 'today' || route.name === 'schedule') && !classes) content = <div className="center"><Spinner label="Loading your classes" /></div>
   else if (route.name === 'place' && selected)
     content = <PlaceDetail place={selected} byId={byId} onOpen={openPlace} auditMode={auditMode} onLocate={currentFix} transit={transit} now={clock} live={live} nearGraph={nearGraph(selected)} onBack={home} onDirections={() => directionsFor(selected.id)} onShare={share} onTransit={() => setModal('transit')} />
   else if (route.name === 'place')
@@ -302,6 +389,8 @@ export function App() {
         bus={bus}
         transit={transit}
         toRoom={toRoom}
+        arriveBy={arriveBy}
+        now={now}
       />
     )
   else if (showResults)
@@ -341,9 +430,26 @@ export function App() {
     </div>
   )
 
+  const tab = route.name === 'today' ? 'today' : route.name === 'schedule' ? 'schedule' : 'map'
+  const tabs = (
+    <div className="tabs">
+      <GlassSegmentedControl<'today' | 'schedule' | 'map'>
+        label="Classmap sections"
+        value={tab}
+        onChange={(v) => go(v === 'map' ? { name: 'home' } : { name: v })}
+        options={[
+          { value: 'today', label: 'Today' },
+          { value: 'schedule', label: 'Schedule' },
+          { value: 'map', label: 'Map' },
+        ]}
+      />
+    </div>
+  )
+
   const panel = (
     <>
-      {route.name !== 'directions' && searchBar}
+      {route.name !== 'directions' && tabs}
+      {tab === 'map' && route.name !== 'directions' && searchBar}
       <div className="panelbody">{content}</div>
     </>
   )
@@ -356,6 +462,7 @@ export function App() {
         places={places ?? []}
         selected={selected}
         focus={focus}
+        classPins={classPins}
         route={routeJson}
         endpoints={endpoints}
         you={you}
@@ -389,6 +496,39 @@ export function App() {
         </div>
       )}
       <TransitModal open={modal === 'transit'} onClose={() => setModal(null)} />
+      {classes && index && sheet?.kind === 'paste' && <PasteImport campus={classes.campus} onClose={() => setSheet(null)} onRead={(drafts, notes) => setSheet({ kind: 'review', drafts: drafts.map((d) => ({ ...d, ...(d.startDate ? {} : termDates()) })), notes })} />}
+      {classes && index && sheet?.kind === 'review' && (
+        <ImportReview
+          drafts={sheet.drafts}
+          notes={sheet.notes}
+          campus={classes.campus}
+          byId={byId}
+          index={index}
+          onClose={() => setSheet(null)}
+          onSave={(drafts) => {
+            const added = schedule.add(toMeetings(drafts))
+            setSheet(null)
+            flash(added === drafts.length ? `Added ${added} ${added === 1 ? 'class' : 'classes'}` : `Added ${added}; ${drafts.length - added} were already saved`)
+            go({ name: 'today' })
+          }}
+        />
+      )}
+      {classes && index && sheet?.kind === 'edit' && (
+        <ClassEditor
+          draft={sheet.draft}
+          title={sheet.index === null ? 'Add a class' : 'Edit class'}
+          campus={classes.campus}
+          byId={byId}
+          index={index}
+          onClose={() => setSheet(null)}
+          onDelete={sheet.index === null ? undefined : () => (schedule.remove(sheet.index!), setSheet(null))}
+          onSave={(d) => {
+            if (sheet.index === null) schedule.add([toMeeting(d)])
+            else schedule.replace(sheet.index, toMeeting(d))
+            setSheet(null)
+          }}
+        />
+      )}
       <AboutModal open={modal === 'about'} onClose={() => setModal(null)} mode={mode} onMode={setMode} reduceMotion={reduce} onReduceMotion={setReduce} solid={solid} onSolid={setSolid} />
     </div>
   )
