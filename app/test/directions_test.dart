@@ -7,15 +7,27 @@ import 'helpers.dart';
 
 void main() {
   group('the door to walk to', () {
-    test('a room in a building uses the building\'s main entrance', () {
-      final target = walkTarget(testCampus, 'Kresge Acad 3201')!;
-      final r = testCampus.resolve('Kresge Acad 3201');
-      final main = r.entrances.firstWhere(
-        (e) => e.kind == 'main',
-        orElse: () => r.entrances.first,
+    test('a room uses the door nearest the room, not the main entrance', () {
+      for (final place in ['Thimann Lab 101', 'J Baskin Engr 372']) {
+        final r = testCampus.resolve(place);
+        final room = r.roomPoint!.point;
+        final target = walkTarget(testCampus, place)!;
+        final closest = r.entrances
+            .map((e) => e.point.metresTo(room))
+            .reduce((a, b) => a < b ? a : b);
+        expect(target.point.metresTo(room), closest, reason: place);
+        expect(target.point.metresTo(room), lessThan(10), reason: place);
+      }
+      expect(
+        walkTarget(testCampus, 'Kresge Acad 3201')!.label,
+        'Kresge College Academic Building 3201',
       );
-      expect(target.point, main.point);
-      expect(target.label, 'Kresge College Academic Building 3201');
+    });
+
+    test('a building with no room uses its main entrance', () {
+      final r = testCampus.resolve('Baskin Engineering');
+      final main = r.entrances.firstWhere((e) => e.kind == 'main');
+      expect(walkTarget(testCampus, 'Baskin Engineering')!.point, main.point);
     });
 
     test('a building with no room still has a place', () {
@@ -52,6 +64,30 @@ void main() {
       );
       expect(walkTarget(campus, 'Test Hall 101')!.point, const GeoPoint(3, 3));
       expect(walkTarget(campus, 'Test Hall 102')!.point, const GeoPoint(1, 1));
+    });
+
+    test('with a room position the nearest door beats the main entrance', () {
+      final campus = Campus([
+        Building(
+          id: 'b',
+          name: 'Test Hall',
+          aliases: const ['Test Hall'],
+          roomPoints: const {'7': RoomPoint(37.0001, -122.0601, 'L1')},
+          entrances: const [
+            Entrance(GeoPoint(37.0010, -122.0610), 'main'),
+            Entrance(GeoPoint(37.0002, -122.0601), 'door'),
+            Entrance(GeoPoint(37.0001, -122.0601), 'approach'),
+          ],
+        ),
+      ]);
+      expect(
+        walkTarget(campus, 'Test Hall 7')!.point,
+        const GeoPoint(37.0002, -122.0601),
+      );
+      expect(
+        walkTarget(campus, 'Test Hall')!.point,
+        const GeoPoint(37.0010, -122.0610),
+      );
     });
 
     test('with no door the room, then the middle of the building, is used', () {

@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../campus/campus.dart';
 import '../../campus/campus_data.dart';
+import '../../campus/geo_point.dart';
 import '../../core/tiles.dart';
 import '../../design/controls.dart';
 import '../../design/floating_bar.dart';
@@ -240,6 +243,44 @@ class _Results extends ConsumerWidget {
   }
 }
 
+const _accessText = {
+  'outside':
+      'Outside access: the door is on a patio, plaza or outdoor walkway.',
+  'lobby': 'Inside the building: go in and find the room inside.',
+  'library': 'Inside the library: the room is past the library doors.',
+};
+const _months = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+String _checkedText(RoomGuide g) {
+  final d = DateTime.tryParse(g.checked);
+  final when = d == null
+      ? g.checked
+      : '${_months[d.month - 1]} ${d.day}, ${d.year}';
+  return g.source == 'student-tip'
+      ? 'From a student tip, checked $when.'
+      : 'Checked on foot $when.';
+}
+
+String _fromDoor(GeoPoint door, GeoPoint room) {
+  final m = door.metresTo(room);
+  if (m < 6) return 'Walk there ends at the door nearest the room.';
+  final about = math.max(5, (m / 5).round() * 5);
+  return 'Walk there ends at the door nearest the room; the room is about $about m ${door.compassTo(room)} of it.';
+}
+
 class _PlaceCard extends ConsumerWidget {
   const _PlaceCard({required this.place});
 
@@ -250,6 +291,24 @@ class _PlaceCard extends ConsumerWidget {
     final c = context.colors;
     final campus = ref.watch(campusProvider).value;
     final target = campus == null ? null : walkTarget(campus, place.query);
+    final resolved = campus?.resolve(place.query);
+    final guide = resolved?.guide;
+    final roomPoint = resolved?.roomPoint?.point;
+    final floor = floorText(place.floor, room: place.room);
+    final lines = <String>[
+      if (guide?.access != null) _accessText[guide!.access] ?? guide.access!,
+      if (guide?.doorLabel != null) 'Door: ${guide!.doorLabel}',
+      ...?guide?.steps.indexed.map((s) => '${s.$1 + 1}. ${s.$2}'),
+      if (guide?.stepFree == true) 'Step-free from that door.',
+      if (guide?.stepFree == false) 'Stairs between that door and the room.',
+      if (guide?.elevator != null) 'Elevator: ${guide!.elevator}',
+      if (guide == null &&
+          place.isRoom &&
+          roomPoint != null &&
+          target != null &&
+          target.point != roomPoint)
+        _fromDoor(target.point, roomPoint),
+    ];
     // Large text must not push the card off the screen: it takes at most 60% of the height, and the
     // words scroll while the button stays in reach.
     return Padding(
@@ -275,11 +334,44 @@ class _PlaceCard extends ConsumerWidget {
                         place.label,
                         style: AppText.title3.copyWith(color: c.labelPrimary),
                       ),
-                      if (place.floor != null)
+                      if (floor != null || guide?.wing != null)
                         Text(
-                          'Floor ${place.floor}',
+                          [?floor, ?guide?.wing].join(' · '),
                           style: AppText.subhead.copyWith(
                             color: c.labelSecondary,
+                          ),
+                        ),
+                      if (guide?.note != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: Space.xs),
+                          child: Text(
+                            guide!.note!,
+                            style: AppText.subhead.copyWith(
+                              color: c.labelPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      for (final line in lines)
+                        Padding(
+                          padding: const EdgeInsets.only(top: Space.xs),
+                          child: Text(
+                            line,
+                            style: AppText.subhead.copyWith(
+                              color: c.labelPrimary,
+                            ),
+                          ),
+                        ),
+                      if (place.isRoom && place.roomKnown != false)
+                        Padding(
+                          padding: const EdgeInsets.only(top: Space.xs),
+                          child: Text(
+                            guide == null
+                                ? 'Not checked on foot yet.'
+                                : _checkedText(guide),
+                            style: AppText.footnote.copyWith(
+                              color: c.labelSecondary,
+                            ),
                           ),
                         ),
                       if (place.roomKnown == false)
