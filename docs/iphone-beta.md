@@ -15,7 +15,7 @@ Raw output is in `docs/evidence/iphone-beta/`.
 Use this to put the app on your own iPhone Air and run the five sessions on that phone. Testers use your phone, so nothing gets installed on theirs.
 
 1. In Xcode → Settings → Accounts, add your Apple ID. A free personal team is fine.
-2. Open `app/ios/Runner.xcworkspace`, select the Runner target → Signing & Capabilities → check *Automatically manage signing* and pick your personal team. If `com.jmbugarin.classmap` is taken, change the bundle id to something unique (for example add `.beta`).
+2. Put `DEVELOPMENT_TEAM = YOUR_TEAM_ID` in `app/ios/Flutter/LocalSigning.xcconfig` (git-ignored). Open `app/ios/Runner.xcworkspace` and check the resolved team under Runner → Signing & Capabilities. If `com.jmbugarin.classmap` is taken, change the bundle id to something unique (for example add `.beta`).
 3. On the iPhone: Settings → Privacy & Security → Developer Mode → on (restart required). Connect with USB and trust the Mac.
 4. Build and install from `app/`:
    ```
@@ -31,7 +31,7 @@ With a free team the provisioning profile expires after 7 days, so reinstall bef
 
 Needs the paid Apple Developer Program ($99/year). Only Joshua can enroll. Everything else is ready in the repo.
 
-1. Enroll at developer.apple.com. Then in App Store Connect create the app with bundle id `com.jmbugarin.classmap` (or the one used for signing) and select the paid team under Signing & Capabilities.
+1. Enroll at developer.apple.com. Then in App Store Connect create the app with bundle id `com.jmbugarin.classmap` (or the one used for signing) and set the paid team ID in the same local signing file.
 2. Make `app/dart_defines.json` from the example. Set `TILE_PROVIDER`/`TILE_KEY` to a hosted tile provider, because OSM's public server isn't allowed for distributed apps. Set `ACTIVITY_URL` to the classmap-transit public ingress (`https://<host>/v1/activity`; see its docs/operations.md "Public ingress", which is opened only at this step).
 3. Build with `flutter build ipa --release --build-number <n> --dart-define-from-file=dart_defines.json`, then upload `build/ios/ipa/*.ipa` with Transporter or `xcrun altool`.
 4. Export compliance is answered in Info.plist (`ITSAppUsesNonExemptEncryption = false`; the app only uses HTTPS).
