@@ -934,6 +934,10 @@ ul.plain.note li {
   display: grid;
   gap: 8px;
 }
+.trips .gfold__body:not([hidden]) {
+  display: grid;
+  gap: 8px;
+}
 .trips__options {
   display: grid;
   gap: 6px;

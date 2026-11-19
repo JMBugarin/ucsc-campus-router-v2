@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { GlassBanner, GlassButton, GlassIconButton, GlassSearch, GlassSwitch, SectionLabel } from '../design/components'
+import { GlassBanner, GlassButton, GlassDisclosure, GlassIconButton, GlassSearch, GlassSwitch } from '../design/components'
 import { Icon } from '../design/icons'
 import { formatDistance, formatDuration, type Plan, type PlanError } from '../routing/plan'
 import type { Place } from '../data/types'
@@ -17,6 +17,7 @@ import type { BusPlan } from '../transit/plan'
 import { ACCESS_LABEL, checkedText, doorSentence, relation } from '../data/rooms'
 import { GlassSegmentedControl, StatusPill } from '../design/components'
 import { clockAt, pacificDate, pacificInstant } from '../schedule/time'
+import { useFold } from '../state/prefs'
 
 export type Pick = { id: string; name: string } | null
 
@@ -25,41 +26,60 @@ function BusOptions({ bus, transit, now, vehicles, live }: { bus: BusPlan; trans
   const stopIds = [...new Set(bus.options.map((o) => transit.stops[o.board].id))]
   const service = useServiceDepartures(stopIds)
   const predictions = freshPredictions(service.value)
+  const [open, toggle] = useFold('bus', bus.options.length > 0)
   const clock = pacificClock(new Date(now))
   const nowSecs = Math.floor(now / 1000)
   const routes = bus.options.map((o) => o.route)
   const stops = bus.options.flatMap((o) => [transit.stops[o.board].id, transit.stops[o.alight].id])
   const alerts = (live?.alerts ?? []).filter((a) => (!a.routes.length && !a.stops.length) || a.routes.some((r) => routes.includes(r)) || a.stops.some((s) => stops.includes(s)))
+  const rows = bus.options.map((o) => {
+    const delay = predictedDelay(predictions, o.tripId, transit.stops[o.board].id, o.departs, clock.secs, nowSecs)
+    return { o, delay, leaves: delay === null ? o.departs : o.departs + delay, arrives: o.arrives + (delay ?? 0) }
+  })
+  const first = rows[0]
   return (
-    <>
+    <GlassDisclosure
+      title="By bus"
+      icon="transit"
+      tint="42 143 168"
+      open={open}
+      onToggle={toggle}
+      summary={
+        <>
+          {alerts.length > 0 && <StatusPill tone="warning">Alert</StatusPill>}
+          {first ? `Route ${first.o.route} at ${clockText(first.leaves)}, arrive ${clockText(first.arrives)}` : 'None faster than walking'}
+        </>
+      }
+    >
       {alerts.map((a, i) => (
         <GlassBanner key={i} tone="warning" title={a.header || 'Service alert'}>
           {a.text}
         </GlassBanner>
       ))}
-      <ul className="bus">
-        {bus.options.map((o) => {
-          const stop = transit.stops[o.board].id
-          const delay = predictedDelay(predictions, o.tripId, stop, o.departs, clock.secs, nowSecs)
-          const leaves = delay === null ? o.departs : o.departs + delay
-          const v = vehicles.find((x) => x.trip === o.tripId && recent(x, nowSecs))
-          const when = delay === null ? 'Scheduled' : Math.abs(delay) < 60 ? 'Live: on time' : delay > 0 ? `Live: ${Math.round(delay / 60)} min late` : `Live: ${Math.round(-delay / 60)} min early`
-          return (
-            <li key={o.tripId + o.departs}>
-              <span className="route">{o.route}</span>
-              <span className="bus__main">
-                {transit.stops[o.board].name} {clockText(leaves)} to {transit.stops[o.alight].name}
-                <small>
-                  Walk {Math.max(1, Math.round(o.walkToStop / 60))} min to the stop, ride, walk {Math.max(1, Math.round(o.walkFromStop / 60))} min. {when}.
-                  {v && ` Bus ${v.label || v.id} is on the map${v.occupancy ? `: ${OCCUPANCY_TEXT[v.occupancy].toLowerCase()}` : ''}.`}
-                </small>
-              </span>
-              <span className="bus__eta tabular">{clockText(o.arrives + (delay ?? 0))}</span>
-            </li>
-          )
-        })}
-      </ul>
-    </>
+      {rows.length ? (
+        <ul className="bus">
+          {rows.map(({ o, delay, leaves, arrives }) => {
+            const v = vehicles.find((x) => x.trip === o.tripId && recent(x, nowSecs))
+            const when = delay === null ? 'Scheduled' : Math.abs(delay) < 60 ? 'Live: on time' : delay > 0 ? `Live: ${Math.round(delay / 60)} min late` : `Live: ${Math.round(-delay / 60)} min early`
+            return (
+              <li key={o.tripId + o.departs}>
+                <span className="route">{o.route}</span>
+                <span className="bus__main">
+                  {transit.stops[o.board].name} {clockText(leaves)} to {transit.stops[o.alight].name}
+                  <small>
+                    Walk {Math.max(1, Math.round(o.walkToStop / 60))} min to the stop, ride, walk {Math.max(1, Math.round(o.walkFromStop / 60))} min. {when}.
+                    {v && ` Bus ${v.label || v.id} is on the map${v.occupancy ? `: ${OCCUPANCY_TEXT[v.occupancy].toLowerCase()}` : ''}.`}
+                  </small>
+                </span>
+                <span className="bus__eta tabular">{clockText(arrives)}</span>
+              </li>
+            )
+          })}
+        </ul>
+      ) : (
+        <p className="note">No direct METRO bus gets there sooner than walking{bus.walkOnlyArrives ? ` (arrive ${clockText(bus.walkOnlyArrives)})` : ''}.</p>
+      )}
+    </GlassDisclosure>
   )
 }
 
@@ -157,6 +177,37 @@ function legs(plan: Plan) {
     meters: l.meters,
     detail: l.stairs ? 'Mapped steps' : l.by.map((m, k) => (m >= 5 ? `${LOWER[k]} ${formatDistance(m)}` : '')).filter(Boolean).join(' · '),
   }))
+}
+
+/** "Paths and roads, 70 m of stairs": what the walk is like, for the folded section. */
+function footSummary(plan: Plan): string {
+  const by = [0, 0, 0, 0]
+  for (const s of plan.route.steps) by[s.kind] += s.meters
+  const level = by[0] + by[2] + by[3]
+  const ways = [by[0] + by[3] >= level * 0.2 && 'paths', by[2] >= level * 0.2 && 'roads'].filter(Boolean).join(' and ') || 'paths'
+  return `${ways[0].toUpperCase()}${ways.slice(1)}, ${by[1] >= 5 ? `${formatDistance(by[1])} of stairs` : 'no stairs'}`
+}
+
+function OnFoot({ plan }: { plan: Plan }) {
+  const [open, toggle] = useFold('foot', false)
+  return (
+    <GlassDisclosure title="On foot" icon="walk" open={open} onToggle={toggle} summary={footSummary(plan)}>
+      <ol className="steps">
+        {legs(plan).map((l, i) => (
+          <li key={i}>
+            <span className="steps__icon" data-kind={l.stairs ? 1 : 0}>
+              <Icon name={l.stairs ? 'stairs' : 'walk'} size={16} />
+            </span>
+            <span className="steps__main">
+              {l.stairs ? 'Climb stairs' : 'Walk'}
+              <small>{l.detail}</small>
+            </span>
+            <span className="steps__trail tabular">{formatDistance(l.meters)}</span>
+          </li>
+        ))}
+      </ol>
+    </GlassDisclosure>
+  )
 }
 
 const ERROR_TEXT: Record<PlanError, string> = {
@@ -365,36 +416,9 @@ export function Directions({
                   No route without mapped stairs exists between these places, so the shortest one is shown.
                 </GlassBanner>
               )}
-              {bus && transit && (
-                <>
-                  <SectionLabel>By bus</SectionLabel>
-                  {bus.options.length ? (
-                    <BusOptions bus={bus} transit={transit} now={now} vehicles={vehicles} live={live} />
-                  ) : (
-                    <p className="note">No direct METRO bus gets there sooner than walking{bus.walkOnlyArrives ? ` (arrive ${clockText(bus.walkOnlyArrives)})` : ''}.</p>
-                  )}
-                </>
-              )}
-              <SectionLabel>On foot</SectionLabel>
-              <ol className="steps">
-                {legs(plan).map((l, i) => (
-                  <li key={i}>
-                    <span className="steps__icon" data-kind={l.stairs ? 1 : 0}>
-                      <Icon name={l.stairs ? 'stairs' : 'walk'} size={16} />
-                    </span>
-                    <span className="steps__main">
-                      {l.stairs ? 'Climb stairs' : 'Walk'}
-                      <small>{l.detail}</small>
-                    </span>
-                    <span className="steps__trail tabular">{formatDistance(l.meters)}</span>
-                  </li>
-                ))}
-              </ol>
+              {bus && transit && <BusOptions bus={bus} transit={transit} now={now} vehicles={vehicles} live={live} />}
+              <OnFoot plan={plan} />
               {toRoom?.room && <Arrival room={toRoom} end={plan.destPoint} />}
-              <p className="note">
-                Times use Tobler's walking function on USGS elevation (10 m), so they are estimates.
-                {plan.connectorMeters > 5 && <> {formatDistance(plan.connectorMeters)} of the trip, between a door or point and the nearest mapped path, has no mapped path: it's drawn dotted and is approximate.</>}
-              </p>
             </>
           )}
         </>

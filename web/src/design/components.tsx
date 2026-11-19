@@ -300,6 +300,46 @@ export function GlassBanner({
   )
 }
 
+/** A section that folds down to its title and a one-line summary. `tint` is an "r g b" triple for the icon. */
+export function GlassDisclosure({
+  title,
+  summary,
+  icon,
+  tint,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string
+  summary?: ReactNode
+  icon?: IconName
+  tint?: string
+  open: boolean
+  onToggle: () => void
+  children: ReactNode
+}) {
+  const id = useId()
+  return (
+    <div className="gfold" data-open={open || undefined} style={tint ? ({ ['--gfold-rgb' as string]: tint } as CSSProperties) : undefined}>
+      <button type="button" className="gfold__head" aria-expanded={open} aria-controls={id} onClick={onToggle}>
+        {icon && (
+          <span className="gfold__icon">
+            <Icon name={icon} size={16} />
+          </span>
+        )}
+        <span className="gfold__text">
+          <span className="gfold__title">{title}</span>
+          {!open && summary && <span className="gfold__summary">{summary}</span>}
+        </span>
+        <Icon name="chevron" size={16} className="gfold__chev" />
+      </button>
+      <div id={id} className="gfold__body" hidden={!open}>
+        {open && children}
+      </div>
+    </div>
+  )
+}
+
 /* ------------------------------------------------------------------ Tooltip */
 export function GlassTooltip({ text, children, side = 'left', force }: { text: string; children: ReactNode; side?: 'left' | 'top' | 'bottom'; force?: 'show' }) {
   const id = useId()
