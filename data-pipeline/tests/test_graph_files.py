@@ -76,3 +76,20 @@ class TestGraphFiles(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestShapes(unittest.TestCase):
+    def test_shapes_join_real_edges_and_stay_on_campus(self):
+        nodes = read("nodes.csv")
+        pairs = {(min(int(e["from"]), int(e["to"])), max(int(e["from"]), int(e["to"]))) for e in read("edges.csv")}
+        shapes = json.loads((GRAPH_DIR / "shapes.json").read_text())
+        self.assertEqual(shapes["pairs"], len(pairs))
+        self.assertGreater(shapes["matched"], 0.98 * shapes["pairs"])
+        for key, pts in shapes["shapes"].items():
+            a, b = map(int, key.split("-"))
+            self.assertLess(a, b)
+            self.assertIn((a, b), pairs)
+            self.assertGreater(len(pts), 0)
+            for lat, lon in pts:
+                self.assertTrue(36.97 < lat < 37.02 and -122.09 < lon < -122.03)
+        self.assertLess(len(nodes), 10000)
