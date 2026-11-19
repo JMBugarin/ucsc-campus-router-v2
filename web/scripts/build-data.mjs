@@ -248,3 +248,23 @@ writeFileSync(
   }),
 )
 console.log('places', final.length, counts)
+
+// ---------------------------------------------------------------- schedule matching
+// what the schedule screens need to read a MyUCSC location the way the phone app does
+writeFileSync(
+  join(out, 'campus.json'),
+  JSON.stringify({
+    buildings: curated.map((b) => ({
+      id: b.id,
+      name: b.name,
+      osm_name: b.osm_name ?? null,
+      aliases: b.aliases ?? [],
+      exact_names: b.exact_names ?? {},
+      known_rooms: b.known_rooms ?? [],
+      room_points: Object.fromEntries(Object.entries(b.room_points ?? {}).map(([r, pt]) => [r, { level: pt.level ?? null }])),
+    })),
+    nicknames: extra,
+  }),
+)
+writeFileSync(join(out, 'terms.json'), readFileSync(join(root, 'data', 'holidays.json'), 'utf8'))
+console.log('campus', curated.length, 'buildings; terms copied')

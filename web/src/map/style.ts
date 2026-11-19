@@ -316,6 +316,14 @@ export function buildStyle(theme: Theme): StyleSpecification {
       layout: { 'text-field': ['get', 'label'], 'text-font': F_BOLD, 'text-size': 11, 'text-variable-anchor': ['top', 'bottom', 'left', 'right'], 'text-radial-offset': 0.75, 'text-padding': 1 },
       paint: { 'text-color': c.text, 'text-halo-color': c.halo, 'text-halo-width': 1.6 },
     },
+    { id: 'class-pin', type: 'circle', source: 'classes', paint: { 'circle-radius': ['case', ['==', ['get', 'next'], 1], 9, 7], 'circle-color': c.accent, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2.5 } },
+    {
+      id: 'class-label',
+      type: 'symbol',
+      source: 'classes',
+      layout: { 'text-field': ['get', 'label'], 'text-font': F_BOLD, 'text-size': 12, 'text-variable-anchor': ['top', 'bottom', 'left', 'right'], 'text-radial-offset': 1, 'text-allow-overlap': true },
+      paint: { 'text-color': c.accent, 'text-halo-color': c.halo, 'text-halo-width': 2 },
+    },
     {
       id: 'selected-ring',
       type: 'circle',
@@ -350,6 +358,7 @@ export function buildStyle(theme: Theme): StyleSpecification {
       selected: empty,
       rooms: empty,
       doors: empty,
+      classes: empty,
       endpoints: empty,
       you: empty,
     },

@@ -5,6 +5,8 @@ export type Route =
   | { name: 'place'; id: string }
   | { name: 'directions'; from?: string; to?: string }
   | { name: 'gallery' }
+  | { name: 'today'; day?: string }
+  | { name: 'schedule' }
 
 function decode(s: string): string {
   try {
@@ -14,13 +16,15 @@ function decode(s: string): string {
   }
 }
 
-/** #/ · #/p/<id> · #/r/<from>/<to> (either may be empty; "me" is current location) · #/gallery */
+/** #/ · #/p/<id> · #/r/<from>/<to> (either may be empty; "me" is current location) · #/today[/<YYYY-MM-DD>] · #/schedule · #/gallery */
 export function parseHash(h: string): Route {
   const path = h.replace(/^#/, '').split('?')[0]
   const seg = path.replace(/^\/+/, '').split('/').map(decode)
   if (seg[0] === 'p' && seg[1]) return { name: 'place', id: seg[1] }
   if (seg[0] === 'r') return { name: 'directions', from: seg[1] || undefined, to: seg[2] || undefined }
   if (seg[0] === 'gallery') return { name: 'gallery' }
+  if (seg[0] === 'today') return /^\d{4}-\d{2}-\d{2}$/.test(seg[1] ?? '') ? { name: 'today', day: seg[1] } : { name: 'today' }
+  if (seg[0] === 'schedule') return { name: 'schedule' }
   return { name: 'home' }
 }
 
@@ -33,6 +37,10 @@ export function formatHash(r: Route, params?: Record<string, string>): string {
       return `#/r/${encodeURIComponent(r.from ?? '')}/${encodeURIComponent(r.to ?? '')}${q}`
     case 'gallery':
       return '#/gallery'
+    case 'today':
+      return `#/today${r.day ? '/' + r.day : ''}${q}`
+    case 'schedule':
+      return `#/schedule${q}`
     default:
       return '#/'
   }
