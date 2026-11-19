@@ -41,7 +41,8 @@ test('the building lists its rooms by floor and remembers recent rooms', async (
 test('directions to a room end at its door and draw the last stretch inside', async ({ page }) => {
   await ready(page, '#/r/quarry-plaza/baskin-engineering-152')
   await expect(page.getByText(/^\d+ min$/)).toBeVisible()
-  await expect(page.getByRole('region', { name: 'Arriving at the room' })).toContainText('The route ends at the closest mapped door.')
+  // from Quarry Plaza the quicker of the two doors near 152 is the main entrance, not the closest one
+  await expect(page.getByRole('region', { name: 'Arriving at the room' })).toContainText('The route ends at a mapped door near the room.')
   await page.waitForFunction(() => (window as any).__map.querySourceFeatures('route').some((f: any) => f.properties.kind === 'indoor'), null, { timeout: 15_000 })
   const roles = await page.evaluate(() => (window as any).__map.querySourceFeatures('endpoints').map((f: any) => f.properties.role))
   expect(roles).toContain('room')
