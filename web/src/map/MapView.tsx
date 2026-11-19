@@ -42,6 +42,8 @@ export interface MapViewProps {
   you: { lat: number; lon: number; accuracy: number } | null
   padding: PaddingOptions
   onSelect: (id: string) => void
+  /** a tap on the map itself; return true to keep it from also opening a place */
+  onMapClick?: (lat: number, lon: number) => boolean
   onBearing?: (b: number) => void
   onReady?: () => void
   interactive?: boolean
@@ -157,7 +159,12 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     })
     map.on('rotate', () => propsRef.current.onBearing?.(map.getBearing()))
 
+    let consumed: Event | null = null
+    map.on('click', (e) => {
+      if (propsRef.current.onMapClick?.(e.lngLat.lat, e.lngLat.lng)) consumed = e.originalEvent
+    })
     const hit = (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
+      if (e.originalEvent === consumed) return
       const id = e.features?.[0]?.properties?.id as string | undefined
       if (id) propsRef.current.onSelect(id)
     }

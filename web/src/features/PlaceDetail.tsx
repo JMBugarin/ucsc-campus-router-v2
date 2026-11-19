@@ -3,6 +3,8 @@ import { CATEGORY_LABEL } from '../design/tokens'
 import { Icon } from '../design/icons'
 import type { Place } from '../data/types'
 import { ACCESS_LABEL, checkedText, doorSentence, doorTitle, floorText, roomGroups, type RoomGroup } from '../data/rooms'
+import { AuditPanel } from './AuditPanel'
+import { RoomFeedback } from './Feedback'
 import { TRANSIT_LINKS } from '../data/campus'
 import { kindName } from './Browse'
 import { Departures } from './Departures'
@@ -21,6 +23,8 @@ interface DetailProps {
   onShare: () => void
   onTransit: () => void
   nearGraph: boolean
+  auditMode?: boolean
+  onLocate?: () => Promise<[number, number] | null>
 }
 
 export function RoomList({ groups, current, onOpen }: { groups: RoomGroup[]; current?: string; onOpen: (p: Place) => void }) {
@@ -42,7 +46,7 @@ export function RoomList({ groups, current, onOpen }: { groups: RoomGroup[]; cur
   )
 }
 
-function RoomDetail({ place, byId, onOpen, onBack, onDirections, onShare, nearGraph }: DetailProps) {
+function RoomDetail({ place, byId, onOpen, onBack, onDirections, onShare, nearGraph, auditMode, onLocate }: DetailProps) {
   const info = place.room!
   const g = info.guide
   const building = byId.get(info.building)
@@ -86,6 +90,8 @@ function RoomDetail({ place, byId, onOpen, onBack, onDirections, onShare, nearGr
         {g?.elevator && <p className="arrive__line">Elevator: {g.elevator}</p>}
         <p className="note">{g ? checkedText(info) : 'The room position is from UCSC’s campus map and the doors are from OpenStreetMap. Nobody has walked this one for the app yet.'}</p>
       </section>
+      <RoomFeedback place={place.id} />
+      {auditMode && <AuditPanel room={place} onLocate={onLocate ?? (async () => null)} />}
       <details className="more">
         <summary>More details</summary>
         {building && groups.length > 0 && (

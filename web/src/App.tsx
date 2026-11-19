@@ -13,6 +13,7 @@ import { hashParams, useHashRoute } from './state/hashRoute'
 import { usePref, useTheme } from './state/prefs'
 import { CategoryChips, Featured, PlaceRows } from './features/Browse'
 import { PlaceDetail } from './features/PlaceDetail'
+import { MissingRoom } from './features/Feedback'
 import { Directions, type Pick } from './features/Directions'
 import { AboutModal, TransitModal } from './features/Modals'
 import { activity } from './state/activity'
@@ -20,8 +21,29 @@ import { busOptions } from './transit/plan'
 import { loadTransit, useClock, useLive } from './transit/useTransit'
 import type { TransitData } from './transit/schedule'
 import { recentStore } from './data/rooms'
+import { audit, roomKey, useDraft } from './state/audit'
 
 const recents = recentStore()
+
+function auditRequested(): boolean {
+  try {
+    if (hashParams().has('audit')) sessionStorage.setItem('audit', '1')
+    return sessionStorage.getItem('audit') === '1'
+  } catch {
+    return hashParams().has('audit')
+  }
+}
+
+function currentFix(): Promise<[number, number] | null> {
+  return new Promise((done) => {
+    if (!navigator.geolocation) return done(null)
+    navigator.geolocation.getCurrentPosition(
+      (p) => done([p.coords.latitude, p.coords.longitude]),
+      () => done(null),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+    )
+  })
+}
 
 const FEATURED = ['mchenry-library', 'quarry-plaza', 'science-hill', 'baskin-engineering', 'science-engineering-library', 'kresge-college']
 
@@ -47,6 +69,7 @@ export function App() {
   const [toast, setToast] = useState<string | null>(null)
   const [modal, setModal] = useState<'about' | 'transit' | null>(null)
   const [recentIds, setRecentIds] = useState<string[]>(() => recents.get())
+  const [auditMode] = useState(auditRequested)
   const mapRef = useRef<MapHandle>(null)
   const searchRef = useRef<HTMLInputElement>(null)
 
@@ -75,6 +98,7 @@ export function App() {
   const showResults = q.trim().length > 0 || cat !== null
 
   const selected = route.name === 'place' ? byId.get(route.id) ?? null : null
+  const draft = useDraft(auditMode && selected?.kind === 'room' ? roomKey(selected) : null)
   const focus = useMemo((): MapFocus | null => {
     if (!selected) return null
     const building = selected.kind === 'room' && selected.room ? byId.get(selected.room.building) : selected
@@ -83,9 +107,9 @@ export function App() {
     return {
       rooms: building.roomIds.map((id) => byId.get(id)).filter((p): p is Place => !!p),
       doors: building.entrances ?? [],
-      door: d ? [d.lat, d.lon] : null,
+      door: draft?.door ?? (d ? [d.lat, d.lon] : null),
     }
-  }, [selected, byId])
+  }, [selected, byId, draft?.door])
   const roomOf = (id?: string) => {
     const p = id ? byId.get(id) : undefined
     return p?.kind === 'room' ? p : null
@@ -253,7 +277,7 @@ export function App() {
   if (loadError) content = <GlassBanner tone="danger" title="Campus data failed to load">{loadError}. Check your connection and reload.</GlassBanner>
   else if (!places || !index) content = <div className="center"><Spinner label="Loading campus data" /></div>
   else if (route.name === 'place' && selected)
-    content = <PlaceDetail place={selected} byId={byId} onOpen={openPlace} transit={transit} now={clock} live={live} nearGraph={nearGraph(selected)} onBack={home} onDirections={() => directionsFor(selected.id)} onShare={share} onTransit={() => setModal('transit')} />
+    content = <PlaceDetail place={selected} byId={byId} onOpen={openPlace} auditMode={auditMode} onLocate={currentFix} transit={transit} now={clock} live={live} nearGraph={nearGraph(selected)} onBack={home} onDirections={() => directionsFor(selected.id)} onShare={share} onTransit={() => setModal('transit')} />
   else if (route.name === 'place')
     content = <GlassBanner tone="warning" title="Place not found" action={<GlassIconButton icon="close" label="Back" size="s" onClick={home} />}>No place has the id "{route.id}".</GlassBanner>
   else if (route.name === 'directions')
@@ -289,6 +313,7 @@ export function App() {
           </button>
         )}
         <PlaceRows places={results} activeId={results[active]?.id} onPick={openPlace} listId="results" label="Search results" />
+        {q.trim() && (/\d/.test(q) ? !results.some((p) => p.kind === 'room') : !results.length) && <MissingRoom query={q.trim()} />}
       </>
     )
   else content = <Featured places={featured} recent={recent} onPick={openPlace} onTransit={() => setModal('transit')} />
@@ -336,6 +361,7 @@ export function App() {
         you={you}
         padding={padding}
         onSelect={(id) => go({ name: 'place', id })}
+        onMapClick={(lat, lon) => audit.tap(lat, lon)}
         onBearing={setBearing}
       />
 

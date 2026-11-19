@@ -88,3 +88,43 @@ test('weekly counting is off until chosen, sends only an id and week, and withdr
   await expect.poll(() => deletes.length).toBe(1)
   expect(deletes[0]).toBe((posts[0] as { install: string }).install)
 })
+
+test('room feedback sends only the room, the kind and the note', async ({ page }) => {
+  const posts: unknown[] = []
+  await page.route('**/svc/v1/room-feedback', (r) => {
+    posts.push(r.request().postDataJSON())
+    return r.fulfill({ status: 204 })
+  })
+  await page.goto('/?e2e#/p/baskin-engineering-152')
+  const fb = page.getByRole('region', { name: 'Room feedback' })
+  await expect(fb).toBeVisible({ timeout: 45_000 })
+  await fb.getByRole('button', { name: 'Easy to find' }).click()
+  await expect(fb.getByRole('status')).toContainText('Marked easy to find')
+  await expect(fb.getByRole('button', { name: 'Easy to find' })).toBeDisabled()
+  await fb.getByRole('button', { name: 'Add a tip' }).click()
+  await fb.getByLabel('Your finding tip').fill('Door is tucked behind the vending machines')
+  await fb.getByRole('button', { name: 'Send' }).click()
+  await expect(fb.getByRole('status')).toContainText('checked before it shows up')
+  expect(posts).toEqual([
+    { place: 'baskin-engineering-152', kind: 'easy' },
+    { place: 'baskin-engineering-152', kind: 'tip', message: 'Door is tucked behind the vending machines' },
+  ])
+
+  await page.getByRole('button', { name: 'Back to search' }).click()
+  await page.getByRole('combobox', { name: 'Search UCSC' }).fill('crown 999')
+  await page.getByRole('button', { name: /Can't find your room/ }).click()
+  await expect(page.getByLabel('Which room is missing?')).toHaveValue('crown 999')
+  await page.getByRole('button', { name: 'Send' }).click()
+  await expect(page.getByText("Thanks. We'll look for that room.")).toBeVisible()
+  expect(posts[2]).toEqual({ place: 'campus', kind: 'missing', message: 'crown 999' })
+})
+
+test('a busy server is explained and nothing is marked sent', async ({ page }) => {
+  await page.route('**/svc/v1/room-feedback', (r) => r.fulfill({ status: 429, json: { error: 'too much feedback right now, try again in a minute' } }))
+  await page.goto('/?e2e#/p/thimann-labs-101')
+  const fb = page.getByRole('region', { name: 'Room feedback' })
+  await expect(fb).toBeVisible({ timeout: 45_000 })
+  await fb.getByRole('button', { name: 'Easy to find' }).click()
+  await expect(fb.getByRole('alert')).toContainText('Try again in a minute')
+  await expect(fb.getByRole('button', { name: 'Easy to find' })).toBeEnabled()
+})
