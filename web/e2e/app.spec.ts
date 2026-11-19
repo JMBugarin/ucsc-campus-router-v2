@@ -61,8 +61,31 @@ test('walking route follows mapped paths and reports time and distance', async (
   expect(kinds.length).toBeGreaterThan(1)
 })
 
+test('on foot folds to a one-line summary and stays the way it was left', async ({ page }) => {
+  await ready(page, '#/r/quarry-plaza/mchenry-library')
+  const foot = page.getByRole('button', { name: /^On foot/ })
+  await expect(foot).toHaveAttribute('aria-expanded', 'false')
+  await expect(foot).toContainText(/of stairs|no stairs/)
+  await expect(page.getByText('Climb stairs')).toHaveCount(0)
+  await expect(page.getByText(/Tobler/)).toHaveCount(0)
+  await foot.click()
+  await expect(page.getByText('Climb stairs').first()).toBeVisible()
+  await page.reload()
+  await expect(page.getByRole('button', { name: /^On foot/ })).toHaveAttribute('aria-expanded', 'true')
+  await expect(page.getByText('Climb stairs').first()).toBeVisible()
+})
+
+test('the walking route is one rounded line with a mark where it climbs stairs', async ({ page }) => {
+  await ready(page, '#/r/quarry-plaza/mchenry-library')
+  await page.waitForFunction(() => (window as any).__map.querySourceFeatures('route').some((f: any) => f.properties.kind === 'stairs'), null, { timeout: 15_000 })
+  const kinds = await page.evaluate(() => (window as any).__map.querySourceFeatures('route').map((f: any) => f.properties.kind))
+  expect(kinds).not.toContain(0)
+  expect(kinds).not.toContain(1)
+})
+
 test('avoid stairs either removes stair legs or explains that none exists', async ({ page }) => {
   await ready(page, '#/r/quarry-plaza/mchenry-library')
+  await page.getByRole('button', { name: /^On foot/ }).click()
   await expect(page.getByText('Climb stairs').first()).toBeVisible()
   await page.getByRole('switch', { name: 'Avoid stairs' }).click()
   await expect(page.getByText(/^\d+ min$/)).toBeVisible()

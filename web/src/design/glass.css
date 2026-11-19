@@ -426,6 +426,74 @@ input {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+.gfold {
+  border-top: 1px solid var(--divider);
+}
+.gfold__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 6px;
+  border: 0;
+  border-radius: var(--r-control);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--m-fast) var(--ease);
+}
+.gfold__head:focus-visible {
+  outline-offset: -2px;
+}
+@media (hover: hover) {
+  .gfold__head:hover {
+    background: var(--fill);
+  }
+}
+.gfold__icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgb(var(--gfold-rgb, var(--accent-rgb)) / 0.15);
+  color: rgb(var(--gfold-rgb, var(--accent-rgb)));
+}
+.gfold__text {
+  display: grid;
+  flex: 1;
+  gap: 1px;
+  min-width: 0;
+}
+.gfold__title {
+  font-weight: 600;
+}
+.gfold__summary {
+  color: var(--text-2);
+  font-size: var(--t-footnote);
+}
+.gfold__summary .gpill {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.gfold__chev {
+  flex: none;
+  color: var(--text-3);
+  transition: transform var(--m-base) var(--ease);
+}
+.gfold[data-open] .gfold__chev {
+  transform: rotate(90deg);
+}
+.gfold__body {
+  padding-bottom: 6px;
+}
+.gfold__body:not([hidden]) {
+  animation: gfade var(--m-base) var(--ease);
+}
 .gpill {
   display: inline-flex;
   align-items: center;

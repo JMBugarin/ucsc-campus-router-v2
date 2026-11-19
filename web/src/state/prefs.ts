@@ -23,6 +23,13 @@ export function usePref<T>(key: string, initial: T): [T, (v: T) => void] {
   return [v, (n) => (setV(n), write(key, n))]
 }
 
+/** Whether a folding section is open: what the person last chose there, else `fallback`. */
+export function useFold(id: string, fallback: boolean): [boolean, () => void] {
+  const [chosen, setChosen] = usePref<boolean | null>(`fold:${id}`, null)
+  const open = chosen ?? fallback
+  return [open, () => setChosen(!open)]
+}
+
 /** Resolves auto/light/dark and mirrors it onto <html> so CSS and the map share one source of truth. */
 export function useTheme(): { mode: ThemeMode; setMode: (m: ThemeMode) => void; theme: 'light' | 'dark' } {
   const [mode, setMode] = usePref<ThemeMode>('theme', 'auto')

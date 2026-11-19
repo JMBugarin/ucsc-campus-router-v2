@@ -17,16 +17,17 @@ test('directions follow you: the route is redrawn as you move, at once when you 
   await page.getByRole('button', { name: 'Show my location' }).click()
   await page.getByRole('button', { name: 'Directions' }).click()
   await expect(page).toHaveURL(/#\/r\/me\/stevenson-academic/)
-  await expect(page.getByText('Following your location: the route updates as you move.')).toBeVisible({ timeout: 15_000 })
+  await page.waitForFunction(() => (window as any).__map.querySourceFeatures('route').some((f: any) => f.properties.kind === 'walk'), null, { timeout: 15_000 })
+  await expect(page.getByText(/Following your location/)).toHaveCount(0)
   const first = await routeEnd(page)
 
   // walk 40 m along the way: the route starts from the new spot
   await context.setGeolocation({ latitude: 36.99715, longitude: -122.05484 })
   await expect.poll(async () => JSON.stringify(await routeEnd(page)), { timeout: 15_000 }).not.toBe(JSON.stringify(first))
 
-  // step well off the route: it is redrawn at once and says so
+  // step well off the route: it is redrawn at once and says so briefly
   await context.setGeolocation({ latitude: 36.99795, longitude: -122.05529 })
-  await expect(page.getByText('Off the route, so it was redrawn from where you are.')).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByRole('status').filter({ hasText: 'Rerouted from where you are' })).toBeVisible({ timeout: 15_000 })
 
   // reach the door
   const door = await page.evaluate(() => {
@@ -60,7 +61,7 @@ test('dragging the map stops following, and the follow button brings it back', a
   await ready(page, '#/p/stevenson-academic')
   await page.getByRole('button', { name: 'Show my location' }).click()
   await page.getByRole('button', { name: 'Directions' }).click()
-  await expect(page.getByText('Following your location: the route updates as you move.')).toBeVisible({ timeout: 15_000 })
+  await page.waitForFunction(() => (window as any).__map.querySourceFeatures('route').some((f: any) => f.properties.kind === 'walk'), null, { timeout: 15_000 })
   const box = (await page.locator('.map-root').boundingBox())!
   await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5)
   await page.mouse.down()

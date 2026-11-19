@@ -47,4 +47,37 @@ export function addMarkerImages(map: MLMap) {
     ctx.restore()
     map.addImage(id, ctx.getImageData(0, 0, size * px, size * px), { pixelRatio: px })
   }
+  addStairsBadge(map, px)
+}
+
+/** Small orange disc with a stair glyph, set on the route wherever it climbs mapped steps. */
+function addStairsBadge(map: MLMap, px: number) {
+  const id = 'badge-stairs'
+  if (map.hasImage(id)) return
+  const size = 24
+  const c = document.createElement('canvas')
+  c.width = c.height = size * px
+  const ctx = c.getContext('2d')!
+  ctx.scale(px, px)
+  ctx.shadowColor = 'rgba(0,0,0,0.3)'
+  ctx.shadowBlur = 2.5
+  ctx.shadowOffsetY = 1
+  ctx.beginPath()
+  ctx.arc(size / 2, size / 2, 9.5, 0, Math.PI * 2)
+  ctx.fillStyle = '#d9730d'
+  ctx.fill()
+  ctx.shadowColor = 'transparent'
+  ctx.lineWidth = 2
+  ctx.strokeStyle = '#ffffff'
+  ctx.stroke()
+  ctx.save()
+  ctx.translate(size / 2 - 6.5, size / 2 - 6.5)
+  ctx.scale(13 / 24, 13 / 24)
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 2.6
+  ctx.lineCap = 'round'
+  ctx.lineJoin = 'round'
+  ctx.stroke(new Path2D(ICON_PATHS.stairs))
+  ctx.restore()
+  map.addImage(id, ctx.getImageData(0, 0, size * px, size * px), { pixelRatio: px })
 }

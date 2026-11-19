@@ -9,7 +9,7 @@ import { SearchIndex } from './data/search'
 import type { Place } from './data/types'
 import { buildGraph, nearestNode, type Graph } from './routing/graph'
 import type { GraphFile } from './data/types'
-import { endpointOf, planCoords, planRoute, routeGeoJSON, straightMeters, MAX_SNAP_M, type Endpoint, type Plan, type PlanError } from './routing/plan'
+import { endpointOf, planCoords, planRoute, routeGeoJSON, straightMeters, MAX_SNAP_M, type Endpoint, type Plan, type PlanError, type RouteFeature } from './routing/plan'
 import { hashParams, useHashRoute } from './state/hashRoute'
 import { usePref, useTheme } from './state/prefs'
 import { CategoryChips, Featured, PlaceRows } from './features/Browse'
@@ -82,7 +82,6 @@ export function App() {
   const [locationOn, setLocationOn] = usePref('locationOn', false)
   const [follow, setFollow] = useState(true)
   const [origin, setOrigin] = useState<{ lat: number; lon: number; at: number } | null>(null)
-  const [reroutedAt, setReroutedAt] = useState(0)
   const tracker = useRef<Tracker | null>(null)
   const [locating, setLocating] = useState(false)
   const [locError, setLocError] = useState<string | null>(null)
@@ -235,7 +234,7 @@ export function App() {
     if (trip && graph) return tripGeoJSON(graph, trip)
     if (!plan || !graph) return null
     const fc = routeGeoJSON(graph, plan)
-    const indoor = (a: [number, number], b: [number, number]): GeoJSON.Feature<GeoJSON.LineString> => ({ type: 'Feature', properties: { kind: 'indoor' }, geometry: { type: 'LineString', coordinates: [[a[1], a[0]], [b[1], b[0]]] } })
+    const indoor = (a: [number, number], b: [number, number]): RouteFeature => ({ type: 'Feature', properties: { kind: 'indoor' }, geometry: { type: 'LineString', coordinates: [[a[1], a[0]], [b[1], b[0]]] } })
     if (toRoom) fc.features.push(indoor(plan.destPoint, [toRoom.lat, toRoom.lon]))
     if (fromRoom) fc.features.push(indoor([fromRoom.lat, fromRoom.lon], plan.originPoint))
     return fc
@@ -343,13 +342,13 @@ export function App() {
     setOrigin(null)
     setFollow(true)
   }, [route.name === 'directions' ? route.from : '', route.name === 'directions' ? route.to : ''])
-  const routeLine = useMemo((): [number, number][] => (routeJson ? routeJson.features.flatMap((f) => f.geometry.coordinates as [number, number][]) : []), [routeJson])
+  const routeLine = useMemo((): [number, number][] => (routeJson ? routeJson.features.flatMap((f) => (f.geometry.type === 'LineString' ? (f.geometry.coordinates as [number, number][]) : [])) : []), [routeJson])
   useEffect(() => {
     if (!liveTrip || !you) return
     const r = replan(origin, { lat: you.lat, lon: you.lon, accuracy: you.accuracy, heading: you.heading ?? null, at: you.at ?? Date.now() }, origin ? routeLine : [])
     if (r.again) {
       setOrigin({ lat: you.lat, lon: you.lon, at: you.at ?? Date.now() })
-      if (r.offRoute) setReroutedAt(Date.now())
+      if (r.offRoute) flash('Rerouted from where you are')
     }
     if (follow && fitted.current && followedAt.current && fixMetres(followedAt.current, you) >= 8) {
       followedAt.current = { lat: you.lat, lon: you.lon }
@@ -549,7 +548,7 @@ export function App() {
         tripIndex={tripIndex}
         onTrip={setTripIndex}
         picking={pickPoint}
-        following={liveTrip ? { finding: !you, rerouted: Date.now() - reroutedAt < 15_000, arrived: arrivedAt, updated: you?.at ?? null } : null}
+        following={liveTrip ? { finding: !you, arrived: arrivedAt } : null}
         onPickOnMap={(field) => setPickPoint(field)}
         onPickAddress={(field, a) => {
           const id = pointId(a.lat, a.lon)

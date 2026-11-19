@@ -1,4 +1,4 @@
-import type { StyleSpecification, LayerSpecification, ExpressionSpecification } from 'maplibre-gl'
+import type { StyleSpecification, LayerSpecification, ExpressionSpecification, FilterSpecification } from 'maplibre-gl'
 
 export type Theme = 'light' | 'dark'
 
@@ -26,7 +26,11 @@ interface Palette {
   hillHigh: string
   accent: string
   warn: string
-  routeCasing: string
+  route: string
+  routeEdge: string
+  routeGlow: string
+  bus: string
+  busEdge: string
   room: string
 }
 
@@ -54,7 +58,11 @@ const LIGHT: Palette = {
   hillHigh: '#ffffff',
   accent: '#0b6fe0',
   warn: '#d9730d',
-  routeCasing: '#ffffff',
+  route: '#1a73e8',
+  routeEdge: '#0b4fae',
+  routeGlow: '#ffffff',
+  bus: '#2a8fa8',
+  busEdge: '#17606f',
   room: '#1f5fae',
 }
 const DARK: Palette = {
@@ -81,7 +89,11 @@ const DARK: Palette = {
   hillHigh: '#52667a',
   accent: '#5ac8fa',
   warn: '#ffb454',
-  routeCasing: '#0b1118',
+  route: '#4fb4ff',
+  routeEdge: '#155e9c',
+  routeGlow: '#05090e',
+  bus: '#38aac4',
+  busEdge: '#124f5c',
   room: '#7fb2ff',
 }
 
@@ -91,6 +103,8 @@ const F_REG = ['Noto Sans Regular']
 const F_BOLD = ['Noto Sans Bold']
 
 const w = (stops: [number, number][]): ExpressionSpecification => ['interpolate', ['exponential', 1.5], ['zoom'], ...stops.flat()] as ExpressionSpecification
+const ROUND = { 'line-cap': 'round', 'line-join': 'round' } as const
+const ROUTE_LINE: FilterSpecification = ['in', ['get', 'kind'], ['literal', ['walk', 'bus']]]
 
 export function buildStyle(theme: Theme): StyleSpecification {
   const c = palette(theme)
@@ -233,15 +247,13 @@ export function buildStyle(theme: Theme): StyleSpecification {
       layout: { 'text-field': ['coalesce', ['get', 'name:en'], ['get', 'name']], 'text-font': F_BOLD, 'text-size': w([[8, 11], [13, 15]]), 'text-transform': 'uppercase', 'text-letter-spacing': 0.08 },
       paint: { 'text-color': c.muted, 'text-halo-color': c.halo, 'text-halo-width': 1.5 },
     },
-    // route (drawn under campus markers)
-    { id: 'route-casing', type: 'line', source: 'route', filter: ['!', ['in', ['get', 'kind'], ['literal', ['connector', 'indoor']]]], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': c.routeCasing, 'line-width': w([[14, 6], [17, 10], [19, 16]]), 'line-opacity': 0.92 } },
-    { id: 'route-road', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 2], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': c.accent, 'line-opacity': 0.62, 'line-width': w([[14, 3], [17, 6], [19, 10]]) } },
-    { id: 'route-path', type: 'line', source: 'route', filter: ['in', ['get', 'kind'], ['literal', [0, 3]]], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': c.accent, 'line-width': w([[14, 3.5], [17, 6.5], [19, 11]]) } },
-    { id: 'route-bridge', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 3], layout: { 'line-cap': 'butt' }, paint: { 'line-color': '#ffffff', 'line-width': w([[14, 1], [19, 3.5]]), 'line-dasharray': [1, 1] } },
-    { id: 'route-steps', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 1], layout: { 'line-cap': 'butt', 'line-join': 'round' }, paint: { 'line-color': c.warn, 'line-width': w([[14, 3.5], [17, 6.5], [19, 11]]), 'line-dasharray': [0.45, 0.55] } },
-    { id: 'route-bus', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'bus'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#2a8fa8', 'line-width': w([[12, 3], [17, 7]]) } },
-    { id: 'route-connector', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'connector'], layout: { 'line-cap': 'round' }, paint: { 'line-color': c.accent, 'line-width': 2.5, 'line-dasharray': [0.1, 2] } },
-    { id: 'route-indoor', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'indoor'], layout: { 'line-cap': 'round' }, paint: { 'line-color': c.room, 'line-width': 2.5, 'line-dasharray': [1.2, 1.6] } },
+    // route (drawn under campus markers): a soft glow so it lifts off forest and roofs, a darker edge, then the line
+    { id: 'route-glow', type: 'line', source: 'route', filter: ROUTE_LINE, layout: ROUND, paint: { 'line-color': c.routeGlow, 'line-width': w([[13, 9], [16, 15], [19, 28]]), 'line-blur': w([[13, 3], [16, 5], [19, 9]]), 'line-opacity': 0.75 } },
+    { id: 'route-edge', type: 'line', source: 'route', filter: ROUTE_LINE, layout: ROUND, paint: { 'line-color': ['match', ['get', 'kind'], 'bus', c.busEdge, c.routeEdge], 'line-width': w([[13, 4.5], [16, 8], [19, 16]]) } },
+    { id: 'route-line', type: 'line', source: 'route', filter: ROUTE_LINE, layout: ROUND, paint: { 'line-color': ['match', ['get', 'kind'], 'bus', c.bus, c.route], 'line-width': w([[13, 2.5], [16, 5.5], [19, 12]]) } },
+    { id: 'route-connector', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'connector'], layout: ROUND, paint: { 'line-color': c.route, 'line-width': w([[13, 2.5], [16, 4.5], [19, 8]]), 'line-dasharray': [0.1, 1.9] } },
+    { id: 'route-indoor', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'indoor'], layout: ROUND, paint: { 'line-color': c.room, 'line-width': w([[15, 2.5], [19, 6]]), 'line-dasharray': [0.1, 2.1] } },
+    { id: 'route-stairs', type: 'symbol', source: 'route', minzoom: 15, filter: ['==', ['get', 'kind'], 'stairs'], layout: { 'icon-image': 'badge-stairs', 'icon-size': ['interpolate', ['linear'], ['zoom'], 15, 0.7, 18, 1], 'icon-allow-overlap': true, 'icon-ignore-placement': true } },
     // parking clusters and lots
     { id: 'parking-cluster', type: 'circle', source: 'parking', minzoom: 15, filter: ['has', 'point_count'], paint: { 'circle-radius': ['step', ['get', 'point_count'], 15, 6, 18, 20, 22], 'circle-color': '#6f7d92', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2, 'circle-opacity': 0.92 } },
     { id: 'parking-cluster-count', type: 'symbol', source: 'parking', minzoom: 15, filter: ['has', 'point_count'], layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-font': F_BOLD, 'text-size': 12, 'text-allow-overlap': true }, paint: { 'text-color': '#ffffff' } },
@@ -338,12 +350,12 @@ export function buildStyle(theme: Theme): StyleSpecification {
       layout: { 'icon-image': ['concat', 'pin-', ['get', 'kind']], 'icon-size': 1.15, 'icon-allow-overlap': true, 'text-field': ['get', 'name'], 'text-font': F_BOLD, 'text-size': 13, 'text-offset': [0, 1.7], 'text-anchor': 'top', 'text-max-width': 9, 'text-allow-overlap': true },
       paint: { 'text-color': c.text, 'text-halo-color': c.halo, 'text-halo-width': 2 },
     },
-    { id: 'endpoint-from', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'from'], paint: { 'circle-radius': 7, 'circle-color': '#ffffff', 'circle-stroke-color': c.accent, 'circle-stroke-width': 4 } },
-    { id: 'endpoint-to', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'to'], paint: { 'circle-radius': 8, 'circle-color': c.accent, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
-    { id: 'bus-dot', type: 'circle', source: 'buses', paint: { 'circle-radius': ['case', ['==', ['get', 'hi'], 1], 11, 8], 'circle-color': '#2a8fa8', 'circle-opacity': ['case', ['==', ['get', 'hi'], 1], 1, 0.7], 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2 } },
+    { id: 'endpoint-from', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'from'], paint: { 'circle-radius': 6.5, 'circle-color': '#ffffff', 'circle-stroke-color': c.routeEdge, 'circle-stroke-width': 3.5 } },
+    { id: 'endpoint-to', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'to'], paint: { 'circle-radius': 8, 'circle-color': c.route, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
+    { id: 'bus-dot', type: 'circle', source: 'buses', paint: { 'circle-radius': ['case', ['==', ['get', 'hi'], 1], 11, 8], 'circle-color': c.bus, 'circle-opacity': ['case', ['==', ['get', 'hi'], 1], 1, 0.7], 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2 } },
     { id: 'bus-label', type: 'symbol', source: 'buses', layout: { 'text-field': ['get', 'label'], 'text-font': F_BOLD, 'text-size': 10, 'text-allow-overlap': true }, paint: { 'text-color': '#ffffff' } },
     { id: 'endpoint-room', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'room'], paint: { 'circle-radius': 6, 'circle-color': c.room, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2.5 } },
-    { id: 'endpoint-bus', type: 'circle', source: 'endpoints', filter: ['in', ['get', 'role'], ['literal', ['board', 'alight']]], paint: { 'circle-radius': 7, 'circle-color': '#2a8fa8', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
+    { id: 'endpoint-bus', type: 'circle', source: 'endpoints', filter: ['in', ['get', 'role'], ['literal', ['board', 'alight']]], paint: { 'circle-radius': 6.5, 'circle-color': c.bus, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
     { id: 'you-halo', type: 'circle', source: 'you', paint: { 'circle-radius': ['get', 'accuracy_px'], 'circle-color': '#0a84ff', 'circle-opacity': 0.14 } },
     { id: 'you', type: 'circle', source: 'you', paint: { 'circle-radius': 8, 'circle-color': '#0a84ff', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
   ]
