@@ -593,3 +593,30 @@ ul.plain.note li {
   flex-wrap: wrap;
   gap: 6px;
 }
+
+/* room feedback */
+.feedback {
+  display: grid;
+  gap: 8px;
+}
+.feedback p {
+  margin: 0;
+}
+.feedback__q {
+  font-size: var(--t-footnote);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.fbform {
+  display: grid;
+  gap: 6px;
+}
+.fbcount {
+  margin-left: auto;
+  align-self: center;
+  color: var(--text-3);
+  font-size: var(--t-caption);
+}
+.fberror {
+  color: rgb(var(--danger-rgb));
+}

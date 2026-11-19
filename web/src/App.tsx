@@ -13,6 +13,7 @@ import { hashParams, useHashRoute } from './state/hashRoute'
 import { usePref, useTheme } from './state/prefs'
 import { CategoryChips, Featured, PlaceRows } from './features/Browse'
 import { PlaceDetail } from './features/PlaceDetail'
+import { MissingRoom } from './features/Feedback'
 import { Directions, type Pick } from './features/Directions'
 import { AboutModal, TransitModal } from './features/Modals'
 import { activity } from './state/activity'
@@ -312,6 +313,7 @@ export function App() {
           </button>
         )}
         <PlaceRows places={results} activeId={results[active]?.id} onPick={openPlace} listId="results" label="Search results" />
+        {q.trim() && (/\d/.test(q) ? !results.some((p) => p.kind === 'room') : !results.length) && <MissingRoom query={q.trim()} />}
       </>
     )
   else content = <Featured places={featured} recent={recent} onPick={openPlace} onTransit={() => setModal('transit')} />

@@ -77,3 +77,9 @@ test('room pages show no audit tools without ?audit', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Jack Baskin Engineering 152' })).toBeVisible()
   await expect(page.getByRole('region', { name: 'Audit this room' })).toHaveCount(0)
 })
+
+test('without a feedback endpoint the room page shows no feedback buttons', async ({ page }) => {
+  await ready(page, '#/p/thimann-labs-101')
+  await expect(page.getByRole('heading', { name: 'Thimann Labs 101' })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Room feedback' })).toHaveCount(0)
+})
