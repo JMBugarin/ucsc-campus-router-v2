@@ -50,6 +50,15 @@ for (const [f, t, len, stairs, hw] of csv('edges.csv')) {
   kindCount[['path', 'steps', 'road', 'bridge'][kind]]++
   edges.push(+f, +t, round(+len, 2), kind)
 }
+// the true path between each pair of joined nodes (graph/ucsc/shapes.json, from build_edge_shapes.py)
+const shapeFile = JSON.parse(readFileSync(join(root, 'graph', 'ucsc', 'shapes.json'), 'utf8'))
+const shapes = { pairs: [], off: [0], pts: [] }
+for (const [key, pts] of Object.entries(shapeFile.shapes).sort(([x], [y]) => x.localeCompare(y, 'en', { numeric: true }))) {
+  const [a, b] = key.split('-').map(Number)
+  shapes.pairs.push(a, b)
+  for (const [la, lo] of pts) shapes.pts.push(round(la), round(lo))
+  shapes.off.push(shapes.pts.length / 2)
+}
 writeFileSync(
   join(out, 'graph.json'),
   JSON.stringify({
@@ -57,8 +66,10 @@ writeFileSync(
     lon: nodes.map((n) => round(n[1])),
     ele: nodes.map((n) => n[2]),
     edges,
+    shapes,
   }),
 )
+console.log('shapes', shapes.pairs.length / 2, 'bent edges,', shapes.pts.length / 2, 'points;', shapeFile.unmatched.length, 'edges left straight')
 console.log('graph', nodes.length, 'nodes', edges.length / 4, 'edges', kindCount)
 
 // ---------------------------------------------------------------- places

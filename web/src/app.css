@@ -937,3 +937,8 @@ ul.plain.note li {
 .arrive--plan {
   background: rgb(var(--accent-rgb) / 0.1);
 }
+.legend i[data-k='c'] {
+  background: none;
+  border-top: 2.5px dotted var(--accent);
+  height: 0;
+}
