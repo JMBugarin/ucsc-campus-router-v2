@@ -5,13 +5,60 @@ import { formatDistance, formatDuration, type Plan, type PlanError } from '../ro
 import type { Place } from '../data/types'
 import type { SearchIndex } from '../data/search'
 import { PlaceRows } from './Browse'
-import { clockText, type TransitData } from '../transit/schedule'
+import { clockText, pacificClock, type TransitData } from '../transit/schedule'
+import { useServiceDepartures } from '../transit/useServiceDepartures'
+import { freshPredictions, predictedDelay } from '../transit/serviceState'
+import { OCCUPANCY_TEXT, recent, type Vehicle } from '../transit/liveClient'
+import type { LiveState } from '../transit/useTransit'
 import type { BusPlan } from '../transit/plan'
 import { ACCESS_LABEL, checkedText, doorSentence, relation } from '../data/rooms'
 import { GlassSegmentedControl, StatusPill } from '../design/components'
 import { clockAt, pacificDate, pacificInstant } from '../schedule/time'
 
 export type Pick = { id: string; name: string } | null
+
+/** The direct buses, with live departure times, the bus itself and how full METRO says it is, when the service has them. */
+function BusOptions({ bus, transit, now, vehicles, live }: { bus: BusPlan; transit: TransitData; now: number; vehicles: Vehicle[]; live?: LiveState }) {
+  const stopIds = [...new Set(bus.options.map((o) => transit.stops[o.board].id))]
+  const service = useServiceDepartures(stopIds)
+  const predictions = freshPredictions(service.value)
+  const clock = pacificClock(new Date(now))
+  const nowSecs = Math.floor(now / 1000)
+  const routes = bus.options.map((o) => o.route)
+  const stops = bus.options.flatMap((o) => [transit.stops[o.board].id, transit.stops[o.alight].id])
+  const alerts = (live?.alerts ?? []).filter((a) => (!a.routes.length && !a.stops.length) || a.routes.some((r) => routes.includes(r)) || a.stops.some((s) => stops.includes(s)))
+  return (
+    <>
+      {alerts.map((a, i) => (
+        <GlassBanner key={i} tone="warning" title={a.header || 'Service alert'}>
+          {a.text}
+        </GlassBanner>
+      ))}
+      <ul className="bus">
+        {bus.options.map((o) => {
+          const stop = transit.stops[o.board].id
+          const delay = predictedDelay(predictions, o.tripId, stop, o.departs, clock.secs, nowSecs)
+          const leaves = delay === null ? o.departs : o.departs + delay
+          const v = vehicles.find((x) => x.trip === o.tripId && recent(x, nowSecs))
+          const when = delay === null ? 'Scheduled' : Math.abs(delay) < 60 ? 'Live: on time' : delay > 0 ? `Live: ${Math.round(delay / 60)} min late` : `Live: ${Math.round(-delay / 60)} min early`
+          return (
+            <li key={o.tripId + o.departs}>
+              <span className="route">{o.route}</span>
+              <span className="bus__main">
+                {transit.stops[o.board].name} {clockText(leaves)} to {transit.stops[o.alight].name}
+                <small>
+                  Walk {Math.max(1, Math.round(o.walkToStop / 60))} min to the stop, ride, walk {Math.max(1, Math.round(o.walkFromStop / 60))} min. {when}.
+                  {v && ` Bus ${v.label || v.id} is on the map${v.occupancy ? `: ${OCCUPANCY_TEXT[v.occupancy].toLowerCase()}` : ''}.`}
+                </small>
+              </span>
+              <span className="bus__eta tabular">{clockText(o.arrives + (delay ?? 0))}</span>
+            </li>
+          )
+        })}
+      </ul>
+    </>
+  )
+}
 
 /** "Leave by" for a class: when to set off to make it, on foot or by one of the buses that gets there in time. */
 function ArriveBy({ plan, at, label, now, bus, transit }: { plan: Plan; at: number; label: string; now: number; bus?: BusPlan | null; transit?: TransitData | null }) {
@@ -151,7 +198,11 @@ export function Directions({
   toRoom,
   arriveBy,
   now = Date.now(),
+  vehicles = [],
+  live,
 }: {
+  vehicles?: Vehicle[]
+  live?: LiveState
   arriveBy?: { at: number; label: string } | null
   now?: number
   toRoom?: Place | null
@@ -246,20 +297,7 @@ export function Directions({
                 <>
                   <SectionLabel>By bus</SectionLabel>
                   {bus.options.length ? (
-                    <ul className="bus">
-                      {bus.options.map((o) => (
-                        <li key={o.tripId + o.departs}>
-                          <span className="route">{o.route}</span>
-                          <span className="bus__main">
-                            {transit.stops[o.board].name} {clockText(o.departs)} to {transit.stops[o.alight].name}
-                            <small>
-                              Walk {Math.max(1, Math.round(o.walkToStop / 60))} min to the stop, ride, walk {Math.max(1, Math.round(o.walkFromStop / 60))} min. Scheduled.
-                            </small>
-                          </span>
-                          <span className="bus__eta tabular">{clockText(o.arrives)}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <BusOptions bus={bus} transit={transit} now={now} vehicles={vehicles} live={live} />
                   ) : (
                     <p className="note">No direct METRO bus gets there sooner than walking{bus.walkOnlyArrives ? ` (arrive ${clockText(bus.walkOnlyArrives)})` : ''}.</p>
                   )}

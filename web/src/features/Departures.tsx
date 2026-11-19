@@ -15,7 +15,7 @@ export function Departures({ data, stopIds, now, live }: { data: TransitData; st
   const idx = useMemo(() => stopIds.flatMap((id) => data.stops.flatMap((s, i) => (s.id === id ? [i] : []))), [data, stopIds])
   const { list, today, day } = useMemo(() => upcoming(data, idx, now, 8), [data, idx, now])
   const covered = feedCovers(data, now)
-  const alerts = live.alerts.filter((a) => a.stops.some((s) => stopIds.includes(s)) || a.routes.some((r) => list.some((d) => d.trip.r === r)))
+  const alerts = live.alerts.filter((a) => (!a.stops.length && !a.routes.length) || a.stops.some((s) => stopIds.includes(s)) || a.routes.some((r) => list.some((d) => d.trip.r === r)))
 
   return (
     <section aria-label="Next buses" className="departures">

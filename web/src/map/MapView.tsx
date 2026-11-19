@@ -37,6 +37,8 @@ export interface MapViewProps {
   places: Place[]
   selected: Place | null
   focus?: MapFocus | null
+  /** buses on the map: a trip's own bus is highlighted */
+  buses?: { id: string; lat: number; lon: number; label: string; bearing?: number; highlight: boolean }[]
   /** today's classes, pinned with their start times */
   classPins?: { id: string; lat: number; lon: number; label: string; next: boolean }[]
   route: GeoJSON.FeatureCollection | null
@@ -106,6 +108,10 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     const f = focusFeatures(p.focus, p.selected)
     set('rooms', f.rooms)
     set('doors', f.doors)
+    set('buses', {
+      type: 'FeatureCollection',
+      features: (p.buses ?? []).map((b) => ({ type: 'Feature', properties: { id: b.id, label: b.label, hi: b.highlight ? 1 : 0 }, geometry: { type: 'Point', coordinates: [b.lon, b.lat] } })),
+    })
     set('classes', {
       type: 'FeatureCollection',
       features: (p.classPins ?? []).map((c) => ({ type: 'Feature', properties: { id: c.id, label: c.label, next: c.next ? 1 : 0 }, geometry: { type: 'Point', coordinates: [c.lon, c.lat] } })),
@@ -205,7 +211,7 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     }
   }, [props.theme])
 
-  useEffect(apply, [props.places, props.route, props.endpoints, props.selected, props.you, props.focus, props.classPins])
+  useEffect(apply, [props.places, props.route, props.endpoints, props.selected, props.you, props.focus, props.classPins, props.buses])
 
   useImperativeHandle(ref, () => ({
     flyToPlace(p, zoom = 17.2) {
