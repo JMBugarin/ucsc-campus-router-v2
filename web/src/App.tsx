@@ -8,6 +8,7 @@ import { loadGraph, loadPlaces } from './data/campus'
 import { SearchIndex } from './data/search'
 import type { Place } from './data/types'
 import { buildGraph, nearestNode, type Graph } from './routing/graph'
+import type { GraphFile } from './data/types'
 import { endpointOf, planCoords, planRoute, routeGeoJSON, straightMeters, MAX_SNAP_M, type Endpoint, type Plan, type PlanError } from './routing/plan'
 import { hashParams, useHashRoute } from './state/hashRoute'
 import { usePref, useTheme } from './state/prefs'
@@ -87,6 +88,7 @@ export function App() {
   const [auditMode] = useState(auditRequested)
   const [classes, setClasses] = useState<ClassesData | null>(null)
   const [metro, setMetro] = useState<Network | null>(null)
+  const [town, setTown] = useState<Graph | null>(null)
   const [pointNames, setPointNames] = useState<Map<string, string>>(() => new Map())
   const [pickPoint, setPickPoint] = useState<'from' | 'to' | null>(null)
   const [tripIndex, setTripIndex] = useState(0)
@@ -192,12 +194,21 @@ export function App() {
       .then((f: MetroFile) => setMetro(prepareNetwork(f)))
       .catch(() => undefined)
   }, [wantTrips, metro])
+  // the town street network, for the walk to and from the bus when one end is off campus
+  const needTown = wantTrips && (planError === 'no-path-near-origin' || planError === 'no-path-near-destination')
+  useEffect(() => {
+    if (!needTown || town) return
+    fetch(`${import.meta.env.BASE_URL}data/town.json`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((f: GraphFile) => setTown(buildGraph(f)))
+      .catch(() => undefined)
+  }, [needTown, town])
   const minute = Math.floor(now / 60000)
   const trips = useMemo((): TripOption[] | null => {
     if (!wantTrips || !metro || !graph || !dFrom.ep || !dTo.ep) return null
-    return planTrips(metro, graph, dFrom.ep, dTo.ep, arriveBy ? { kind: 'arrive', by: arriveBy.at } : { kind: 'leave', at: minute * 60000 }, avoidStairs)
+    return planTrips(metro, graph, dFrom.ep, dTo.ep, arriveBy ? { kind: 'arrive', by: arriveBy.at, now: minute * 60000 } : { kind: 'leave', at: minute * 60000 }, avoidStairs, town)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wantTrips, metro, graph, dFrom.ep?.id, dFrom.ep?.lat, dTo.ep?.id, arriveBy?.at, minute, avoidStairs])
+  }, [wantTrips, metro, graph, town, dFrom.ep?.id, dFrom.ep?.lat, dTo.ep?.id, arriveBy?.at, minute, avoidStairs])
   useEffect(() => setTripIndex(0), [dFrom.ep?.id, dTo.ep?.id, arriveBy?.at])
   const trip = trips?.length ? trips[Math.min(tripIndex, trips.length - 1)] : null
   const stopPlace = route.name === 'place' && selected?.stops ? selected : null

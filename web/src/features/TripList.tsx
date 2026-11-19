@@ -19,13 +19,20 @@ export function TripList({ trips, index, onIndex, deadline, now, vehicles, live 
   const nowSecs = Math.floor(now / 1000)
   const routes = trip.parts.flatMap((p) => (p.kind === 'bus' ? [p.route] : []))
   const stops = trip.parts.flatMap((p) => (p.kind === 'bus' ? [p.boardStop, p.alightStop] : []))
+  const allLate = deadline !== null && trips.every((t) => t.late)
+  const lateBy = (t: TripOption) => Math.max(1, Math.ceil((t.arrive - (deadline ?? t.arrive)) / 60000))
   const alerts = (live?.alerts ?? []).filter((a) => (!a.routes.length && !a.stops.length) || a.routes.some((r) => routes.includes(r)) || a.stops.some((s) => stops.includes(s)))
   return (
     <section className="trips" aria-label="Trips by bus">
       <SectionLabel>By bus</SectionLabel>
+      {allLate && deadline !== null && (
+        <GlassBanner tone="warning" title={deadline <= now ? `Class started at ${clockAt(deadline)}` : `No bus gets you there by ${clockAt(deadline)}`}>
+          The soonest gets you there around {clockAt(trips[0].arrive)}, {lateBy(trips[0])} min late. These are the buses you can still catch.
+        </GlassBanner>
+      )}
       <div className="trips__options" role="radiogroup" aria-label="Trip options">
         {trips.map((t, i) => {
-          const late = deadline !== null && t.arrive > deadline
+          const late = t.late
           return (
             <button key={t.leave + '-' + i} role="radio" aria-checked={i === index} className="trips__option" onClick={() => onIndex(i)}>
               <strong>Leave by {clockAt(t.leave)}</strong>
@@ -33,7 +40,7 @@ export function TripList({ trips, index, onIndex, deadline, now, vehicles, live 
                 Arrive around {clockAt(t.arrive)} · {t.parts.filter((p) => p.kind === 'bus').map((p) => (p.kind === 'bus' ? p.route : '')).join(' → ')}
                 {t.transfers > 0 ? ` · ${t.transfers} transfer${t.transfers > 1 ? 's' : ''}` : ''}
               </span>
-              {late && <StatusPill tone="danger">Late</StatusPill>}
+              {late ? <StatusPill tone="danger">{lateBy(t)} min late</StatusPill> : deadline !== null && <StatusPill tone="success">On time</StatusPill>}
             </button>
           )
         })}
@@ -54,7 +61,7 @@ export function TripList({ trips, index, onIndex, deadline, now, vehicles, live 
                 </span>
                 <span className="steps__main">
                   Walk {mins(p.seconds)} min to {p.toName}
-                  <small>{p.approximate ? 'Estimated: no mapped path here, so follow streets and sidewalks.' : 'Along the mapped campus paths.'}</small>
+                  <small>{p.approximate ? 'Estimated: no mapped way here, so follow streets and sidewalks.' : p.on === 'town' ? 'Along the streets, shown on the map.' : 'Along the mapped campus paths.'}</small>
                 </span>
               </li>
             )
@@ -79,7 +86,7 @@ export function TripList({ trips, index, onIndex, deadline, now, vehicles, live 
           )
         })}
       </ol>
-      <p className="note">Times come from METRO's schedule, with live predictions where the transit service has them. Walks off campus are estimates.</p>
+      <p className="note">Times come from METRO's schedule, with live predictions where the transit service has them. Walking times in town assume flat ground.</p>
     </section>
   )
 }

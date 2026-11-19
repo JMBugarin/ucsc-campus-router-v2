@@ -198,6 +198,26 @@ function assemble(
   }
 }
 
+/** Walking seconds from one point to each of several points, from a single search (Infinity where no path joins them). */
+export function walkSeconds(g: Graph, from: [number, number], targets: [number, number][], opt: { avoidStairs?: boolean } = {}): number[] {
+  const o = nearestOnEdges(g, from[0], from[1])
+  if (!o || o.dist > MAX_SNAP_M) return targets.map(() => Infinity)
+  const { cost } = searchFrom(
+    g,
+    new Map([
+      [o.a, partSeconds(g, o.a, o.b, o.t, 0)],
+      [o.b, partSeconds(g, o.a, o.b, o.t, 1)],
+    ]),
+    opt,
+  )
+  return targets.map(([la, lo]) => {
+    const d = nearestOnEdges(g, la, lo)
+    if (!d || d.dist > MAX_SNAP_M) return Infinity
+    const along = Math.min(cost[d.a] + partSeconds(g, d.a, d.b, 0, d.t), cost[d.b] + partSeconds(g, d.a, d.b, 1, d.t))
+    return along + (o.dist + d.dist) / CONNECTOR_SPEED
+  })
+}
+
 export function straightMeters(a: Endpoint, b: Endpoint): number {
   return haversine(a.lat, a.lon, b.lat, b.lon)
 }
