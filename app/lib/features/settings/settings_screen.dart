@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../design/floating_bar.dart';
+import '../../design/surfaces.dart';
+import '../../design/tokens.dart';
 import '../activity/activity.dart';
 import '../reminders/reminder.dart';
 import '../reminders/reminder_controller.dart';
@@ -62,99 +65,116 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       child: Text(text, style: theme.textTheme.bodyMedium),
     );
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Class reminders'),
-            subtitle: const Text(
-              'A notification before each class over the next week, even if the app is closed. They are planned '
-              'whenever the app opens, so open it at least once a week.',
-            ),
-            value: settings.remindersOn,
-            onChanged: _setReminders,
+      body: SafeArea(
+        bottom: false,
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            Space.md,
+            Space.xs,
+            Space.md,
+            Space.md + FloatingBarInset.of(context),
           ),
-          if (_reminderMessage != null || planProblem != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                _reminderMessage ?? planProblem!,
-                style: TextStyle(color: theme.colorScheme.error),
-              ),
+          children: [
+            const LargeTitleHeader(title: 'Settings'),
+            const SizedBox(height: Space.sm),
+            GroupCard(
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Class reminders'),
+                  subtitle: const Text(
+                    'A notification before each class over the next week, even if the app is closed. They are planned '
+                    'whenever the app opens, so open it at least once a week.',
+                  ),
+                  value: settings.remindersOn,
+                  onChanged: _setReminders,
+                ),
+                if (_reminderMessage != null || planProblem != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      _reminderMessage ?? planProblem!,
+                      style: TextStyle(color: theme.colorScheme.error),
+                    ),
+                  ),
+                if (settings.remindersOn)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: _sendTest,
+                      icon: const Icon(Icons.notifications_active_outlined),
+                      label: const Text('Send a test notification'),
+                    ),
+                  ),
+                const Divider(),
+                Text(
+                  'Remind me before class',
+                  style: theme.textTheme.titleMedium,
+                ),
+                Text(
+                  'How long before a class starts the reminder comes.',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                DropdownButton<int>(
+                  isExpanded: true,
+                  value: settings.remindLeadMinutes,
+                  items: const [
+                    DropdownMenuItem(value: 0, child: Text('At the start')),
+                    DropdownMenuItem(value: 5, child: Text('5 min')),
+                    DropdownMenuItem(value: 10, child: Text('10 min')),
+                    DropdownMenuItem(value: 15, child: Text('15 min')),
+                    DropdownMenuItem(value: 30, child: Text('30 min')),
+                  ],
+                  onChanged: (value) => controller.setRemindLead(value ?? 10),
+                ),
+              ],
             ),
-          if (settings.remindersOn)
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: _sendTest,
-                icon: const Icon(Icons.notifications_active_outlined),
-                label: const Text('Send a test notification'),
-              ),
+            const SizedBox(height: Space.md),
+            Semantics(
+              header: true,
+              child: Text('Your data', style: theme.textTheme.titleMedium),
             ),
-          Text('Remind me before class', style: theme.textTheme.titleMedium),
-          Text(
-            'How long before a class starts the reminder comes.',
-            style: theme.textTheme.bodyMedium,
-          ),
-          DropdownButton<int>(
-            isExpanded: true,
-            value: settings.remindLeadMinutes,
-            items: const [
-              DropdownMenuItem(value: 0, child: Text('At the start')),
-              DropdownMenuItem(value: 5, child: Text('5 min')),
-              DropdownMenuItem(value: 10, child: Text('10 min')),
-              DropdownMenuItem(value: 15, child: Text('15 min')),
-              DropdownMenuItem(value: 30, child: Text('30 min')),
+            line(
+              counting
+                  ? 'Your schedule is saved only on this phone. There is no account.'
+                  : 'Your schedule is saved only on this phone. There is no account and no server.',
+            ),
+            line(
+              'The app never asks for your location. Walk there hands the destination to your maps app, which finds where you are.',
+            ),
+            line(
+              'When you read a schedule from a picture, the phone reads it and the picture goes nowhere.',
+            ),
+            line(
+              'The map downloads its tiles from a map provider, which sees the area you look at and your network address.',
+            ),
+            if (counting) ...[
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Count my weekly use'),
+                subtitle: const Text(
+                  'Off unless you turn it on. Once a week, after you find a room or open a class on the map, '
+                  'the phone sends a random id and the week, nothing else: no schedule, searches, location or name. '
+                  'Turning it off deletes what was sent.',
+                ),
+                value: activity.on,
+                onChanged: ref.read(activityProvider.notifier).setOn,
+              ),
+              if (activity.participantCode case final code?)
+                line('Participant code: $code'),
             ],
-            onChanged: (value) => controller.setRemindLead(value ?? 10),
-          ),
-          const Divider(height: 32),
-          Semantics(
-            header: true,
-            child: Text('Your data', style: theme.textTheme.titleMedium),
-          ),
-          line(
-            counting
-                ? 'Your schedule is saved only on this phone. There is no account.'
-                : 'Your schedule is saved only on this phone. There is no account and no server.',
-          ),
-          line(
-            'The app never asks for your location. Walk there hands the destination to your maps app, which finds where you are.',
-          ),
-          line(
-            'When you read a schedule from a picture, the phone reads it and the picture goes nowhere.',
-          ),
-          line(
-            'The map downloads its tiles from a map provider, which sees the area you look at and your network address.',
-          ),
-          if (counting) ...[
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Count my weekly use'),
-              subtitle: const Text(
-                'Off unless you turn it on. Once a week, after you find a room or open a class on the map, '
-                'the phone sends a random id and the week, nothing else: no schedule, searches, location or name. '
-                'Turning it off deletes what was sent.',
-              ),
-              value: activity.on,
-              onChanged: ref.read(activityProvider.notifier).setOn,
+            const Divider(height: 32),
+            Semantics(
+              header: true,
+              child: Text('About the data', style: theme.textTheme.titleMedium),
             ),
-            if (activity.participantCode case final code?)
-              line('Participant code: $code'),
+            line(
+              'Not affiliated with or endorsed by UC Santa Cruz. Room names and positions come from the public UCSC '
+              'classroom directory and campus map; building outlines and doors are © OpenStreetMap contributors (ODbL). '
+              'A pin can be wrong: check the room number on your schedule.',
+            ),
           ],
-          const Divider(height: 32),
-          Semantics(
-            header: true,
-            child: Text('About the data', style: theme.textTheme.titleMedium),
-          ),
-          line(
-            'Not affiliated with or endorsed by UC Santa Cruz. Room names and positions come from the public UCSC '
-            'classroom directory and campus map; building outlines and doors are © OpenStreetMap contributors (ODbL). '
-            'A pin can be wrong: check the room number on your schedule.',
-          ),
-        ],
+        ),
       ),
     );
   }

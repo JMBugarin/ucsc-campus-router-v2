@@ -460,3 +460,66 @@ class ListRow extends StatelessWidget {
     );
   }
 }
+
+/// The large title that opens a tab, with round glass buttons beside it.
+class LargeTitleHeader extends StatelessWidget {
+  const LargeTitleHeader({
+    super.key,
+    required this.title,
+    this.actions = const [],
+  });
+
+  final String title;
+  final List<Widget> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Semantics(
+            header: true,
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+          ),
+        ),
+        for (final action in actions) ...[
+          const SizedBox(width: Space.sm),
+          action,
+        ],
+      ],
+    );
+  }
+}
+
+/// A solid rounded group for settings rows.
+class GroupCard extends StatelessWidget {
+  const GroupCard({super.key, required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Material(
+      color: c.surfaceContent,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Radii.xl),
+        side: BorderSide(color: c.separator),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.md,
+          vertical: Space.sm,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: children,
+        ),
+      ),
+    );
+  }
+}
