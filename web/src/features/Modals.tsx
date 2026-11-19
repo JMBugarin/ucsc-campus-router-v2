@@ -39,7 +39,11 @@ export function AboutModal({
   onReduceMotion,
   solid,
   onSolid,
+  locationOn,
+  onLocationOn,
 }: {
+  locationOn: boolean
+  onLocationOn: (v: boolean) => void
   open: boolean
   onClose: () => void
   mode: ThemeMode
@@ -64,6 +68,13 @@ export function AboutModal({
             { value: 'dark', label: 'Dark' },
           ]}
         />
+      </div>
+      <div className="setrow">
+        <span>
+          Use my location
+          <small>Starts directions from where you are and follows you on the way. Your location stays on this device.</small>
+        </span>
+        <GlassSwitch label="Use my location" checked={locationOn} onChange={onLocationOn} />
       </div>
       <div className="setrow">
         <span>Reduce motion</span>

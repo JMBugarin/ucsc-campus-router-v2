@@ -203,6 +203,7 @@ export function Directions({
   now = Date.now(),
   vehicles = [],
   live,
+  following = null,
   trips = null,
   tripsLoading = false,
   tripIndex = 0,
@@ -211,6 +212,8 @@ export function Directions({
   onPickOnMap = () => {},
   onPickAddress = () => {},
 }: {
+  /** set while the trip starts from the walker's live location */
+  following?: { finding: boolean; rerouted: boolean; arrived: string | null; updated: number | null } | null
   trips?: TripOption[] | null
   tripsLoading?: boolean
   tripIndex?: number
@@ -328,6 +331,17 @@ export function Directions({
             <GlassSwitch checked={avoidStairs} onChange={onAvoidStairs} label="Avoid stairs" />
           </div>
           {locationError && <GlassBanner tone="warning" title="Location unavailable">{locationError}</GlassBanner>}
+          {following?.arrived && (
+            <GlassBanner tone="success" title={`You've arrived at ${following.arrived}`}>
+              {toRoom?.room ? 'Check the room number by the door.' : 'Enjoy your class.'}
+            </GlassBanner>
+          )}
+          {following && !following.arrived && (
+            <p className="live-status" role="status" aria-live="polite">
+              <StatusPill tone={following.finding ? 'warning' : 'success'}>{following.finding ? 'Finding you…' : 'Live'}</StatusPill>
+              {following.finding ? 'Waiting for your location.' : following.rerouted ? 'Off the route, so it was redrawn from where you are.' : 'Following your location: the route updates as you move.'}
+            </p>
+          )}
           {picking && <GlassBanner title="Tap the map">Tap where the trip {picking === 'from' ? 'starts' : 'ends'}.</GlassBanner>}
           {tripsLoading && <p className="note" role="status">Finding buses…</p>}
           {showTrips && trips && <TripList trips={trips} index={tripIndex} onIndex={onTrip} deadline={arriveBy?.at ?? null} now={now} vehicles={vehicles} live={live} />}

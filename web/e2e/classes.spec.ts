@@ -6,17 +6,18 @@ PHYS 5A - Mechanics Status Units Grading Grade Deadlines Dropped 5.00 Graded 301
 
 test.use({ geolocation: { latitude: 36.99715, longitude: -122.05529 }, permissions: ['geolocation'] })
 
+// the clock stands still at `iso`, so "in 30 min" doesn't depend on how fast the test runs
 const at = async (page: Page, iso: string) =>
   page.addInitScript((when) => {
     const R = Date
-    const off = new R(when).getTime() - R.now()
+    const fixed = new R(when).getTime()
     globalThis.Date = class extends R {
       constructor(...a: unknown[]) {
         if (a.length) super(...(a as [string]))
-        else super(R.now() + off)
+        else super(fixed)
       }
       static now() {
-        return R.now() + off
+        return fixed
       }
     } as DateConstructor
   }, iso)
