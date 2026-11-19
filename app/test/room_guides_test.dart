@@ -6,33 +6,60 @@ import 'helpers.dart';
 
 void main() {
   group('floors', () {
-    test('read the floor a room number implies', () {
-      expect(floorFromRoomNumber('152'), '1');
-      expect(floorFromRoomNumber('071'), '0');
-      expect(floorFromRoomNumber('B206'), '2');
-      expect(floorFromRoomNumber('3201'), '2');
-      expect(floorFromRoomNumber('1340'), '3');
-      expect(floorFromRoomNumber('Hall'), isNull);
+    test(
+      'come from a walk or a published source, never the room number or map level',
+      () {
+        // The campus map puts McHenry 1340 on level L3; the library's floor plan says floor 1.
+        expect(
+          testCampus.roomFloor('mchenry-library', '1340')?.text,
+          'Floor 1 · one floor below the main entrance',
+        );
+        expect(
+          testCampus.roomFloor('merrill-academic', '102')?.text,
+          'Floor 2 · upstairs',
+        );
+        expect(
+          testCampus.roomFloor('merrill-academic', '002')?.text,
+          'Floor 1 · entrance level',
+        );
+        expect(testCampus.roomFloor('engineering-2', '192')?.text, 'Floor 1');
+        expect(testCampus.roomFloor('baskin-engineering', '372'), isNull);
+        expect(testCampus.roomFloor('social-sciences-2', '071'), isNull);
+        expect(testCampus.roomFloor('mchenry-library', null), isNull);
+      },
+    );
+    test('every published floor names its source and a real room', () {
+      expect(testCampus.floors, isNotEmpty);
+      testCampus.floors.forEach((key, f) {
+        final [b, room] = key.split(':');
+        expect(
+          testCampus.buildings[b]?.roomPoints,
+          contains(room),
+          reason: key,
+        );
+        expect(f.sourceUrl, startsWith('https://'), reason: key);
+        expect(f.label, matches(RegExp(r'^(\d{1,2}|G)$')), reason: key);
+      });
     });
-    test('say Floor N, and name the campus map when the number disagrees', () {
-      expect(floorText('L1', room: '152'), 'Floor 1');
-      expect(floorText('L3', room: '1340'), 'Floor 3');
-      expect(floorText('L1', room: '001'), 'Floor 1 (campus map)');
-      expect(floorText('L0', room: '071'), 'Lower level (floor 0)');
-      expect(floorText('2', room: '152'), 'Floor 2');
-      expect(floorText('Ground'), 'Ground');
-      expect(floorText(null), isNull);
-    });
-    test('every listed classroom gets a floor', () {
-      for (final b in testCampus.buildings.values) {
-        for (final e in b.roomPoints.entries) {
-          expect(
-            floorText(e.value.level, room: e.key),
-            matches(RegExp('^(Floor|Lower)')),
-            reason: '${b.name} ${e.key}',
-          );
-        }
-      }
+    test('a walked floor wins over a published one', () {
+      final campus = Campus(
+        [
+          Building(id: 'b', name: 'Test Hall', aliases: const ['Test Hall']),
+        ],
+        overrides: {
+          'b:101': {'floor': '2', 'checked': '2026-11-20'},
+        },
+        floors: {
+          'b:101': const RoomFloor(
+            '1',
+            where: 'entrance',
+            sourceName: 'Map',
+            sourceUrl: 'https://x',
+          ),
+        },
+      );
+      expect(campus.roomFloor('b', '101')?.text, 'Floor 2');
+      expect(campus.roomFloor('b', '101')?.checked, isTrue);
     });
   });
 

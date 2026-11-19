@@ -35,13 +35,12 @@ function rank(rooms) {
         score += 2
         why.push(`nearest mapped door ${r.room.door?.meters ?? '?'} m away`)
       }
-      if (r.room.floor?.basis === 'map') {
+      if (!r.room.floor) {
         score += 2
-        why.push('floor not confirmed by the room number')
-      }
-      if (r.room.floor && r.room.floor.label !== '1') {
+        why.push('floor not confirmed by any published source')
+      } else if (r.room.floor.where === 'below' || r.room.floor.where === 'upstairs') {
         score += 1
-        why.push(`not on floor 1`)
+        why.push(`not on the entrance level`)
       }
       if (doors.length <= 1) {
         score += 1
@@ -53,7 +52,7 @@ function rank(rooms) {
       }
       return { r, b, doors, score, why }
     })
-    .filter((x) => !x.r.room.guide)
+    .filter((x) => !x.r.room.guide || x.r.room.guide.source === 'published')
     .sort((a, b) => b.score - a.score || a.r.name.localeCompare(b.r.name))
 }
 
@@ -79,7 +78,7 @@ for (const [i, x] of ranked.entries()) {
   lines.push(
     `## ${i + 1}. ${x.r.name}`,
     '',
-    `- Campus map: floor ${x.r.room.floor?.label ?? 'unknown'} (${x.r.room.floor?.basis === 'map+number' ? 'matches the room number' : 'does not match the room number'}).`,
+    `- Floor: ${x.r.room.floor ? `${x.r.room.floor.label}${x.r.room.floor.where ? ` (${x.r.room.floor.where})` : ''}, from ${x.r.room.floor.source?.name ?? 'a walk'}` : 'not confirmed; record the floor as signed'}.`,
     `- Mapped doors, nearest first: ${doors.join('; ') || 'none'}.`,
     `- Other rooms here: ${(byId.get(x.r.room.building)?.roomIds ?? []).filter((id) => id !== x.r.id).map((id) => byId.get(id)?.room?.number).join(', ') || 'none'}.`,
     '- To record: how you get in (outside, lobby or library), the door you would use and where it is, the floor as signed, wing or side, one line that would have saved you a minute, up to five short steps from the door, step-free or not, elevator.',

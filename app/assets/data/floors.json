@@ -1,0 +1,274 @@
+{
+  "about": "Classroom floors checked against published UCSC sources (floor plans, college maps, official directions). Rooms not listed show no floor until someone confirms one; never fill a floor in from the room number or the campus map level. `where`: entrance (on the level you walk in at), upstairs, or below (under the main entrance).",
+  "sources": {
+    "library-mchenry": {
+      "name": "UCSC Library: McHenry floor plans and classroom directions",
+      "url": "https://guides.library.ucsc.edu/mchenry-library/classrooms",
+      "says": "1st-floor plan shows 1340 and 1350; directions: take the library elevator to the 1st floor. The main floor with the service desk and café is the 2nd.",
+      "read": "2026-11-19"
+    },
+    "map-cowell": {
+      "name": "Cowell College map (UCSC, rev. 9/17)",
+      "url": "https://maps.ucsc.edu/printable-maps/cowell_9-17.pdf",
+      "says": "Administration: 113A/113B on the plan; \"Classrooms 216, 222, 223 and Cowell Senior Commons on 2nd floor\". 131A/131B and 134 on the plan.",
+      "read": "2026-11-19"
+    },
+    "map-crown": {
+      "name": "Crown College map (UCSC, rev. 6/08)",
+      "url": "https://maps.ucsc.edu/printable-maps/Crown_College.pdf",
+      "says": "Classroom building: Classroom 104 and 105 on the plan; \"Classrooms 201, 202, 203, and 208 upstairs\".",
+      "read": "2026-11-19"
+    },
+    "map-merrill": {
+      "name": "Merrill College map (UCSC, 12/14)",
+      "url": "https://maps.ucsc.edu/printable-maps/Merrill_College010215.pdf",
+      "says": "Academic building: Classroom 2 and 3 on the plan, \"Classroom 102 on 2nd floor\"; 30/32/34 on the plan with 130/132/134 \"Classrooms on 2nd floor\".",
+      "read": "2026-11-19"
+    },
+    "map-oakes": {
+      "name": "Oakes College map (UCSC, 9/15)",
+      "url": "https://maps.ucsc.edu/printable-maps/Oakes_College.pdf",
+      "says": "101, 102, 103, Classroom 105 and 106 on the plan; \"106 (222 upstairs)\".",
+      "read": "2026-11-19"
+    },
+    "map-porter": {
+      "name": "Porter College map (UCSC, rev. 7/15)",
+      "url": "https://maps.ucsc.edu/printable-maps/Porter_College_2015.pdf",
+      "says": "D-building: Classroom 140, 144 and 148 on the plan; \"Classrooms 241-250 (upstairs)\".",
+      "read": "2026-11-19"
+    },
+    "map-carson": {
+      "name": "Rachel Carson College map (UCSC, 3/18)",
+      "url": "https://maps.ucsc.edu/printable-maps/rachel_carson_college_3-18.pdf",
+      "says": "240, 242 and 250-256 at the north end of the academic building, at the level of the north parking and path, with stairs and an elevator down to the plaza.",
+      "read": "2026-11-19"
+    },
+    "map-stevenson": {
+      "name": "Stevenson College map (UCSC, rev. 9/17)",
+      "url": "https://maps.ucsc.edu/printable-maps/stevenson_9-17.pdf",
+      "says": "Classrooms 151 and 152, Classroom 150 and Classroom 175 on the plan.",
+      "read": "2026-11-19"
+    },
+    "map-sel": {
+      "name": "Science & Engineering Library map (UCSC)",
+      "url": "https://maps.ucsc.edu/printable-maps/Science_And_Engineering_Library.pdf",
+      "says": "\"The Science & Engineering library is on the second floor level.\"",
+      "read": "2026-11-19"
+    },
+    "news-e2": {
+      "name": "UCSC News: Engineering 2 dedication advisory",
+      "url": "https://news.ucsc.edu/2004/10/media-advisory-media-tours-and-interviews-available-prior-to-dedication-ceremonies-for-engineering-2-building/",
+      "says": "\"Simularium Hall, Engineering 2 (first floor, enter from the courtyard)\": E2 180, the 1xx floor that 192 and 194 share.",
+      "read": "2026-11-19"
+    }
+  },
+  "rooms": {
+    "carson-academic:240": {
+      "floor": "2",
+      "where": "entrance",
+      "source": "map-carson"
+    },
+    "carson-academic:242": {
+      "floor": "2",
+      "where": "entrance",
+      "source": "map-carson"
+    },
+    "carson-academic:250": {
+      "floor": "2",
+      "where": "entrance",
+      "source": "map-carson"
+    },
+    "carson-academic:252": {
+      "floor": "2",
+      "where": "entrance",
+      "source": "map-carson"
+    },
+    "cowell-academic:113": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-cowell"
+    },
+    "cowell-academic:216": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-cowell"
+    },
+    "cowell-academic:222": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-cowell"
+    },
+    "cowell-academic:223": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-cowell"
+    },
+    "cowell-classroom:131": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-cowell"
+    },
+    "cowell-com:134": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-cowell"
+    },
+    "crown-classroom:104": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-crown"
+    },
+    "crown-classroom:105": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-crown"
+    },
+    "crown-classroom:201": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-crown"
+    },
+    "crown-classroom:202": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-crown"
+    },
+    "crown-classroom:203": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-crown"
+    },
+    "crown-classroom:208": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-crown"
+    },
+    "engineering-2:192": {
+      "floor": "1",
+      "source": "news-e2"
+    },
+    "engineering-2:194": {
+      "floor": "1",
+      "source": "news-e2"
+    },
+    "mchenry-library:1340": {
+      "floor": "1",
+      "where": "below",
+      "source": "library-mchenry"
+    },
+    "mchenry-library:1350": {
+      "floor": "1",
+      "where": "below",
+      "source": "library-mchenry"
+    },
+    "merrill-academic:002": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-merrill"
+    },
+    "merrill-academic:003": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-merrill"
+    },
+    "merrill-academic:102": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-merrill"
+    },
+    "merrill-academic:130": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-merrill"
+    },
+    "merrill-academic:132": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-merrill"
+    },
+    "oakes-academic:101": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-oakes"
+    },
+    "oakes-academic:102": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-oakes"
+    },
+    "oakes-academic:103": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-oakes"
+    },
+    "oakes-academic:105": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-oakes"
+    },
+    "oakes-academic:106": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-oakes"
+    },
+    "oakes-academic:222": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-oakes"
+    },
+    "porter-academic:144": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-porter"
+    },
+    "porter-academic:148": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-porter"
+    },
+    "porter-academic:241": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-porter"
+    },
+    "porter-academic:246": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-porter"
+    },
+    "porter-academic:249": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-porter"
+    },
+    "porter-academic:250": {
+      "floor": "2",
+      "where": "upstairs",
+      "source": "map-porter"
+    },
+    "science-engineering-library:206": {
+      "floor": "2",
+      "source": "map-sel"
+    },
+    "stevenson-academic:150": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-stevenson"
+    },
+    "stevenson-academic:151": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-stevenson"
+    },
+    "stevenson-academic:152": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-stevenson"
+    },
+    "stevenson-academic:175": {
+      "floor": "1",
+      "where": "entrance",
+      "source": "map-stevenson"
+    }
+  }
+}

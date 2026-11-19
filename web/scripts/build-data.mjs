@@ -81,6 +81,7 @@ const roomData = buildRooms({
   extraAliases: extra,
   classrooms: JSON.parse(readFileSync(join(root, 'data', 'classrooms.json'), 'utf8')).rooms,
   overrides: JSON.parse(readFileSync(join(root, 'data', 'rooms.json'), 'utf8')).overrides ?? {},
+  floors: JSON.parse(readFileSync(join(root, 'data', 'floors.json'), 'utf8')),
 })
 if (roomData.errors.length) {
   console.error(roomData.errors.join('\n'))

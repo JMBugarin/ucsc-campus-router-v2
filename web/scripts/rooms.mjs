@@ -1,8 +1,9 @@
-// Turns the curated buildings, the official room points and the hand-checked guides in
-// data/rooms.json into one searchable place per classroom.
+// Turns the curated buildings, the official room points, the hand-checked guides in
+// data/rooms.json and the published floors in data/floors.json into one searchable place per classroom.
 
 export const ACCESS = ['outside', 'lobby', 'library']
-export const SOURCES = ['walk', 'student-tip']
+export const SOURCES = ['walk', 'student-tip', 'published']
+export const WHERE = ['entrance', 'upstairs', 'below']
 const MAX_DOOR_GAP_M = 15
 const MAX_ENTRANCE_FROM_ROOM_M = 120
 const COMPASS = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west']
@@ -26,20 +27,32 @@ export function bearing(a, b) {
 
 export const compass = (deg) => COMPASS[Math.round(deg / 45) % 8]
 
-/** The floor a room number implies: 152 → 1, B206 → 2, 3201 → 2 (Kresge and McHenry put the floor second). */
-export function floorFromNumber(room) {
-  let m = /^[A-Z]?(\d)\d{2}$/.exec(room)
-  if (m) return m[1]
-  m = /^\d(\d)\d{2}$/.exec(room)
-  return m ? m[1] : null
+/**
+ * The floor shown for a room: checked on foot, else confirmed by a published UCSC source, else none.
+ * Neither the room number nor the campus map level is a floor (McHenry 1340 is on floor 1, map level L3).
+ */
+export function floorOf(key, guide, floors) {
+  if (guide?.floor) return { label: guide.floor, basis: 'checked' }
+  const f = floors?.rooms?.[key]
+  const s = f && floors.sources?.[f.source]
+  if (!s) return undefined
+  return { label: f.floor, basis: 'published', ...(f.where ? { where: f.where } : {}), source: { name: s.name, url: s.url } }
 }
 
-/** Floor shown for a room, and how much to trust it. */
-export function floorOf(level, room, guide) {
-  if (guide?.floor) return { label: guide.floor, basis: 'checked' }
-  const lv = /^L(\d+)$/.exec(level ?? '')?.[1]
-  if (lv == null) return undefined
-  return { label: lv, basis: floorFromNumber(room) === lv ? 'map+number' : 'map' }
+/** Errors in data/floors.json: every room must exist, cite a listed source and say where it is plainly. */
+export function checkFloors(floors, exists) {
+  const errors = []
+  const sources = floors?.sources ?? {}
+  for (const [id, s] of Object.entries(sources)) {
+    if (!s?.name || !/^https:\/\//.test(s.url ?? '') || !/^\d{4}-\d{2}-\d{2}$/.test(s.read ?? '')) errors.push(`floors.json sources.${id}: needs name, https url and the YYYY-MM-DD it was read`)
+  }
+  for (const [key, f] of Object.entries(floors?.rooms ?? {})) {
+    if (!exists(key)) errors.push(`floors.json ${key}: no such building and room`)
+    if (typeof f?.floor !== 'string' || !/^(\d{1,2}|G)$/.test(f.floor)) errors.push(`floors.json ${key}.floor: a floor as signed, like "1" or "G"`)
+    if (f?.where != null && !WHERE.includes(f.where)) errors.push(`floors.json ${key}.where: one of ${WHERE.join(', ')}`)
+    if (!sources[f?.source]) errors.push(`floors.json ${key}.source: not in sources`)
+  }
+  return errors
 }
 
 const text = (v, max, where, errors) => {
@@ -54,7 +67,7 @@ export function readGuide(key, raw, roomPoint) {
   const errors = []
   const where = (f) => `rooms.json ${key}${f ? '.' + f : ''}`
   if (!raw || typeof raw !== 'object') return { errors: [`${where()}: must be an object`] }
-  const known = new Set(['entrance', 'access', 'floor', 'wing', 'note', 'steps', 'step_free', 'elevator', 'checked', 'source'])
+  const known = new Set(['entrance', 'access', 'floor', 'wing', 'note', 'steps', 'step_free', 'elevator', 'checked', 'source', 'url', 'cite'])
   for (const k of Object.keys(raw)) if (!known.has(k)) errors.push(`${where(k)}: unknown field`)
   const g = {}
   if (raw.access != null) {
@@ -88,7 +101,14 @@ export function readGuide(key, raw, roomPoint) {
     const source = raw.source ?? 'walk'
     if (!SOURCES.includes(source)) errors.push(`${where('source')}: one of ${SOURCES.join(', ')}`)
     else g.source = source
+    if (source === 'published') {
+      if (typeof raw.url !== 'string' || !/^https:\/\//.test(raw.url)) errors.push(`${where('url')}: the https page the guide comes from`)
+      else g.url = raw.url
+      g.cite = text(raw.cite, 60, where('cite'), errors)
+      if (!raw.cite) errors.push(`${where('cite')}: who published it, like "UCSC Library"`)
+    }
   }
+  if (raw.source !== 'published' && (raw.url != null || raw.cite != null)) errors.push(`${where('url')}: only for "source": "published"`)
   for (const k of Object.keys(g)) if (g[k] === undefined) delete g[k]
   return { guide: has ? g : undefined, errors }
 }
@@ -96,16 +116,18 @@ export function readGuide(key, raw, roomPoint) {
 const cleanName = (n) => n.replace(/\s*\([^)]*\)\s*$/, '')
 
 /** One place per room point, plus the room ids each building lists. */
-export function buildRooms({ buildings, extraAliases = {}, classrooms = [], overrides = {} }) {
+export function buildRooms({ buildings, extraAliases = {}, classrooms = [], overrides = {}, floors = { sources: {}, rooms: {} } }) {
   const errors = []
   const rooms = []
   const byBuilding = {}
   const used = new Set()
-  for (const key of Object.keys(overrides)) {
+  const exists = (key) => {
     const [bid, room] = key.split(':')
     const b = buildings.find((x) => x.id === bid)
-    if (!b || !room || !b.room_points?.[room]) errors.push(`rooms.json ${key}: no such building and room`)
+    return !!(b && room && b.room_points?.[room])
   }
+  for (const key of Object.keys(overrides)) if (!exists(key)) errors.push(`rooms.json ${key}: no such building and room`)
+  errors.push(...checkFloors(floors, exists))
   for (const b of buildings) {
     const points = b.room_points ?? {}
     const doors = (b.entrances ?? []).filter((e) => e.kind !== 'approach')
@@ -158,7 +180,7 @@ export function buildRooms({ buildings, extraAliases = {}, classrooms = [], over
       let id = `${b.id}-${room.toLowerCase()}`
       while (used.has(id)) id += '-x'
       used.add(id)
-      const floor = floorOf(p.level, room, guide)
+      const floor = floorOf(key, guide, floors)
       rooms.push({
         id,
         name: `${name} ${room}`,
@@ -168,7 +190,7 @@ export function buildRooms({ buildings, extraAliases = {}, classrooms = [], over
         aliases: [...new Set(aliases)].filter((a) => a !== `${name} ${room}`),
         subtitle: name,
         entrances,
-        source: guide ? 'ucsc-dataset+walk' : 'ucsc-dataset',
+        source: !guide ? 'ucsc-dataset' : guide.source === 'published' ? 'ucsc-dataset+published' : 'ucsc-dataset+walk',
         room: {
           building: b.id,
           number: room,

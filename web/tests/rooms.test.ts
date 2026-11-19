@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { buildRooms, floorFromNumber, floorOf, readGuide } from '../scripts/rooms.mjs'
-import { doorSentence, floorText, recentStore, relation, roomGroups } from '../src/data/rooms'
+import { buildRooms, checkFloors, floorOf, readGuide } from '../scripts/rooms.mjs'
+import { checkedText, doorSentence, floorText, recentStore, relation, roomGroups } from '../src/data/rooms'
 import { SearchIndex } from '../src/data/search'
 import type { Place, PlacesFile } from '../src/data/types'
 
@@ -14,6 +14,7 @@ const sources = {
   extraAliases: read('../data/search_aliases.json'),
   classrooms: read('../data/classrooms.json').rooms,
   overrides: read('../data/rooms.json').overrides ?? {},
+  floors: read('../data/floors.json'),
 }
 
 describe('room places', () => {
@@ -40,24 +41,34 @@ describe('room places', () => {
 })
 
 describe('floors', () => {
-  it('reads the floor a room number implies', () => {
-    expect(floorFromNumber('152')).toBe('1')
-    expect(floorFromNumber('071')).toBe('0')
-    expect(floorFromNumber('B206')).toBe('2')
-    expect(floorFromNumber('3201')).toBe('2')
-    expect(floorFromNumber('1340')).toBe('3')
-    expect(floorFromNumber('Hall')).toBeNull()
+  const floors = sources.floors
+  it('come only from a walk or a published UCSC source, never from the room number or map level', () => {
+    // the campus map puts McHenry 1340 on level L3 and its number starts 13; the library's own plan says floor 1
+    expect(floorOf('mchenry-library:1340', undefined, floors)).toMatchObject({ label: '1', basis: 'published', where: 'below' })
+    expect(floorOf('mchenry-library:1340', { floor: '1' }, floors)).toEqual({ label: '1', basis: 'checked' })
+    expect(floorOf('baskin-engineering:372', undefined, floors)).toBeUndefined()
+    const shown = rooms.filter((r) => r.room?.floor)
+    expect(shown.length).toBe(Object.keys(floors.rooms).length)
+    for (const r of shown) expect(r.room!.floor!.source?.url ?? r.room!.floor!.basis).toMatch(/^https:|checked/)
   })
-  it('trusts a campus-map level more when the room number agrees', () => {
-    expect(floorOf('L3', '372')).toEqual({ label: '3', basis: 'map+number' })
-    expect(floorOf('L1', '001')).toEqual({ label: '1', basis: 'map' })
-    expect(floorOf('L1', '152', { floor: '2' })).toEqual({ label: '2', basis: 'checked' })
-    expect(floorOf(null, '152')).toBeUndefined()
+  it('match the college maps that put a room upstairs', () => {
+    expect(floorText(byId.get('mchenry-library-1340')!.room)).toBe('Floor 1 · one floor below the main entrance')
+    expect(floorText(byId.get('merrill-academic-102')!.room)).toBe('Floor 2 · upstairs')
+    expect(floorText(byId.get('merrill-academic-002')!.room)).toBe('Floor 1 · entrance level')
+    expect(floorText(byId.get('crown-classroom-208')!.room)).toBe('Floor 2 · upstairs')
+    expect(floorText(byId.get('engineering-2-192')!.room)).toBe('Floor 1')
+    expect(floorText(byId.get('baskin-engineering-372')!.room)).toBeNull()
+    expect(floorText(byId.get('social-sciences-2-071')!.room)).toBeNull()
   })
-  it('labels the source only when the campus map alone says so', () => {
-    expect(floorText(byId.get('baskin-engineering-372')!.room)).toBe('Floor 3')
-    expect(floorText(byId.get('classroom-unit-001')!.room)).toBe('Floor 1 (campus map)')
-    expect(floorText(byId.get('social-sciences-2-071')!.room)).toBe('Lower level (floor 0)')
+  it('reject a floor without a source, an unknown room or a vague place', () => {
+    const exists = (k: string) => k === 'a:1'
+    const src = { s: { name: 'Map', url: 'https://maps.ucsc.edu/x.pdf', read: '2026-11-19' } }
+    expect(checkFloors({ sources: src, rooms: { 'a:1': { floor: '2', where: 'upstairs', source: 's' } } }, exists)).toEqual([])
+    expect(checkFloors({ sources: src, rooms: { 'a:1': { floor: '2', source: 'nope' } } }, exists).join()).toMatch(/not in sources/)
+    expect(checkFloors({ sources: src, rooms: { 'b:9': { floor: '2', source: 's' } } }, exists).join()).toMatch(/no such building/)
+    expect(checkFloors({ sources: src, rooms: { 'a:1': { floor: 'L3', source: 's' } } }, exists).join()).toMatch(/as signed/)
+    expect(checkFloors({ sources: src, rooms: { 'a:1': { floor: '1', where: 'nearby', source: 's' } } }, exists).join()).toMatch(/one of/)
+    expect(checkFloors({ sources: { s: { name: 'Map', url: 'http://x' } }, rooms: {} }, exists).join()).toMatch(/https url/)
   })
 })
 
@@ -85,6 +96,15 @@ describe('room guides', () => {
     expect(readGuide('k', { entrance: { lat: 37.01, lon: -122.06 }, checked: '2026-11-20' }, at).errors.join()).toMatch(/from the room/)
     expect(readGuide('k', { steps: ['a', 'b', 'c', 'd', 'e', 'f'], checked: '2026-11-20' }).errors.join()).toMatch(/1 to 5/)
   })
+  it('accepts published directions only with the page and who published them', () => {
+    const ok = readGuide('k', { note: 'x', checked: '2026-11-19', source: 'published', url: 'https://guides.library.ucsc.edu/x', cite: 'UCSC Library' })
+    expect(ok.errors).toEqual([])
+    expect(ok.guide).toMatchObject({ source: 'published', url: 'https://guides.library.ucsc.edu/x', cite: 'UCSC Library' })
+    expect(readGuide('k', { note: 'x', checked: '2026-11-19', source: 'published' }).errors.join()).toMatch(/https page/)
+    expect(readGuide('k', { note: 'x', checked: '2026-11-19', url: 'https://x.edu' }).errors.join()).toMatch(/only for/)
+    expect(checkedText(byId.get('mchenry-library-1340')!.room)).toBe("From UCSC Library's published directions, read Nov 19, 2026")
+    expect(byId.get('mchenry-library-1340')!.room!.guide!.steps!.at(-1)).toBe('1340 is on your right.')
+  })
   it('fails the build for overrides that name no known room', () => {
     expect(buildRooms({ ...sources, overrides: { 'baskin-engineering:999': { note: 'x', checked: '2026-11-20' } } }).errors.join()).toMatch(/no such building and room/)
   })
@@ -101,15 +121,21 @@ describe('room guides', () => {
     expect(groups.map((g) => g.title)).toEqual(['Outside access', 'Not checked yet'])
     expect(groups[0].rooms.map((r) => r.id)).toEqual(['baskin-engineering-152'])
   })
-  it('groups unchecked buildings by floor', () => {
-    expect(roomGroups(byId.get('baskin-engineering')!, byId).map((g) => g.title)).toEqual(['Floor 1', 'Floor 3'])
+  it('groups unchecked buildings by confirmed floor, and never makes one up', () => {
+    expect(roomGroups(byId.get('crown-classroom')!, byId).map((g) => g.title)).toEqual(['Floor 1', 'Floor 2'])
+    expect(roomGroups(byId.get('merrill-academic')!, byId).map((g) => [g.title, g.rooms.map((r) => r.room?.number)])).toEqual([
+      ['Floor 1', ['002', '003']],
+      ['Floor 2', ['102', '130', '132']],
+    ])
+    expect(roomGroups(byId.get('baskin-engineering')!, byId).map((g) => g.title)).toEqual(['Floors not confirmed yet'])
   })
 })
 
 describe('door sentences', () => {
   it('describes the room from the door in plain words', () => {
-    expect(doorSentence(byId.get('baskin-engineering-152')!.room)).toBe('The room is about 30 m south-west of this door, on floor 1.')
-    expect(doorSentence(byId.get('thimann-labs-101')!.room)).toBe('The room is right by this door, on floor 1.')
+    expect(doorSentence(byId.get('baskin-engineering-152')!.room)).toBe('The room is about 30 m south-west of this door.')
+    expect(doorSentence(byId.get('thimann-labs-101')!.room)).toBe('The room is right by this door.')
+    expect(doorSentence(byId.get('cowell-academic-216')!.room)).toMatch(/, on floor 2\.$/)
     expect(relation([37, -122.06], [37.0002, -122.06]).toward).toBe('north')
   })
 })
