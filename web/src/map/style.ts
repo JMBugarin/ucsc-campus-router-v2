@@ -27,6 +27,7 @@ interface Palette {
   accent: string
   warn: string
   routeCasing: string
+  room: string
 }
 
 const LIGHT: Palette = {
@@ -54,6 +55,7 @@ const LIGHT: Palette = {
   accent: '#0b6fe0',
   warn: '#d9730d',
   routeCasing: '#ffffff',
+  room: '#1f5fae',
 }
 const DARK: Palette = {
   land: '#17202a',
@@ -80,6 +82,7 @@ const DARK: Palette = {
   accent: '#5ac8fa',
   warn: '#ffb454',
   routeCasing: '#0b1118',
+  room: '#7fb2ff',
 }
 
 export const palette = (t: Theme) => (t === 'dark' ? DARK : LIGHT)
@@ -231,12 +234,13 @@ export function buildStyle(theme: Theme): StyleSpecification {
       paint: { 'text-color': c.muted, 'text-halo-color': c.halo, 'text-halo-width': 1.5 },
     },
     // route (drawn under campus markers)
-    { id: 'route-casing', type: 'line', source: 'route', filter: ['!=', ['get', 'kind'], 'connector'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': c.routeCasing, 'line-width': w([[14, 6], [17, 10], [19, 16]]), 'line-opacity': 0.92 } },
+    { id: 'route-casing', type: 'line', source: 'route', filter: ['!', ['in', ['get', 'kind'], ['literal', ['connector', 'indoor']]]], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': c.routeCasing, 'line-width': w([[14, 6], [17, 10], [19, 16]]), 'line-opacity': 0.92 } },
     { id: 'route-road', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 2], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': c.accent, 'line-opacity': 0.62, 'line-width': w([[14, 3], [17, 6], [19, 10]]) } },
     { id: 'route-path', type: 'line', source: 'route', filter: ['in', ['get', 'kind'], ['literal', [0, 3]]], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': c.accent, 'line-width': w([[14, 3.5], [17, 6.5], [19, 11]]) } },
     { id: 'route-bridge', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 3], layout: { 'line-cap': 'butt' }, paint: { 'line-color': '#ffffff', 'line-width': w([[14, 1], [19, 3.5]]), 'line-dasharray': [1, 1] } },
     { id: 'route-steps', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 1], layout: { 'line-cap': 'butt', 'line-join': 'round' }, paint: { 'line-color': c.warn, 'line-width': w([[14, 3.5], [17, 6.5], [19, 11]]), 'line-dasharray': [0.45, 0.55] } },
     { id: 'route-connector', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'connector'], layout: { 'line-cap': 'round' }, paint: { 'line-color': c.accent, 'line-width': 2.5, 'line-dasharray': [0.1, 2] } },
+    { id: 'route-indoor', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'indoor'], layout: { 'line-cap': 'round' }, paint: { 'line-color': c.room, 'line-width': 2.5, 'line-dasharray': [1.2, 1.6] } },
     // parking clusters and lots
     { id: 'parking-cluster', type: 'circle', source: 'parking', minzoom: 15, filter: ['has', 'point_count'], paint: { 'circle-radius': ['step', ['get', 'point_count'], 15, 6, 18, 20, 22], 'circle-color': '#6f7d92', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2, 'circle-opacity': 0.92 } },
     { id: 'parking-cluster-count', type: 'symbol', source: 'parking', minzoom: 15, filter: ['has', 'point_count'], layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-font': F_BOLD, 'text-size': 12, 'text-allow-overlap': true }, paint: { 'text-color': '#ffffff' } },
@@ -291,6 +295,27 @@ export function buildStyle(theme: Theme): StyleSpecification {
       },
       paint: { 'text-color': c.text, 'text-halo-color': c.halo, 'text-halo-width': 1.6 },
     },
+    // the open building's doors and classrooms
+    { id: 'door-dot', type: 'circle', source: 'doors', minzoom: 16, filter: ['==', ['get', 'chosen'], 0], paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 16, 3, 19, 5], 'circle-color': c.halo, 'circle-stroke-color': c.room, 'circle-stroke-width': 1.5 } },
+    { id: 'door-chosen', type: 'circle', source: 'doors', filter: ['==', ['get', 'chosen'], 1], paint: { 'circle-radius': 7, 'circle-color': c.room, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2.5 } },
+    {
+      id: 'door-chosen-label',
+      type: 'symbol',
+      source: 'doors',
+      minzoom: 16.5,
+      filter: ['==', ['get', 'chosen'], 1],
+      layout: { 'text-field': 'Door', 'text-font': F_BOLD, 'text-size': 11, 'text-offset': [0, 1.3], 'text-anchor': 'top', 'text-allow-overlap': true },
+      paint: { 'text-color': c.room, 'text-halo-color': c.halo, 'text-halo-width': 1.8 },
+    },
+    { id: 'room-dot', type: 'circle', source: 'rooms', minzoom: 16, paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 16, 3.5, 19, 6], 'circle-color': c.room, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.5 } },
+    {
+      id: 'room-label',
+      type: 'symbol',
+      source: 'rooms',
+      minzoom: 17,
+      layout: { 'text-field': ['get', 'label'], 'text-font': F_BOLD, 'text-size': 11, 'text-variable-anchor': ['top', 'bottom', 'left', 'right'], 'text-radial-offset': 0.75, 'text-padding': 1 },
+      paint: { 'text-color': c.text, 'text-halo-color': c.halo, 'text-halo-width': 1.6 },
+    },
     {
       id: 'selected-ring',
       type: 'circle',
@@ -306,6 +331,7 @@ export function buildStyle(theme: Theme): StyleSpecification {
     },
     { id: 'endpoint-from', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'from'], paint: { 'circle-radius': 7, 'circle-color': '#ffffff', 'circle-stroke-color': c.accent, 'circle-stroke-width': 4 } },
     { id: 'endpoint-to', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'to'], paint: { 'circle-radius': 8, 'circle-color': c.accent, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
+    { id: 'endpoint-room', type: 'circle', source: 'endpoints', filter: ['==', ['get', 'role'], 'room'], paint: { 'circle-radius': 6, 'circle-color': c.room, 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2.5 } },
     { id: 'endpoint-bus', type: 'circle', source: 'endpoints', filter: ['in', ['get', 'role'], ['literal', ['board', 'alight']]], paint: { 'circle-radius': 7, 'circle-color': '#2a8fa8', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
     { id: 'you-halo', type: 'circle', source: 'you', paint: { 'circle-radius': ['get', 'accuracy_px'], 'circle-color': '#0a84ff', 'circle-opacity': 0.14 } },
     { id: 'you', type: 'circle', source: 'you', paint: { 'circle-radius': 8, 'circle-color': '#0a84ff', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 3 } },
@@ -322,6 +348,8 @@ export function buildStyle(theme: Theme): StyleSpecification {
       parking: { ...empty, cluster: true, clusterRadius: 44, clusterMaxZoom: 16 },
       route: empty,
       selected: empty,
+      rooms: empty,
+      doors: empty,
       endpoints: empty,
       you: empty,
     },

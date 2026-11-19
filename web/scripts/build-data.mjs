@@ -3,6 +3,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { buildRooms } from './rooms.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..', '..')
@@ -64,6 +65,16 @@ console.log('graph', nodes.length, 'nodes', edges.length / 4, 'edges', kindCount
 const osm = JSON.parse(readFileSync(join(src, 'osm-pois.json'), 'utf8')).elements
 const curated = JSON.parse(readFileSync(join(root, 'data', 'buildings.json'), 'utf8')).buildings
 const extra = JSON.parse(readFileSync(join(root, 'data', 'search_aliases.json'), 'utf8'))
+const roomData = buildRooms({
+  buildings: curated,
+  extraAliases: extra,
+  classrooms: JSON.parse(readFileSync(join(root, 'data', 'classrooms.json'), 'utf8')).rooms,
+  overrides: JSON.parse(readFileSync(join(root, 'data', 'rooms.json'), 'utf8')).overrides ?? {},
+})
+if (roomData.errors.length) {
+  console.error(roomData.errors.join('\n'))
+  process.exit(1)
+}
 const pt = (e) => [e.lat ?? e.center?.lat, e.lon ?? e.center?.lon]
 const key = (e) => e.type[0] + e.id
 
@@ -96,6 +107,7 @@ for (const b of curated) {
     aliases: [...new Set([...(b.aliases || []), ...(extra[b.id] || [])])].filter((a) => a !== b.name),
     entrances: (b.entrances || []).map((e) => [round(e.lat), round(e.lon)]),
     rooms: Object.keys(b.room_points || {}).length || undefined,
+    roomIds: roomData.byBuilding[b.id],
     source: b.source === 'ucsc-facilities' ? 'ucsc-facilities' : 'ucsc-dataset',
     subtitle: b.region && b.source === 'ucsc-facilities' ? b.region : undefined,
   })
@@ -223,7 +235,8 @@ for (const p of places) {
 }
 
 // dining halls and cafés that OSM lists as nodes; keep college nodes unique
-const order = { college: 0, academic: 1, library: 2, dining: 3, landmark: 4, transit: 5, parking: 6 }
+const order = { college: 0, academic: 1, library: 2, dining: 3, landmark: 4, transit: 5, parking: 6, room: 7 }
+final.push(...roomData.rooms)
 final.sort((a, b) => order[a.kind] - order[b.kind] || a.name.localeCompare(b.name))
 const counts = {}
 for (const p of final) counts[p.kind] = (counts[p.kind] || 0) + 1

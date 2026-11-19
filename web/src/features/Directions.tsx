@@ -7,8 +7,39 @@ import type { SearchIndex } from '../data/search'
 import { PlaceRows } from './Browse'
 import { clockText, type TransitData } from '../transit/schedule'
 import type { BusPlan } from '../transit/plan'
+import { ACCESS_LABEL, checkedText, doorSentence, relation } from '../data/rooms'
 
 export type Pick = { id: string; name: string } | null
+
+function Arrival({ room, end }: { room: Place; end: [number, number] }) {
+  const info = room.room!
+  const g = info.guide
+  const atDoor = !!info.door && Math.abs(info.door.lat - end[0]) < 1e-5 && Math.abs(info.door.lon - end[1]) < 1e-5
+  const ends = info.door?.checked && atDoor ? `The route ends at ${info.door.label ?? 'the checked door'}. ` : atDoor ? 'The route ends at the closest mapped door. ' : 'The route ends at a mapped door near the room. '
+  return (
+    <section className="arrive" aria-label="Arriving at the room">
+      <h2 className="arrive__title">
+        <Icon name="door" size={16} />
+        Arriving at {info.number}
+      </h2>
+      {g?.access && <p className="arrive__line">{ACCESS_LABEL[g.access].detail}</p>}
+      {g?.note && <p className="arrive__note">{g.note}</p>}
+      {g?.steps && (
+        <ol className="arrive__steps">
+          {g.steps.map((s, i) => (
+            <li key={i}>{s}</li>
+          ))}
+        </ol>
+      )}
+      <p className="arrive__line">
+        {ends}
+        {doorSentence(info, relation(end, [room.lat, room.lon]))}
+      </p>
+      {g?.elevator && <p className="arrive__line">Elevator: {g.elevator}</p>}
+      <p className="note">{g ? checkedText(info) : 'Nobody has walked this room for the app yet, so check signs at the door.'}</p>
+    </section>
+  )
+}
 const LOWER = ['path', 'stairs', 'road', 'bridge']
 
 /** Merge consecutive non-stair steps into one "Walk" leg and keep the surface mix as detail. */
@@ -72,7 +103,9 @@ export function Directions({
   straightMeters,
   bus,
   transit,
+  toRoom,
 }: {
+  toRoom?: Place | null
   bus?: BusPlan | null
   transit?: TransitData | null
   from: Pick
@@ -197,6 +230,7 @@ export function Directions({
                   </li>
                 ))}
               </ol>
+              {toRoom?.room && <Arrival room={toRoom} end={plan.destPoint} />}
               <p className="note">
                 Times use Tobler's walking function on USGS elevation (10 m), so they are estimates.
                 {plan.connectorMeters > 5 && <> {formatDistance(plan.connectorMeters)} of the trip is from a door or point to the nearest mapped path (dotted).</>}

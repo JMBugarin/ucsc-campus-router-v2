@@ -7,6 +7,7 @@ const norm = (s: string) =>
     .replace(/[̀-ͯ]/g, '')
     .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/([a-z])(?=\d)|(\d)(?=[a-z])/g, '$1$2 ')
     .trim()
 
 const SYNONYMS: Record<string, string> = { sci: 'sciences', science: 'sciences', eng: 'engineering', engr: 'engineering', bldg: 'building', lib: 'library', hall: 'hall', coffee: 'cafe', cafes: 'cafe', restaurant: 'dining', food: 'dining', eat: 'dining', lot: 'lot' }
@@ -58,10 +59,13 @@ export class SearchIndex {
     const pool = kind ? this.entries.filter((e) => e.place.kind === kind) : this.entries
     if (!q) return pool.slice(0, limit).map((e) => e.place)
     const qWords = q.split(' ').map((w) => SYNONYMS[w] ?? w)
+    // rooms only lead when the query names a room number; "baskin" should open the building first
+    const roomPenalty = /\d/.test(q) ? 0 : 15
     const scored: [number, Entry][] = []
     for (const e of pool) {
       const s = this.score(e, q, qWords)
-      if (s > 0) scored.push([s, e])
+      // an exact room name such as "Humn Lecture Hall" opens the room itself
+      if (s > 0) scored.push([e.place.kind !== 'room' ? s : s >= 100 ? s + 1 : s - roomPenalty, e])
     }
     scored.sort((a, b) => b[0] - a[0] || a[1].place.name.length - b[1].place.name.length)
     return scored.slice(0, limit).map(([, e]) => e.place)

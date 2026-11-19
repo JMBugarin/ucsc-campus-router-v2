@@ -12,7 +12,7 @@ import { prefersReducedMotion } from '../design/motion'
 
 maplibregl.setWorkerUrl(new URL(`${import.meta.env.BASE_URL}maplibre/maplibre-gl-worker.mjs`, location.href).href)
 
-const RANK: Record<string, number> = { college: 0, library: 1, landmark: 2, academic: 3, dining: 4, transit: 5, parking: 6 }
+const RANK: Record<string, number> = { college: 0, library: 1, landmark: 2, academic: 3, dining: 4, transit: 5, parking: 6, room: 7 }
 
 export interface MapHandle {
   flyToPlace(p: Place, zoom?: number): void
@@ -24,10 +24,19 @@ export interface MapHandle {
   setCamera(c: { lng: number; lat: number; zoom: number; bearing?: number; pitch?: number }): void
 }
 
+/** A building's classrooms and doors, drawn when it or one of its rooms is open. */
+export interface MapFocus {
+  rooms: Place[]
+  doors: [number, number][]
+  /** the door the open room's directions end at */
+  door: [number, number] | null
+}
+
 export interface MapViewProps {
   theme: Theme
   places: Place[]
   selected: Place | null
+  focus?: MapFocus | null
   route: GeoJSON.FeatureCollection | null
   endpoints: GeoJSON.FeatureCollection | null
   you: { lat: number; lon: number; accuracy: number } | null
@@ -40,6 +49,26 @@ export interface MapViewProps {
 }
 
 const EMPTY: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] }
+
+function focusFeatures(f: MapFocus | null | undefined, selected: Place | null): { rooms: GeoJSON.FeatureCollection; doors: GeoJSON.FeatureCollection } {
+  if (!f) return { rooms: EMPTY, doors: EMPTY }
+  const same = (a: [number, number], b: [number, number] | null) => !!b && Math.abs(a[0] - b[0]) < 1e-6 && Math.abs(a[1] - b[1]) < 1e-6
+  const doors = f.doors.filter((d) => !same(d, f.door)).map((d) => ({ d, chosen: 0 }))
+  const floors = new Set(f.rooms.map((r) => r.room?.floor?.label))
+  if (f.door) doors.push({ d: f.door, chosen: 1 })
+  return {
+    rooms: {
+      type: 'FeatureCollection',
+      features: f.rooms
+        .filter((r) => r.id !== selected?.id)
+        .map((r) => ({ type: 'Feature', properties: { id: r.id, label: floors.size > 1 && r.room?.floor ? `${r.room.number} · F${r.room.floor.label}` : r.room?.number ?? '' }, geometry: { type: 'Point', coordinates: [r.lon, r.lat] } })),
+    },
+    doors: {
+      type: 'FeatureCollection',
+      features: doors.map(({ d, chosen }) => ({ type: 'Feature', properties: { chosen }, geometry: { type: 'Point', coordinates: [d[1], d[0]] } })),
+    },
+  }
+}
 
 function placeFeatures(places: Place[]): GeoJSON.FeatureCollection {
   return {
@@ -69,7 +98,10 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
       return
     }
     const set = (id: string, d: GeoJSON.FeatureCollection) => (map.getSource(id) as GeoJSONSource | undefined)?.setData(d)
-    set('places', placeFeatures(p.places.filter((x) => x.kind !== 'parking')))
+    set('places', placeFeatures(p.places.filter((x) => x.kind !== 'parking' && x.kind !== 'room')))
+    const f = focusFeatures(p.focus, p.selected)
+    set('rooms', f.rooms)
+    set('doors', f.doors)
     set('parking', placeFeatures(p.places.filter((x) => x.kind === 'parking')))
     set('route', p.route ?? EMPTY)
     set('endpoints', p.endpoints ?? EMPTY)
@@ -129,7 +161,7 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
       const id = e.features?.[0]?.properties?.id as string | undefined
       if (id) propsRef.current.onSelect(id)
     }
-    for (const layer of ['place-pin', 'place-pin-minor', 'parking-pin', 'selected-pin']) {
+    for (const layer of ['place-pin', 'place-pin-minor', 'parking-pin', 'selected-pin', 'room-dot']) {
       map.on('click', layer, hit)
       map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'))
       map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''))
@@ -160,7 +192,7 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     }
   }, [props.theme])
 
-  useEffect(apply, [props.places, props.route, props.endpoints, props.selected, props.you])
+  useEffect(apply, [props.places, props.route, props.endpoints, props.selected, props.you, props.focus])
 
   useImperativeHandle(ref, () => ({
     flyToPlace(p, zoom = 17.2) {
