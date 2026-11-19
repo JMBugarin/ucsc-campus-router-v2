@@ -61,6 +61,14 @@ test('walking route follows mapped paths and reports time and distance', async (
   expect(kinds.length).toBeGreaterThan(1)
 })
 
+test('the walking route is one rounded line with a mark where it climbs stairs', async ({ page }) => {
+  await ready(page, '#/r/quarry-plaza/mchenry-library')
+  await page.waitForFunction(() => (window as any).__map.querySourceFeatures('route').some((f: any) => f.properties.kind === 'stairs'), null, { timeout: 15_000 })
+  const kinds = await page.evaluate(() => (window as any).__map.querySourceFeatures('route').map((f: any) => f.properties.kind))
+  expect(kinds).not.toContain(0)
+  expect(kinds).not.toContain(1)
+})
+
 test('avoid stairs either removes stair legs or explains that none exists', async ({ page }) => {
   await ready(page, '#/r/quarry-plaza/mchenry-library')
   await expect(page.getByText('Climb stairs').first()).toBeVisible()

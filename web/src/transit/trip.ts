@@ -1,6 +1,7 @@
 import type { Graph } from '../routing/graph'
 import { haversine, nearestOnEdges } from '../routing/graph'
-import { MAX_SNAP_M, planRoute, routeGeoJSON, walkSeconds, type Endpoint, type Plan } from '../routing/plan'
+import { MAX_SNAP_M, planRoute, routeGeoJSON, walkSeconds, type Endpoint, type Plan, type RouteFeature } from '../routing/plan'
+import { smoothLine } from '../routing/smooth'
 import { arriveBy, leaveAt, stopsNear, DETOUR, WALK_SPEED, type Day, type Journey, type Network } from './raptor'
 import { pacificClock } from './schedule'
 
@@ -158,11 +159,11 @@ export function planTrips(net: Network, g: Graph, from: Endpoint, to: Endpoint, 
 /** Walking estimate between two points where no mapped path joins them. */
 export const estimateWalk = (a: [number, number], b: [number, number]) => Math.round((haversine(a[0], a[1], b[0], b[1]) * DETOUR) / WALK_SPEED)
 
-/** The trip as map lines: walks along their paths (or dotted where estimated) and each bus through its stops. */
+/** The trip as map features: walks along their paths (dotted where estimated) and each bus along its road. */
 export function tripGeoJSON(g: Graph, trip: TripOption) {
-  const features: GeoJSON.Feature<GeoJSON.LineString>[] = []
+  const features: RouteFeature[] = []
   for (const p of trip.parts) {
-    if (p.kind === 'bus') features.push({ type: 'Feature', properties: { kind: 'bus' }, geometry: { type: 'LineString', coordinates: p.line.map(([la, lo]) => [lo, la]) } })
+    if (p.kind === 'bus') features.push({ type: 'Feature', properties: { kind: 'bus' }, geometry: { type: 'LineString', coordinates: smoothLine(p.line).map(([la, lo]) => [lo, la]) } })
     else if (p.plan) features.push(...routeGeoJSON(g, p.plan).features)
     else features.push({ type: 'Feature', properties: { kind: 'connector' }, geometry: { type: 'LineString', coordinates: [[p.from[1], p.from[0]], [p.to[1], p.to[0]]] } })
   }

@@ -250,33 +250,6 @@
 .steps__trail {
   color: var(--text-2);
 }
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  padding: 2px 6px;
-  color: var(--text-2);
-  font-size: var(--t-caption);
-}
-.legend i {
-  display: inline-block;
-  width: 18px;
-  height: 0;
-  margin-right: 6px;
-  vertical-align: middle;
-  border-top: 3px solid var(--accent);
-}
-.legend i[data-k='1'] {
-  border-top: 3px dashed var(--warning);
-}
-.legend i[data-k='2'] {
-  border-top-color: rgb(var(--accent-rgb) / 0.55);
-}
-.legend i[data-k='3'] {
-  border-top: 3px double var(--accent);
-  height: 3px;
-  border-bottom: 0;
-}
 
 /* modals */
 .plain {
@@ -936,11 +909,6 @@ ul.plain.note li {
 }
 .arrive--plan {
   background: rgb(var(--accent-rgb) / 0.1);
-}
-.legend i[data-k='c'] {
-  background: none;
-  border-top: 2.5px dotted var(--accent);
-  height: 0;
 }
 
 /* reading a picture */

@@ -1,5 +1,6 @@
 import type { Place } from '../data/types'
 import { cutEdge, describePath, edgeIndex, edgeSeconds, haversine, nearestOnEdges, searchFrom, type EdgeKind, type EdgeSnap, type Graph, type RouteResult } from './graph'
+import { lineMetres, pointAlong, smoothLine } from './smooth'
 
 export const MAX_SNAP_M = 150
 const CONNECTOR_SPEED = 1.3
@@ -231,23 +232,39 @@ export function formatDuration(s: number): string {
   return min < 60 ? `${min} min` : `${Math.floor(min / 60)} h ${min % 60} min`
 }
 
-/** The walk as map lines: each kind of path in its own style, along the real shape, with the unmapped ends dotted. */
+export type RouteFeature = GeoJSON.Feature<GeoJSON.LineString | GeoJSON.Point, { kind: string }>
+
+const STAIR_GAP_M = 25
+const lonLat = (pts: [number, number][]) => pts.map(([la, lo]) => [lo, la])
+
+/** The walk as map features: one smooth line along the paths, dotted where a door or point is off them, and a mark at each flight of stairs. */
 export function routeGeoJSON(_g: Graph, plan: Plan) {
-  const features: GeoJSON.Feature<GeoJSON.LineString>[] = []
-  let run: { kind: EdgeKind; pts: [number, number][] } | null = null
-  const flush = () => {
-    if (run && run.pts.length > 1) features.push({ type: 'Feature', properties: { kind: run.kind }, geometry: { type: 'LineString', coordinates: run.pts.map(([la, lo]) => [lo, la]) } })
-  }
+  const pts: [number, number][] = []
+  const stairs: [number, number][] = []
+  let at = 0
   for (const piece of plan.path) {
-    if (run && run.kind === piece.kind) run.pts.push(...piece.pts.slice(1))
-    else {
-      flush()
-      run = { kind: piece.kind, pts: [...piece.pts] }
+    pts.push(...(pts.length ? piece.pts.slice(1) : piece.pts))
+    const m = lineMetres(piece.pts)
+    const last = stairs[stairs.length - 1]
+    if (piece.kind === 1) {
+      if (last && at - last[1] < STAIR_GAP_M) last[1] = at + m
+      else stairs.push([at, at + m])
+    }
+    at += m
+  }
+  const features: RouteFeature[] = []
+  if (pts.length > 1) {
+    const line = smoothLine(pts)
+    const scale = at > 0 ? lineMetres(line) / at : 1
+    features.push({ type: 'Feature', properties: { kind: 'walk' }, geometry: { type: 'LineString', coordinates: lonLat(line) } })
+    for (const [a, b] of stairs) {
+      if (b - a < 4) continue
+      const [la, lo] = pointAlong(line, ((a + b) / 2) * scale)
+      features.push({ type: 'Feature', properties: { kind: 'stairs' }, geometry: { type: 'Point', coordinates: [lo, la] } })
     }
   }
-  flush()
-  const line = (x: [number, number], y: [number, number]): GeoJSON.Feature<GeoJSON.LineString> => ({ type: 'Feature', properties: { kind: 'connector' }, geometry: { type: 'LineString', coordinates: [[x[1], x[0]], [y[1], y[0]]] } })
-  return { type: 'FeatureCollection' as const, features: [...features, line(plan.originPoint, plan.originOn), line(plan.destOn, plan.destPoint)] }
+  const stub = (x: [number, number], y: [number, number]): RouteFeature => ({ type: 'Feature', properties: { kind: 'connector' }, geometry: { type: 'LineString', coordinates: lonLat([x, y]) } })
+  return { type: 'FeatureCollection' as const, features: [...features, stub(plan.originPoint, plan.originOn), stub(plan.destOn, plan.destPoint)] }
 }
 
 /** Every [lon, lat] the walk passes through, for fitting the camera. */
