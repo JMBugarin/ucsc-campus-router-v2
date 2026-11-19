@@ -32,6 +32,35 @@ void main() {
     });
 
     testWidgets(
+      'puts McHenry 1340 on floor 1 with the library directions, not on floor 3',
+      (tester) async {
+        final rig = TestRig(startTab: tabMap);
+        await open(tester, rig);
+
+        await type(tester, 'mchenry 1340');
+        await tester.tap(find.text('McHenry Library 1340'));
+        await tester.pumpAndSettle();
+        expect(
+          find.text('Floor 1 · one floor below the main entrance'),
+          findsOneWidget,
+        );
+        expect(find.textContaining('Floor 3'), findsNothing);
+        expect(
+          find.textContaining(
+            'Take the library elevator, not the café elevator',
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            "From UCSC Library's published directions, read Nov 19, 2026.",
+          ),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
       'searches a room, shows it, and offers a walk there without a schedule',
       (tester) async {
         final rig = TestRig(startTab: tabMap);
@@ -44,8 +73,8 @@ void main() {
         );
         await tester.tap(find.text('Kresge College Academic Building 3201'));
         await tester.pumpAndSettle();
-        expect(find.text('Floor 2'), findsOneWidget);
-        expect(find.textContaining('Floor L'), findsNothing);
+        // No published plan confirms Kresge's floors yet, so none is shown rather than one guessed.
+        expect(find.textContaining('Floor'), findsNothing);
         expect(find.text('Not checked on foot yet.'), findsOneWidget);
         expect(
           find.textContaining('Walk there ends at the door nearest the room'),

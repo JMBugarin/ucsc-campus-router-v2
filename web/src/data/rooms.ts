@@ -8,15 +8,18 @@ export const ACCESS_LABEL: Record<Access, { title: string; detail: string }> = {
 const ACCESS_ORDER: Access[] = ['outside', 'lobby', 'library']
 
 export function floorName(label: string): string {
-  if (label === '0') return 'Lower level (floor 0)'
+  if (label === 'G') return 'Ground floor'
   return /^\d+$/.test(label) ? `Floor ${label}` : label
 }
 
-/** "Floor 2", or with its source when only the campus map says so. */
+const WHERE_TEXT = { entrance: 'entrance level', upstairs: 'upstairs', below: 'one floor below the main entrance' } as const
+
+/** "Floor 2 · upstairs" once the floor is confirmed; nothing when it isn't. */
 export function floorText(info?: RoomInfo): string | null {
-  if (!info?.floor) return null
-  const name = floorName(info.floor.label)
-  return info.floor.basis === 'map' ? `${name} (campus map)` : name
+  const f = info?.floor
+  if (!f) return null
+  const name = floorName(f.label)
+  return f.where ? `${name} · ${WHERE_TEXT[f.where]}` : name
 }
 
 const about = (m: number) => `about ${Math.max(5, Math.round(m / 5) * 5)} m`
@@ -55,6 +58,7 @@ export function checkedText(info?: RoomInfo): string | null {
   const g = info?.guide
   if (!g) return null
   const date = new Date(g.checked + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  if (g.source === 'published') return `From ${g.cite}'s published directions, read ${date}`
   return g.source === 'student-tip' ? `From a student tip, checked ${date}` : `Checked on foot ${date}`
 }
 
@@ -73,12 +77,13 @@ export function roomGroups(building: Place, byId: Map<string, Place>): RoomGroup
     groups.push({ key: 'unchecked', title: 'Not checked yet', rooms: rooms.filter((r) => !r.room?.guide?.access) })
     return groups.filter((g) => g.rooms.length)
   }
+  if (!rooms.some((r) => r.room?.floor)) return [{ key: 'rooms', title: 'Floors not confirmed yet', rooms }]
   const floors = new Map<string, Place[]>()
   for (const r of rooms) {
     const k = r.room?.floor?.label ?? '?'
     floors.set(k, [...(floors.get(k) ?? []), r])
   }
-  return [...floors].map(([k, rs]) => ({ key: `floor-${k}`, title: k === '?' ? 'Floor not known' : floorName(k), rooms: rs }))
+  return [...floors].map(([k, rs]) => ({ key: `floor-${k}`, title: k === '?' ? 'Floor not confirmed' : floorName(k), rooms: rs }))
 }
 
 export interface RecentStore {

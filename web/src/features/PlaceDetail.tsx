@@ -88,7 +88,17 @@ function RoomDetail({ place, byId, onOpen, onBack, onDirections, onShare, nearGr
         {sentence && <p className="arrive__line">{sentence}</p>}
         {g?.stepFree === false && <p className="arrive__line">There are stairs between this door and the room.</p>}
         {g?.elevator && <p className="arrive__line">Elevator: {g.elevator}</p>}
-        <p className="note">{g ? checkedText(info) : 'The room position is from UCSC’s campus map and the doors are from OpenStreetMap. Nobody has walked this one for the app yet.'}</p>
+        <p className="note">
+          {g ? checkedText(info) : 'The room position is from UCSC’s campus map and the doors are from OpenStreetMap. Nobody has walked this one for the app yet.'}
+          {g?.url && (
+            <>
+              {' '}
+              <a href={g.url} target="_blank" rel="noopener">
+                Source
+              </a>
+            </>
+          )}
+        </p>
       </section>
       <RoomFeedback place={place.id} />
       {auditMode && <AuditPanel room={place} onLocate={onLocate ?? (async () => null)} />}
@@ -111,7 +121,17 @@ function RoomDetail({ place, byId, onOpen, onBack, onDirections, onShare, nearGr
             {place.lat.toFixed(5)}, {place.lon.toFixed(5)}
           </dd>
           <dt>Floor source</dt>
-          <dd>{info.floor ? (info.floor.basis === 'checked' ? 'Checked on foot' : info.floor.basis === 'map+number' ? 'UCSC campus map, matches the room number' : 'UCSC campus map only') : 'Not known'}</dd>
+          <dd>
+            {info.floor?.basis === 'checked' ? (
+              'Checked on foot'
+            ) : info.floor?.source ? (
+              <a href={info.floor.source.url} target="_blank" rel="noopener">
+                {info.floor.source.name}
+              </a>
+            ) : (
+              'Not confirmed yet, so no floor is shown. Check the signs.'
+            )}
+          </dd>
         </dl>
       </details>
     </article>

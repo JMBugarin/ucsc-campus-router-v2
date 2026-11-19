@@ -1,6 +1,7 @@
 import { GlassBanner, GlassButton, GlassIconButton, StatusPill } from '../../design/components'
 import { Icon } from '../../design/icons'
 import type { Place } from '../../data/types'
+import { floorName } from '../../data/rooms'
 import type { ClassesData } from '../../schedule/data'
 import { placeFor } from '../../schedule/data'
 import { breakBefore, daySummary, departure, label, planDay, transitions, type Occurrence, type Status, type Walk } from '../../schedule/dayPlan'
@@ -115,7 +116,7 @@ export function Today({
                       <Icon name={p.kind === 'room' ? 'door' : 'academic'} size={14} />
                       <span>
                         {p.name}
-                        {p.room?.floor ? ` · Floor ${p.room.floor.label}` : ''}
+                        {p.room?.floor ? ` · ${floorName(p.room.floor.label)}` : ''}
                       </span>
                     </button>
                   ) : (

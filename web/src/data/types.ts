@@ -20,12 +20,25 @@ export interface RoomGuide {
   stepFree?: boolean
   elevator?: string
   checked: string
-  source: 'walk' | 'student-tip'
+  source: 'walk' | 'student-tip' | 'published'
+  /** for published guides: the page it comes from and who published it */
+  url?: string
+  cite?: string
+}
+export interface RoomFloor {
+  /** as signed in the building */
+  label: string
+  /** checked on foot, or confirmed by a published UCSC floor plan, map or directions */
+  basis: 'checked' | 'published'
+  /** where it is from the way in: on the entrance level, upstairs, or below the main entrance */
+  where?: 'entrance' | 'upstairs' | 'below'
+  source?: { name: string; url: string }
 }
 export interface RoomInfo {
   building: string
   number: string
-  floor?: { label: string; basis: 'checked' | 'map+number' | 'map' }
+  /** only when confirmed; never guessed from the room number or the campus map level */
+  floor?: RoomFloor
   door?: RoomDoor
   guide?: RoomGuide
 }

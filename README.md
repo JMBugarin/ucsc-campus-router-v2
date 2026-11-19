@@ -14,7 +14,7 @@ _Captured on 2026-10-31 in the iOS Simulator (iPhone 17) with an invented schedu
 
 ## Campus map on the web
 
-[`web/`](web/README.md) is a separate, installable web version built on free, open-source parts (MapLibre, OpenFreeMap, OpenStreetMap). It has the app's class features (Today with when to leave, a weekly Schedule, paste from MyUCSC or add by hand, review before saving, skipped days, reminders while open, all stored only in the browser) and "Get me there" with arrive-by timing, plus search for buildings and each of the 87 general-assignment classrooms ("BE 152", "McHenry 1340"), room pages with the floor and the door nearest the room, walking routes that end at that door, place pages, scheduled METRO bus times at campus stops, and a glass interface ported from TileLens. It needs no key, account or server. See [docs/web-app.md](docs/web-app.md).
+[`web/`](web/README.md) is a separate, installable web version built on free, open-source parts (MapLibre, OpenFreeMap, OpenStreetMap). It has the app's class features (Today with when to leave, a weekly Schedule, paste from MyUCSC or add by hand, review before saving, skipped days, reminders while open, all stored only in the browser) and "Get me there" with arrive-by timing, plus search for buildings and each of the 87 general-assignment classrooms ("BE 152", "McHenry 1340"), room pages with the door nearest the room and the floor where a published UCSC plan or map confirms it, walking routes that end at that door, place pages, scheduled METRO bus times at campus stops, and a glass interface ported from TileLens. It needs no key, account or server. See [docs/web-app.md](docs/web-app.md).
 
 | Place | Route (dark) | Mobile |
 |---|---|---|

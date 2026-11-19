@@ -110,6 +110,8 @@ class RoomGuide {
   const RoomGuide({
     required this.checked,
     this.source = 'walk',
+    this.url,
+    this.cite,
     this.access,
     this.doorLabel,
     this.wing,
@@ -119,11 +121,15 @@ class RoomGuide {
     this.elevator,
   });
 
-  /// `YYYY-MM-DD` someone checked it.
+  /// `YYYY-MM-DD` someone checked it (or read the published directions).
   final String checked;
 
-  /// `walk` or `student-tip`.
+  /// `walk`, `student-tip` or `published` (directions a UCSC office published, at [url]).
   final String source;
+
+  /// The page published directions come from, and who published them.
+  final String? url;
+  final String? cite;
 
   /// `outside`, `lobby` or `library`.
   final String? access;
@@ -141,6 +147,8 @@ class RoomGuide {
     return RoomGuide(
       checked: checked,
       source: (o['source'] as String?) ?? 'walk',
+      url: o['url'] as String?,
+      cite: o['cite'] as String?,
       access: o['access'] as String?,
       doorLabel: entrance is Map ? entrance['label'] as String? : null,
       wing: o['wing'] as String?,
@@ -152,27 +160,38 @@ class RoomGuide {
   }
 }
 
-/// The floor a room number implies: 152 is 1, B206 is 2, 3201 is 2 (Kresge and McHenry put the floor second).
-String? floorFromRoomNumber(String room) {
-  var m = RegExp(r'^[A-Z]?(\d)\d{2}$').firstMatch(room);
-  if (m != null) return m.group(1);
-  m = RegExp(r'^\d(\d)\d{2}$').firstMatch(room);
-  return m?.group(1);
-}
+/// A room's floor once it is confirmed: walked, or shown on a published UCSC floor plan, map or
+/// directions (`data/floors.json`). Never guessed from the room number or the campus map level:
+/// McHenry 1340 is on floor 1 although the map puts it on level L3.
+class RoomFloor {
+  const RoomFloor(this.label, {this.where, this.sourceName, this.sourceUrl});
 
-/// "Floor 2" for a campus-map level such as `L2` or a checked floor such as `2`. Says "(campus map)" when
-/// the level is all there is and the room number does not back it up.
-String? floorText(String? raw, {String? room, bool checked = false}) {
-  if (raw == null || raw.isEmpty) return null;
-  final m = RegExp(r'^L?(\d+)$').firstMatch(raw);
-  if (m == null) return raw;
-  final n = m.group(1)!;
-  final name = n == '0' ? 'Lower level (floor 0)' : 'Floor $n';
-  final fromMap = !checked && raw.startsWith('L');
-  if (fromMap && room != null && floorFromRoomNumber(room) != n) {
-    return '$name (campus map)';
+  /// As signed in the building: `1`, `2`, or `G` for a ground floor.
+  final String label;
+
+  /// `entrance`, `upstairs` or `below` (under the main entrance).
+  final String? where;
+  final String? sourceName;
+  final String? sourceUrl;
+
+  bool get checked => sourceName == null;
+
+  static const _where = {
+    'entrance': 'entrance level',
+    'upstairs': 'upstairs',
+    'below': 'one floor below the main entrance',
+  };
+
+  /// "Floor 2 · upstairs".
+  String get text {
+    final name = label == 'G'
+        ? 'Ground floor'
+        : RegExp(r'^\d+$').hasMatch(label)
+        ? 'Floor $label'
+        : label;
+    final w = _where[where];
+    return w == null ? name : '$name · $w';
   }
-  return name;
 }
 
 /// What a schedule-style location string turned out to be.
@@ -257,6 +276,7 @@ class Campus {
   Campus(
     List<Building> buildings, {
     this.overrides = const {},
+    this.floors = const {},
     Map<String, List<String>> searchAliases = const {},
   }) {
     for (final b in buildings) {
@@ -293,6 +313,18 @@ class Campus {
 
   final Map<String, Building> buildings = {};
   final Map<String, dynamic> overrides;
+
+  /// Published floors by `building:room`, from `data/floors.json`.
+  final Map<String, RoomFloor> floors;
+
+  /// The confirmed floor of a room: as walked, else as published, else none.
+  RoomFloor? roomFloor(String buildingId, String? room) {
+    if (room == null) return null;
+    final walked = (overrides['$buildingId:$room'] as Map?)?['floor'];
+    if (walked is String && walked.isNotEmpty) return RoomFloor(walked);
+    return floors['$buildingId:$room'];
+  }
+
   final Map<String, List<List<String>>> _searchNames = {};
   final Map<String, String> _index = {};
   final Map<String, (String, String)> _exact = {};

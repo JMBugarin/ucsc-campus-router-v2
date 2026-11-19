@@ -269,6 +269,9 @@ String _checkedText(RoomGuide g) {
   final when = d == null
       ? g.checked
       : '${_months[d.month - 1]} ${d.day}, ${d.year}';
+  if (g.source == 'published') {
+    return "From ${g.cite ?? 'UCSC'}'s published directions, read $when.";
+  }
   return g.source == 'student-tip'
       ? 'From a student tip, checked $when.'
       : 'Checked on foot $when.';
@@ -294,7 +297,7 @@ class _PlaceCard extends ConsumerWidget {
     final resolved = campus?.resolve(place.query);
     final guide = resolved?.guide;
     final roomPoint = resolved?.roomPoint?.point;
-    final floor = floorText(place.floor, room: place.room);
+    final floor = campus?.roomFloor(place.buildingId, place.room)?.text;
     final lines = <String>[
       if (guide?.access != null) _accessText[guide!.access] ?? guide.access!,
       if (guide?.doorLabel != null) 'Door: ${guide!.doorLabel}',

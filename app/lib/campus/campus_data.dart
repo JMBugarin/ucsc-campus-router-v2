@@ -10,6 +10,7 @@ Campus campusFromJson({
   required String buildings,
   String? rooms,
   String? aliases,
+  String? floors,
 }) {
   final list =
       (jsonDecode(buildings) as Map<String, dynamic>)['buildings'] as List;
@@ -25,8 +26,27 @@ Campus campusFromJson({
   return Campus(
     [for (final b in list) Building.fromJson(b as Map<String, dynamic>)],
     overrides: overrides,
+    floors: floors == null ? const {} : floorsFromJson(floors),
     searchAliases: searchAliases,
   );
+}
+
+/// `data/floors.json`: each confirmed floor with the published source it came from.
+Map<String, RoomFloor> floorsFromJson(String text) {
+  final json = jsonDecode(text) as Map<String, dynamic>;
+  final sources = json['sources'] as Map<String, dynamic>? ?? const {};
+  return {
+    for (final e
+        in (json['rooms'] as Map<String, dynamic>? ?? const {}).entries)
+      e.key: RoomFloor(
+        (e.value as Map)['floor'] as String,
+        where: (e.value as Map)['where'] as String?,
+        sourceName:
+            (sources[(e.value as Map)['source']] as Map?)?['name'] as String?,
+        sourceUrl:
+            (sources[(e.value as Map)['source']] as Map?)?['url'] as String?,
+      ),
+  };
 }
 
 /// The campus data bundled with the app (`assets/data`). Nothing is fetched at run time.
@@ -35,11 +55,13 @@ final campusProvider = FutureProvider<Campus>((ref) async {
     rootBundle.loadString('assets/data/buildings.json'),
     rootBundle.loadString('assets/data/rooms.json'),
     rootBundle.loadString('assets/data/search_aliases.json'),
+    rootBundle.loadString('assets/data/floors.json'),
   ]);
   return campusFromJson(
     buildings: texts[0],
     rooms: texts[1],
     aliases: texts[2],
+    floors: texts[3],
   );
 });
 

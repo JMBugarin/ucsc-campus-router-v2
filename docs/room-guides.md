@@ -6,15 +6,16 @@ A room guide is what a student needs in the last 30 metres: which door, which si
 
 | State | What the student sees |
 |---|---|
-| Not walked yet (default) | Floor from the campus map, "Not checked on foot yet", the closest mapped door and where the room is from it ("about 30 m south-west of this door, on floor 1"). |
+| Not walked yet (default) | The floor only if a published UCSC plan, college map or directions confirms it ([floors](floors.md)), "Not checked on foot yet", the closest mapped door and where the room is from it ("about 30 m south-west of this door"). |
 | Walked | An access badge (Outside access, Inside the building, Inside the library), the checked door with its name, the one-line tip, up to five steps from the door, step-free or stairs, the elevator, and "Checked on foot Nov 20, 2026". Directions end at the checked door. |
 | From a student tip | The same, marked "From a student tip, checked ...". A tip is only added after someone confirms it on foot. |
+| From published directions | Directions a UCSC office publishes (McHenry 1340 and 1350, from the library), marked "From UCSC Library's published directions, read ..." with a link to the page. These rooms stay on the walking list until someone checks the door. |
 
 Buildings whose rooms have access tags split their room list into Outside access, Inside the building, Inside the library and Not checked yet, so a hybrid building like Baskin Engineering or McHenry reads at a glance. Until then rooms are grouped by floor.
 
 ## Walking a room (field audit)
 
-1. Open the worksheet, [room-audit.md](room-audit.md). It lists the 20 rooms most likely to send someone to the wrong side, floor or door, with each one's mapped doors and the campus map floor. Regenerate it with `npm run rooms:audit` in `web/`; rooms with a guide drop off.
+1. Open the worksheet, [room-audit.md](room-audit.md). It lists the 20 rooms most likely to send someone to the wrong side, floor or door, with each one's mapped doors and its floor if a published source confirms one. Regenerate it with `npm run rooms:audit` in `web/`; rooms with a guide drop off.
 2. On your phone, open a room's link from the worksheet. The `?audit` at the end turns on the audit panel for this browser session (it stays on as you move between rooms).
 3. Walk to the room from the outside the way a student would arrive, then fill in only what you saw:
    - **How you get in**: Outside (patio, plaza, outdoor walkway), Lobby (inside the building) or Library (past the library doors).

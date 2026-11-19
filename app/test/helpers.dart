@@ -226,6 +226,7 @@ final testCampus = campusFromJson(
   buildings: File('assets/data/buildings.json').readAsStringSync(),
   rooms: File('assets/data/rooms.json').readAsStringSync(),
   aliases: File('assets/data/search_aliases.json').readAsStringSync(),
+  floors: File('assets/data/floors.json').readAsStringSync(),
 );
 final testTerms = termsFromJson(
   jsonDecode(File('assets/data/holidays.json').readAsStringSync())
