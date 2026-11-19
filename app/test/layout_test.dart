@@ -151,6 +151,11 @@ void main() {
           screen(tester, size, ratio, scale);
           await tester.pumpWidget(await rig(startTab: tabSchedule).app());
           await tester.pumpAndSettle();
+          await Scrollable.ensureVisible(
+            tester.element(find.text('Paste from MyUCSC')),
+            alignment: 0.35,
+          );
+          await tester.pumpAndSettle();
           await tester.tap(find.text('Paste from MyUCSC'));
           await tester.pumpAndSettle();
           expect(find.text('Paste your schedule'), findsOneWidget);
@@ -158,6 +163,11 @@ void main() {
           await tester.tap(find.text('Cancel'));
           await tester.pumpAndSettle();
 
+          await Scrollable.ensureVisible(
+            tester.element(find.text('Add a class')),
+            alignment: 0.35,
+          );
+          await tester.pumpAndSettle();
           await tester.tap(find.text('Add a class'));
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull, reason: 'add a class');
@@ -239,6 +249,37 @@ void main() {
       });
     }
   }
+
+  testWidgets(
+    'the last schedule and settings rows scroll clear of the tab bar',
+    (tester) async {
+      screen(tester, phones['an iPhone SE']!.$1, 2.0, 2.0);
+      await tester.pumpWidget(await rig(startTab: tabSchedule).app());
+      await tester.pumpAndSettle();
+
+      for (final (label, lastRow) in [
+        ('Schedule', find.byTooltip('Remove ABC 20 Lecture')),
+        ('Settings', find.textContaining('Not affiliated with')),
+      ]) {
+        await tab(tester, label);
+        final list = find.byType(ListView);
+        final scrollable = find
+            .descendant(of: list, matching: find.byType(Scrollable))
+            .first;
+        await tester.scrollUntilVisible(lastRow, 200, scrollable: scrollable);
+        final position = tester.state<ScrollableState>(scrollable).position;
+        position.jumpTo(position.maxScrollExtent);
+        await tester.pumpAndSettle();
+        final bounds = tester.getRect(lastRow);
+        expect(bounds.bottom, greaterThan(0), reason: label);
+        expect(
+          bounds.bottom,
+          lessThanOrEqualTo(tester.getRect(find.byType(NavigationBar)).top),
+          reason: label,
+        );
+      }
+    },
+  );
 
   group('the Map', () {
     testWidgets(

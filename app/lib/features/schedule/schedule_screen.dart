@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../today/day_plan.dart';
+import '../../design/controls.dart';
 import '../../design/floating_bar.dart';
+import '../../design/surfaces.dart';
+import '../../design/tokens.dart';
 import 'add_class_dialog.dart';
 import 'import/clean.dart';
 import 'meeting.dart';
@@ -61,75 +64,88 @@ class ScheduleScreen extends ConsumerWidget {
     final busy = ref.watch(_busyProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My schedule'),
-        actions: [
-          if (schedule.value?.isNotEmpty ?? false)
-            IconButton(
-              tooltip: 'Remove all classes',
-              icon: const Icon(Icons.delete_sweep_outlined),
-              onPressed: () => _confirmClear(context, ref),
-            ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              FilledButton.tonalIcon(
-                icon: const Icon(Icons.content_paste),
-                label: const Text('Paste from MyUCSC'),
-                onPressed: busy == null ? () => _paste(context, ref) : null,
-              ),
-              FilledButton.tonalIcon(
-                icon: const Icon(Icons.event),
-                label: const Text('Calendar file'),
-                onPressed: busy == null ? () => _calendar(context, ref) : null,
-              ),
-              if (ref.watch(pictureImportAvailableProvider))
-                FilledButton.tonalIcon(
-                  icon: const Icon(Icons.photo_camera_outlined),
-                  label: const Text('Read a photo'),
-                  onPressed: busy == null ? () => _photo(context, ref) : null,
-                ),
-              FilledButton.tonalIcon(
-                icon: const Icon(Icons.add),
-                label: const Text('Add a class'),
-                onPressed: busy == null ? () => _add(context, ref) : null,
-              ),
-            ],
+      body: SafeArea(
+        bottom: false,
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            Space.md,
+            Space.xs,
+            Space.md,
+            Space.md + FloatingBarInset.of(context),
           ),
-          if (busy != null) _Working(busy.label, note: busy.note),
-          const SizedBox(height: 8),
-          Text(
-            'Your classes are saved on this phone. Instructor names are never kept.',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 12),
-          schedule.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Text('Could not read your saved classes: $e'),
-            data: (meetings) => meetings.isEmpty
-                ? const _Empty()
-                : Column(
-                    children: [
-                      for (var i = 0; i < meetings.length; i++)
-                        _MeetingTile(
-                          meeting: meetings[i],
-                          location: i < locations.length ? locations[i] : null,
-                          onDelete: () =>
-                              ref.read(scheduleProvider.notifier).removeAt(i),
-                          onRestore: () => ref
-                              .read(scheduleProvider.notifier)
-                              .restoreAllDays(meetings[i]),
-                        ),
-                    ],
+          children: [
+            LargeTitleHeader(
+              title: 'My schedule',
+              actions: [
+                if (schedule.value?.isNotEmpty ?? false)
+                  GlassIconButton(
+                    tooltip: 'Remove all classes',
+                    icon: Icons.delete_sweep_outlined,
+                    onPressed: () => _confirmClear(context, ref),
                   ),
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: Space.sm),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton.icon(
+                  icon: const Icon(Icons.content_paste),
+                  label: const Text('Paste from MyUCSC'),
+                  onPressed: busy == null ? () => _paste(context, ref) : null,
+                ),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.event),
+                  label: const Text('Calendar file'),
+                  onPressed: busy == null
+                      ? () => _calendar(context, ref)
+                      : null,
+                ),
+                if (ref.watch(pictureImportAvailableProvider))
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.photo_camera_outlined),
+                    label: const Text('Read a photo'),
+                    onPressed: busy == null ? () => _photo(context, ref) : null,
+                  ),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add a class'),
+                  onPressed: busy == null ? () => _add(context, ref) : null,
+                ),
+              ],
+            ),
+            if (busy != null) _Working(busy.label, note: busy.note),
+            const SizedBox(height: 8),
+            Text(
+              'Your classes are saved on this phone. Instructor names are never kept.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 12),
+            schedule.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Text('Could not read your saved classes: $e'),
+              data: (meetings) => meetings.isEmpty
+                  ? const _Empty()
+                  : Column(
+                      children: [
+                        for (var i = 0; i < meetings.length; i++)
+                          _MeetingTile(
+                            meeting: meetings[i],
+                            location: i < locations.length
+                                ? locations[i]
+                                : null,
+                            onDelete: () =>
+                                ref.read(scheduleProvider.notifier).removeAt(i),
+                            onRestore: () => ref
+                                .read(scheduleProvider.notifier)
+                                .restoreAllDays(meetings[i]),
+                          ),
+                      ],
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
