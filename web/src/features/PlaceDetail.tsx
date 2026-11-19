@@ -25,6 +25,9 @@ interface DetailProps {
   nearGraph: boolean
   auditMode?: boolean
   onLocate?: () => Promise<[number, number] | null>
+  /** the place id saved as home */
+  home?: string | null
+  onSetHome?: (id: string | null) => void
 }
 
 export function RoomList({ groups, current, onOpen }: { groups: RoomGroup[]; current?: string; onOpen: (p: Place) => void }) {
@@ -139,7 +142,8 @@ function RoomDetail({ place, byId, onOpen, onBack, onDirections, onShare, nearGr
 }
 
 export function PlaceDetail(props: DetailProps) {
-  const { place, byId, onOpen, onBack, onDirections, onShare, onTransit, nearGraph, transit, now, live } = props
+  const { place, byId, onOpen, onBack, onDirections, onShare, onTransit, nearGraph, transit, now, live, home = null, onSetHome = () => {} } = props
+  const isHome = home === place.id
   if (place.kind === 'room' && place.room) return <RoomDetail {...props} />
   const groups = roomGroups(place, byId)
   return (
@@ -156,8 +160,21 @@ export function PlaceDetail(props: DetailProps) {
         <GlassButton variant="primary" icon="route" onClick={onDirections} disabled={!nearGraph}>
           Directions
         </GlassButton>
-        <StatusPill tone="accent">{CATEGORY_LABEL[place.kind]}</StatusPill>
+        {place.kind === 'housing' &&
+          (isHome ? (
+            <GlassButton icon="close" onClick={() => onSetHome(null)}>
+              Remove home
+            </GlassButton>
+          ) : (
+            <GlassButton icon="home" onClick={() => onSetHome(place.id)}>
+              Set as home
+            </GlassButton>
+          ))}
+        {isHome ? <StatusPill tone="success">Your home</StatusPill> : <StatusPill tone="accent">{CATEGORY_LABEL[place.kind]}</StatusPill>}
       </div>
+      {place.kind === 'housing' && !isHome && (
+        <p className="note">Set it as home to route back from anywhere on campus in one tap. It stays in this browser.</p>
+      )}
       {!nearGraph && (
         <GlassBanner tone="warning" title="No walking paths mapped here">
           This place is outside the campus path network, so walking directions are not available.
@@ -173,7 +190,7 @@ export function PlaceDetail(props: DetailProps) {
         {place.aliases.length > 0 && (
           <>
             <dt>Also known as</dt>
-            <dd>{place.aliases.slice(0, 6).join(', ')}</dd>
+            <dd>{place.aliases.slice(0, place.kind === 'housing' ? 3 : 6).join(', ')}</dd>
           </>
         )}
         <dt>Coordinates</dt>

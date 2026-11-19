@@ -14,6 +14,7 @@ export const CATEGORY_COLOR = {
   transit: '#2a8fa8',
   parking: '#6f7d92',
   room: '#1f5fae',
+  housing: '#c2577a',
 } as const
 export type Category = keyof typeof CATEGORY_COLOR
 
@@ -26,6 +27,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   transit: 'Transit',
   parking: 'Parking',
   room: 'Rooms',
+  housing: 'Housing',
 }
 
 export const MOBILE_QUERY = '(max-width: 720px)'

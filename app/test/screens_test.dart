@@ -101,6 +101,28 @@ void main() {
     );
 
     testWidgets(
+      'offers the walk home after the last class once a home is saved',
+      (tester) async {
+        final rig = TestRig(
+          stored: [meeting()],
+          now: mondayNoon,
+          prefs: {'home_place': 'crown-college-galileo-house'},
+        );
+        await open(tester, rig);
+        expect(find.text('Head home after XYZ 10 Lecture'), findsOneWidget);
+        expect(find.text('Galileo House · Crown College'), findsOneWidget);
+        await tester.ensureVisible(find.text('Walk home'));
+        await tester.tap(find.text('Walk home'));
+        await tester.pumpAndSettle();
+        final home = testHousing.byId('crown-college-galileo-house')!;
+        expect(
+          rig.urls.opened.single.queryParameters.values,
+          contains('${home.point.lat},${home.point.lon}'),
+        );
+      },
+    );
+
+    testWidgets(
       'Walk there opens walking directions in Apple Maps on an iPhone',
       (tester) async {
         final rig = TestRig(stored: [meeting()], now: mondayNoon);
@@ -318,27 +340,43 @@ void main() {
       expect(find.text('XYZ 10 Lecture'), findsOneWidget);
     });
 
-    testWidgets('the message after an import floats above the tab bar, so the tabs stay tappable', (tester) async {
-      final rig = TestRig(now: mondayNoon);
-      rig.schedule.nextImport = ImportResult(meetings: [meeting()], notes: const [], locations: const []);
-      await open(tester, rig);
-      await goToTab(tester, 'Schedule');
-      await tester.tap(find.text('Paste from MyUCSC'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'my schedule text');
-      await tester.tap(find.text('Import'));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'the message after an import floats above the tab bar, so the tabs stay tappable',
+      (tester) async {
+        final rig = TestRig(now: mondayNoon);
+        rig.schedule.nextImport = ImportResult(
+          meetings: [meeting()],
+          notes: const [],
+          locations: const [],
+        );
+        await open(tester, rig);
+        await goToTab(tester, 'Schedule');
+        await tester.tap(find.text('Paste from MyUCSC'));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'my schedule text');
+        await tester.tap(find.text('Import'));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(SnackBar), findsOneWidget);
-      expect(
-        tester.getRect(find.textContaining('Added 1 class')).bottom,
-        lessThanOrEqualTo(tester.getRect(find.byType(NavigationBar)).top),
-      );
-      expect(find.text("Today's classes"), findsNothing);
-      await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text('Today')));
-      await tester.pumpAndSettle();
-      expect(find.text("Today's classes"), findsOneWidget, reason: 'Monday noon is before the default class, so Today lists it');
-    });
+        expect(find.byType(SnackBar), findsOneWidget);
+        expect(
+          tester.getRect(find.textContaining('Added 1 class')).bottom,
+          lessThanOrEqualTo(tester.getRect(find.byType(NavigationBar)).top),
+        );
+        expect(find.text("Today's classes"), findsNothing);
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Today'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.text("Today's classes"),
+          findsOneWidget,
+          reason: 'Monday noon is before the default class, so Today lists it',
+        );
+      },
+    );
 
     testWidgets('a calendar file is read and cancelling does nothing', (
       tester,

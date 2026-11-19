@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:classmap/app.dart';
 import 'package:classmap/campus/campus_data.dart';
+import 'package:classmap/campus/housing.dart';
 import 'package:classmap/campus/terms.dart';
 import 'package:classmap/core/clock.dart';
 import 'package:classmap/core/tiles.dart';
@@ -228,6 +229,9 @@ final testCampus = campusFromJson(
   aliases: File('assets/data/search_aliases.json').readAsStringSync(),
   floors: File('assets/data/floors.json').readAsStringSync(),
 );
+final testHousing = HousingIndex(
+  housingFromJson(File('assets/data/housing.json').readAsStringSync()),
+);
 final testTerms = termsFromJson(
   jsonDecode(File('assets/data/holidays.json').readAsStringSync())
       as Map<String, dynamic>,
@@ -309,6 +313,7 @@ class TestRig {
       sharedPreferencesProvider.overrideWithValue(prefs),
       if (pinned != null) clockProvider.overrideWithValue(() => pinned),
       campusProvider.overrideWith((ref) => testCampus),
+      housingProvider.overrideWith((ref) => testHousing),
       termsProvider.overrideWith((ref) => testTerms),
       scheduleRepositoryProvider.overrideWithValue(schedule),
       reminderSchedulerProvider.overrideWithValue(scheduler),

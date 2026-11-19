@@ -13,6 +13,7 @@ import '../../design/surfaces.dart';
 import '../../design/tokens.dart';
 import '../../design/type.dart';
 import '../directions/directions.dart';
+import '../home/home_place.dart';
 import '../map/focused_place.dart';
 import '../schedule/schedule_controller.dart';
 import '../search/place.dart';
@@ -158,8 +159,58 @@ class _TodayBody extends ConsumerWidget {
                 canSkip: occ.end.isAfter(pacificTime(now)),
               ),
             ),
+          if (!viewing) _HeadHome(last: plan.classes.last),
         ],
       ],
+    );
+  }
+}
+
+/// After the day's last class, the walk back to the saved dorm or apartment.
+class _HeadHome extends ConsumerWidget {
+  const _HeadHome({required this.last});
+
+  final Occurrence last;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final home = ref
+        .watch(housingProvider)
+        .value
+        ?.byId(ref.watch(homePlaceProvider));
+    final now = pacificTime(ref.watch(nowProvider));
+    if (home == null || now.isAfter(last.end.add(const Duration(hours: 1)))) {
+      return const SizedBox.shrink();
+    }
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(Space.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Head home after ${last.label}',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Text(
+              '${home.short ?? home.name} · ${home.area}',
+              style: AppText.subhead.copyWith(
+                color: context.colors.labelSecondary,
+              ),
+            ),
+            const SizedBox(height: Space.sm),
+            FilledButton.icon(
+              onPressed: () => walkThere(
+                context,
+                ref,
+                WalkTarget(label: home.name, point: home.point),
+              ),
+              icon: const Icon(Icons.home_outlined),
+              label: const Text('Walk home'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

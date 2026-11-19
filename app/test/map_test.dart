@@ -3,6 +3,7 @@ import 'package:classmap/design/map_markers.dart';
 import 'package:classmap/features/directions/directions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'helpers.dart';
 
@@ -56,6 +57,40 @@ void main() {
             "From UCSC Library's published directions, read Nov 19, 2026.",
           ),
           findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'finds a dorm, saves it as home, and walks home from the Home chip',
+      (tester) async {
+        final rig = TestRig(startTab: tabMap);
+        await open(tester, rig);
+        expect(find.text('Set your home'), findsOneWidget);
+
+        await type(tester, 'c9 apt 2');
+        await tester.tap(find.text('College Nine Apartment Building 2'));
+        await tester.pumpAndSettle();
+        expect(find.text('Housing · College Nine'), findsOneWidget);
+        await tester.tap(find.text('Set as home'));
+        await tester.pumpAndSettle();
+        expect(find.text('Remove home'), findsOneWidget);
+        final prefs = await SharedPreferences.getInstance();
+        expect(
+          prefs.getString('home_place'),
+          'college-nine-apartment-building-2',
+        );
+
+        await tester.tap(find.byTooltip('Clear search'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Home · Apartment Building 2'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Walk home'));
+        await tester.pumpAndSettle();
+        final home = testHousing.byId('college-nine-apartment-building-2')!;
+        expect(
+          rig.urls.opened.single.queryParameters.values,
+          contains('${home.point.lat},${home.point.lon}'),
         );
       },
     );

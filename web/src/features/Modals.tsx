@@ -1,5 +1,5 @@
 import { useActivity } from '../state/activity'
-import { GlassBanner, GlassModal, GlassSegmentedControl, GlassSwitch, Divider } from '../design/components'
+import { GlassBanner, GlassButton, GlassModal, GlassSegmentedControl, GlassSwitch, Divider } from '../design/components'
 import { SHUTTLES, TRANSIT_LINKS } from '../data/campus'
 import type { ThemeMode } from '../state/prefs'
 
@@ -41,7 +41,13 @@ export function AboutModal({
   onSolid,
   locationOn,
   onLocationOn,
+  homeName = null,
+  onClearHome = () => {},
+  onPickHome = () => {},
 }: {
+  homeName?: string | null
+  onClearHome?: () => void
+  onPickHome?: () => void
   locationOn: boolean
   onLocationOn: (v: boolean) => void
   open: boolean
@@ -75,6 +81,21 @@ export function AboutModal({
           <small>Starts directions from where you are and follows you on the way. Your location stays on this device.</small>
         </span>
         <GlassSwitch label="Use my location" checked={locationOn} onChange={onLocationOn} />
+      </div>
+      <div className="setrow">
+        <span>
+          Home
+          <small>{homeName ? `${homeName}. Get me home routes here, and Today shows the walk back after class.` : 'Not set. Pick your dorm or apartment, then Set as home.'}</small>
+        </span>
+        {homeName ? (
+          <GlassButton size="s" icon="close" onClick={onClearHome}>
+            Remove
+          </GlassButton>
+        ) : (
+          <GlassButton size="s" icon="home" onClick={onPickHome}>
+            Choose
+          </GlassButton>
+        )}
       </div>
       <div className="setrow">
         <span>Reduce motion</span>

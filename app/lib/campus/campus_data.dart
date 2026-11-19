@@ -4,6 +4,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'campus.dart';
+import 'housing.dart';
 import 'terms.dart';
 
 Campus campusFromJson({
@@ -63,6 +64,12 @@ final campusProvider = FutureProvider<Campus>((ref) async {
     aliases: texts[2],
     floors: texts[3],
   );
+});
+
+/// Every residence hall and apartment building (`assets/data/housing.json`), for finding and walking home.
+final housingProvider = FutureProvider<HousingIndex>((ref) async {
+  final text = await rootBundle.loadString('assets/data/housing.json');
+  return HousingIndex(housingFromJson(text));
 });
 
 final termsProvider = FutureProvider<List<Term>>((ref) async {

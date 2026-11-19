@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// The data the app ships must be the data in `data/`, which the tools in `data-pipeline/` write. After
 /// changing `data/`, run `scripts/sync_app_data.sh`.
 void main() {
-  for (final name in ['buildings', 'rooms', 'floors', 'search_aliases', 'holidays']) {
+  for (final name in ['buildings', 'rooms', 'floors', 'housing', 'search_aliases', 'holidays']) {
     test('$name.json in the app is the one in data/', () {
       expect(
         File('assets/data/$name.json').readAsStringSync(),

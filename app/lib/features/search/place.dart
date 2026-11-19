@@ -1,5 +1,6 @@
 import '../../campus/campus.dart';
 import '../../campus/geo_point.dart';
+import '../../campus/housing.dart';
 
 /// One search answer: a building, or a room inside one.
 class Place {
@@ -12,6 +13,8 @@ class Place {
     this.roomKnown,
     this.floor,
     this.point,
+    this.isHousing = false,
+    this.subtitle,
   });
 
   final String buildingId;
@@ -29,7 +32,23 @@ class Place {
   final String? floor;
   final GeoPoint? point;
 
+  /// A residence hall or apartment building: walked to as a whole, never resolved as a class location.
+  final bool isHousing;
+
+  /// Shown under the name in search results and on the place card.
+  final String? subtitle;
+
   bool get isRoom => room != null;
+
+  factory Place.fromHousing(Housing h) => Place(
+    buildingId: h.id,
+    buildingName: h.area,
+    label: h.name,
+    query: h.name,
+    point: h.point,
+    isHousing: true,
+    subtitle: h.subtitle,
+  );
 
   factory Place.fromHit(SearchHit hit) => Place(
     buildingId: hit.buildingId,

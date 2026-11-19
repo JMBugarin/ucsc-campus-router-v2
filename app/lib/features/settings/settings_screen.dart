@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design/floating_bar.dart';
 import '../../design/surfaces.dart';
 import '../../design/tokens.dart';
+import '../../campus/campus_data.dart';
 import '../activity/activity.dart';
+import '../home/home_place.dart';
 import '../reminders/reminder.dart';
 import '../reminders/reminder_controller.dart';
 import '../reminders/reminder_scheduler.dart';
@@ -60,6 +62,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final counting = ref.watch(activitySenderProvider) != null;
     final activity = ref.watch(activityProvider);
     final theme = Theme.of(context);
+    final home = ref
+        .watch(housingProvider)
+        .value
+        ?.byId(ref.watch(homePlaceProvider));
     Widget line(String text) => Padding(
       padding: const EdgeInsets.only(top: 6),
       child: Text(text, style: theme.textTheme.bodyMedium),
@@ -126,6 +132,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     DropdownMenuItem(value: 30, child: Text('30 min')),
                   ],
                   onChanged: (value) => controller.setRemindLead(value ?? 10),
+                ),
+              ],
+            ),
+            const SizedBox(height: Space.md),
+            GroupCard(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.home_outlined),
+                  title: const Text('Home'),
+                  subtitle: Text(
+                    home == null
+                        ? 'Not set. Search your dorm or apartment on the map, then tap Set as home.'
+                        : '${home.name}. The map and Today offer the walk home.',
+                  ),
+                  trailing: home == null
+                      ? null
+                      : TextButton(
+                          onPressed: () =>
+                              ref.read(homePlaceProvider.notifier).set(null),
+                          child: const Text('Remove'),
+                        ),
                 ),
               ],
             ),

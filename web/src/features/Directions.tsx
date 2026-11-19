@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
-import { GlassBanner, GlassButton, GlassDisclosure, GlassIconButton, GlassSearch, GlassSwitch } from '../design/components'
+import { GlassBanner, GlassButton, GlassDisclosure, GlassIconButton, GlassList, GlassListRow, GlassSearch, GlassSwitch } from '../design/components'
+import { CATEGORY_COLOR } from '../design/tokens'
 import { Icon } from '../design/icons'
 import { formatDistance, formatDuration, type Plan, type PlanError } from '../routing/plan'
 import type { Place } from '../data/types'
@@ -262,7 +263,10 @@ export function Directions({
   picking = null,
   onPickOnMap = () => {},
   onPickAddress = () => {},
+  homePlace = null,
 }: {
+  /** the dorm or apartment saved as home, offered first when choosing a place */
+  homePlace?: Place | null
   /** set while the trip starts from the walker's live location */
   following?: { finding: boolean; arrived: string | null } | null
   trips?: TripOption[] | null
@@ -356,6 +360,11 @@ export function Directions({
               </GlassButton>
             )}
           </div>
+          {homePlace && !q.trim() && (
+            <GlassList label="Home">
+              <GlassListRow icon="home" iconColor={CATEGORY_COLOR.housing} title="Home" subtitle={homePlace.name} onClick={() => choose(homePlace)} />
+            </GlassList>
+          )}
           {addresses && addresses.length > 0 && (
             <ul className="glist" role="listbox" aria-label="Addresses">
               {addresses.map((a) => (

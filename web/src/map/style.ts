@@ -290,7 +290,7 @@ export function buildStyle(theme: Theme): StyleSpecification {
     {
       id: 'place-pin-minor',
       minzoom: 15.8,
-      filter: ['!', ['in', ['get', 'kind'], ['literal', ['college', 'library']]]],
+      filter: ['!', ['in', ['get', 'kind'], ['literal', ['college', 'library', 'housing']]]],
       type: 'symbol',
       source: 'places',
       layout: {
@@ -305,6 +305,28 @@ export function buildStyle(theme: Theme): StyleSpecification {
         'text-anchor': 'top',
         'text-optional': true,
         'text-max-width': 8,
+      },
+      paint: { 'text-color': c.text, 'text-halo-color': c.halo, 'text-halo-width': 1.6 },
+    },
+    // where people live: only once zoomed in close, so the dorms don't bury the academic buildings
+    {
+      id: 'place-pin-housing',
+      minzoom: 16.4,
+      filter: ['==', ['get', 'kind'], 'housing'],
+      type: 'symbol',
+      source: 'places',
+      layout: {
+        'icon-image': 'pin-housing',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 16.4, 0.62, 18.5, 0.9],
+        'icon-padding': 2,
+        'symbol-sort-key': ['get', 'rank'],
+        'text-field': ['step', ['zoom'], '', 17.3, ['get', 'label']],
+        'text-font': F_BOLD,
+        'text-size': ['interpolate', ['linear'], ['zoom'], 17, 10.5, 19, 12.5],
+        'text-offset': [0, 1.2],
+        'text-anchor': 'top',
+        'text-optional': true,
+        'text-max-width': 7,
       },
       paint: { 'text-color': c.text, 'text-halo-color': c.halo, 'text-halo-width': 1.6 },
     },
