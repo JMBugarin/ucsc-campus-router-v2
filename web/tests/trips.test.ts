@@ -29,12 +29,29 @@ describe('trips from off campus', () => {
     expect(kinds).toContain('bus')
     expect(kinds).toContain('connector')
   })
-  it('arrive by a class: every option gets there in time, latest departure first', () => {
+  it('arrive by a class: every option gets there in time, latest departure first, none already gone', () => {
     const by = at('2026-11-04T09:20:00-08:00')
-    const trips = planTrips(net, g, downtown, be152, { kind: 'arrive', by })
-    expect(trips.length).toBeGreaterThan(1)
-    expect(trips.every((t) => t.arrive <= by)).toBe(true)
-    expect(trips[0].leave).toBeGreaterThanOrEqual(trips[1].leave)
+    const now = at('2026-11-04T08:20:00-08:00')
+    const trips = planTrips(net, g, downtown, be152, { kind: 'arrive', by, now })
+    expect(trips.length).toBeGreaterThan(0)
+    expect(trips.every((t) => t.arrive <= by && !t.late)).toBe(true)
+    expect(trips.every((t) => t.leave >= now)).toBe(true)
+    for (let i = 1; i < trips.length; i++) expect(trips[i - 1].leave).toBeGreaterThanOrEqual(trips[i].leave)
+  })
+  it('running late: shows the buses still to come, marked late, never ones that left', () => {
+    const by = at('2026-11-04T09:20:00-08:00')
+    const now = at('2026-11-04T09:10:00-08:00')
+    const trips = planTrips(net, g, downtown, be152, { kind: 'arrive', by, now })
+    expect(trips.length).toBeGreaterThan(0)
+    expect(trips.every((t) => t.late && t.leave >= now - 60_000)).toBe(true)
+    const buses = trips.flatMap((t) => t.parts.filter((p) => p.kind === 'bus'))
+    expect(buses.every((b) => b.kind === 'bus' && b.departs >= now)).toBe(true)
+  })
+  it('after class has started: still the next buses, all late', () => {
+    const by = at('2026-11-04T09:20:00-08:00')
+    const trips = planTrips(net, g, downtown, be152, { kind: 'arrive', by, now: at('2026-11-04T09:40:00-08:00') })
+    expect(trips.length).toBeGreaterThan(0)
+    expect(trips.every((t) => t.late && t.leave >= at('2026-11-04T09:39:00-08:00'))).toBe(true)
   })
   it('works the other way, from a room to home', () => {
     expect(planTrips(net, g, be152, downtown, { kind: 'leave', at: at('2026-11-04T17:00:00-08:00') }).length).toBeGreaterThan(0)
@@ -58,5 +75,36 @@ describe('address search', () => {
   it('round-trips point ids', () => {
     expect(parsePointId(pointId(36.9719, -122.0263))).toEqual([36.9719, -122.0263])
     expect(parsePointId('baskin-engineering')).toBeNull()
+  })
+})
+
+describe('walking in town', () => {
+  const town = buildGraph(JSON.parse(readFileSync('public/data/town.json', 'utf8')) as GraphFile)
+  it('routes the walk to the bus along the streets, and draws it', () => {
+    const t0 = performance.now()
+    const trips = planTrips(net, g, downtown, be152, { kind: 'leave', at: at('2026-11-04T08:00:00-08:00') }, false, town)
+    const ms = performance.now() - t0
+    const walk = trips[0].parts[0]
+    expect(walk.kind).toBe('walk')
+    if (walk.kind !== 'walk') return
+    expect(walk.on).toBe('town')
+    expect(walk.approximate).toBe(false)
+    expect(walk.plan?.path.length).toBeGreaterThan(0)
+    // the only straight dotted bits left are the short stubs between a point and its street or path
+    const stubs = tripGeoJSON(g, trips[0]).features.filter((f) => f.properties?.kind === 'connector')
+    for (const f of stubs) {
+      const [[lo1, la1], [lo2, la2]] = f.geometry.coordinates as [number, number][]
+      expect(Math.hypot((la1 - la2) * 110540, (lo1 - lo2) * 88900)).toBeLessThan(60)
+    }
+    expect(ms).toBeLessThan(3000)
+  })
+  it('draws each bus along its route, through its stops', () => {
+    const trips = planTrips(net, g, downtown, be152, { kind: 'leave', at: at('2026-11-04T08:00:00-08:00') }, false, town)
+    for (const part of trips[0].parts) {
+      if (part.kind !== 'bus') continue
+      expect(part.line.length).toBeGreaterThan(part.stops.length)
+      const near = (p: [number, number]) => Math.min(...part.line.map((q) => Math.hypot((p[0] - q[0]) * 110540, (p[1] - q[1]) * 88900)))
+      for (const s of part.stops) expect(near(s)).toBeLessThan(80)
+    }
   })
 })

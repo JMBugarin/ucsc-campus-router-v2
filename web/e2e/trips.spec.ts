@@ -25,7 +25,7 @@ test('a trip from downtown to a classroom: walk, bus, then the campus paths to t
   const trips = page.getByRole('region', { name: 'Trips by bus' })
   await expect(trips).toBeVisible({ timeout: 20_000 })
   await expect(trips.getByRole('radio').first()).toContainText(/Leave by \d{1,2}:\d{2} AM/)
-  await expect(trips).toContainText('Estimated: no mapped path here')
+  await expect(trips).toContainText('Along the streets, shown on the map.')
   await expect(trips).toContainText('Along the mapped campus paths.')
   await expect(trips).toContainText(/Route \d+ toward/)
   await expect(page.getByText('No walking route')).toHaveCount(0)
@@ -66,4 +66,19 @@ test('a starting point can be picked on the map', async ({ page }) => {
   await page.mouse.click(pt.x, pt.y)
   await expect(page).toHaveURL(/#\/r\/%4036\.99\d+%2C-122\.05\d+\/baskin-engineering-152|#\/r\/@36\.99\d+,-122\.05\d+\/baskin-engineering-152/)
   await expect(page.getByRole('combobox', { name: 'From' })).toHaveValue('Dropped pin')
+})
+
+test('running late for class shows the buses still to come, and how late each gets there', async ({ page }) => {
+  await at(page, '2026-11-04T09:10:00-08:00')
+  await ready(page, `#/r/@36.971900,-122.026300/baskin-engineering-152?arrive=${new Date('2026-11-04T09:20:00-08:00').getTime()}&cls=CSE%20130%20Lecture`)
+  const trips = page.getByRole('region', { name: 'Trips by bus' })
+  await expect(trips).toBeVisible({ timeout: 20_000 })
+  await expect(trips).toContainText('No bus gets you there by 9:20 AM')
+  const leaves = await trips.getByRole('radio').allInnerTexts()
+  expect(leaves.length).toBeGreaterThan(0)
+  for (const text of leaves) {
+    const m = /Leave by (\d{1,2}):(\d{2}) AM/.exec(text)!
+    expect(+m[1] * 60 + +m[2]).toBeGreaterThanOrEqual(9 * 60 + 9)
+    expect(text).toMatch(/\d+ min late/)
+  }
 })
