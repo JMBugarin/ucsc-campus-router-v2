@@ -283,13 +283,14 @@ export function Directions({
               {toRoom?.room && <Arrival room={toRoom} end={plan.destPoint} />}
               <p className="note">
                 Times use Tobler's walking function on USGS elevation (10 m), so they are estimates.
-                {plan.connectorMeters > 5 && <> {formatDistance(plan.connectorMeters)} of the trip is from a door or point to the nearest mapped path (dotted).</>}
+                {plan.connectorMeters > 5 && <> {formatDistance(plan.connectorMeters)} of the trip, between a door or point and the nearest mapped path, has no mapped path: it's drawn dotted and is approximate.</>}
               </p>
               <div className="legend" aria-label="Route legend">
                 <span><i data-k="0" /> Path</span>
                 <span><i data-k="1" /> Stairs</span>
                 <span><i data-k="2" /> Road</span>
                 <span><i data-k="3" /> Bridge</span>
+                <span><i data-k="c" /> No mapped path</span>
               </div>
             </>
           )}

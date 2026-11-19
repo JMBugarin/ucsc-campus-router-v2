@@ -8,7 +8,7 @@ import { loadGraph, loadPlaces } from './data/campus'
 import { SearchIndex } from './data/search'
 import type { Place } from './data/types'
 import { buildGraph, nearestNode, type Graph } from './routing/graph'
-import { endpointOf, planRoute, routeGeoJSON, straightMeters, MAX_SNAP_M, type Endpoint, type Plan, type PlanError } from './routing/plan'
+import { endpointOf, planCoords, planRoute, routeGeoJSON, straightMeters, MAX_SNAP_M, type Endpoint, type Plan, type PlanError } from './routing/plan'
 import { hashParams, useHashRoute } from './state/hashRoute'
 import { usePref, useTheme } from './state/prefs'
 import { CategoryChips, Featured, PlaceRows } from './features/Browse'
@@ -206,8 +206,7 @@ export function App() {
   useEffect(() => void activity.flush(), [])
   useEffect(() => {
     if (!plan || !graph) return
-    const coords = plan.route.nodes.map((n) => [graph.lon[n], graph.lat[n]] as [number, number])
-    coords.push([plan.originPoint[1], plan.originPoint[0]], [plan.destPoint[1], plan.destPoint[0]])
+    const coords = planCoords(plan)
     for (const r of [toRoom, fromRoom]) if (r) coords.push([r.lon, r.lat])
     mapRef.current?.fitCoords(coords)
   }, [plan])
