@@ -128,3 +128,27 @@ test('a busy server is explained and nothing is marked sent', async ({ page }) =
   await expect(fb.getByRole('alert')).toContainText('Try again in a minute')
   await expect(fb.getByRole('button', { name: 'Easy to find' })).toBeEnabled()
 })
+
+test('a trip shows its bus live with how full it is, and the alerts that touch it', async ({ page }) => {
+  await page.addInitScript(() => {
+    const R = Date
+    const off = new R('2026-11-04T18:00:00Z').getTime() - R.now()
+    globalThis.Date = class extends R {
+      constructor(...a: unknown[]) { if (a.length) super(...(a as [string])); else super(R.now() + off) }
+      static now() { return R.now() + off }
+    } as DateConstructor
+  })
+  const now = Math.floor(new Date('2026-11-04T18:00:00Z').getTime() / 1000)
+  const status = { source_time: now - 10, fetched_at: null, freshness: 'fresh' }
+  await page.route('**/svc/v1/departures?**', (r) => r.fulfill({ json: { status: { ...status, generation: 1, processed_at: null }, departures: [] } }))
+  await page.route('**/svc/v1/vehicles', (r) => r.fulfill({ json: { status, vehicles: [{ id: '2214', label: '2214', trip: '970020', route: '18', lat: 36.9985, lon: -122.0602, time: now - 15, occupancy: 'few_seats' }, { id: 'old', trip: 'x', route: '20', lat: 36.99, lon: -122.06, time: now - 900 }] } }))
+  await page.route('**/svc/v1/alerts', (r) => r.fulfill({ json: { status, alerts: [{ id: 'a', header: 'Route 18 detour on Mission St', routes: ['18'] }, { id: 'b', header: 'Route 3 change', routes: ['3'] }] } }))
+  await page.goto('/?e2e#/r/baskin-engineering/oakes-college')
+  await page.waitForFunction(() => (window as any).__map?.loaded(), null, { timeout: 45_000 })
+  await expect(page.getByText('Bus 2214 is on the map: few seats.')).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByText('Route 18 detour on Mission St')).toBeVisible()
+  await expect(page.getByText('Route 3 change')).toHaveCount(0)
+  await page.waitForFunction(() => (window as any).__map.querySourceFeatures('buses').some((f: any) => f.properties.id === '2214' && f.properties.hi === 1), null, { timeout: 15_000 })
+  const ids = await page.evaluate(() => (window as any).__map.querySourceFeatures('buses').map((f: any) => f.properties.id))
+  expect(ids).not.toContain('old')
+})

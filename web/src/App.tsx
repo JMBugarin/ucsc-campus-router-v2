@@ -31,6 +31,9 @@ import { AboutModal, TransitModal } from './features/Modals'
 import { activity } from './state/activity'
 import { busOptions } from './transit/plan'
 import { loadTransit, useClock, useLive } from './transit/useTransit'
+import { useLiveBuses } from './transit/useLiveBuses'
+import { recent as recentVehicle } from './transit/liveClient'
+import { haversine } from './routing/graph'
 import type { TransitData } from './transit/schedule'
 import { recentStore } from './data/rooms'
 import { audit, roomKey, useDraft } from './state/audit'
@@ -164,6 +167,17 @@ export function App() {
 
   const toRoom = route.name === 'directions' ? roomOf(route.to) : null
   const fromRoom = route.name === 'directions' ? roomOf(route.from) : null
+  const stopPlace = route.name === 'place' && selected?.stops ? selected : null
+  const liveBuses = useLiveBuses(!!stopPlace || (route.name === 'directions' && !!bus?.options.length))
+  const busPins = useMemo(() => {
+    const nowSecs = Math.floor(now / 1000)
+    const trips = new Set(route.name === 'directions' ? (bus?.options ?? []).map((o) => o.tripId) : [])
+    const label = (v: { route?: string }) => (v.route && transit?.routes[v.route]?.n) || v.route || '•'
+    return liveBuses.vehicles
+      .filter((v) => recentVehicle(v, nowSecs) && (trips.has(v.trip ?? '') || (stopPlace && haversine(stopPlace.lat, stopPlace.lon, v.lat, v.lon) < 1500)))
+      .map((v) => ({ id: v.id, lat: v.lat, lon: v.lon, label: label(v), bearing: v.bearing, highlight: trips.has(v.trip ?? '') }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [liveBuses.vehicles, bus, stopPlace?.id, now, transit, route.name])
   const routeJson = useMemo(() => {
     if (!plan || !graph) return null
     const fc = routeGeoJSON(graph, plan)
@@ -391,6 +405,8 @@ export function App() {
         toRoom={toRoom}
         arriveBy={arriveBy}
         now={now}
+        vehicles={liveBuses.vehicles}
+        live={live}
       />
     )
   else if (showResults)
@@ -463,6 +479,7 @@ export function App() {
         selected={selected}
         focus={focus}
         classPins={classPins}
+        buses={busPins}
         route={routeJson}
         endpoints={endpoints}
         you={you}
