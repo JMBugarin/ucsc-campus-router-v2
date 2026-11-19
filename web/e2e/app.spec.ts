@@ -78,11 +78,36 @@ const stubLocation = (page: Page, mode: 'denied' | { lat: number; lon: number })
     }
   }, mode)
 
-test('current location off campus gives an honest message, not a straight line', async ({ page }) => {
+const weekdayMorning = (page: Page) =>
+  page.addInitScript(() => {
+    const R = Date
+    const off = new R('2026-11-04T08:00:00-08:00').getTime() - R.now()
+    globalThis.Date = class extends R {
+      constructor(...a: unknown[]) {
+        if (a.length) super(...(a as [string]))
+        else super(R.now() + off)
+      }
+      static now() {
+        return R.now() + off
+      }
+    } as DateConstructor
+  })
+
+test('current location in town plans the bus instead of a straight line', async ({ page }) => {
+  await weekdayMorning(page)
   await stubLocation(page, { lat: 36.9741, lon: -122.0308 })
   await ready(page, '#/r//mchenry-library')
   await page.getByRole('button', { name: 'Use my location' }).click()
-  await expect(page.getByText(/not near a mapped campus path/)).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByRole('region', { name: 'Trips by bus' })).toBeVisible({ timeout: 20_000 })
+  await expect(page.getByText(/not near a mapped campus path/)).toHaveCount(0)
+})
+
+test('current location far outside the bus area gives an honest message, not a straight line', async ({ page }) => {
+  await weekdayMorning(page)
+  await stubLocation(page, { lat: 37.7749, lon: -122.4194 })
+  await ready(page, '#/r//mchenry-library')
+  await page.getByRole('button', { name: 'Use my location' }).click()
+  await expect(page.getByText(/not near a mapped campus path/)).toBeVisible({ timeout: 20_000 })
   expect(await page.evaluate(() => (window as any).__map.querySourceFeatures('route').length)).toBe(0)
 })
 
@@ -97,7 +122,11 @@ test('location permission denied is explained', async ({ page }) => {
   await stubLocation(page, 'denied')
   await ready(page, '#/r//mchenry-library')
   await page.getByRole('button', { name: 'Use my location' }).click()
-  await expect(page.getByText(/Location permission was denied/)).toBeVisible({ timeout: 15_000 })
+  const dialog = page.getByRole('dialog', { name: /Location is/ })
+  await expect(dialog).toBeVisible({ timeout: 15_000 })
+  await expect(dialog.getByRole('button', { name: 'Pick my start on the map' })).toBeVisible()
+  await dialog.getByRole('button', { name: 'Pick my start on the map' }).click()
+  await expect(page.getByText('Tap where the trip starts.')).toBeVisible()
 })
 
 test('transit info says campus shuttles have no public live feed', async ({ page }) => {
@@ -150,4 +179,17 @@ test('a METRO stop lists scheduled buses and says live tracking is not connected
   await expect(page.getByLabel(/^Route (11|16|18|19|20)$/).first()).toBeVisible()
   await expect(page.getByText(/Live tracking is not connected/)).toBeVisible()
   await expect(page.getByText(/flexigo/)).toBeVisible()
+})
+
+test('blocked location explains the setting to change, and Try again works once it is allowed', async ({ page, context }) => {
+  await ready(page)
+  await page.getByRole('button', { name: 'Show my location' }).click()
+  const dialog = page.getByRole('dialog', { name: /Location is/ })
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByRole('listitem').first()).toBeVisible()
+  await context.grantPermissions(['geolocation'])
+  await context.setGeolocation({ latitude: 36.9972, longitude: -122.0555 })
+  await dialog.getByRole('button', { name: 'Try again' }).click()
+  await expect(dialog).toHaveCount(0)
+  await page.waitForFunction(() => Math.abs((window as any).__map.getCenter().lat - 36.9972) < 0.003, null, { timeout: 15_000 })
 })
