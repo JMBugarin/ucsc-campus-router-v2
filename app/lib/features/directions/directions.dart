@@ -17,16 +17,17 @@ class WalkTarget {
 }
 
 /// The door to walk to for [location] (a schedule-style place such as `Kresge Acad 3201`), or null when it
-/// is online, to be announced, unknown, or has no position yet. A door the data pins for the room comes first,
-/// then the building's main entrance, then any entrance, then the room itself, then the building's middle.
+/// is online, to be announced, unknown, or has no position yet. A door checked for the room comes first, then the
+/// door nearest the room, then the building's main entrance, then any entrance, then the room itself, then the
+/// building's middle.
 WalkTarget? walkTarget(Campus campus, String location) {
   final r = campus.resolve(location);
   if (r.kind != 'building') return null;
   final building = campus.buildings[r.buildingId]!;
-  Entrance? door;
-  for (final kind in const ['override', 'main']) {
-    door ??= r.entrances.where((e) => e.kind == kind).firstOrNull;
-  }
+  var door = r.entrances.where((e) => e.kind == 'override').firstOrNull;
+  final room = r.roomPoint?.point;
+  if (door == null && room != null) door = nearestDoor(r.entrances, room);
+  door ??= r.entrances.where((e) => e.kind == 'main').firstOrNull;
   door ??= r.entrances.firstOrNull;
   final point = door?.point ?? r.roomPoint?.point ?? building.centroid;
   if (point == null) return null;
@@ -34,6 +35,18 @@ WalkTarget? walkTarget(Campus campus, String location) {
     label: r.room == null ? building.name : '${building.name} ${r.room}',
     point: point,
   );
+}
+
+/// The mapped door closest to [room], ignoring outline-centre approach points.
+Entrance? nearestDoor(List<Entrance> entrances, GeoPoint room) {
+  Entrance? best;
+  for (final e in entrances) {
+    if (e.kind == 'approach') continue;
+    if (best == null || e.point.metresTo(room) < best.point.metresTo(room)) {
+      best = e;
+    }
+  }
+  return best;
 }
 
 /// A link that opens walking directions to [target] in the phone's maps app, starting from where the phone is.

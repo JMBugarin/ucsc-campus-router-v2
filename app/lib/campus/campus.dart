@@ -105,6 +105,76 @@ class Building {
   }
 }
 
+/// A room checked on foot: how you get in and what to look for. Read from `data/rooms.json`.
+class RoomGuide {
+  const RoomGuide({
+    required this.checked,
+    this.source = 'walk',
+    this.access,
+    this.doorLabel,
+    this.wing,
+    this.note,
+    this.steps = const [],
+    this.stepFree,
+    this.elevator,
+  });
+
+  /// `YYYY-MM-DD` someone checked it.
+  final String checked;
+
+  /// `walk` or `student-tip`.
+  final String source;
+
+  /// `outside`, `lobby` or `library`.
+  final String? access;
+  final String? doorLabel;
+  final String? wing;
+  final String? note;
+  final List<String> steps;
+  final bool? stepFree;
+  final String? elevator;
+
+  static RoomGuide? fromOverride(Map? o) {
+    final checked = o?['checked'];
+    if (o == null || checked is! String) return null;
+    final entrance = o['entrance'];
+    return RoomGuide(
+      checked: checked,
+      source: (o['source'] as String?) ?? 'walk',
+      access: o['access'] as String?,
+      doorLabel: entrance is Map ? entrance['label'] as String? : null,
+      wing: o['wing'] as String?,
+      note: o['note'] as String?,
+      steps: [for (final s in (o['steps'] as List? ?? const [])) s as String],
+      stepFree: o['step_free'] as bool?,
+      elevator: o['elevator'] as String?,
+    );
+  }
+}
+
+/// The floor a room number implies: 152 is 1, B206 is 2, 3201 is 2 (Kresge and McHenry put the floor second).
+String? floorFromRoomNumber(String room) {
+  var m = RegExp(r'^[A-Z]?(\d)\d{2}$').firstMatch(room);
+  if (m != null) return m.group(1);
+  m = RegExp(r'^\d(\d)\d{2}$').firstMatch(room);
+  return m?.group(1);
+}
+
+/// "Floor 2" for a campus-map level such as `L2` or a checked floor such as `2`. Says "(campus map)" when
+/// the level is all there is and the room number does not back it up.
+String? floorText(String? raw, {String? room, bool checked = false}) {
+  if (raw == null || raw.isEmpty) return null;
+  final m = RegExp(r'^L?(\d+)$').firstMatch(raw);
+  if (m == null) return raw;
+  final n = m.group(1)!;
+  final name = n == '0' ? 'Lower level (floor 0)' : 'Floor $n';
+  final fromMap = !checked && raw.startsWith('L');
+  if (fromMap && room != null && floorFromRoomNumber(room) != n) {
+    return '$name (campus map)';
+  }
+  return name;
+}
+
 /// What a schedule-style location string turned out to be.
 class Resolution {
   const Resolution(
@@ -117,6 +187,7 @@ class Resolution {
     this.note,
     this.roomKnown,
     this.roomPoint,
+    this.guide,
   });
 
   final String raw;
@@ -132,6 +203,9 @@ class Resolution {
   /// True or false if the building's room list is known, else null.
   final bool? roomKnown;
   final RoomPoint? roomPoint;
+
+  /// Set once someone has walked the room.
+  final RoomGuide? guide;
 }
 
 /// One answer to a typed search: a building, or a room inside one.
@@ -323,6 +397,7 @@ class Campus {
       note: note,
       roomKnown: roomKnown,
       roomPoint: roomPoint,
+      guide: RoomGuide.fromOverride(override),
     );
   }
 
