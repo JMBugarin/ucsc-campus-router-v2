@@ -47,3 +47,33 @@ test('directions to a room end at its door and draw the last stretch inside', as
   const roles = await page.evaluate(() => (window as any).__map.querySourceFeatures('endpoints').map((f: any) => f.properties.role))
   expect(roles).toContain('room')
 })
+
+test('audit mode records a guide, places the door from a map tap and writes the rooms.json entry', async ({ page }) => {
+  await ready(page, '#/p/baskin-engineering-152?audit')
+  const panel = page.getByRole('region', { name: 'Audit this room' })
+  await expect(panel).toBeVisible()
+  await panel.getByRole('radio', { name: 'Outside' }).click()
+  await panel.getByLabel('One-line tip').fill('Corner room facing the trees')
+  await panel.getByRole('button', { name: 'Tap it on the map' }).click()
+  await page.waitForTimeout(1200)
+  const pt = await page.evaluate(() => {
+    const m = (window as any).__map
+    const p = m.project([-122.0634, 37.0003])
+    const r = m.getCanvas().getBoundingClientRect()
+    return { x: r.left + p.x, y: r.top + p.y }
+  })
+  await page.mouse.click(pt.x, pt.y)
+  const json = panel.getByLabel('Entry for data/rooms.json')
+  await expect(json).toHaveValue(/"baskin-engineering:152"/)
+  await expect(json).toHaveValue(/"access": "outside"/)
+  await expect(json).toHaveValue(/"entrance"/)
+  await expect(json).toHaveValue(/"checked": "\d{4}-\d{2}-\d{2}"/)
+  await expect(page).toHaveURL(/baskin-engineering-152/)
+  await page.waitForFunction(() => (window as any).__map.querySourceFeatures('doors').some((f: any) => f.properties.chosen === 1 && Math.abs(f.geometry.coordinates[1] - 37.0003) < 0.00005), null, { timeout: 15_000 })
+})
+
+test('room pages show no audit tools without ?audit', async ({ page }) => {
+  await ready(page, '#/p/baskin-engineering-152')
+  await expect(page.getByRole('heading', { name: 'Jack Baskin Engineering 152' })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Audit this room' })).toHaveCount(0)
+})
