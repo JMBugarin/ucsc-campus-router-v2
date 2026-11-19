@@ -6,7 +6,10 @@ export interface MetroFile {
   stops: [string, string, number, number][]
   routes: Record<string, [string, string, string]>
   services: { d: number[]; a: string; z: string; add: string[]; del: string[] }[]
-  patterns: { r: string; h: string; s: number[]; np?: number[]; nd?: number[]; p: number[][]; t: [number, number, number, string][] }[]
+  /** route shapes as flat lat, lon lists */
+  shapes?: number[][]
+  /** g: the pattern's shape; gi: for each stop, its point on that shape */
+  patterns: { r: string; h: string; s: number[]; np?: number[]; nd?: number[]; p: number[][]; t: [number, number, number, string][]; g?: number; gi?: number[] }[]
 }
 
 export interface Network {
@@ -233,15 +236,18 @@ export function leaveAt(net: Network, day: Day, depart: number, access: Map<numb
   return out
 }
 
-/** Journeys that get there by `deadline`, latest departure first: one search per five minutes over the two hours before. */
-export function arriveBy(net: Network, day: Day, deadline: number, access: Map<number, number>, egress: Map<number, number>, count = 3): Journey[] {
+/**
+ * Journeys that get there by `deadline`, latest departure first: one search per five minutes over the two hours before,
+ * never leaving before `earliestStart` (now), so a bus that has already gone is never offered.
+ */
+export function arriveBy(net: Network, day: Day, deadline: number, access: Map<number, number>, egress: Map<number, number>, count = 3, earliestStart = -Infinity): Journey[] {
   const found = new Map<string, Journey>()
-  for (let t = deadline - 150 * 60; t <= deadline; t += 300) {
+  for (let t = Math.max(deadline - 150 * 60, earliestStart); t <= deadline; t += 300) {
     const j = earliest(net, day, t, access, egress)
     if (!j || j.arrives > deadline) continue
     const key = j.legs.filter((l) => l.kind === 'bus').map((l) => `${(l as { pattern: number }).pattern}:${(l as { trip: number }).trip}`).join('>')
     const prev = found.get(key)
-    if (!prev || j.departs > prev.departs) found.set(key, j)
+    if (j.departs >= earliestStart && (!prev || j.departs > prev.departs)) found.set(key, j)
   }
   return [...found.values()].sort((a, b) => b.departs - a.departs).slice(0, count)
 }

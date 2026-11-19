@@ -19,7 +19,8 @@ export interface Graph {
   pairs: [number, number][]
 }
 
-export function buildGraph(f: GraphFile): Graph {
+export function buildGraph(file: GraphFile): Graph {
+  const f = file.undirected ? { ...file, edges: mirrored(file.edges) } : file
   const n = f.lat.length
   const m = f.edges.length / 4
   const off = new Uint32Array(n + 1)
@@ -48,6 +49,21 @@ export function buildGraph(f: GraphFile): Graph {
   const pairs: [number, number][] = []
   for (let u = 0; u < n; u++) for (let e = off[u]; e < off[u + 1]; e++) if (to[e] > u) pairs.push([u, to[e]])
   return { n, lat: Float64Array.from(f.lat), lon: Float64Array.from(f.lon), ele: Float32Array.from(f.ele), off, to, len, kind, shape, pairs }
+}
+
+function mirrored(edges: number[]): number[] {
+  const out = new Array<number>(edges.length * 2)
+  for (let i = 0; i < edges.length; i += 4) {
+    out[2 * i] = edges[i]
+    out[2 * i + 1] = edges[i + 1]
+    out[2 * i + 2] = edges[i + 2]
+    out[2 * i + 3] = edges[i + 3]
+    out[2 * i + 4] = edges[i + 1]
+    out[2 * i + 5] = edges[i]
+    out[2 * i + 6] = edges[i + 2]
+    out[2 * i + 7] = edges[i + 3]
+  }
+  return out
 }
 
 /** The directed edge from a to b, or -1. */

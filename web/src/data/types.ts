@@ -56,6 +56,8 @@ export interface GraphFile {
   lon: number[]
   ele: number[]
   edges: number[]
+  /** each edge is listed once and runs both ways */
+  undirected?: boolean
   /** bends between joined nodes: pairs (a < b, flat), offsets into pts, and the points (lat, lon flat) from a to b */
   shapes?: { pairs: number[]; off: number[]; pts: number[] }
 }
