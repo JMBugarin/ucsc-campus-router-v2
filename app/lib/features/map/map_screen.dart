@@ -19,6 +19,7 @@ import '../../design/tokens.dart';
 import '../../design/type.dart';
 import '../activity/activity.dart';
 import '../directions/directions.dart';
+import '../home/home_place.dart';
 import '../search/place.dart';
 import '../search/search_repository.dart';
 import '../today/today_controller.dart';
@@ -148,7 +149,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 if (_query.isNotEmpty)
                   Flexible(
                     child: _Results(query: _query, onChoose: _choose),
-                  ),
+                  )
+                else if (selected == null)
+                  _HomeChip(onChoose: _choose),
               ],
             ),
           ),
@@ -228,8 +231,10 @@ class _Results extends ConsumerWidget {
                       title: p.label,
                       subtitle: p.roomKnown == false
                           ? "Not on the building's room list"
-                          : null,
-                      icon: p.isRoom
+                          : p.subtitle,
+                      icon: p.isHousing
+                          ? Icons.home_outlined
+                          : p.isRoom
                           ? Icons.meeting_room_outlined
                           : Icons.apartment_outlined,
                       flagged: p.roomKnown == false,
@@ -293,8 +298,15 @@ class _PlaceCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.colors;
     final campus = ref.watch(campusProvider).value;
-    final target = campus == null ? null : walkTarget(campus, place.query);
-    final resolved = campus?.resolve(place.query);
+    final home = ref.watch(homePlaceProvider);
+    final target = place.isHousing
+        ? (place.point == null
+              ? null
+              : WalkTarget(label: place.label, point: place.point!))
+        : campus == null
+        ? null
+        : walkTarget(campus, place.query);
+    final resolved = place.isHousing ? null : campus?.resolve(place.query);
     final guide = resolved?.guide;
     final roomPoint = resolved?.roomPoint?.point;
     final floor = campus?.roomFloor(place.buildingId, place.room)?.text;
@@ -337,6 +349,13 @@ class _PlaceCard extends ConsumerWidget {
                         place.label,
                         style: AppText.title3.copyWith(color: c.labelPrimary),
                       ),
+                      if (place.subtitle != null && place.isHousing)
+                        Text(
+                          place.subtitle!,
+                          style: AppText.subhead.copyWith(
+                            color: c.labelSecondary,
+                          ),
+                        ),
                       if (floor != null || guide?.wing != null)
                         Text(
                           [?floor, ?guide?.wing].join(' · '),
@@ -410,12 +429,79 @@ class _PlaceCard extends ConsumerWidget {
                   child: FilledButton.icon(
                     onPressed: () => walkThere(context, ref, target),
                     icon: const Icon(Icons.directions_walk),
-                    label: const Text('Walk there'),
+                    label: Text(
+                      place.isHousing && home == place.buildingId
+                          ? 'Walk home'
+                          : 'Walk there',
+                    ),
                   ),
                 ),
               ],
+              if (place.isHousing)
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton.icon(
+                    onPressed: () => ref
+                        .read(homePlaceProvider.notifier)
+                        .set(
+                          home == place.buildingId ? null : place.buildingId,
+                        ),
+                    icon: Icon(
+                      home == place.buildingId
+                          ? Icons.close
+                          : Icons.home_outlined,
+                    ),
+                    label: Text(
+                      home == place.buildingId ? 'Remove home' : 'Set as home',
+                    ),
+                  ),
+                ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The saved home, one tap from the map, or a nudge to save one.
+class _HomeChip extends ConsumerWidget {
+  const _HomeChip({required this.onChoose});
+
+  final ValueChanged<Place> onChoose;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final id = ref.watch(homePlaceProvider);
+    final housing = ref.watch(housingProvider).value;
+    final home = housing?.byId(id);
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: Space.xs),
+        child: ActionChip(
+          avatar: const Icon(Icons.home_outlined, size: 18),
+          label: Text(
+            home == null
+                ? 'Set your home'
+                : 'Home · ${home.short ?? home.name}',
+          ),
+          onPressed: () {
+            if (home != null) {
+              onChoose(Place.fromHousing(home));
+              return;
+            }
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                floatingSnackBar(
+                  inset: FloatingBarInset.of(context),
+                  content: const Text(
+                    'Search your dorm or apartment, like "C9 Apt 2" or "Casa Primera", then tap Set as home.',
+                  ),
+                ),
+              );
+          },
         ),
       ),
     );

@@ -1,0 +1,6211 @@
+{
+ "source": "https://maps.ucsc.edu/ (facilities layer, UCSC PPDO); wing names from the Merrill College map",
+ "buildings": [
+  {
+   "id": "college-nine-apartment-building-1",
+   "asset": "7911",
+   "name": "College Nine Apartment Building 1",
+   "short": "Apartment Building 1",
+   "area": "College Nine",
+   "aliases": [
+    "C9 Apartment Building 1",
+    "C9 Apt 1",
+    "C9 Apartments 1",
+    "C9 Apartment 1",
+    "C9 Apt Building 1",
+    "C9 Building 1",
+    "College 9 Apartment Building 1",
+    "College 9 Apt 1",
+    "College 9 Apartments 1",
+    "College 9 Apartment 1",
+    "College 9 Apt Building 1",
+    "College 9 Building 1",
+    "Nine Apartment Building 1",
+    "Nine Apt 1",
+    "Nine Apartments 1",
+    "Nine Apartment 1",
+    "Nine Apt Building 1",
+    "Nine Building 1"
+   ],
+   "lat": 37.0019056,
+   "lon": -122.0589237,
+   "approach": [
+    [
+     37.0022953,
+     -122.0598478
+    ],
+    [
+     37.0020542,
+     -122.0593778
+    ],
+    [
+     37.0019917,
+     -122.0594403
+    ],
+    [
+     37.0022327,
+     -122.0599106
+    ]
+   ]
+  },
+  {
+   "id": "college-nine-apartment-building-2",
+   "asset": "7912",
+   "name": "College Nine Apartment Building 2",
+   "short": "Apartment Building 2",
+   "area": "College Nine",
+   "aliases": [
+    "C9 Apartment Building 2",
+    "C9 Apt 2",
+    "C9 Apartments 2",
+    "C9 Apartment 2",
+    "C9 Apt Building 2",
+    "C9 Building 2",
+    "College 9 Apartment Building 2",
+    "College 9 Apt 2",
+    "College 9 Apartments 2",
+    "College 9 Apartment 2",
+    "College 9 Apt Building 2",
+    "College 9 Building 2",
+    "Nine Apartment Building 2",
+    "Nine Apt 2",
+    "Nine Apartments 2",
+    "Nine Apartment 2",
+    "Nine Apt Building 2",
+    "Nine Building 2"
+   ],
+   "lat": 37.0024445,
+   "lon": -122.0590723,
+   "approach": [
+    [
+     37.0024885,
+     -122.058733
+    ],
+    [
+     37.002481,
+     -122.058607
+    ],
+    [
+     37.0022619,
+     -122.0589428
+    ],
+    [
+     37.0022624,
+     -122.0590695
+    ]
+   ]
+  },
+  {
+   "id": "college-nine-apartment-building-3",
+   "asset": "7913",
+   "name": "College Nine Apartment Building 3",
+   "short": "Apartment Building 3",
+   "area": "College Nine",
+   "aliases": [
+    "C9 Apartment Building 3",
+    "C9 Apt 3",
+    "C9 Apartments 3",
+    "C9 Apartment 3",
+    "C9 Apt Building 3",
+    "C9 Building 3",
+    "College 9 Apartment Building 3",
+    "College 9 Apt 3",
+    "College 9 Apartments 3",
+    "College 9 Apartment 3",
+    "College 9 Apt Building 3",
+    "College 9 Building 3",
+    "Nine Apartment Building 3",
+    "Nine Apt 3",
+    "Nine Apartments 3",
+    "Nine Apartment 3",
+    "Nine Apt Building 3",
+    "Nine Building 3"
+   ],
+   "lat": 37.0026346,
+   "lon": -122.058299,
+   "approach": [
+    [
+     37.0029914,
+     -122.0586812
+    ],
+    [
+     37.0028627,
+     -122.0586536
+    ],
+    [
+     37.0025872,
+     -122.0589275
+    ],
+    [
+     37.0026638,
+     -122.0589732
+    ]
+   ]
+  },
+  {
+   "id": "college-nine-apartment-building-4",
+   "asset": "7914",
+   "name": "College Nine Apartment Building 4",
+   "short": "Apartment Building 4",
+   "area": "College Nine",
+   "aliases": [
+    "C9 Apartment Building 4",
+    "C9 Apt 4",
+    "C9 Apartments 4",
+    "C9 Apartment 4",
+    "C9 Apt Building 4",
+    "C9 Building 4",
+    "College 9 Apartment Building 4",
+    "College 9 Apt 4",
+    "College 9 Apartments 4",
+    "College 9 Apartment 4",
+    "College 9 Apt Building 4",
+    "College 9 Building 4",
+    "Nine Apartment Building 4",
+    "Nine Apt 4",
+    "Nine Apartments 4",
+    "Nine Apartment 4",
+    "Nine Apt Building 4",
+    "Nine Building 4"
+   ],
+   "lat": 37.0038056,
+   "lon": -122.0606885,
+   "approach": [
+    [
+     37.0031732,
+     -122.0582926
+    ],
+    [
+     37.0030989,
+     -122.0582341
+    ],
+    [
+     37.0030105,
+     -122.0583443
+    ],
+    [
+     37.0030674,
+     -122.058418
+    ]
+   ]
+  },
+  {
+   "id": "college-nine-apartment-building-5",
+   "asset": "7915",
+   "name": "College Nine Apartment Building 5",
+   "short": "International Learning Center",
+   "known_as": "International Learning Center",
+   "area": "College Nine",
+   "aliases": [
+    "International Learning Center",
+    "C9 Apartment Building 5",
+    "C9 Apt 5",
+    "C9 Apartments 5",
+    "C9 Apartment 5",
+    "C9 Apt Building 5",
+    "C9 Building 5",
+    "College 9 Apartment Building 5",
+    "College 9 Apt 5",
+    "College 9 Apartments 5",
+    "College 9 Apartment 5",
+    "College 9 Apt Building 5",
+    "College 9 Building 5",
+    "Nine Apartment Building 5",
+    "Nine Apt 5",
+    "Nine Apartments 5",
+    "Nine Apartment 5",
+    "Nine Apt Building 5",
+    "Nine Building 5"
+   ],
+   "lat": 37.002888,
+   "lon": -122.056966,
+   "approach": [
+    [
+     37.0033949,
+     -122.0584341
+    ],
+    [
+     37.0033118,
+     -122.0584326
+    ],
+    [
+     37.0033101,
+     -122.0585625
+    ],
+    [
+     37.0033938,
+     -122.0585642
+    ]
+   ]
+  },
+  {
+   "id": "college-nine-residence-hall-1",
+   "asset": "7931",
+   "name": "College Nine Residence Hall 1",
+   "short": "Hague House",
+   "known_as": "Hague House",
+   "area": "College Nine",
+   "aliases": [
+    "Hague House",
+    "C9 Residence Hall 1",
+    "C9 Res Hall 1",
+    "C9 Hall 1",
+    "College 9 Residence Hall 1",
+    "College 9 Res Hall 1",
+    "College 9 Hall 1",
+    "Nine Residence Hall 1",
+    "Nine Res Hall 1",
+    "Nine Hall 1"
+   ],
+   "lat": 37.0020827,
+   "lon": -122.0585394,
+   "approach": [
+    [
+     37.0018662,
+     -122.0574451
+    ],
+    [
+     37.0014975,
+     -122.0569454
+    ],
+    [
+     37.001451,
+     -122.0570506
+    ],
+    [
+     37.0017797,
+     -122.0574929
+    ]
+   ]
+  },
+  {
+   "id": "college-nine-residence-hall-2",
+   "asset": "7932",
+   "name": "College Nine Residence Hall 2",
+   "short": "Gandhi House",
+   "known_as": "Gandhi House",
+   "area": "College Nine",
+   "aliases": [
+    "Gandhi House",
+    "C9 Residence Hall 2",
+    "C9 Res Hall 2",
+    "C9 Hall 2",
+    "College 9 Residence Hall 2",
+    "College 9 Res Hall 2",
+    "College 9 Hall 2",
+    "Nine Residence Hall 2",
+    "Nine Res Hall 2",
+    "Nine Hall 2"
+   ],
+   "lat": 37.0009237,
+   "lon": -122.0563854,
+   "approach": [
+    [
+     37.0014001,
+     -122.0570026
+    ],
+    [
+     37.0013633,
+     -122.0568946
+    ],
+    [
+     37.0008514,
+     -122.0571051
+    ],
+    [
+     37.0011115,
+     -122.0571816
+    ]
+   ]
+  },
+  {
+   "id": "college-nine-residence-hall-3",
+   "asset": "7934",
+   "name": "College Nine Residence Hall 3",
+   "short": "Geneva House",
+   "known_as": "Geneva House",
+   "area": "College Nine",
+   "aliases": [
+    "Geneva House",
+    "C9 Residence Hall 3",
+    "C9 Res Hall 3",
+    "C9 Hall 3",
+    "College 9 Residence Hall 3",
+    "College 9 Res Hall 3",
+    "College 9 Hall 3",
+    "Nine Residence Hall 3",
+    "Nine Res Hall 3",
+    "Nine Hall 3"
+   ],
+   "lat": 37.0015703,
+   "lon": -122.057793,
+   "approach": [
+    [
+     37.0016698,
+     -122.0576366
+    ],
+    [
+     37.001401,
+     -122.0571732
+    ],
+    [
+     37.0013128,
+     -122.0572138
+    ],
+    [
+     37.0016136,
+     -122.0577306
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-adams-house",
+   "asset": "7126",
+   "name": "Cowell College Adams House",
+   "short": "Adams House",
+   "area": "Cowell College",
+   "aliases": [
+    "Adams House",
+    "Adams",
+    "Cowell Adams House",
+    "Cowell Adams"
+   ],
+   "lat": 36.9966911,
+   "lon": -122.0521949,
+   "approach": [
+    [
+     36.9974622,
+     -122.0541547
+    ],
+    [
+     36.9970859,
+     -122.0539337
+    ],
+    [
+     36.997048,
+     -122.0539971
+    ],
+    [
+     36.9974233,
+     -122.054218
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-apartment-building-1",
+   "asset": "7701",
+   "name": "Cowell College Apartment Building 1",
+   "short": "Apartment Building 1",
+   "area": "Cowell College",
+   "aliases": [
+    "Cowell Apartment Building 1",
+    "Cowell Apt 1",
+    "Cowell Apartments 1",
+    "Cowell Apartment 1",
+    "Cowell Apt Building 1",
+    "Cowell Building 1"
+   ],
+   "lat": 36.9970591,
+   "lon": -122.0554526,
+   "approach": [
+    [
+     36.9970232,
+     -122.0550475
+    ],
+    [
+     36.9968372,
+     -122.054674
+    ],
+    [
+     36.9967989,
+     -122.054888
+    ],
+    [
+     36.9969692,
+     -122.0551147
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-apartment-building-2",
+   "asset": "7707",
+   "name": "Cowell College Apartment Building 2",
+   "short": "Apartment Building 2",
+   "area": "Cowell College",
+   "aliases": [
+    "Cowell Apartment Building 2",
+    "Cowell Apt 2",
+    "Cowell Apartments 2",
+    "Cowell Apartment 2",
+    "Cowell Apt Building 2",
+    "Cowell Building 2"
+   ],
+   "lat": 36.9967294,
+   "lon": -122.0556545,
+   "approach": [
+    [
+     36.9968491,
+     -122.0551022
+    ],
+    [
+     36.9965054,
+     -122.0549636
+    ],
+    [
+     36.996266,
+     -122.0549977
+    ],
+    [
+     36.9968098,
+     -122.0552412
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-apartment-building-3",
+   "asset": "7714",
+   "name": "Cowell College Apartment Building 3",
+   "short": "Apartment Building 3",
+   "area": "Cowell College",
+   "aliases": [
+    "Cowell Apartment Building 3",
+    "Cowell Apt 3",
+    "Cowell Apartments 3",
+    "Cowell Apartment 3",
+    "Cowell Apt Building 3",
+    "Cowell Building 3"
+   ],
+   "lat": 36.9964656,
+   "lon": -122.0554641,
+   "approach": [
+    [
+     36.9963147,
+     -122.0545754
+    ],
+    [
+     36.9961791,
+     -122.054351
+    ],
+    [
+     36.9960977,
+     -122.0544292
+    ],
+    [
+     36.9962932,
+     -122.0549551
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-beard-house",
+   "asset": "7122",
+   "name": "Cowell College Beard House",
+   "short": "Beard House",
+   "area": "Cowell College",
+   "aliases": [
+    "Beard House",
+    "Beard",
+    "Cowell Beard House",
+    "Cowell Beard"
+   ],
+   "lat": 36.9960437,
+   "lon": -122.0527514,
+   "approach": [
+    [
+     36.9967593,
+     -122.054529
+    ],
+    [
+     36.9964203,
+     -122.0544017
+    ],
+    [
+     36.9963896,
+     -122.0544648
+    ],
+    [
+     36.9967273,
+     -122.0545991
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-morison-house",
+   "asset": "7123",
+   "name": "Cowell College Morison House",
+   "short": "Morison House",
+   "area": "Cowell College",
+   "aliases": [
+    "Morison House",
+    "Morison",
+    "Cowell Morison House",
+    "Cowell Morison"
+   ],
+   "lat": 36.9961115,
+   "lon": -122.0518802,
+   "approach": [
+    [
+     36.9969282,
+     -122.0541005
+    ],
+    [
+     36.9968737,
+     -122.0540569
+    ],
+    [
+     36.9967538,
+     -122.0544722
+    ],
+    [
+     36.9968028,
+     -122.0545139
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-parkman-house",
+   "asset": "7125",
+   "name": "Cowell College Parkman House",
+   "short": "Parkman House",
+   "area": "Cowell College",
+   "aliases": [
+    "Parkman House",
+    "Parkman",
+    "Cowell Parkman House",
+    "Cowell Parkman"
+   ],
+   "lat": 36.9971991,
+   "lon": -122.0538492,
+   "approach": [
+    [
+     36.9974853,
+     -122.0542803
+    ],
+    [
+     36.9974366,
+     -122.0542361
+    ],
+    [
+     36.9972812,
+     -122.0546356
+    ],
+    [
+     36.9973333,
+     -122.0546819
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-parrington-house",
+   "asset": "7121",
+   "name": "Cowell College Parrington House",
+   "short": "Parrington House",
+   "area": "Cowell College",
+   "aliases": [
+    "Parrington House",
+    "Parrington",
+    "Cowell Parrington House",
+    "Cowell Parrington"
+   ],
+   "lat": 36.9970202,
+   "lon": -122.0562542,
+   "approach": [
+    [
+     36.9964764,
+     -122.0539862
+    ],
+    [
+     36.9964222,
+     -122.0539441
+    ],
+    [
+     36.9963018,
+     -122.0543597
+    ],
+    [
+     36.9963669,
+     -122.0544058
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-prescott-house",
+   "asset": "7124",
+   "name": "Cowell College Prescott House",
+   "short": "Prescott House",
+   "area": "Cowell College",
+   "aliases": [
+    "Prescott House",
+    "Prescott",
+    "Cowell Prescott House",
+    "Cowell Prescott"
+   ],
+   "lat": 36.9977539,
+   "lon": -122.0568552,
+   "approach": [
+    [
+     36.9972633,
+     -122.0546431
+    ],
+    [
+     36.9969212,
+     -122.0545296
+    ],
+    [
+     36.9968907,
+     -122.0545997
+    ],
+    [
+     36.9972331,
+     -122.0547146
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-scholars-house",
+   "asset": "7127",
+   "name": "Cowell College Scholars House",
+   "short": "Cowell Scholars House",
+   "known_as": "Cowell Scholars House",
+   "area": "Cowell College",
+   "aliases": [
+    "Cowell Scholars House",
+    "French House",
+    "Cowell College French House",
+    "Cowell College Apt Bldg 4",
+    "Scholars House",
+    "Scholars",
+    "Cowell Scholars"
+   ],
+   "lat": 36.9978554,
+   "lon": -122.0552565,
+   "approach": [
+    [
+     36.9977413,
+     -122.0546107
+    ],
+    [
+     36.9977403,
+     -122.0544963
+    ],
+    [
+     36.9975446,
+     -122.0544994
+    ],
+    [
+     36.9975457,
+     -122.0546149
+    ]
+   ]
+  },
+  {
+   "id": "cowell-college-turner-house",
+   "asset": "7120",
+   "name": "Cowell College Turner House",
+   "short": "Turner House",
+   "area": "Cowell College",
+   "aliases": [
+    "Turner House",
+    "Turner",
+    "Cowell Turner House",
+    "Cowell Turner"
+   ],
+   "lat": 36.9964182,
+   "lon": -122.0531285,
+   "approach": [
+    [
+     36.9968298,
+     -122.0538598
+    ],
+    [
+     36.9968008,
+     -122.0537772
+    ],
+    [
+     36.9964545,
+     -122.0538689
+    ],
+    [
+     36.9964827,
+     -122.0539448
+    ]
+   ]
+  },
+  {
+   "id": "crown-college-descartes-house",
+   "asset": "7152",
+   "name": "Crown College Descartes House",
+   "short": "Descartes House",
+   "area": "Crown College",
+   "aliases": [
+    "Descartes House",
+    "Descartes",
+    "Crown Descartes House",
+    "Crown Descartes"
+   ],
+   "lat": 36.9998342,
+   "lon": -122.0564018,
+   "approach": [
+    [
+     36.9993612,
+     -122.0543897
+    ],
+    [
+     36.9993041,
+     -122.0543885
+    ],
+    [
+     36.9991454,
+     -122.0546093
+    ],
+    [
+     36.9993128,
+     -122.0546851
+    ]
+   ]
+  },
+  {
+   "id": "crown-college-galen-house",
+   "asset": "7150",
+   "name": "Crown College Galen House",
+   "short": "Galen House",
+   "area": "Crown College",
+   "aliases": [
+    "Galen House",
+    "Galen",
+    "Crown Galen House",
+    "Crown Galen"
+   ],
+   "lat": 37.0002343,
+   "lon": -122.0550779,
+   "approach": [
+    [
+     37.0003267,
+     -122.0550582
+    ],
+    [
+     37.0002501,
+     -122.0548977
+    ],
+    [
+     37.0000883,
+     -122.055158
+    ],
+    [
+     37.0001295,
+     -122.0551585
+    ]
+   ]
+  },
+  {
+   "id": "crown-college-galileo-house",
+   "asset": "7154",
+   "name": "Crown College Galileo House",
+   "short": "Galileo House",
+   "area": "Crown College",
+   "aliases": [
+    "Galileo House",
+    "Galileo",
+    "Crown Galileo House",
+    "Crown Galileo"
+   ],
+   "lat": 36.9991983,
+   "lon": -122.0531313,
+   "approach": [
+    [
+     36.9997316,
+     -122.054381
+    ],
+    [
+     36.9995647,
+     -122.0543119
+    ],
+    [
+     36.999521,
+     -122.0546085
+    ],
+    [
+     36.9995762,
+     -122.0546096
+    ]
+   ]
+  },
+  {
+   "id": "crown-college-gauss-house",
+   "asset": "7151",
+   "name": "Crown College Gauss House",
+   "short": "Gauss House",
+   "area": "Crown College",
+   "aliases": [
+    "Gauss House",
+    "Gauss",
+    "Crown Gauss House",
+    "Crown Gauss"
+   ],
+   "lat": 36.9998509,
+   "lon": -122.0560399,
+   "approach": [
+    [
+     36.9996109,
+     -122.054669
+    ],
+    [
+     36.9995691,
+     -122.0546681
+    ],
+    [
+     36.9993758,
+     -122.0548904
+    ],
+    [
+     36.9994513,
+     -122.0549244
+    ]
+   ]
+  },
+  {
+   "id": "crown-college-harvey-house",
+   "asset": "7149",
+   "name": "Crown College Harvey House",
+   "short": "Harvey House",
+   "area": "Crown College",
+   "aliases": [
+    "Harvey House",
+    "Harvey",
+    "Crown Harvey House",
+    "Crown Harvey"
+   ],
+   "lat": 37.0010077,
+   "lon": -122.0586698,
+   "approach": [
+    [
+     37.0000357,
+     -122.0550352
+    ],
+    [
+     36.9999581,
+     -122.055033
+    ],
+    [
+     36.9998223,
+     -122.0552578
+    ],
+    [
+     36.9999888,
+     -122.0553302
+    ]
+   ]
+  },
+  {
+   "id": "crown-college-leonardo-house",
+   "asset": "7147",
+   "name": "Crown College Leonardo House",
+   "short": "Leonardo House",
+   "area": "Crown College",
+   "aliases": [
+    "Leonardo House",
+    "Leonardo",
+    "Crown Leonardo House",
+    "Crown Leonardo"
+   ],
+   "lat": 37.0020613,
+   "lon": -122.0608704,
+   "approach": [
+    [
+     37.0005209,
+     -122.055241
+    ],
+    [
+     37.0003091,
+     -122.0552163
+    ],
+    [
+     37.0002723,
+     -122.0552898
+    ],
+    [
+     37.000342,
+     -122.0554788
+    ]
+   ]
+  },
+  {
+   "id": "crown-college-maxwell-house",
+   "asset": "7148",
+   "name": "Crown College Maxwell House",
+   "short": "Maxwell House",
+   "area": "Crown College",
+   "aliases": [
+    "Maxwell House",
+    "Maxwell",
+    "Crown Maxwell House",
+    "Crown Maxwell"
+   ],
+   "lat": 36.9999362,
+   "lon": -122.0548642,
+   "approach": [
+    [
+     37.0002215,
+     -122.0554428
+    ],
+    [
+     36.9999846,
+     -122.0553854
+    ],
+    [
+     36.9999837,
+     -122.0554571
+    ],
+    [
+     37.0001637,
+     -122.0556509
+    ]
+   ]
+  },
+  {
+   "id": "crown-college-rutherford-house",
+   "asset": "7153",
+   "name": "Crown College Rutherford House",
+   "short": "Rutherford House",
+   "area": "Crown College",
+   "aliases": [
+    "Rutherford House",
+    "Rutherford",
+    "Crown Rutherford House",
+    "Crown Rutherford"
+   ],
+   "lat": 36.9985518,
+   "lon": -122.0512696,
+   "approach": [
+    [
+     36.9995115,
+     -122.0542185
+    ],
+    [
+     36.9994154,
+     -122.0539961
+    ],
+    [
+     36.999302,
+     -122.0542457
+    ],
+    [
+     36.9994959,
+     -122.0543124
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-1",
+   "asset": "7535",
+   "name": "Crown-Merrill Housing Building 1",
+   "short": "Building 1",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 1",
+    "Crown Merrill 1",
+    "Crown-Merrill Building 1",
+    "Crown-Merrill 1",
+    "Crown Merrill Apartments Building 1",
+    "Crown Merrill Apartments 1",
+    "CM Building 1",
+    "CM 1"
+   ],
+   "lat": 37.0019261,
+   "lon": -122.054731,
+   "approach": [
+    [
+     37.0020263,
+     -122.0548643
+    ],
+    [
+     37.0019593,
+     -122.054644
+    ],
+    [
+     37.0018523,
+     -122.0547349
+    ],
+    [
+     37.0019403,
+     -122.0548818
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-2",
+   "asset": "7536",
+   "name": "Crown-Merrill Housing Building 2",
+   "short": "Building 2",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 2",
+    "Crown Merrill 2",
+    "Crown-Merrill Building 2",
+    "Crown-Merrill 2",
+    "Crown Merrill Apartments Building 2",
+    "Crown Merrill Apartments 2",
+    "CM Building 2",
+    "CM 2"
+   ],
+   "lat": 37.0022568,
+   "lon": -122.0557179,
+   "approach": [
+    [
+     37.0019757,
+     -122.054299
+    ],
+    [
+     37.0018755,
+     -122.0542101
+    ],
+    [
+     37.0017696,
+     -122.0545449
+    ],
+    [
+     37.0018199,
+     -122.0546079
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-3",
+   "asset": "7537",
+   "name": "Crown-Merrill Housing Building 3",
+   "short": "Building 3",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 3",
+    "Crown Merrill 3",
+    "Crown-Merrill Building 3",
+    "Crown-Merrill 3",
+    "Crown Merrill Apartments Building 3",
+    "Crown Merrill Apartments 3",
+    "CM Building 3",
+    "CM 3"
+   ],
+   "lat": 37.0016369,
+   "lon": -122.053817,
+   "approach": [
+    [
+     37.0018185,
+     -122.054173
+    ],
+    [
+     37.0016928,
+     -122.0540487
+    ],
+    [
+     37.0016711,
+     -122.0541549
+    ],
+    [
+     37.0018055,
+     -122.0543018
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-4",
+   "asset": "7538",
+   "name": "Crown-Merrill Housing Building 4",
+   "short": "Building 4",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 4",
+    "Crown Merrill 4",
+    "Crown-Merrill Building 4",
+    "Crown-Merrill 4",
+    "Crown Merrill Apartments Building 4",
+    "Crown Merrill Apartments 4",
+    "CM Building 4",
+    "CM 4"
+   ],
+   "lat": 37.0013725,
+   "lon": -122.0520902,
+   "approach": [
+    [
+     37.0019915,
+     -122.0538962
+    ],
+    [
+     37.0018654,
+     -122.0537679
+    ],
+    [
+     37.0018514,
+     -122.0538709
+    ],
+    [
+     37.0019765,
+     -122.0540253
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-5",
+   "asset": "7539",
+   "name": "Crown-Merrill Housing Building 5",
+   "short": "Building 5",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 5",
+    "Crown Merrill 5",
+    "Crown-Merrill Building 5",
+    "Crown-Merrill 5",
+    "Crown Merrill Apartments Building 5",
+    "Crown Merrill Apartments 5",
+    "CM Building 5",
+    "CM 5"
+   ],
+   "lat": 37.0009899,
+   "lon": -122.0504179,
+   "approach": [
+    [
+     37.0020072,
+     -122.0534225
+    ],
+    [
+     37.0019747,
+     -122.0534154
+    ],
+    [
+     37.0018605,
+     -122.0536331
+    ],
+    [
+     37.0019602,
+     -122.0536548
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-6",
+   "asset": "7540",
+   "name": "Crown-Merrill Housing Building 6",
+   "short": "Building 6",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 6",
+    "Crown Merrill 6",
+    "Crown-Merrill Building 6",
+    "Crown-Merrill 6",
+    "Crown Merrill Apartments Building 6",
+    "Crown Merrill Apartments 6",
+    "CM Building 6",
+    "CM 6"
+   ],
+   "lat": 37.0014969,
+   "lon": -122.0540539,
+   "approach": [
+    [
+     37.0016642,
+     -122.0543204
+    ],
+    [
+     37.0015517,
+     -122.0541252
+    ],
+    [
+     37.0014592,
+     -122.0541842
+    ],
+    [
+     37.0015817,
+     -122.0543651
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-7",
+   "asset": "7541",
+   "name": "Crown-Merrill Housing Building 7",
+   "short": "Building 7",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 7",
+    "Crown Merrill 7",
+    "Crown-Merrill Building 7",
+    "Crown-Merrill 7",
+    "Crown Merrill Apartments Building 7",
+    "Crown Merrill Apartments 7",
+    "CM Building 7",
+    "CM 7"
+   ],
+   "lat": 37.0012787,
+   "lon": -122.0535951,
+   "approach": [
+    [
+     37.0014842,
+     -122.0538618
+    ],
+    [
+     37.0014141,
+     -122.0537371
+    ],
+    [
+     37.0013176,
+     -122.0540229
+    ],
+    [
+     37.0013369,
+     -122.0541688
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-8",
+   "asset": "7542",
+   "name": "Crown-Merrill Housing Building 8",
+   "short": "Building 8",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 8",
+    "Crown Merrill 8",
+    "Crown-Merrill Building 8",
+    "Crown-Merrill 8",
+    "Crown Merrill Apartments Building 8",
+    "Crown Merrill Apartments 8",
+    "CM Building 8",
+    "CM 8"
+   ],
+   "lat": 37.0015764,
+   "lon": -122.0530743,
+   "approach": [
+    [
+     37.0017964,
+     -122.0534379
+    ],
+    [
+     37.0017151,
+     -122.0533573
+    ],
+    [
+     37.0016335,
+     -122.053571
+    ],
+    [
+     37.0017002,
+     -122.0536462
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-9",
+   "asset": "7543",
+   "name": "Crown-Merrill Housing Building 9",
+   "short": "Building 9",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 9",
+    "Crown Merrill 9",
+    "Crown-Merrill Building 9",
+    "Crown-Merrill 9",
+    "Crown Merrill Apartments Building 9",
+    "Crown Merrill Apartments 9",
+    "CM Building 9",
+    "CM 9"
+   ],
+   "lat": 37.0016735,
+   "lon": -122.05288,
+   "approach": [
+    [
+     37.0016955,
+     -122.0525772
+    ],
+    [
+     37.0016389,
+     -122.0525529
+    ],
+    [
+     37.0015376,
+     -122.0527404
+    ],
+    [
+     37.0015849,
+     -122.0528023
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-10",
+   "asset": "7544",
+   "name": "Crown-Merrill Housing Building 10",
+   "short": "Building 10",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 10",
+    "Crown Merrill 10",
+    "Crown-Merrill Building 10",
+    "Crown-Merrill 10",
+    "Crown Merrill Apartments Building 10",
+    "Crown Merrill Apartments 10",
+    "CM Building 10",
+    "CM 10"
+   ],
+   "lat": 37.0020253,
+   "lon": -122.0547888,
+   "approach": [
+    [
+     37.0015893,
+     -122.0529927
+    ],
+    [
+     37.0014537,
+     -122.0528458
+    ],
+    [
+     37.001369,
+     -122.0529162
+    ],
+    [
+     37.0015043,
+     -122.0530772
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-11",
+   "asset": "7545",
+   "name": "Crown-Merrill Housing Building 11",
+   "short": "Building 11",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 11",
+    "Crown Merrill 11",
+    "Crown-Merrill Building 11",
+    "Crown-Merrill 11",
+    "Crown Merrill Apartments Building 11",
+    "Crown Merrill Apartments 11",
+    "CM Building 11",
+    "CM 11"
+   ],
+   "lat": 37.0000665,
+   "lon": -122.048463,
+   "approach": [
+    [
+     37.0014469,
+     -122.0526079
+    ],
+    [
+     37.0013474,
+     -122.0525533
+    ],
+    [
+     37.0012496,
+     -122.0526988
+    ],
+    [
+     37.001346,
+     -122.0527932
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-12",
+   "asset": "7546",
+   "name": "Crown-Merrill Housing Building 12",
+   "short": "Building 12",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 12",
+    "Crown Merrill 12",
+    "Crown-Merrill Building 12",
+    "Crown-Merrill 12",
+    "Crown Merrill Apartments Building 12",
+    "Crown Merrill Apartments 12",
+    "CM Building 12",
+    "CM 12"
+   ],
+   "lat": 37.0006692,
+   "lon": -122.0487332,
+   "approach": [
+    [
+     37.0018919,
+     -122.0523583
+    ],
+    [
+     37.0017953,
+     -122.0523011
+    ],
+    [
+     37.0016898,
+     -122.0524977
+    ],
+    [
+     37.0017741,
+     -122.0525465
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-13",
+   "asset": "7547",
+   "name": "Crown-Merrill Housing Building 13",
+   "short": "Building 13",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 13",
+    "Crown Merrill 13",
+    "Crown-Merrill Building 13",
+    "Crown-Merrill 13",
+    "Crown Merrill Apartments Building 13",
+    "Crown Merrill Apartments 13",
+    "CM Building 13",
+    "CM 13"
+   ],
+   "lat": 37.002414,
+   "lon": -122.0547903,
+   "approach": [
+    [
+     37.0019182,
+     -122.0526686
+    ],
+    [
+     37.0018169,
+     -122.0526256
+    ],
+    [
+     37.0017333,
+     -122.0527724
+    ],
+    [
+     37.0017964,
+     -122.0530454
+    ]
+   ]
+  },
+  {
+   "id": "crown-merrill-housing-building-14",
+   "asset": "7548",
+   "name": "Crown-Merrill Housing Building 14",
+   "short": "Building 14",
+   "area": "Crown/Merrill Apartments",
+   "aliases": [
+    "Crown Merrill Building 14",
+    "Crown Merrill 14",
+    "Crown-Merrill Building 14",
+    "Crown-Merrill 14",
+    "Crown Merrill Apartments Building 14",
+    "Crown Merrill Apartments 14",
+    "CM Building 14",
+    "CM 14"
+   ],
+   "lat": 37.0026256,
+   "lon": -122.0548333,
+   "approach": [
+    [
+     37.0020979,
+     -122.0527133
+    ],
+    [
+     37.0020438,
+     -122.0526838
+    ],
+    [
+     37.0019307,
+     -122.0528575
+    ],
+    [
+     37.0020377,
+     -122.0529419
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-a-1-4",
+   "asset": "7352",
+   "name": "Family Student Housing A 1-4",
+   "short": "A 1-4",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH A 1-4",
+    "Family Housing A 1-4"
+   ],
+   "lat": 36.9911062,
+   "lon": -122.0668765,
+   "approach": [
+    [
+     36.9911807,
+     -122.0668595
+    ],
+    [
+     36.991047,
+     -122.0667665
+    ],
+    [
+     36.9910157,
+     -122.0668559
+    ],
+    [
+     36.99115,
+     -122.0669474
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-a-5-7",
+   "asset": "7351",
+   "name": "Family Student Housing A 5-7",
+   "short": "A 5-7",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH A 5-7",
+    "Family Housing A 5-7"
+   ],
+   "lat": 36.9903604,
+   "lon": -122.0648335,
+   "approach": [
+    [
+     36.9910109,
+     -122.0666761
+    ],
+    [
+     36.9908641,
+     -122.0666167
+    ],
+    [
+     36.9908216,
+     -122.0666609
+    ],
+    [
+     36.9910026,
+     -122.0667714
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-a-8-12",
+   "asset": "7350",
+   "name": "Family Student Housing A 8-12",
+   "short": "A 8-12",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH A 8-12",
+    "Family Housing A 8-12"
+   ],
+   "lat": 36.9910512,
+   "lon": -122.0677353,
+   "approach": [
+    [
+     36.990858,
+     -122.0667586
+    ],
+    [
+     36.9907816,
+     -122.066748
+    ],
+    [
+     36.9907293,
+     -122.0669974
+    ],
+    [
+     36.9908058,
+     -122.067008
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-a-13-18",
+   "asset": "7349",
+   "name": "Family Student Housing A 13-18",
+   "short": "A 13-18",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH A 13-18",
+    "Family Housing A 13-18"
+   ],
+   "lat": 36.9907149,
+   "lon": -122.0672361,
+   "approach": [
+    [
+     36.9908027,
+     -122.0670894
+    ],
+    [
+     36.9907378,
+     -122.0670379
+    ],
+    [
+     36.9906178,
+     -122.0673142
+    ],
+    [
+     36.9906839,
+     -122.0673664
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-a-19-21",
+   "asset": "7345",
+   "name": "Family Student Housing A 19-21",
+   "short": "A 19-21",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH A 19-21",
+    "Family Housing A 19-21"
+   ],
+   "lat": 36.9916954,
+   "lon": -122.0698995,
+   "approach": [
+    [
+     36.9909454,
+     -122.067132
+    ],
+    [
+     36.9908807,
+     -122.0670803
+    ],
+    [
+     36.9907963,
+     -122.0672446
+    ],
+    [
+     36.990861,
+     -122.0672963
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-b-1-2",
+   "asset": "7366",
+   "name": "Family Student Housing B 1-2",
+   "short": "B 1-2",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH B 1-2",
+    "Family Housing B 1-2"
+   ],
+   "lat": 36.9898714,
+   "lon": -122.063974,
+   "approach": [
+    [
+     36.9909805,
+     -122.0673811
+    ],
+    [
+     36.990846,
+     -122.0672843
+    ],
+    [
+     36.9908208,
+     -122.0673333
+    ],
+    [
+     36.9909391,
+     -122.0674618
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-b-3-6",
+   "asset": "7348",
+   "name": "Family Student Housing B 3-6",
+   "short": "B 3-6",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH B 3-6",
+    "Family Housing B 3-6"
+   ],
+   "lat": 36.9905672,
+   "lon": -122.0676099,
+   "approach": [
+    [
+     36.9905784,
+     -122.0672821
+    ],
+    [
+     36.99038,
+     -122.0672221
+    ],
+    [
+     36.9903686,
+     -122.0673203
+    ],
+    [
+     36.9905668,
+     -122.0673817
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-b-7-9",
+   "asset": "7347",
+   "name": "Family Student Housing B 7-9",
+   "short": "B 7-9",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH B 7-9",
+    "Family Housing B 7-9"
+   ],
+   "lat": 36.9914489,
+   "lon": -122.0711613,
+   "approach": [
+    [
+     36.9903443,
+     -122.0672464
+    ],
+    [
+     36.9903141,
+     -122.06723
+    ],
+    [
+     36.9902273,
+     -122.0673681
+    ],
+    [
+     36.9902977,
+     -122.0674068
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-b-10-12",
+   "asset": "7346",
+   "name": "Family Student Housing B 10-12",
+   "short": "B 10-12",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH B 10-12",
+    "Family Housing B 10-12"
+   ],
+   "lat": 36.9903832,
+   "lon": -122.0675057,
+   "approach": [
+    [
+     36.9904816,
+     -122.0675219
+    ],
+    [
+     36.9903543,
+     -122.0674054
+    ],
+    [
+     36.9902921,
+     -122.0674674
+    ],
+    [
+     36.9904193,
+     -122.0675839
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-b-13-19",
+   "asset": "7338",
+   "name": "Family Student Housing B 13-19",
+   "short": "B 13-19",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH B 13-19",
+    "Family Housing B 13-19"
+   ],
+   "lat": 36.9900331,
+   "lon": -122.0665545,
+   "approach": [
+    [
+     36.9904815,
+     -122.0676222
+    ],
+    [
+     36.9904075,
+     -122.0676206
+    ],
+    [
+     36.9903558,
+     -122.0679842
+    ],
+    [
+     36.9904354,
+     -122.0679859
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-b-20-23",
+   "asset": "7339",
+   "name": "Family Student Housing B 20-23",
+   "short": "B 20-23",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH B 20-23",
+    "Family Housing B 20-23"
+   ],
+   "lat": 36.9908055,
+   "lon": -122.0688161,
+   "approach": [
+    [
+     36.9905727,
+     -122.0677902
+    ],
+    [
+     36.990493,
+     -122.0677885
+    ],
+    [
+     36.9904898,
+     -122.0680316
+    ],
+    [
+     36.9905694,
+     -122.0680332
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-b-24-28",
+   "asset": "7340",
+   "name": "Family Student Housing B 24-28",
+   "short": "B 24-28",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH B 24-28",
+    "Family Housing B 24-28"
+   ],
+   "lat": 36.9910974,
+   "lon": -122.0689435,
+   "approach": [
+    [
+     36.9908582,
+     -122.0677485
+    ],
+    [
+     36.9907247,
+     -122.0676972
+    ],
+    [
+     36.9906258,
+     -122.0677175
+    ],
+    [
+     36.9906385,
+     -122.0678138
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-c-1-5",
+   "asset": "7341",
+   "name": "Family Student Housing C 1-5",
+   "short": "C 1-5",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH C 1-5",
+    "Family Housing C 1-5"
+   ],
+   "lat": 36.9896426,
+   "lon": -122.0628543,
+   "approach": [
+    [
+     36.9912677,
+     -122.0678144
+    ],
+    [
+     36.9911693,
+     -122.0678026
+    ],
+    [
+     36.9910599,
+     -122.0679155
+    ],
+    [
+     36.9911597,
+     -122.0679274
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-c-6-7-and-e-19",
+   "asset": "7342",
+   "name": "Family Student Housing C 6-7 and E 19",
+   "short": "C 6-7 and E 19",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH C 6-7 and E 19",
+    "Family Housing C 6-7 and E 19"
+   ],
+   "lat": 36.9925138,
+   "lon": -122.0723807,
+   "approach": [
+    [
+     36.9913631,
+     -122.0680624
+    ],
+    [
+     36.9913411,
+     -122.0679422
+    ],
+    [
+     36.9910505,
+     -122.0681908
+    ],
+    [
+     36.9910677,
+     -122.0682858
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-c-8-16",
+   "asset": "7343",
+   "name": "Family Student Housing C 8-16",
+   "short": "C 8-16",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH C 8-16",
+    "Family Housing C 8-16"
+   ],
+   "lat": 36.9922647,
+   "lon": -122.0704206,
+   "approach": [
+    [
+     36.9915292,
+     -122.0675904
+    ],
+    [
+     36.9915229,
+     -122.0675259
+    ],
+    [
+     36.9914057,
+     -122.0678231
+    ],
+    [
+     36.991429,
+     -122.068061
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-c-17-23",
+   "asset": "7344",
+   "name": "Family Student Housing C 17-23",
+   "short": "C 17-23",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH C 17-23",
+    "Family Housing C 17-23"
+   ],
+   "lat": 36.9910588,
+   "lon": -122.0667622,
+   "approach": [
+    [
+     36.9914214,
+     -122.0674392
+    ],
+    [
+     36.9912695,
+     -122.0673837
+    ],
+    [
+     36.9911118,
+     -122.0675011
+    ],
+    [
+     36.9914204,
+     -122.0675351
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-d-1-6",
+   "asset": "7335",
+   "name": "Family Student Housing D 1-6",
+   "short": "D 1-6",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH D 1-6",
+    "Family Housing D 1-6"
+   ],
+   "lat": 36.98986,
+   "lon": -122.0652766,
+   "approach": [
+    [
+     36.9908718,
+     -122.0680646
+    ],
+    [
+     36.9907283,
+     -122.0680345
+    ],
+    [
+     36.99056,
+     -122.0681576
+    ],
+    [
+     36.9906101,
+     -122.0681679
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-d-7-9",
+   "asset": "7337",
+   "name": "Family Student Housing D 7-9",
+   "short": "D 7-9",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH D 7-9",
+    "Family Housing D 7-9"
+   ],
+   "lat": 36.9886582,
+   "lon": -122.062817,
+   "approach": [
+    [
+     36.9903374,
+     -122.0681277
+    ],
+    [
+     36.9902717,
+     -122.0680211
+    ],
+    [
+     36.9901712,
+     -122.0680447
+    ],
+    [
+     36.9901859,
+     -122.0681423
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-d-10-14",
+   "asset": "7365",
+   "name": "Family Student Housing D 10-14",
+   "short": "D 10-14",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH D 10-14",
+    "Family Housing D 10-14"
+   ],
+   "lat": 36.9902647,
+   "lon": -122.0678701,
+   "approach": [
+    [
+     36.9905252,
+     -122.0682106
+    ],
+    [
+     36.9905,
+     -122.0681164
+    ],
+    [
+     36.9902154,
+     -122.0682774
+    ],
+    [
+     36.9902257,
+     -122.0683372
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-d-15-21",
+   "asset": "7334",
+   "name": "Family Student Housing D 15-21",
+   "short": "D 15-21",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH D 15-21",
+    "Family Housing D 15-21"
+   ],
+   "lat": 36.990435,
+   "lon": -122.067823,
+   "approach": [
+    [
+     36.9907287,
+     -122.0685664
+    ],
+    [
+     36.9905715,
+     -122.0682106
+    ],
+    [
+     36.9905226,
+     -122.0682796
+    ],
+    [
+     36.9906588,
+     -122.0686102
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-e-1-5",
+   "asset": "7327",
+   "name": "Family Student Housing E 1-5",
+   "short": "E 1-5",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH E 1-5",
+    "Family Housing E 1-5"
+   ],
+   "lat": 36.990501,
+   "lon": -122.0670446,
+   "approach": [
+    [
+     36.9911102,
+     -122.0686999
+    ],
+    [
+     36.9910567,
+     -122.068631
+    ],
+    [
+     36.9909278,
+     -122.0688243
+    ],
+    [
+     36.9909822,
+     -122.0688945
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-e-6-9",
+   "asset": "7326",
+   "name": "Family Student Housing E 6-9",
+   "short": "E 6-9",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH E 6-9",
+    "Family Housing E 6-9"
+   ],
+   "lat": 36.9912899,
+   "lon": -122.0688713,
+   "approach": [
+    [
+     36.9913277,
+     -122.0686312
+    ],
+    [
+     36.9912482,
+     -122.0686158
+    ],
+    [
+     36.9911465,
+     -122.0687233
+    ],
+    [
+     36.9912468,
+     -122.0687254
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-e-10-13",
+   "asset": "7325",
+   "name": "Family Student Housing E 10-13",
+   "short": "E 10-13",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH E 10-13",
+    "Family Housing E 10-13"
+   ],
+   "lat": 36.9911466,
+   "lon": -122.0677469,
+   "approach": [
+    [
+     36.9914685,
+     -122.0685337
+    ],
+    [
+     36.9914254,
+     -122.0684523
+    ],
+    [
+     36.9913105,
+     -122.0685709
+    ],
+    [
+     36.9913529,
+     -122.068651
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-f-1-5",
+   "asset": "7333",
+   "name": "Family Student Housing F 1-5",
+   "short": "F 1-5",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH F 1-5",
+    "Family Housing F 1-5"
+   ],
+   "lat": 36.9911288,
+   "lon": -122.0712963,
+   "approach": [
+    [
+     36.9903579,
+     -122.0686417
+    ],
+    [
+     36.9903012,
+     -122.0683398
+    ],
+    [
+     36.9902141,
+     -122.0684274
+    ],
+    [
+     36.9902799,
+     -122.0686613
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-f-6-10",
+   "asset": "7336",
+   "name": "Family Student Housing F 6-10",
+   "short": "F 6-10",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH F 6-10",
+    "Family Housing F 6-10"
+   ],
+   "lat": 36.9903503,
+   "lon": -122.0691052,
+   "approach": [
+    [
+     36.9901287,
+     -122.0680206
+    ],
+    [
+     36.9900602,
+     -122.0679769
+    ],
+    [
+     36.9899771,
+     -122.0682102
+    ],
+    [
+     36.9900212,
+     -122.0682883
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-f-11-14",
+   "asset": "7332",
+   "name": "Family Student Housing F 11-14",
+   "short": "F 11-14",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH F 11-14",
+    "Family Housing F 11-14"
+   ],
+   "lat": 36.990304,
+   "lon": -122.0690688,
+   "approach": [
+    [
+     36.990185,
+     -122.0685072
+    ],
+    [
+     36.9901468,
+     -122.0682688
+    ],
+    [
+     36.9900296,
+     -122.0683602
+    ],
+    [
+     36.9901069,
+     -122.0685268
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-f-15-17",
+   "asset": "7331",
+   "name": "Family Student Housing F 15-17",
+   "short": "F 15-17",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH F 15-17",
+    "Family Housing F 15-17"
+   ],
+   "lat": 36.989258,
+   "lon": -122.0657924,
+   "approach": [
+    [
+     36.9901838,
+     -122.0686511
+    ],
+    [
+     36.9901452,
+     -122.0685642
+    ],
+    [
+     36.9900574,
+     -122.0686252
+    ],
+    [
+     36.9900961,
+     -122.0687116
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-f-18-23",
+   "asset": "7330",
+   "name": "Family Student Housing F 18-23",
+   "short": "F 18-23",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH F 18-23",
+    "Family Housing F 18-23"
+   ],
+   "lat": 36.9908779,
+   "lon": -122.0714039,
+   "approach": [
+    [
+     36.9902158,
+     -122.0690774
+    ],
+    [
+     36.9901402,
+     -122.0688695
+    ],
+    [
+     36.9900704,
+     -122.0689173
+    ],
+    [
+     36.9901898,
+     -122.0690952
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-f-24-29",
+   "asset": "7329",
+   "name": "Family Student Housing F 24-29",
+   "short": "F 24-29",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH F 24-29",
+    "Family Housing F 24-29"
+   ],
+   "lat": 36.9911637,
+   "lon": -122.0716167,
+   "approach": [
+    [
+     36.9905069,
+     -122.0690237
+    ],
+    [
+     36.9904893,
+     -122.0689269
+    ],
+    [
+     36.9902417,
+     -122.0689948
+    ],
+    [
+     36.9902592,
+     -122.0690916
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-f-30-33",
+   "asset": "7328",
+   "name": "Family Student Housing F 30-33",
+   "short": "F 30-33",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH F 30-33",
+    "Family Housing F 30-33"
+   ],
+   "lat": 36.990455,
+   "lon": -122.0685484,
+   "approach": [
+    [
+     36.9906396,
+     -122.0689064
+    ],
+    [
+     36.9905683,
+     -122.0688621
+    ],
+    [
+     36.9905236,
+     -122.068974
+    ],
+    [
+     36.9906111,
+     -122.0690964
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-g-1-4",
+   "asset": "7353",
+   "name": "Family Student Housing G 1-4",
+   "short": "G 1-4",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH G 1-4",
+    "Family Housing G 1-4"
+   ],
+   "lat": 36.9917051,
+   "lon": -122.0675326,
+   "approach": [
+    [
+     36.9917839,
+     -122.0676578
+    ],
+    [
+     36.9916653,
+     -122.067465
+    ],
+    [
+     36.9916637,
+     -122.06753
+    ],
+    [
+     36.9917824,
+     -122.0677228
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-g-5-8",
+   "asset": "7363",
+   "name": "Family Student Housing G 5-8",
+   "short": "G 5-8",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH G 5-8",
+    "Family Housing G 5-8"
+   ],
+   "lat": 36.9900377,
+   "lon": -122.0621151,
+   "approach": [
+    [
+     36.9918513,
+     -122.0679072
+    ],
+    [
+     36.9917716,
+     -122.0677663
+    ],
+    [
+     36.9917313,
+     -122.0679598
+    ],
+    [
+     36.9917973,
+     -122.0680124
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-g-9-11",
+   "asset": "7362",
+   "name": "Family Student Housing G 9-11",
+   "short": "G 9-11",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH G 9-11",
+    "Family Housing G 9-11"
+   ],
+   "lat": 36.9922594,
+   "lon": -122.0699436,
+   "approach": [
+    [
+     36.9917837,
+     -122.0680259
+    ],
+    [
+     36.9916573,
+     -122.0679997
+    ],
+    [
+     36.9916029,
+     -122.0681134
+    ],
+    [
+     36.991655,
+     -122.0681149
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-g-12-14",
+   "asset": "7354",
+   "name": "Family Student Housing G 12-14",
+   "short": "G 12-14",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH G 12-14",
+    "Family Housing G 12-14"
+   ],
+   "lat": 36.9924916,
+   "lon": -122.0689603,
+   "approach": [
+    [
+     36.9920994,
+     -122.0674514
+    ],
+    [
+     36.9920104,
+     -122.0673939
+    ],
+    [
+     36.9919744,
+     -122.0674806
+    ],
+    [
+     36.9920634,
+     -122.067538
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-g-15-16",
+   "asset": "7355",
+   "name": "Family Student Housing G 15-16",
+   "short": "G 15-16",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH G 15-16",
+    "Family Housing G 15-16"
+   ],
+   "lat": 36.9919926,
+   "lon": -122.0673227,
+   "approach": [
+    [
+     36.992143,
+     -122.0676645
+    ],
+    [
+     36.9921,
+     -122.0675527
+    ],
+    [
+     36.9920295,
+     -122.0675951
+    ],
+    [
+     36.9920943,
+     -122.0677283
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-g-17-21",
+   "asset": "7356",
+   "name": "Family Student Housing G 17-21",
+   "short": "G 17-21",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH G 17-21",
+    "Family Housing G 17-21"
+   ],
+   "lat": 36.9927276,
+   "lon": -122.0691312,
+   "approach": [
+    [
+     36.992418,
+     -122.0676868
+    ],
+    [
+     36.9923984,
+     -122.0675923
+    ],
+    [
+     36.9921639,
+     -122.0676923
+    ],
+    [
+     36.9921834,
+     -122.0677868
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-h-1-13",
+   "asset": "7361",
+   "name": "Family Student Housing H 1-13",
+   "short": "H 1-13",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH H 1-13",
+    "Family Housing H 1-13"
+   ],
+   "lat": 36.992799,
+   "lon": -122.0686403,
+   "approach": [
+    [
+     36.9927723,
+     -122.0678779
+    ],
+    [
+     36.9924235,
+     -122.0677667
+    ],
+    [
+     36.9923528,
+     -122.0678324
+    ],
+    [
+     36.9926045,
+     -122.0679261
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-h-14-18",
+   "asset": "7360",
+   "name": "Family Student Housing H 14-18",
+   "short": "H 14-18",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH H 14-18",
+    "Family Housing H 14-18"
+   ],
+   "lat": 36.9921916,
+   "lon": -122.0648429,
+   "approach": [
+    [
+     36.9930693,
+     -122.0676485
+    ],
+    [
+     36.9930354,
+     -122.0674001
+    ],
+    [
+     36.9929479,
+     -122.0675315
+    ],
+    [
+     36.9929911,
+     -122.0676526
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-h-19-22",
+   "asset": "7359",
+   "name": "Family Student Housing H 19-22",
+   "short": "H 19-22",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH H 19-22",
+    "Family Housing H 19-22"
+   ],
+   "lat": 36.9934902,
+   "lon": -122.0694278,
+   "approach": [
+    [
+     36.9929318,
+     -122.0673453
+    ],
+    [
+     36.9927879,
+     -122.0671188
+    ],
+    [
+     36.9927517,
+     -122.0672199
+    ],
+    [
+     36.9928758,
+     -122.0674134
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-h-23-29",
+   "asset": "7358",
+   "name": "Family Student Housing H 23-29",
+   "short": "H 23-29",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH H 23-29",
+    "Family Housing H 23-29"
+   ],
+   "lat": 36.9920517,
+   "lon": -122.0656461,
+   "approach": [
+    [
+     36.9926244,
+     -122.0672346
+    ],
+    [
+     36.9925799,
+     -122.0671539
+    ],
+    [
+     36.9924434,
+     -122.0672329
+    ],
+    [
+     36.9924878,
+     -122.0673133
+    ]
+   ]
+  },
+  {
+   "id": "family-student-housing-h-30-33",
+   "asset": "7357",
+   "name": "Family Student Housing H 30-33",
+   "short": "H 30-33",
+   "area": "Family Student Housing",
+   "aliases": [
+    "FSH H 30-33",
+    "Family Housing H 30-33"
+   ],
+   "lat": 36.9916494,
+   "lon": -122.0648716,
+   "approach": [
+    [
+     36.992393,
+     -122.0671784
+    ],
+    [
+     36.9923522,
+     -122.0671335
+    ],
+    [
+     36.9923017,
+     -122.0671987
+    ],
+    [
+     36.9923745,
+     -122.0672349
+    ]
+   ]
+  },
+  {
+   "id": "graduate-student-housing-1",
+   "asset": "7553",
+   "name": "Graduate Student Housing 1",
+   "short": "Heller Housing 1",
+   "known_as": "Heller Housing 1",
+   "area": "Graduate Student Housing",
+   "aliases": [
+    "Heller Housing 1",
+    "Grad Housing 1",
+    "Graduate Housing 1"
+   ],
+   "lat": 37.0000185,
+   "lon": -122.067156,
+   "approach": [
+    [
+     36.9994459,
+     -122.0648577
+    ],
+    [
+     36.9992668,
+     -122.0646572
+    ],
+    [
+     36.9991953,
+     -122.064745
+    ],
+    [
+     36.9994078,
+     -122.0649998
+    ]
+   ]
+  },
+  {
+   "id": "graduate-student-housing-2",
+   "asset": "7554",
+   "name": "Graduate Student Housing 2",
+   "short": "Heller Housing 2",
+   "known_as": "Heller Housing 2",
+   "area": "Graduate Student Housing",
+   "aliases": [
+    "Heller Housing 2",
+    "Grad Housing 2",
+    "Graduate Housing 2"
+   ],
+   "lat": 37.0002313,
+   "lon": -122.0670057,
+   "approach": [
+    [
+     36.9996293,
+     -122.0646622
+    ],
+    [
+     36.9995704,
+     -122.0645596
+    ],
+    [
+     36.9994035,
+     -122.0646505
+    ],
+    [
+     36.9994515,
+     -122.0647522
+    ]
+   ]
+  },
+  {
+   "id": "graduate-student-housing-3",
+   "asset": "7555",
+   "name": "Graduate Student Housing 3",
+   "short": "Heller Housing 3",
+   "known_as": "Heller Housing 3",
+   "area": "Graduate Student Housing",
+   "aliases": [
+    "Heller Housing 3",
+    "Grad Housing 3",
+    "Graduate Housing 3"
+   ],
+   "lat": 37.0003414,
+   "lon": -122.0666886,
+   "approach": [
+    [
+     36.9998788,
+     -122.0647739
+    ],
+    [
+     36.9997808,
+     -122.0647374
+    ],
+    [
+     36.999676,
+     -122.0648917
+    ],
+    [
+     36.9997245,
+     -122.0649022
+    ]
+   ]
+  },
+  {
+   "id": "graduate-student-housing-4",
+   "asset": "7556",
+   "name": "Graduate Student Housing 4",
+   "short": "Heller Housing 4",
+   "known_as": "Heller Housing 4",
+   "area": "Graduate Student Housing",
+   "aliases": [
+    "Graduate Housing Laundry",
+    "Heller Housing 4",
+    "Grad Housing 4",
+    "Graduate Housing 4"
+   ],
+   "lat": 36.9978828,
+   "lon": -122.0584643,
+   "approach": [
+    [
+     36.999794,
+     -122.0646642
+    ],
+    [
+     36.9997738,
+     -122.0645492
+    ],
+    [
+     36.9996883,
+     -122.0646088
+    ],
+    [
+     36.9997587,
+     -122.0646786
+    ]
+   ]
+  },
+  {
+   "id": "john-r-lewis-college-residence-hall-4",
+   "asset": "7936",
+   "name": "John R. Lewis College Residence Hall 4",
+   "short": "Residence Hall 4",
+   "area": "John R. Lewis College",
+   "aliases": [
+    "JRL Residence Hall 4",
+    "JRL Res Hall 4",
+    "JRL Hall 4",
+    "C10 Residence Hall 4",
+    "C10 Res Hall 4",
+    "C10 Hall 4",
+    "College 10 Residence Hall 4",
+    "College 10 Res Hall 4",
+    "College 10 Hall 4",
+    "College Ten Residence Hall 4",
+    "College Ten Res Hall 4",
+    "College Ten Hall 4",
+    "Lewis Residence Hall 4",
+    "Lewis Res Hall 4",
+    "Lewis Hall 4"
+   ],
+   "lat": 37.0004481,
+   "lon": -122.0573561,
+   "approach": [
+    [
+     37.0009792,
+     -122.0582974
+    ],
+    [
+     37.0005428,
+     -122.0580595
+    ],
+    [
+     37.0004811,
+     -122.0581479
+    ],
+    [
+     37.000966,
+     -122.0584136
+    ]
+   ]
+  },
+  {
+   "id": "john-r-lewis-college-residence-hall-5",
+   "asset": "7937",
+   "name": "John R. Lewis College Residence Hall 5",
+   "short": "Residence Hall 5",
+   "area": "John R. Lewis College",
+   "aliases": [
+    "JRL Residence Hall 5",
+    "JRL Res Hall 5",
+    "JRL Hall 5",
+    "C10 Residence Hall 5",
+    "C10 Res Hall 5",
+    "C10 Hall 5",
+    "College 10 Residence Hall 5",
+    "College 10 Res Hall 5",
+    "College 10 Hall 5",
+    "College Ten Residence Hall 5",
+    "College Ten Res Hall 5",
+    "College Ten Hall 5",
+    "Lewis Residence Hall 5",
+    "Lewis Res Hall 5",
+    "Lewis Hall 5"
+   ],
+   "lat": 37.0006436,
+   "lon": -122.0595674,
+   "approach": [
+    [
+     37.0004422,
+     -122.0579869
+    ],
+    [
+     37.0003567,
+     -122.0579321
+    ],
+    [
+     37.000133,
+     -122.058388
+    ],
+    [
+     37.0002427,
+     -122.0586493
+    ]
+   ]
+  },
+  {
+   "id": "john-r-lewis-college-residence-hall-6",
+   "asset": "7938",
+   "name": "John R. Lewis College Residence Hall 6",
+   "short": "Residence Hall 6",
+   "area": "John R. Lewis College",
+   "aliases": [
+    "JRL Residence Hall 6",
+    "JRL Res Hall 6",
+    "JRL Hall 6",
+    "C10 Residence Hall 6",
+    "C10 Res Hall 6",
+    "C10 Hall 6",
+    "College 10 Residence Hall 6",
+    "College 10 Res Hall 6",
+    "College 10 Hall 6",
+    "College Ten Residence Hall 6",
+    "College Ten Res Hall 6",
+    "College Ten Hall 6",
+    "Lewis Residence Hall 6",
+    "Lewis Res Hall 6",
+    "Lewis Hall 6"
+   ],
+   "lat": 37.0008161,
+   "lon": -122.0593536,
+   "approach": [
+    [
+     37.0008418,
+     -122.0587043
+    ],
+    [
+     37.0004041,
+     -122.058508
+    ],
+    [
+     37.0003677,
+     -122.0586151
+    ],
+    [
+     37.0005546,
+     -122.0587625
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-apartment-building-j",
+   "asset": "7909",
+   "name": "Kresge College Apartment Building J",
+   "short": "Apartment Building J",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge Apartment Building J",
+    "Kresge Apt J",
+    "Kresge Apartments J",
+    "Kresge Apartment J",
+    "Kresge Apt Building J",
+    "Kresge Building J"
+   ],
+   "lat": 36.9965978,
+   "lon": -122.0662064,
+   "approach": [
+    [
+     36.9965998,
+     -122.0656929
+    ],
+    [
+     36.9963273,
+     -122.06552
+    ],
+    [
+     36.9962633,
+     -122.0656376
+    ],
+    [
+     36.9965676,
+     -122.0657998
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-apartment-building-k",
+   "asset": "7910",
+   "name": "Kresge College Apartment Building K",
+   "short": "Apartment Building K",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge Apartment Building K",
+    "Kresge Apt K",
+    "Kresge Apartments K",
+    "Kresge Apartment K",
+    "Kresge Apt Building K",
+    "Kresge Building K"
+   ],
+   "lat": 36.9965931,
+   "lon": -122.0656357,
+   "approach": [
+    [
+     36.9968463,
+     -122.0662753
+    ],
+    [
+     36.9967035,
+     -122.065765
+    ],
+    [
+     36.9966065,
+     -122.0658483
+    ],
+    [
+     36.9967905,
+     -122.0662995
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-01",
+   "asset": "7382",
+   "name": "Kresge College House 01",
+   "short": "House 01",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 01",
+    "Kresge House 1"
+   ],
+   "lat": 36.9976267,
+   "lon": -122.0669346,
+   "approach": [
+    [
+     36.9976435,
+     -122.0665502
+    ],
+    [
+     36.9975648,
+     -122.066514
+    ],
+    [
+     36.9974666,
+     -122.0668479
+    ],
+    [
+     36.9975441,
+     -122.0668809
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-02",
+   "asset": "7383",
+   "name": "Kresge College House 02",
+   "short": "House 02",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 02",
+    "Kresge House 2"
+   ],
+   "lat": 36.9976224,
+   "lon": -122.0661488,
+   "approach": [
+    [
+     36.99772,
+     -122.0664899
+    ],
+    [
+     36.997707,
+     -122.0661388
+    ],
+    [
+     36.9976265,
+     -122.0661435
+    ],
+    [
+     36.9976395,
+     -122.0664945
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-03",
+   "asset": "7384",
+   "name": "Kresge College House 03",
+   "short": "House 03",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 03",
+    "Kresge House 3"
+   ],
+   "lat": 36.9984635,
+   "lon": -122.0684467,
+   "approach": [
+    [
+     36.9977654,
+     -122.0660215
+    ],
+    [
+     36.9977221,
+     -122.0658974
+    ],
+    [
+     36.9976775,
+     -122.0660683
+    ],
+    [
+     36.9977645,
+     -122.0660853
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-04",
+   "asset": "7385",
+   "name": "Kresge College House 04",
+   "short": "House 04",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 04",
+    "Kresge House 4"
+   ],
+   "lat": 36.9977853,
+   "lon": -122.0654135,
+   "approach": [
+    [
+     36.9981158,
+     -122.0659927
+    ],
+    [
+     36.9978338,
+     -122.0659759
+    ],
+    [
+     36.9978313,
+     -122.0660774
+    ],
+    [
+     36.9981118,
+     -122.066093
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-05",
+   "asset": "7386",
+   "name": "Kresge College House 05",
+   "short": "House 05",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 05",
+    "Kresge House 5"
+   ],
+   "lat": 36.9974006,
+   "lon": -122.0637805,
+   "approach": [
+    [
+     36.9982131,
+     -122.0662042
+    ],
+    [
+     36.998094,
+     -122.0661705
+    ],
+    [
+     36.998067,
+     -122.066259
+    ],
+    [
+     36.9982067,
+     -122.0662985
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-06",
+   "asset": "7387",
+   "name": "Kresge College House 06",
+   "short": "House 06",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 06",
+    "Kresge House 6"
+   ],
+   "lat": 36.9984252,
+   "lon": -122.0662247,
+   "approach": [
+    [
+     36.9985354,
+     -122.0661783
+    ],
+    [
+     36.9982796,
+     -122.066055
+    ],
+    [
+     36.998253,
+     -122.066143
+    ],
+    [
+     36.9985287,
+     -122.0662171
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-08",
+   "asset": "7389",
+   "name": "Kresge College House 08",
+   "short": "House 08",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 08",
+    "Kresge House 8"
+   ],
+   "lat": 36.9986513,
+   "lon": -122.0671461,
+   "approach": [
+    [
+     36.9984453,
+     -122.0658608
+    ],
+    [
+     36.998078,
+     -122.0657009
+    ],
+    [
+     36.9980647,
+     -122.0657901
+    ],
+    [
+     36.9984121,
+     -122.0659414
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-09",
+   "asset": "7390",
+   "name": "Kresge College House 09",
+   "short": "House 09",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 09",
+    "Kresge House 9"
+   ],
+   "lat": 36.9982497,
+   "lon": -122.0673612,
+   "approach": [
+    [
+     36.9977636,
+     -122.0655258
+    ],
+    [
+     36.9977338,
+     -122.0654229
+    ],
+    [
+     36.9976045,
+     -122.0655124
+    ],
+    [
+     36.9976561,
+     -122.0655983
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-10",
+   "asset": "7391",
+   "name": "Kresge College House 10",
+   "short": "House 10",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 10"
+   ],
+   "lat": 36.997187,
+   "lon": -122.0649145,
+   "approach": [
+    [
+     36.9975018,
+     -122.0655146
+    ],
+    [
+     36.997444,
+     -122.0654494
+    ],
+    [
+     36.9972961,
+     -122.0657432
+    ],
+    [
+     36.9973659,
+     -122.0657813
+    ]
+   ]
+  },
+  {
+   "id": "kresge-college-house-11",
+   "asset": "7392",
+   "name": "Kresge College House 11",
+   "short": "House 11",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge House 11"
+   ],
+   "lat": 36.9975014,
+   "lon": -122.066487,
+   "approach": [
+    [
+     36.9974178,
+     -122.0662466
+    ],
+    [
+     36.9973331,
+     -122.0658981
+    ],
+    [
+     36.9973372,
+     -122.0662484
+    ]
+   ]
+  },
+  {
+   "id": "kresge-residence-hall-a",
+   "asset": "7871",
+   "name": "Kresge Residence Hall A",
+   "short": "Residence Hall A",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge Res Hall A",
+    "Kresge Hall A",
+    "Kresge A"
+   ],
+   "lat": 36.9982225,
+   "lon": -122.0683667,
+   "approach": [
+    [
+     36.9978979,
+     -122.0667896
+    ],
+    [
+     36.997828,
+     -122.0667487
+    ],
+    [
+     36.9976466,
+     -122.0669658
+    ],
+    [
+     36.9976796,
+     -122.0670504
+    ]
+   ]
+  },
+  {
+   "id": "kresge-residence-hall-b",
+   "asset": "7872",
+   "name": "Kresge Residence Hall B",
+   "short": "Residence Hall B",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge Res Hall B",
+    "Kresge Hall B",
+    "Kresge B"
+   ],
+   "lat": 36.9978279,
+   "lon": -122.065572,
+   "approach": [
+    [
+     36.9982151,
+     -122.0664456
+    ],
+    [
+     36.998138,
+     -122.0664433
+    ],
+    [
+     36.9980414,
+     -122.0667551
+    ],
+    [
+     36.998099,
+     -122.0668179
+    ]
+   ]
+  },
+  {
+   "id": "kresge-residence-hall-c",
+   "asset": "7873",
+   "name": "Kresge Residence Hall C",
+   "short": "Residence Hall C",
+   "area": "Kresge College",
+   "aliases": [
+    "Kresge Res Hall C",
+    "Kresge Hall C",
+    "Kresge C"
+   ],
+   "lat": 36.9984204,
+   "lon": -122.0662365,
+   "approach": [
+    [
+     36.9986428,
+     -122.0664211
+    ],
+    [
+     36.9985796,
+     -122.0663657
+    ],
+    [
+     36.9983643,
+     -122.0665571
+    ],
+    [
+     36.9983845,
+     -122.0666493
+    ]
+   ]
+  },
+  {
+   "id": "redwood-grove-apartments-building-12",
+   "asset": "7736",
+   "name": "Redwood Grove Apartments Building 12",
+   "short": "Redwood Grove 12",
+   "area": "Kresge College",
+   "aliases": [
+    "Redwood Grove 12",
+    "Redwood Grove Building 12",
+    "Redwood Grove Apartments 12"
+   ],
+   "lat": 36.996289,
+   "lon": -122.0616295,
+   "approach": [
+    [
+     36.9971284,
+     -122.0641194
+    ],
+    [
+     36.9970112,
+     -122.0639172
+    ],
+    [
+     36.9969239,
+     -122.0639698
+    ],
+    [
+     36.9970303,
+     -122.0641712
+    ]
+   ]
+  },
+  {
+   "id": "redwood-grove-apartments-building-13",
+   "asset": "7737",
+   "name": "Redwood Grove Apartments Building 13",
+   "short": "Redwood Grove 13",
+   "area": "Kresge College",
+   "aliases": [
+    "Redwood Grove 13",
+    "Redwood Grove Building 13",
+    "Redwood Grove Apartments 13"
+   ],
+   "lat": 36.9983634,
+   "lon": -122.067277,
+   "approach": [
+    [
+     36.9975362,
+     -122.0641406
+    ],
+    [
+     36.997349,
+     -122.0640472
+    ],
+    [
+     36.9972982,
+     -122.0641521
+    ],
+    [
+     36.997472,
+     -122.0642503
+    ]
+   ]
+  },
+  {
+   "id": "redwood-grove-apartments-building-14",
+   "asset": "7738",
+   "name": "Redwood Grove Apartments Building 14",
+   "short": "Redwood Grove 14",
+   "area": "Kresge College",
+   "aliases": [
+    "Redwood Grove 14",
+    "Redwood Grove Building 14",
+    "Redwood Grove Apartments 14"
+   ],
+   "lat": 36.9965892,
+   "lon": -122.0605905,
+   "approach": [
+    [
+     36.9977552,
+     -122.0640868
+    ],
+    [
+     36.997587,
+     -122.0639476
+    ],
+    [
+     36.99755,
+     -122.064007
+    ],
+    [
+     36.9977148,
+     -122.0641947
+    ]
+   ]
+  },
+  {
+   "id": "redwood-grove-apartments-building-15",
+   "asset": "7739",
+   "name": "Redwood Grove Apartments Building 15",
+   "short": "Redwood Grove 15",
+   "area": "Kresge College",
+   "aliases": [
+    "Redwood Grove 15",
+    "Redwood Grove Building 15",
+    "Redwood Grove Apartments 15"
+   ],
+   "lat": 36.999435,
+   "lon": -122.0691514,
+   "approach": [
+    [
+     36.998084,
+     -122.064284
+    ],
+    [
+     36.9979852,
+     -122.0642322
+    ],
+    [
+     36.9978596,
+     -122.064374
+    ],
+    [
+     36.9979817,
+     -122.064395
+    ]
+   ]
+  },
+  {
+   "id": "redwood-grove-apartments-building-16",
+   "asset": "7740",
+   "name": "Redwood Grove Apartments Building 16",
+   "short": "Redwood Grove 16",
+   "area": "Kresge College",
+   "aliases": [
+    "Redwood Grove 16",
+    "Redwood Grove Building 16",
+    "Redwood Grove Apartments 16"
+   ],
+   "lat": 36.9987289,
+   "lon": -122.0652842,
+   "approach": [
+    [
+     36.9986736,
+     -122.0647676
+    ],
+    [
+     36.9985152,
+     -122.064612
+    ],
+    [
+     36.9984717,
+     -122.0647368
+    ],
+    [
+     36.9986288,
+     -122.0648724
+    ]
+   ]
+  },
+  {
+   "id": "merrill-college-house-a",
+   "asset": "7183",
+   "name": "Merrill College House A",
+   "short": "Lorde-Studds",
+   "known_as": "Lorde-Studds",
+   "area": "Merrill College",
+   "aliases": [
+    "Lorde-Studds",
+    "Kochiyama",
+    "Buloson",
+    "Merrill House A",
+    "Merrill Building A",
+    "Merrill A Building",
+    "Merrill A"
+   ],
+   "lat": 37.00075,
+   "lon": -122.0545769,
+   "approach": [
+    [
+     37.0004944,
+     -122.0537161
+    ],
+    [
+     37.000304,
+     -122.0528717
+    ],
+    [
+     37.0002139,
+     -122.0528956
+    ],
+    [
+     37.0004085,
+     -122.0537525
+    ]
+   ]
+  },
+  {
+   "id": "merrill-college-house-b",
+   "asset": "7184",
+   "name": "Merrill College House B",
+   "short": "Gandhi-Kahlo",
+   "known_as": "Gandhi-Kahlo",
+   "area": "Merrill College",
+   "aliases": [
+    "Gandhi-Kahlo",
+    "Ghandi-Kahlo",
+    "Merrill House B",
+    "Merrill Building B",
+    "Merrill B Building",
+    "Merrill B"
+   ],
+   "lat": 36.9997255,
+   "lon": -122.0517502,
+   "approach": [
+    [
+     37.0002547,
+     -122.0527602
+    ],
+    [
+     37.0000774,
+     -122.0526849
+    ],
+    [
+     36.999797,
+     -122.0528049
+    ],
+    [
+     37.0000572,
+     -122.0528271
+    ]
+   ]
+  },
+  {
+   "id": "merrill-college-house-c",
+   "asset": "7192",
+   "name": "Merrill College House C",
+   "short": "Chavez-Menchu",
+   "known_as": "Chavez-Menchu",
+   "area": "Merrill College",
+   "aliases": [
+    "Chavez-Menchu",
+    "Chávez-Menchú",
+    "Merrill House C",
+    "Merrill Building C",
+    "Merrill C Building",
+    "Merrill C"
+   ],
+   "lat": 37.0008978,
+   "lon": -122.0551984,
+   "approach": [
+    [
+     37.0001684,
+     -122.0522886
+    ],
+    [
+     37.0001376,
+     -122.0521869
+    ],
+    [
+     36.9998694,
+     -122.0523212
+    ],
+    [
+     36.9998991,
+     -122.0524163
+    ]
+   ]
+  },
+  {
+   "id": "merrill-college-house-d",
+   "asset": "7193",
+   "name": "Merrill College House D",
+   "short": "DuBois",
+   "known_as": "DuBois",
+   "area": "Merrill College",
+   "aliases": [
+    "DuBois",
+    "Du Bois",
+    "Merrill House D",
+    "Merrill Building D",
+    "Merrill D Building",
+    "Merrill D"
+   ],
+   "lat": 37.0001979,
+   "lon": -122.0527988,
+   "approach": [
+    [
+     37.0001211,
+     -122.0520282
+    ],
+    [
+     37.0000869,
+     -122.0519262
+    ],
+    [
+     36.999819,
+     -122.0520579
+    ],
+    [
+     36.999852,
+     -122.0521623
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-dorm-1",
+   "asset": "7746",
+   "name": "Oakes College Dorm 1",
+   "short": "Biko House",
+   "known_as": "Biko House",
+   "area": "Oakes College",
+   "aliases": [
+    "Biko House",
+    "Biko",
+    "Oakes Dorm E",
+    "Oakes Dorm 1"
+   ],
+   "lat": 36.9887473,
+   "lon": -122.064345,
+   "approach": [
+    [
+     36.9892856,
+     -122.0653928
+    ],
+    [
+     36.989087,
+     -122.0652738
+    ],
+    [
+     36.9889547,
+     -122.0656495
+    ],
+    [
+     36.9890315,
+     -122.0657288
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-dorm-2",
+   "asset": "7747",
+   "name": "Oakes College Dorm 2",
+   "short": "Hong Lim House",
+   "known_as": "Hong Lim House",
+   "area": "Oakes College",
+   "aliases": [
+    "Hong Lim House",
+    "Hong-Lim",
+    "Oakes Dorm F",
+    "Oakes Dorm 2"
+   ],
+   "lat": 36.9895241,
+   "lon": -122.0655106,
+   "approach": [
+    [
+     36.9895614,
+     -122.0649431
+    ],
+    [
+     36.9893015,
+     -122.0647472
+    ],
+    [
+     36.9891918,
+     -122.0650884
+    ],
+    [
+     36.9893047,
+     -122.0651891
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-dorm-3",
+   "asset": "7748",
+   "name": "Oakes College Dorm 3",
+   "short": "Bayit Wiesel House",
+   "known_as": "Bayit Wiesel House",
+   "area": "Oakes College",
+   "aliases": [
+    "Bayit Wiesel House",
+    "Bayit Wiesel",
+    "Oakes Dorm G",
+    "Oakes Dorm 3"
+   ],
+   "lat": 36.9894043,
+   "lon": -122.0648457,
+   "approach": [
+    [
+     36.9894108,
+     -122.0646185
+    ],
+    [
+     36.9892803,
+     -122.0641294
+    ],
+    [
+     36.9891134,
+     -122.0645152
+    ],
+    [
+     36.9893943,
+     -122.0646604
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-dorm-4",
+   "asset": "7749",
+   "name": "Oakes College Dorm 4",
+   "short": "Casa Huerta",
+   "known_as": "Casa Huerta",
+   "area": "Oakes College",
+   "aliases": [
+    "Casa Huerta",
+    "Case Huerta",
+    "Oakes Dorm H",
+    "Oakes Dorm 4"
+   ],
+   "lat": 36.989244,
+   "lon": -122.06609,
+   "approach": [
+    [
+     36.9890398,
+     -122.0651472
+    ],
+    [
+     36.9889465,
+     -122.0647124
+    ],
+    [
+     36.9887466,
+     -122.0650501
+    ],
+    [
+     36.9890224,
+     -122.0651907
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-residence-a11-12",
+   "asset": "7407",
+   "name": "Oakes College Residence A11-12",
+   "short": "Frida Kahlo",
+   "known_as": "Frida Kahlo",
+   "area": "Oakes College",
+   "aliases": [
+    "Frida Kahlo",
+    "A Block apartments",
+    "Frida Kahlo Apts A11 12",
+    "Kahlo Apts A11 12",
+    "Oakes Residence A11-12"
+   ],
+   "lat": 36.9904422,
+   "lon": -122.0666692,
+   "approach": [
+    [
+     36.9898112,
+     -122.0643202
+    ],
+    [
+     36.9896852,
+     -122.064185
+    ],
+    [
+     36.9896169,
+     -122.0641917
+    ],
+    [
+     36.9897192,
+     -122.0643313
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-residence-a13-15",
+   "asset": "7408",
+   "name": "Oakes College Residence A13-15",
+   "short": "Frida Kahlo",
+   "known_as": "Frida Kahlo",
+   "area": "Oakes College",
+   "aliases": [
+    "Frida Kahlo",
+    "A Block apartments",
+    "Frida Kahlo Apts A13 15",
+    "Kahlo Apts A13 15",
+    "Oakes Residence A13-15"
+   ],
+   "lat": 36.9900382,
+   "lon": -122.0645834,
+   "approach": [
+    [
+     36.9900185,
+     -122.0643416
+    ],
+    [
+     36.9900044,
+     -122.0641167
+    ],
+    [
+     36.9898288,
+     -122.0642639
+    ],
+    [
+     36.9898349,
+     -122.0643605
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-residence-a16-17",
+   "asset": "7410",
+   "name": "Oakes College Residence A16-17",
+   "short": "Frida Kahlo",
+   "known_as": "Frida Kahlo",
+   "area": "Oakes College",
+   "aliases": [
+    "Frida Kahlo",
+    "A Block apartments",
+    "Frida Kahlo Apts A16 17",
+    "Kahlo Apts A16 17",
+    "Oakes Residence A16-17"
+   ],
+   "lat": 36.9905588,
+   "lon": -122.0655629,
+   "approach": [
+    [
+     36.990144,
+     -122.0640141
+    ],
+    [
+     36.9901348,
+     -122.063898
+    ],
+    [
+     36.9900387,
+     -122.0640248
+    ],
+    [
+     36.9900459,
+     -122.0641393
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-residence-b11-15",
+   "asset": "7414",
+   "name": "Oakes College Residence B11-15",
+   "short": "Casa Shabazz",
+   "known_as": "Casa Shabazz",
+   "area": "Oakes College",
+   "aliases": [
+    "Casa Shabazz",
+    "B Block apartments",
+    "Casa Shabazz Apts B11 15",
+    "Shabazz",
+    "Oakes Residence B11-15"
+   ],
+   "lat": 36.9902162,
+   "lon": -122.0646127,
+   "approach": [
+    [
+     36.9900385,
+     -122.0635843
+    ],
+    [
+     36.9900233,
+     -122.0633572
+    ],
+    [
+     36.9896552,
+     -122.0634602
+    ],
+    [
+     36.9899588,
+     -122.0635926
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-residence-b16-17",
+   "asset": "7412",
+   "name": "Oakes College Residence B16-17",
+   "short": "Casa Shabazz",
+   "known_as": "Casa Shabazz",
+   "area": "Oakes College",
+   "aliases": [
+    "Casa Shabazz",
+    "B Block apartments",
+    "Shabazz",
+    "Casa Shabazz Apts B16 17",
+    "Oakes Residence B16-17"
+   ],
+   "lat": 36.9895844,
+   "lon": -122.0618439,
+   "approach": [
+    [
+     36.9901998,
+     -122.0637862
+    ],
+    [
+     36.9901592,
+     -122.063557
+    ],
+    [
+     36.99008,
+     -122.0635659
+    ],
+    [
+     36.99012,
+     -122.0637945
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-residence-c11-15",
+   "asset": "7421",
+   "name": "Oakes College Residence C11-15",
+   "short": "Harvey Milk",
+   "known_as": "Harvey Milk",
+   "area": "Oakes College",
+   "aliases": [
+    "Harvey Milk",
+    "C Block apartments",
+    "Harvey Milk Apts C11 15",
+    "Milk",
+    "Oakes Residence C11-15"
+   ],
+   "lat": 36.9890205,
+   "lon": -122.0630166,
+   "approach": [
+    [
+     36.9891544,
+     -122.0630257
+    ],
+    [
+     36.989137,
+     -122.06279
+    ],
+    [
+     36.9887711,
+     -122.0628972
+    ],
+    [
+     36.9890744,
+     -122.0630349
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-residence-d11-12",
+   "asset": "7424",
+   "name": "Oakes College Residence D11-12",
+   "short": "Liliukalani-Minami",
+   "known_as": "Liliukalani-Minami",
+   "area": "Oakes College",
+   "aliases": [
+    "Liliukalani-Minami",
+    "D Block apartments",
+    "Liliuokalani-Minai Apts D11 12",
+    "Oakes Residence D11-12"
+   ],
+   "lat": 36.988798,
+   "lon": -122.0637704,
+   "approach": [
+    [
+     36.9887889,
+     -122.063573
+    ],
+    [
+     36.9887819,
+     -122.0634596
+    ],
+    [
+     36.9886868,
+     -122.063583
+    ],
+    [
+     36.988694,
+     -122.0636974
+    ]
+   ]
+  },
+  {
+   "id": "oakes-college-residence-d14-16",
+   "asset": "7423",
+   "name": "Oakes College Residence D14-16",
+   "short": "Liliukalani-Minami",
+   "known_as": "Liliukalani-Minami",
+   "area": "Oakes College",
+   "aliases": [
+    "Liliukalani-Minami",
+    "D Block apartments",
+    "Liliuokalani-Minai Apts D14 16",
+    "Oakes Residence D14-16"
+   ],
+   "lat": 36.9884562,
+   "lon": -122.0622037,
+   "approach": [
+    [
+     36.9888513,
+     -122.0633119
+    ],
+    [
+     36.9888103,
+     -122.0630811
+    ],
+    [
+     36.9886252,
+     -122.063096
+    ],
+    [
+     36.9888228,
+     -122.0633538
+    ]
+   ]
+  },
+  {
+   "id": "porter-college-apartment-building-e",
+   "asset": "7709",
+   "name": "Porter College Apartment Building E",
+   "short": "Apartment Building E",
+   "area": "Porter College",
+   "aliases": [
+    "Porter Apartment Building E",
+    "Porter Apt E",
+    "Porter Apartments E",
+    "Porter Apartment E",
+    "Porter Apt Building E",
+    "Porter Building E"
+   ],
+   "lat": 36.9953412,
+   "lon": -122.0640878,
+   "approach": [
+    [
+     36.9957804,
+     -122.065034
+    ],
+    [
+     36.9956864,
+     -122.0648779
+    ],
+    [
+     36.9954574,
+     -122.0649499
+    ],
+    [
+     36.9955201,
+     -122.0651062
+    ]
+   ]
+  },
+  {
+   "id": "porter-college-apartment-building-f",
+   "asset": "7712",
+   "name": "Porter College Apartment Building F",
+   "short": "Apartment Building F",
+   "area": "Porter College",
+   "aliases": [
+    "Porter Apartment Building F",
+    "Porter Apt F",
+    "Porter Apartments F",
+    "Porter Apartment F",
+    "Porter Apt Building F",
+    "Porter Building F"
+   ],
+   "lat": 36.9963326,
+   "lon": -122.0657334,
+   "approach": [
+    [
+     36.9962897,
+     -122.0650043
+    ],
+    [
+     36.9962602,
+     -122.0648488
+    ],
+    [
+     36.9958923,
+     -122.064862
+    ],
+    [
+     36.9959278,
+     -122.065031
+    ]
+   ]
+  },
+  {
+   "id": "porter-college-apartment-building-g",
+   "asset": "7713",
+   "name": "Porter College Apartment Building G",
+   "short": "Apartment Building G",
+   "area": "Porter College",
+   "aliases": [
+    "Porter Apartment Building G",
+    "Porter Apt G",
+    "Porter Apartments G",
+    "Porter Apartment G",
+    "Porter Apt Building G",
+    "Porter Building G"
+   ],
+   "lat": 36.995583,
+   "lon": -122.0645878,
+   "approach": [
+    [
+     36.9960087,
+     -122.0652331
+    ],
+    [
+     36.9956475,
+     -122.0651954
+    ],
+    [
+     36.9955186,
+     -122.0653277
+    ],
+    [
+     36.9959761,
+     -122.0653877
+    ]
+   ]
+  },
+  {
+   "id": "porter-college-apartment-building-h",
+   "asset": "7715",
+   "name": "Porter College Apartment Building H",
+   "short": "Apartment Building H",
+   "area": "Porter College",
+   "aliases": [
+    "Porter Apartment Building H",
+    "Porter Apt H",
+    "Porter Apartments H",
+    "Porter Apartment H",
+    "Porter Apt Building H",
+    "Porter Building H"
+   ],
+   "lat": 36.9961996,
+   "lon": -122.0653516,
+   "approach": [
+    [
+     36.996328,
+     -122.0653433
+    ],
+    [
+     36.9962784,
+     -122.0651798
+    ],
+    [
+     36.9960315,
+     -122.0652546
+    ],
+    [
+     36.9960943,
+     -122.0653857
+    ]
+   ]
+  },
+  {
+   "id": "porter-college-house-a",
+   "asset": "7303",
+   "name": "Porter College House A",
+   "short": "House A",
+   "area": "Porter College",
+   "aliases": [
+    "Porter House A",
+    "Porter Building A",
+    "Porter A Building",
+    "Porter A"
+   ],
+   "lat": 36.9948302,
+   "lon": -122.0649168,
+   "approach": [
+    [
+     36.9952198,
+     -122.0651547
+    ],
+    [
+     36.9948727,
+     -122.0648187
+    ],
+    [
+     36.9944826,
+     -122.0649722
+    ],
+    [
+     36.9945379,
+     -122.065258
+    ]
+   ]
+  },
+  {
+   "id": "porter-college-house-b",
+   "asset": "7304",
+   "name": "Porter College House B",
+   "short": "House B",
+   "area": "Porter College",
+   "aliases": [
+    "Porter House B",
+    "Porter Building B",
+    "Porter B Building",
+    "Porter B"
+   ],
+   "lat": 36.9947699,
+   "lon": -122.065147,
+   "approach": [
+    [
+     36.9953344,
+     -122.0653857
+    ],
+    [
+     36.9952139,
+     -122.0653323
+    ],
+    [
+     36.994502,
+     -122.0654919
+    ],
+    [
+     36.9947567,
+     -122.0659298
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-apartment-building-1",
+   "asset": "7800",
+   "name": "Rachel Carson College Apartment Building 1",
+   "short": "Apartment Building 1",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Apartment Building 1",
+    "RCC Apt 1",
+    "RCC Apartments 1",
+    "RCC Apartment 1",
+    "RCC Apt Building 1",
+    "RCC Building 1",
+    "Carson Apartment Building 1",
+    "Carson Apt 1",
+    "Carson Apartments 1",
+    "Carson Apartment 1",
+    "Carson Apt Building 1",
+    "Carson Building 1",
+    "Rachel Carson Apartment Building 1",
+    "Rachel Carson Apt 1",
+    "Rachel Carson Apartments 1",
+    "Rachel Carson Apartment 1",
+    "Rachel Carson Apt Building 1",
+    "Rachel Carson Building 1",
+    "C8 Apartment Building 1",
+    "C8 Apt 1",
+    "C8 Apartments 1",
+    "C8 Apartment 1",
+    "C8 Apt Building 1",
+    "C8 Building 1",
+    "College 8 Apartment Building 1",
+    "College 8 Apt 1",
+    "College 8 Apartments 1",
+    "College 8 Apartment 1",
+    "College 8 Apt Building 1",
+    "College 8 Building 1",
+    "College Eight Apartment Building 1",
+    "College Eight Apt 1",
+    "College Eight Apartments 1",
+    "College Eight Apartment 1",
+    "College Eight Apt Building 1",
+    "College Eight Building 1"
+   ],
+   "lat": 36.9918481,
+   "lon": -122.0626805,
+   "approach": [
+    [
+     36.9924945,
+     -122.064191
+    ],
+    [
+     36.9924336,
+     -122.0640603
+    ],
+    [
+     36.9921318,
+     -122.0642114
+    ],
+    [
+     36.9922448,
+     -122.0643492
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-apartment-building-2",
+   "asset": "7801",
+   "name": "Rachel Carson College Apartment Building 2",
+   "short": "Apartment Building 2",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Apartment Building 2",
+    "RCC Apt 2",
+    "RCC Apartments 2",
+    "RCC Apartment 2",
+    "RCC Apt Building 2",
+    "RCC Building 2",
+    "Carson Apartment Building 2",
+    "Carson Apt 2",
+    "Carson Apartments 2",
+    "Carson Apartment 2",
+    "Carson Apt Building 2",
+    "Carson Building 2",
+    "Rachel Carson Apartment Building 2",
+    "Rachel Carson Apt 2",
+    "Rachel Carson Apartments 2",
+    "Rachel Carson Apartment 2",
+    "Rachel Carson Apt Building 2",
+    "Rachel Carson Building 2",
+    "C8 Apartment Building 2",
+    "C8 Apt 2",
+    "C8 Apartments 2",
+    "C8 Apartment 2",
+    "C8 Apt Building 2",
+    "C8 Building 2",
+    "College 8 Apartment Building 2",
+    "College 8 Apt 2",
+    "College 8 Apartments 2",
+    "College 8 Apartment 2",
+    "College 8 Apt Building 2",
+    "College 8 Building 2",
+    "College Eight Apartment Building 2",
+    "College Eight Apt 2",
+    "College Eight Apartments 2",
+    "College Eight Apartment 2",
+    "College Eight Apt Building 2",
+    "College Eight Building 2"
+   ],
+   "lat": 36.992147,
+   "lon": -122.0635878,
+   "approach": [
+    [
+     36.9924789,
+     -122.0638035
+    ],
+    [
+     36.9920153,
+     -122.0636406
+    ],
+    [
+     36.9919225,
+     -122.0638443
+    ],
+    [
+     36.9924496,
+     -122.0639571
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-apartment-building-3",
+   "asset": "7802",
+   "name": "Rachel Carson College Apartment Building 3",
+   "short": "Apartment Building 3",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Apartment Building 3",
+    "RCC Apt 3",
+    "RCC Apartments 3",
+    "RCC Apartment 3",
+    "RCC Apt Building 3",
+    "RCC Building 3",
+    "Carson Apartment Building 3",
+    "Carson Apt 3",
+    "Carson Apartments 3",
+    "Carson Apartment 3",
+    "Carson Apt Building 3",
+    "Carson Building 3",
+    "Rachel Carson Apartment Building 3",
+    "Rachel Carson Apt 3",
+    "Rachel Carson Apartments 3",
+    "Rachel Carson Apartment 3",
+    "Rachel Carson Apt Building 3",
+    "Rachel Carson Building 3",
+    "C8 Apartment Building 3",
+    "C8 Apt 3",
+    "C8 Apartments 3",
+    "C8 Apartment 3",
+    "C8 Apt Building 3",
+    "C8 Building 3",
+    "College 8 Apartment Building 3",
+    "College 8 Apt 3",
+    "College 8 Apartments 3",
+    "College 8 Apartment 3",
+    "College 8 Apt Building 3",
+    "College 8 Building 3",
+    "College Eight Apartment Building 3",
+    "College Eight Apt 3",
+    "College Eight Apartments 3",
+    "College Eight Apartment 3",
+    "College Eight Apt Building 3",
+    "College Eight Building 3"
+   ],
+   "lat": 36.9909054,
+   "lon": -122.0627562,
+   "approach": [
+    [
+     36.9912724,
+     -122.0635878
+    ],
+    [
+     36.9912254,
+     -122.0635272
+    ],
+    [
+     36.9910851,
+     -122.0637077
+    ],
+    [
+     36.9911412,
+     -122.0638042
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-apartment-building-4",
+   "asset": "7803",
+   "name": "Rachel Carson College Apartment Building 4",
+   "short": "Apartment Building 4",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Apartment Building 4",
+    "RCC Apt 4",
+    "RCC Apartments 4",
+    "RCC Apartment 4",
+    "RCC Apt Building 4",
+    "RCC Building 4",
+    "Carson Apartment Building 4",
+    "Carson Apt 4",
+    "Carson Apartments 4",
+    "Carson Apartment 4",
+    "Carson Apt Building 4",
+    "Carson Building 4",
+    "Rachel Carson Apartment Building 4",
+    "Rachel Carson Apt 4",
+    "Rachel Carson Apartments 4",
+    "Rachel Carson Apartment 4",
+    "Rachel Carson Apt Building 4",
+    "Rachel Carson Building 4",
+    "C8 Apartment Building 4",
+    "C8 Apt 4",
+    "C8 Apartments 4",
+    "C8 Apartment 4",
+    "C8 Apt Building 4",
+    "C8 Building 4",
+    "College 8 Apartment Building 4",
+    "College 8 Apt 4",
+    "College 8 Apartments 4",
+    "College 8 Apartment 4",
+    "College 8 Apt Building 4",
+    "College 8 Building 4",
+    "College Eight Apartment Building 4",
+    "College Eight Apt 4",
+    "College Eight Apartments 4",
+    "College Eight Apartment 4",
+    "College Eight Apt Building 4",
+    "College Eight Building 4"
+   ],
+   "lat": 36.9917081,
+   "lon": -122.0656503,
+   "approach": [
+    [
+     36.9911406,
+     -122.0634587
+    ],
+    [
+     36.9909748,
+     -122.0632904
+    ],
+    [
+     36.9909234,
+     -122.0633532
+    ],
+    [
+     36.991061,
+     -122.0635298
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-apartment-building-5",
+   "asset": "7804",
+   "name": "Rachel Carson College Apartment Building 5",
+   "short": "Apartment Building 5",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Apartment Building 5",
+    "RCC Apt 5",
+    "RCC Apartments 5",
+    "RCC Apartment 5",
+    "RCC Apt Building 5",
+    "RCC Building 5",
+    "Carson Apartment Building 5",
+    "Carson Apt 5",
+    "Carson Apartments 5",
+    "Carson Apartment 5",
+    "Carson Apt Building 5",
+    "Carson Building 5",
+    "Rachel Carson Apartment Building 5",
+    "Rachel Carson Apt 5",
+    "Rachel Carson Apartments 5",
+    "Rachel Carson Apartment 5",
+    "Rachel Carson Apt Building 5",
+    "Rachel Carson Building 5",
+    "C8 Apartment Building 5",
+    "C8 Apt 5",
+    "C8 Apartments 5",
+    "C8 Apartment 5",
+    "C8 Apt Building 5",
+    "C8 Building 5",
+    "College 8 Apartment Building 5",
+    "College 8 Apt 5",
+    "College 8 Apartments 5",
+    "College 8 Apartment 5",
+    "College 8 Apt Building 5",
+    "College 8 Building 5",
+    "College Eight Apartment Building 5",
+    "College Eight Apt 5",
+    "College Eight Apartments 5",
+    "College Eight Apartment 5",
+    "College Eight Apt Building 5",
+    "College Eight Building 5"
+   ],
+   "lat": 36.9910609,
+   "lon": -122.0644983,
+   "approach": [
+    [
+     36.9909085,
+     -122.0636408
+    ],
+    [
+     36.9908153,
+     -122.0635404
+    ],
+    [
+     36.9907184,
+     -122.0637483
+    ],
+    [
+     36.9908339,
+     -122.0638011
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-apartment-building-6",
+   "asset": "7805",
+   "name": "Rachel Carson College Apartment Building 6",
+   "short": "Apartment Building 6",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Apartment Building 6",
+    "RCC Apt 6",
+    "RCC Apartments 6",
+    "RCC Apartment 6",
+    "RCC Apt Building 6",
+    "RCC Building 6",
+    "Carson Apartment Building 6",
+    "Carson Apt 6",
+    "Carson Apartments 6",
+    "Carson Apartment 6",
+    "Carson Apt Building 6",
+    "Carson Building 6",
+    "Rachel Carson Apartment Building 6",
+    "Rachel Carson Apt 6",
+    "Rachel Carson Apartments 6",
+    "Rachel Carson Apartment 6",
+    "Rachel Carson Apt Building 6",
+    "Rachel Carson Building 6",
+    "C8 Apartment Building 6",
+    "C8 Apt 6",
+    "C8 Apartments 6",
+    "C8 Apartment 6",
+    "C8 Apt Building 6",
+    "C8 Building 6",
+    "College 8 Apartment Building 6",
+    "College 8 Apt 6",
+    "College 8 Apartments 6",
+    "College 8 Apartment 6",
+    "College 8 Apt Building 6",
+    "College 8 Building 6",
+    "College Eight Apartment Building 6",
+    "College Eight Apt 6",
+    "College Eight Apartments 6",
+    "College Eight Apartment 6",
+    "College Eight Apt Building 6",
+    "College Eight Building 6"
+   ],
+   "lat": 36.9909271,
+   "lon": -122.0642289,
+   "approach": [
+    [
+     36.9910531,
+     -122.0641175
+    ],
+    [
+     36.9907376,
+     -122.0638198
+    ],
+    [
+     36.9906585,
+     -122.0638828
+    ],
+    [
+     36.9910047,
+     -122.0641723
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-dorm-a-garden",
+   "asset": "7758",
+   "name": "Rachel Carson College Dorm A-Garden",
+   "short": "Dorm A-Garden",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Dorm A-Garden",
+    "RCC A Garden",
+    "RCC Garden A",
+    "Carson Dorm A-Garden",
+    "Carson A Garden",
+    "Carson Garden A",
+    "Rachel Carson Dorm A-Garden",
+    "Rachel Carson A Garden",
+    "Rachel Carson Garden A",
+    "C8 Dorm A-Garden",
+    "C8 A Garden",
+    "C8 Garden A",
+    "College 8 Dorm A-Garden",
+    "College 8 A Garden",
+    "College 8 Garden A",
+    "College Eight Dorm A-Garden",
+    "College Eight A Garden",
+    "College Eight Garden A"
+   ],
+   "lat": 36.9905085,
+   "lon": -122.0635019,
+   "approach": [
+    [
+     36.991208,
+     -122.0654218
+    ],
+    [
+     36.9911448,
+     -122.0653542
+    ],
+    [
+     36.9910125,
+     -122.0655463
+    ],
+    [
+     36.9910759,
+     -122.0656138
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-dorm-a-l-building",
+   "asset": "7759",
+   "name": "Rachel Carson College Dorm A-L-Building",
+   "short": "Dorm A-L-Building",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Dorm A-L-Building",
+    "RCC A Building",
+    "RCC Building A",
+    "RCC Dorm A",
+    "Carson Dorm A-L-Building",
+    "Carson A Building",
+    "Carson Building A",
+    "Carson Dorm A",
+    "Rachel Carson Dorm A-L-Building",
+    "Rachel Carson A Building",
+    "Rachel Carson Building A",
+    "Rachel Carson Dorm A",
+    "C8 Dorm A-L-Building",
+    "C8 A Building",
+    "C8 Building A",
+    "C8 Dorm A",
+    "College 8 Dorm A-L-Building",
+    "College 8 A Building",
+    "College 8 Building A",
+    "College 8 Dorm A",
+    "College Eight Dorm A-L-Building",
+    "College Eight A Building",
+    "College Eight Building A",
+    "College Eight Dorm A"
+   ],
+   "lat": 36.9912383,
+   "lon": -122.0657073,
+   "approach": [
+    [
+     36.9912254,
+     -122.065283
+    ],
+    [
+     36.9911733,
+     -122.0650264
+    ],
+    [
+     36.9908797,
+     -122.065179
+    ],
+    [
+     36.9911462,
+     -122.0653074
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-dorm-b-garden",
+   "asset": "7760",
+   "name": "Rachel Carson College Dorm B-Garden",
+   "short": "Dorm B-Garden",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Dorm B-Garden",
+    "RCC B Garden",
+    "RCC Garden B",
+    "Carson Dorm B-Garden",
+    "Carson B Garden",
+    "Carson Garden B",
+    "Rachel Carson Dorm B-Garden",
+    "Rachel Carson B Garden",
+    "Rachel Carson Garden B",
+    "C8 Dorm B-Garden",
+    "C8 B Garden",
+    "C8 Garden B",
+    "College 8 Dorm B-Garden",
+    "College 8 B Garden",
+    "College 8 Garden B",
+    "College Eight Dorm B-Garden",
+    "College Eight B Garden",
+    "College Eight Garden B"
+   ],
+   "lat": 36.9916086,
+   "lon": -122.0667587,
+   "approach": [
+    [
+     36.9909636,
+     -122.0642905
+    ],
+    [
+     36.9907903,
+     -122.0641525
+    ],
+    [
+     36.9907453,
+     -122.0642404
+    ],
+    [
+     36.9908927,
+     -122.0643779
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-dorm-b-l-building",
+   "asset": "7761",
+   "name": "Rachel Carson College Dorm B-L-Building",
+   "short": "Dorm B-L-Building",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Dorm B-L-Building",
+    "RCC B Building",
+    "RCC Building B",
+    "RCC Dorm B",
+    "Carson Dorm B-L-Building",
+    "Carson B Building",
+    "Carson Building B",
+    "Carson Dorm B",
+    "Rachel Carson Dorm B-L-Building",
+    "Rachel Carson B Building",
+    "Rachel Carson Building B",
+    "Rachel Carson Dorm B",
+    "C8 Dorm B-L-Building",
+    "C8 B Building",
+    "C8 Building B",
+    "C8 Dorm B",
+    "College 8 Dorm B-L-Building",
+    "College 8 B Building",
+    "College 8 Building B",
+    "College 8 Dorm B",
+    "College Eight Dorm B-L-Building",
+    "College Eight B Building",
+    "College Eight Building B",
+    "College Eight Dorm B"
+   ],
+   "lat": 36.99076,
+   "lon": -122.0639202,
+   "approach": [
+    [
+     36.9910848,
+     -122.0646126
+    ],
+    [
+     36.9910328,
+     -122.0643526
+    ],
+    [
+     36.9907769,
+     -122.0646419
+    ],
+    [
+     36.9908055,
+     -122.0647003
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-dorm-c-garden",
+   "asset": "7762",
+   "name": "Rachel Carson College Dorm C-Garden",
+   "short": "Dorm C-Garden",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Dorm C-Garden",
+    "RCC C Garden",
+    "RCC Garden C",
+    "Carson Dorm C-Garden",
+    "Carson C Garden",
+    "Carson Garden C",
+    "Rachel Carson Dorm C-Garden",
+    "Rachel Carson C Garden",
+    "Rachel Carson Garden C",
+    "C8 Dorm C-Garden",
+    "C8 C Garden",
+    "C8 Garden C",
+    "College 8 Dorm C-Garden",
+    "College 8 C Garden",
+    "College 8 Garden C",
+    "College Eight Dorm C-Garden",
+    "College Eight C Garden",
+    "College Eight Garden C"
+   ],
+   "lat": 36.9911667,
+   "lon": -122.0671207,
+   "approach": [
+    [
+     36.9907743,
+     -122.0654439
+    ],
+    [
+     36.9907097,
+     -122.0653967
+    ],
+    [
+     36.9905986,
+     -122.0656101
+    ],
+    [
+     36.9906712,
+     -122.0656632
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-dorm-c-l-building",
+   "asset": "7763",
+   "name": "Rachel Carson College Dorm C-L-Building",
+   "short": "Dorm C-L-Building",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Dorm C-L-Building",
+    "RCC C Building",
+    "RCC Building C",
+    "RCC Dorm C",
+    "Carson Dorm C-L-Building",
+    "Carson C Building",
+    "Carson Building C",
+    "Carson Dorm C",
+    "Rachel Carson Dorm C-L-Building",
+    "Rachel Carson C Building",
+    "Rachel Carson Building C",
+    "Rachel Carson Dorm C",
+    "C8 Dorm C-L-Building",
+    "C8 C Building",
+    "C8 Building C",
+    "C8 Dorm C",
+    "College 8 Dorm C-L-Building",
+    "College 8 C Building",
+    "College 8 Building C",
+    "College 8 Dorm C",
+    "College Eight Dorm C-L-Building",
+    "College Eight C Building",
+    "College Eight Building C",
+    "College Eight Dorm C"
+   ],
+   "lat": 36.9906532,
+   "lon": -122.0652542,
+   "approach": [
+    [
+     36.9907906,
+     -122.0653303
+    ],
+    [
+     36.9907329,
+     -122.0650611
+    ],
+    [
+     36.9904341,
+     -122.0652128
+    ],
+    [
+     36.9907073,
+     -122.0653581
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-dorm-d-garden",
+   "asset": "7764",
+   "name": "Rachel Carson College Dorm D-Garden",
+   "short": "Dorm D-Garden",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Dorm D-Garden",
+    "RCC D Garden",
+    "RCC Garden D",
+    "Carson Dorm D-Garden",
+    "Carson D Garden",
+    "Carson Garden D",
+    "Rachel Carson Dorm D-Garden",
+    "Rachel Carson D Garden",
+    "Rachel Carson Garden D",
+    "C8 Dorm D-Garden",
+    "C8 D Garden",
+    "C8 Garden D",
+    "College 8 Dorm D-Garden",
+    "College 8 D Garden",
+    "College 8 Garden D",
+    "College Eight Dorm D-Garden",
+    "College Eight D Garden",
+    "College Eight Garden D"
+   ],
+   "lat": 36.9901879,
+   "lon": -122.0635792,
+   "approach": [
+    [
+     36.9905757,
+     -122.06451
+    ],
+    [
+     36.9903978,
+     -122.0643807
+    ],
+    [
+     36.9903558,
+     -122.0644706
+    ],
+    [
+     36.9905059,
+     -122.0646028
+    ]
+   ]
+  },
+  {
+   "id": "rachel-carson-college-dorm-d-l-building",
+   "asset": "7765",
+   "name": "Rachel Carson College Dorm D-L-Building",
+   "short": "Dorm D-L-Building",
+   "area": "Rachel Carson College",
+   "aliases": [
+    "RCC Dorm D-L-Building",
+    "RCC D Building",
+    "RCC Building D",
+    "RCC Dorm D",
+    "Carson Dorm D-L-Building",
+    "Carson D Building",
+    "Carson Building D",
+    "Carson Dorm D",
+    "Rachel Carson Dorm D-L-Building",
+    "Rachel Carson D Building",
+    "Rachel Carson Building D",
+    "Rachel Carson Dorm D",
+    "C8 Dorm D-L-Building",
+    "C8 D Building",
+    "C8 Building D",
+    "C8 Dorm D",
+    "College 8 Dorm D-L-Building",
+    "College 8 D Building",
+    "College 8 Building D",
+    "College 8 Dorm D",
+    "College Eight Dorm D-L-Building",
+    "College Eight D Building",
+    "College Eight Building D",
+    "College Eight Dorm D"
+   ],
+   "lat": 36.9904293,
+   "lon": -122.0643989,
+   "approach": [
+    [
+     36.9906901,
+     -122.0648566
+    ],
+    [
+     36.9906342,
+     -122.064596
+    ],
+    [
+     36.9903657,
+     -122.0648863
+    ],
+    [
+     36.9903963,
+     -122.0649469
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-apartment-building-9",
+   "asset": "7904",
+   "name": "Stevenson College Apartment Building 9",
+   "short": "Casa Novena",
+   "known_as": "Casa Novena",
+   "area": "Stevenson College",
+   "aliases": [
+    "Casa Novena",
+    "Novena",
+    "Stevenson Novena",
+    "Stevenson Apartment Building 9",
+    "Stevenson Apt 9",
+    "Stevenson Apartments 9",
+    "Stevenson Apartment 9",
+    "Stevenson Apt Building 9",
+    "Stevenson Building 9"
+   ],
+   "lat": 36.9968707,
+   "lon": -122.0535001,
+   "approach": [
+    [
+     36.9965962,
+     -122.0524283
+    ],
+    [
+     36.9965816,
+     -122.0522812
+    ],
+    [
+     36.9964672,
+     -122.0522988
+    ],
+    [
+     36.9964856,
+     -122.0524848
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-apartment-building-10",
+   "asset": "7905",
+   "name": "Stevenson College Apartment Building 10",
+   "short": "Casa Decima",
+   "known_as": "Casa Decima",
+   "area": "Stevenson College",
+   "aliases": [
+    "Casa Decima",
+    "Decima",
+    "Stevenson Decima",
+    "Stevenson Apartment Building 10",
+    "Stevenson Apt 10",
+    "Stevenson Apartments 10",
+    "Stevenson Apartment 10",
+    "Stevenson Apt Building 10",
+    "Stevenson Building 10"
+   ],
+   "lat": 36.9961189,
+   "lon": -122.0524501,
+   "approach": [
+    [
+     36.9962123,
+     -122.0523485
+    ],
+    [
+     36.9960131,
+     -122.0523139
+    ],
+    [
+     36.9959974,
+     -122.0524581
+    ],
+    [
+     36.9961962,
+     -122.0524927
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-apartment-building-11",
+   "asset": "7906",
+   "name": "Stevenson College Apartment Building 11",
+   "short": "Casa Decima Primera",
+   "known_as": "Casa Decima Primera",
+   "area": "Stevenson College",
+   "aliases": [
+    "Casa Decima Primera",
+    "Decima Primera",
+    "Stevenson Decima Primera",
+    "Stevenson Apartment Building 11",
+    "Stevenson Apt 11",
+    "Stevenson Apartments 11",
+    "Stevenson Apartment 11",
+    "Stevenson Apt Building 11",
+    "Stevenson Building 11"
+   ],
+   "lat": 36.9966654,
+   "lon": -122.0542099,
+   "approach": [
+    [
+     36.9962675,
+     -122.0526558
+    ],
+    [
+     36.9961664,
+     -122.0526534
+    ],
+    [
+     36.9961649,
+     -122.0527993
+    ],
+    [
+     36.9962656,
+     -122.0528014
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-house-1",
+   "asset": "7135",
+   "name": "Stevenson College House 1",
+   "short": "Casa Primera",
+   "known_as": "Casa Primera",
+   "area": "Stevenson College",
+   "aliases": [
+    "Stevenson College Casa Primera",
+    "Casa Primera",
+    "Primera",
+    "Stevenson Primera",
+    "Stevenson House 1"
+   ],
+   "lat": 36.9977157,
+   "lon": -122.0520943,
+   "approach": [
+    [
+     36.9976731,
+     -122.0517068
+    ],
+    [
+     36.9975857,
+     -122.0514813
+    ],
+    [
+     36.9974985,
+     -122.0515101
+    ],
+    [
+     36.997515,
+     -122.0517617
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-house-2",
+   "asset": "7136",
+   "name": "Stevenson College House 2",
+   "short": "Casa Segunda",
+   "known_as": "Casa Segunda",
+   "area": "Stevenson College",
+   "aliases": [
+    "Stevenson College Casa Segunda",
+    "Casa Segunda",
+    "Segunda",
+    "Stevenson Segunda",
+    "Stevenson House 2"
+   ],
+   "lat": 36.9981078,
+   "lon": -122.0522947,
+   "approach": [
+    [
+     36.9979125,
+     -122.0512687
+    ],
+    [
+     36.9978534,
+     -122.0511193
+    ],
+    [
+     36.9976725,
+     -122.0512282
+    ],
+    [
+     36.9977305,
+     -122.0513783
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-house-3",
+   "asset": "7137",
+   "name": "Stevenson College House 3",
+   "short": "Casa Tercera",
+   "known_as": "Casa Tercera",
+   "area": "Stevenson College",
+   "aliases": [
+    "Stevenson College Casa Tercera",
+    "Casa Tercera",
+    "Tercera",
+    "Stevenson Tercera",
+    "Stevenson House 3"
+   ],
+   "lat": 36.9980062,
+   "lon": -122.0526011,
+   "approach": [
+    [
+     36.9976183,
+     -122.0511476
+    ],
+    [
+     36.9975837,
+     -122.0508939
+    ],
+    [
+     36.9974211,
+     -122.0509284
+    ],
+    [
+     36.997522,
+     -122.0511919
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-house-4",
+   "asset": "7138",
+   "name": "Stevenson College House 4",
+   "short": "Casa Cuarta",
+   "known_as": "Casa Cuarta",
+   "area": "Stevenson College",
+   "aliases": [
+    "Stevenson College Casa Cuarta",
+    "Casa Cuarta",
+    "Cuarta",
+    "Stevenson Cuarta",
+    "Stevenson House 4"
+   ],
+   "lat": 36.9969147,
+   "lon": -122.0499226,
+   "approach": [
+    [
+     36.9974742,
+     -122.0513835
+    ],
+    [
+     36.9972863,
+     -122.0512724
+    ],
+    [
+     36.9972423,
+     -122.0512859
+    ],
+    [
+     36.9972538,
+     -122.0514618
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-house-5",
+   "asset": "7139",
+   "name": "Stevenson College House 5",
+   "short": "Casa Quinta",
+   "known_as": "Casa Quinta",
+   "area": "Stevenson College",
+   "aliases": [
+    "Stevenson College Casa Quinta",
+    "Casa Quinta",
+    "Quinta",
+    "Stevenson Quinta",
+    "Stevenson House 5"
+   ],
+   "lat": 36.9965971,
+   "lon": -122.0518324,
+   "approach": [
+    [
+     36.9965903,
+     -122.0515952
+    ],
+    [
+     36.9965325,
+     -122.0513559
+    ],
+    [
+     36.9964022,
+     -122.0513904
+    ],
+    [
+     36.9964605,
+     -122.0516439
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-house-6",
+   "asset": "7140",
+   "name": "Stevenson College House 6",
+   "short": "Casa Sexta",
+   "known_as": "Casa Sexta",
+   "area": "Stevenson College",
+   "aliases": [
+    "Stevenson College Casa Sexta",
+    "Casa Sexta",
+    "Sexta",
+    "Stevenson Sexta",
+    "Stevenson House 6"
+   ],
+   "lat": 36.9963231,
+   "lon": -122.0519469,
+   "approach": [
+    [
+     36.9963138,
+     -122.0515378
+    ],
+    [
+     36.9961117,
+     -122.0514244
+    ],
+    [
+     36.9960849,
+     -122.0515916
+    ],
+    [
+     36.9962529,
+     -122.0516578
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-house-7",
+   "asset": "7141",
+   "name": "Stevenson College House 7",
+   "short": "Casa Septima",
+   "known_as": "Casa Septima",
+   "area": "Stevenson College",
+   "aliases": [
+    "Stevenson College Casa Septima",
+    "Casa Septima",
+    "Septima",
+    "Stevenson Septima",
+    "Stevenson House 7"
+   ],
+   "lat": 36.9958897,
+   "lon": -122.050581,
+   "approach": [
+    [
+     36.9964087,
+     -122.0518818
+    ],
+    [
+     36.9962785,
+     -122.0518297
+    ],
+    [
+     36.9962187,
+     -122.0520789
+    ],
+    [
+     36.9963452,
+     -122.0521274
+    ]
+   ]
+  },
+  {
+   "id": "stevenson-college-house-8",
+   "asset": "7142",
+   "name": "Stevenson College House 8",
+   "short": "Casa Octava",
+   "known_as": "Casa Octava",
+   "area": "Stevenson College",
+   "aliases": [
+    "Stevenson College Casa Octava",
+    "Casa Octava",
+    "Octava",
+    "Stevenson Octava",
+    "Stevenson House 8"
+   ],
+   "lat": 36.9962102,
+   "lon": -122.0507052,
+   "approach": [
+    [
+     36.9966505,
+     -122.0517829
+    ],
+    [
+     36.9965812,
+     -122.0517523
+    ],
+    [
+     36.9964824,
+     -122.0519795
+    ],
+    [
+     36.9965567,
+     -122.0520413
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-b1",
+   "asset": "7011",
+   "name": "Village Housing B1",
+   "short": "B1",
+   "area": "The Village",
+   "aliases": [
+    "Village B1",
+    "The Village B1",
+    "Lower Quarry Village B1"
+   ],
+   "lat": 36.9866707,
+   "lon": -122.0553673,
+   "approach": [
+    [
+     36.9866577,
+     -122.0551364
+    ],
+    [
+     36.9865633,
+     -122.0549475
+    ],
+    [
+     36.9865012,
+     -122.0549958
+    ],
+    [
+     36.9865956,
+     -122.0551847
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-b2",
+   "asset": "7012",
+   "name": "Village Housing B2",
+   "short": "B2",
+   "area": "The Village",
+   "aliases": [
+    "Village B2",
+    "The Village B2",
+    "Lower Quarry Village B2"
+   ],
+   "lat": 36.9865001,
+   "lon": -122.0554218,
+   "approach": [
+    [
+     36.9865035,
+     -122.0550988
+    ],
+    [
+     36.9864643,
+     -122.0550203
+    ],
+    [
+     36.9863127,
+     -122.055138
+    ],
+    [
+     36.986352,
+     -122.0552164
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-b3",
+   "asset": "7013",
+   "name": "Village Housing B3",
+   "short": "B3",
+   "area": "The Village",
+   "aliases": [
+    "Village B3",
+    "The Village B3",
+    "Lower Quarry Village B3"
+   ],
+   "lat": 36.9868093,
+   "lon": -122.0560218,
+   "approach": [
+    [
+     36.9866777,
+     -122.0552558
+    ],
+    [
+     36.9865058,
+     -122.0552002
+    ],
+    [
+     36.9864867,
+     -122.0552896
+    ],
+    [
+     36.9866591,
+     -122.0553453
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-c1",
+   "asset": "7028",
+   "name": "Village Housing C1",
+   "short": "C1",
+   "area": "The Village",
+   "aliases": [
+    "Village C1",
+    "The Village C1",
+    "Lower Quarry Village C1"
+   ],
+   "lat": 36.9872001,
+   "lon": -122.0559612,
+   "approach": [
+    [
+     36.987072,
+     -122.0553055
+    ],
+    [
+     36.9869629,
+     -122.0552892
+    ],
+    [
+     36.986954,
+     -122.0553821
+    ],
+    [
+     36.987063,
+     -122.0553984
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-c2",
+   "asset": "7024",
+   "name": "Village Housing C2",
+   "short": "C2",
+   "area": "The Village",
+   "aliases": [
+    "Village C2",
+    "The Village C2",
+    "Lower Quarry Village C2"
+   ],
+   "lat": 36.9871478,
+   "lon": -122.0550599,
+   "approach": [
+    [
+     36.9873068,
+     -122.0552616
+    ],
+    [
+     36.9872759,
+     -122.0551775
+    ],
+    [
+     36.9871136,
+     -122.05527
+    ],
+    [
+     36.9871444,
+     -122.0553541
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-c3",
+   "asset": "7017",
+   "name": "Village Housing C3",
+   "short": "C3",
+   "area": "The Village",
+   "aliases": [
+    "Village C3",
+    "The Village C3",
+    "Lower Quarry Village C3"
+   ],
+   "lat": 36.9873081,
+   "lon": -122.0550887,
+   "approach": [
+    [
+     36.9874806,
+     -122.0553172
+    ],
+    [
+     36.987302,
+     -122.0553172
+    ],
+    [
+     36.987302,
+     -122.0554096
+    ],
+    [
+     36.9874805,
+     -122.0554097
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-c4",
+   "asset": "7014",
+   "name": "Village Housing C4",
+   "short": "C4",
+   "area": "The Village",
+   "aliases": [
+    "Village C4",
+    "The Village C4",
+    "Lower Quarry Village C4"
+   ],
+   "lat": 36.9880792,
+   "lon": -122.0568573,
+   "approach": [
+    [
+     36.9877117,
+     -122.055305
+    ],
+    [
+     36.9876635,
+     -122.0552348
+    ],
+    [
+     36.9875285,
+     -122.0553802
+    ],
+    [
+     36.9875761,
+     -122.0554496
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-c5",
+   "asset": "7025",
+   "name": "Village Housing C5",
+   "short": "C5",
+   "area": "The Village",
+   "aliases": [
+    "Village C5",
+    "The Village C5",
+    "Lower Quarry Village C5"
+   ],
+   "lat": 36.9880411,
+   "lon": -122.0571819,
+   "approach": [
+    [
+     36.987522,
+     -122.0551771
+    ],
+    [
+     36.987507,
+     -122.0550865
+    ],
+    [
+     36.9873306,
+     -122.0551315
+    ],
+    [
+     36.9873471,
+     -122.055222
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-c6",
+   "asset": "7026",
+   "name": "Village Housing C6",
+   "short": "C6",
+   "area": "The Village",
+   "aliases": [
+    "Village C6",
+    "The Village C6",
+    "Lower Quarry Village C6"
+   ],
+   "lat": 36.9879322,
+   "lon": -122.0560736,
+   "approach": [
+    [
+     36.9877323,
+     -122.0550729
+    ],
+    [
+     36.9875537,
+     -122.0550719
+    ],
+    [
+     36.9875534,
+     -122.0551644
+    ],
+    [
+     36.9877319,
+     -122.0551654
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-d1",
+   "asset": "7030",
+   "name": "Village Housing D1",
+   "short": "D1",
+   "area": "The Village",
+   "aliases": [
+    "Village D1",
+    "The Village D1",
+    "Lower Quarry Village D1"
+   ],
+   "lat": 36.9888413,
+   "lon": -122.0577468,
+   "approach": [
+    [
+     36.9882802,
+     -122.0558095
+    ],
+    [
+     36.988241,
+     -122.0555924
+    ],
+    [
+     36.9881687,
+     -122.0556127
+    ],
+    [
+     36.9882078,
+     -122.0558298
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-d2",
+   "asset": "7021",
+   "name": "Village Housing D2",
+   "short": "D2",
+   "area": "The Village",
+   "aliases": [
+    "Village D2",
+    "The Village D2",
+    "Lower Quarry Village D2"
+   ],
+   "lat": 36.9883935,
+   "lon": -122.0558643,
+   "approach": [
+    [
+     36.9883919,
+     -122.0557734
+    ],
+    [
+     36.9883528,
+     -122.0555563
+    ],
+    [
+     36.9882804,
+     -122.0555766
+    ],
+    [
+     36.9883196,
+     -122.0557937
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-e1",
+   "asset": "7022",
+   "name": "Village Housing E1",
+   "short": "E1",
+   "area": "The Village",
+   "aliases": [
+    "Village E1",
+    "The Village E1",
+    "Lower Quarry Village E1"
+   ],
+   "lat": 36.9885959,
+   "lon": -122.0555683,
+   "approach": [
+    [
+     36.9886707,
+     -122.0557161
+    ],
+    [
+     36.9886257,
+     -122.0554877
+    ],
+    [
+     36.9885477,
+     -122.0555081
+    ],
+    [
+     36.9885932,
+     -122.0557392
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-e2",
+   "asset": "7027",
+   "name": "Village Housing E2",
+   "short": "E2",
+   "area": "The Village",
+   "aliases": [
+    "Village E2",
+    "The Village E2",
+    "Lower Quarry Village E2"
+   ],
+   "lat": 36.9889662,
+   "lon": -122.0561602,
+   "approach": [
+    [
+     36.988887,
+     -122.0555637
+    ],
+    [
+     36.9887127,
+     -122.0555157
+    ],
+    [
+     36.9886967,
+     -122.055606
+    ],
+    [
+     36.988871,
+     -122.0556539
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-e3",
+   "asset": "7018",
+   "name": "Village Housing E3",
+   "short": "E3",
+   "area": "The Village",
+   "aliases": [
+    "Village E3",
+    "The Village E3",
+    "Lower Quarry Village E3"
+   ],
+   "lat": 36.9890529,
+   "lon": -122.0560817,
+   "approach": [
+    [
+     36.9890194,
+     -122.0556215
+    ],
+    [
+     36.9889539,
+     -122.0555704
+    ],
+    [
+     36.9888538,
+     -122.0557731
+    ],
+    [
+     36.9889179,
+     -122.0558245
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-e4",
+   "asset": "7019",
+   "name": "Village Housing E4",
+   "short": "E4",
+   "area": "The Village",
+   "aliases": [
+    "Village E4",
+    "The Village E4",
+    "Lower Quarry Village E4"
+   ],
+   "lat": 36.9889541,
+   "lon": -122.0565204,
+   "approach": [
+    [
+     36.9888331,
+     -122.0558441
+    ],
+    [
+     36.988831,
+     -122.0557458
+    ],
+    [
+     36.9886384,
+     -122.0557553
+    ],
+    [
+     36.9886413,
+     -122.0558542
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-f1",
+   "asset": "7023",
+   "name": "Village Housing F1",
+   "short": "F1",
+   "area": "The Village",
+   "aliases": [
+    "Village F1",
+    "The Village F1",
+    "Lower Quarry Village F1"
+   ],
+   "lat": 36.9887074,
+   "lon": -122.055394,
+   "approach": [
+    [
+     36.9887428,
+     -122.0551676
+    ],
+    [
+     36.9886733,
+     -122.0551216
+    ],
+    [
+     36.9885834,
+     -122.055327
+    ],
+    [
+     36.9886514,
+     -122.0553735
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-f2",
+   "asset": "7016",
+   "name": "Village Housing F2",
+   "short": "F2",
+   "area": "The Village",
+   "aliases": [
+    "Village F2",
+    "The Village F2",
+    "Lower Quarry Village F2"
+   ],
+   "lat": 36.9891205,
+   "lon": -122.0563209,
+   "approach": [
+    [
+     36.9889253,
+     -122.0553227
+    ],
+    [
+     36.9887395,
+     -122.0552882
+    ],
+    [
+     36.9887292,
+     -122.0553831
+    ],
+    [
+     36.988916,
+     -122.0554144
+    ]
+   ]
+  },
+  {
+   "id": "village-housing-f3",
+   "asset": "7015",
+   "name": "Village Housing F3",
+   "short": "F3",
+   "area": "The Village",
+   "aliases": [
+    "Village F3",
+    "The Village F3",
+    "Lower Quarry Village F3"
+   ],
+   "lat": 36.9885252,
+   "lon": -122.0542,
+   "approach": [
+    [
+     36.9888927,
+     -122.0552207
+    ],
+    [
+     36.9887932,
+     -122.055019
+    ],
+    [
+     36.9887301,
+     -122.0550675
+    ],
+    [
+     36.9888296,
+     -122.0552692
+    ]
+   ]
+  }
+ ]
+}
