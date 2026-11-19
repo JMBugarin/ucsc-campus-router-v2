@@ -44,7 +44,13 @@ void main() {
         );
         await tester.tap(find.text('Kresge College Academic Building 3201'));
         await tester.pumpAndSettle();
-        expect(find.textContaining('Floor '), findsOneWidget);
+        expect(find.text('Floor 2'), findsOneWidget);
+        expect(find.textContaining('Floor L'), findsNothing);
+        expect(find.text('Not checked on foot yet.'), findsOneWidget);
+        expect(
+          find.textContaining('Walk there ends at the door nearest the room'),
+          findsOneWidget,
+        );
         expect(find.byType(DestinationPin), findsOneWidget);
 
         await tester.tap(find.text('Walk there'));
