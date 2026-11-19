@@ -239,6 +239,7 @@ export function buildStyle(theme: Theme): StyleSpecification {
     { id: 'route-path', type: 'line', source: 'route', filter: ['in', ['get', 'kind'], ['literal', [0, 3]]], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': c.accent, 'line-width': w([[14, 3.5], [17, 6.5], [19, 11]]) } },
     { id: 'route-bridge', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 3], layout: { 'line-cap': 'butt' }, paint: { 'line-color': '#ffffff', 'line-width': w([[14, 1], [19, 3.5]]), 'line-dasharray': [1, 1] } },
     { id: 'route-steps', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 1], layout: { 'line-cap': 'butt', 'line-join': 'round' }, paint: { 'line-color': c.warn, 'line-width': w([[14, 3.5], [17, 6.5], [19, 11]]), 'line-dasharray': [0.45, 0.55] } },
+    { id: 'route-bus', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'bus'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#2a8fa8', 'line-width': w([[12, 3], [17, 7]]) } },
     { id: 'route-connector', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'connector'], layout: { 'line-cap': 'round' }, paint: { 'line-color': c.accent, 'line-width': 2.5, 'line-dasharray': [0.1, 2] } },
     { id: 'route-indoor', type: 'line', source: 'route', filter: ['==', ['get', 'kind'], 'indoor'], layout: { 'line-cap': 'round' }, paint: { 'line-color': c.room, 'line-width': 2.5, 'line-dasharray': [1.2, 1.6] } },
     // parking clusters and lots

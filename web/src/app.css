@@ -960,3 +960,37 @@ ul.plain.note li {
   background: var(--accent);
   transition: width var(--m-base) var(--ease);
 }
+
+/* trips by bus */
+.trips {
+  display: grid;
+  gap: 8px;
+}
+.trips__options {
+  display: grid;
+  gap: 6px;
+}
+.trips__option {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid var(--divider);
+  border-radius: var(--r-card);
+  background: var(--fill);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.trips__option span {
+  color: var(--text-2);
+  font-size: var(--t-footnote);
+}
+.trips__option[aria-checked='true'] {
+  border-color: rgb(var(--accent-rgb) / 0.6);
+  background: rgb(var(--accent-rgb) / 0.14);
+}
+.steps__icon--bus {
+  background: rgb(42 143 168 / 0.18);
+  color: #2a8fa8;
+}

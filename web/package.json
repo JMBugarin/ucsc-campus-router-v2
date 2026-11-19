@@ -9,6 +9,7 @@
     "preview": "vite preview --port 4173",
     "data": "node scripts/build-data.mjs",
     "transit": "node scripts/build-transit.mjs",
+    "metro": "node scripts/build-metro.mjs",
     "rooms:audit": "node scripts/room-audit.mjs",
     "network:audit": "node scripts/network-audit.mjs",
     "test": "vitest run",

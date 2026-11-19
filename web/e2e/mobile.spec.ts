@@ -13,7 +13,7 @@ test('mobile: bottom sheet search to place to directions', async ({ page }) => {
   const box = await page.getByRole('button', { name: 'Directions' }).boundingBox()
   expect(box!.height).toBeGreaterThanOrEqual(44)
   await page.getByRole('button', { name: 'Directions' }).click()
-  await expect(page.getByRole('heading', { name: 'Walking directions' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Directions' })).toBeVisible()
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
   expect(overflow).toBe(false)
 })
