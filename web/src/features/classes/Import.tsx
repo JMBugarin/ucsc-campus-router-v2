@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GlassBanner, GlassButton, GlassModal } from '../../design/components'
 import { Icon } from '../../design/icons'
 import type { SearchIndex } from '../../data/search'
 import type { Place } from '../../data/types'
 import type { Campus } from '../../schedule/campus'
-import { draftFromMeeting, draftLabel, draftTime, daysLabel, flagged, problem, toMeeting, type ClassDraft } from '../../schedule/draft'
+import { draftFromMeeting, draftLabel, draftTime, daysLabel, flagged, newDraft, problem, toMeeting, type ClassDraft } from '../../schedule/draft'
+import { parseSchedule } from '../../schedule/ocr/parser'
+import { PictureError, recognizePicture } from '../../schedule/ocr/recognize'
+import { needsReview, reasons } from '../../schedule/ocr/rows'
 import { ScheduleError } from '../../schedule/meeting'
 import { parsePasted } from '../../schedule/paste'
 import { ClassEditor } from './ClassEditor'
@@ -133,3 +136,46 @@ export function PasteImport({ campus, onRead, onClose }: { campus: Campus; onRea
 }
 
 export const toMeetings = (drafts: ClassDraft[]) => drafts.map(toMeeting)
+
+/** Reads a picture of a schedule in this browser, then hands the classes to the review sheet. */
+export function PictureImport({ file, onRead, onClose }: { file: File; onRead: (drafts: ClassDraft[], notes: string[]) => void; onClose: () => void }) {
+  const [progress, setProgress] = useState(0)
+  const [error, setError] = useState<string | null>(null)
+  useEffect(() => {
+    const abort = new AbortController()
+    recognizePicture(file, setProgress, abort.signal)
+      .then((reading) => {
+        if (abort.signal.aborted) return
+        const parsed = parseSchedule(reading)
+        if (parsed.problem === 'noText') return setError("I couldn't find any text in that picture. Try a clearer screenshot of your Class Schedule page.")
+        if (parsed.problem === 'noClasses') return setError(['I found text but no classes in it. Try a screenshot of your Class Schedule page, or paste it instead.', ...parsed.notes].join(' '))
+        onRead(
+          parsed.rows.map((r) => newDraft({ course: r.course, title: r.title, section: r.section, component: r.component, days: r.days, start: r.start, end: r.end, location: r.location, startDate: r.startDate, endDate: r.endDate, reasons: needsReview(r) ? reasons(r) : [] })),
+          parsed.notes,
+        )
+      })
+      .catch((e) => !abort.signal.aborted && setError(e instanceof PictureError ? e.message : "I couldn't read that picture. Try a clearer screenshot."))
+    return () => abort.abort()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file])
+  return (
+    <GlassModal open onClose={onClose} title="Reading your schedule">
+      {error ? (
+        <>
+          <p className="note fberror" role="alert">
+            {error}
+          </p>
+          <GlassButton onClick={onClose}>Close</GlassButton>
+        </>
+      ) : (
+        <div className="reading" role="status" aria-live="polite">
+          <div className="reading__bar">
+            <i style={{ width: `${Math.round(progress * 100)}%` }} />
+          </div>
+          <p className="note">{progress > 0 ? `Reading… ${Math.round(progress * 100)}%` : 'Getting the reader ready…'} The picture stays on this device.</p>
+          <GlassButton onClick={onClose}>Cancel</GlassButton>
+        </div>
+      )}
+    </GlassModal>
+  )
+}

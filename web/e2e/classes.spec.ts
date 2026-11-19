@@ -111,3 +111,36 @@ test('the map tab still searches rooms without a schedule', async ({ page }) => 
   await page.getByRole('combobox', { name: 'Search UCSC' }).fill('mchenry 1340')
   await expect(page.getByRole('option').first()).toContainText('McHenry Library 1340')
 })
+
+test('a picture of the Class Schedule page is read in the browser and checked before saving', async ({ page, browser }) => {
+  test.setTimeout(120_000)
+  const { MYUCSC_HTML } = await import('./fixtures-myucsc')
+  const shot = await browser.newPage({ viewport: { width: 1150, height: 900 } })
+  await shot.setContent(MYUCSC_HTML)
+  const png = await shot.screenshot({ fullPage: true })
+  await shot.close()
+
+  await at(page, '2026-11-18T08:50:00-08:00')
+  const uploads: string[] = []
+  page.on('request', (r) => r.method() !== 'GET' && uploads.push(r.url()))
+  await ready(page, '#/schedule')
+  await page.getByLabel('Picture of your schedule').setInputFiles({ name: 'schedule.png', mimeType: 'image/png', buffer: png })
+  const review = page.getByRole('dialog', { name: 'Check 3 classes' })
+  await expect(review).toBeVisible({ timeout: 90_000 })
+  await expect(review).toContainText('Skipped PHYS 5A (dropped).')
+  for (const text of ['CSE 130 Lecture', 'MoWeFr · 9:20 AM–10:25 AM', 'On the map: Jack Baskin Engineering 152', 'CSE 130 Discussion', 'On the map: McHenry Library 1350', 'MATH 19A Lecture', 'On the map: Thimann Lecture Hall 003']) await expect(review).toContainText(text)
+  await review.getByRole('button', { name: 'Save 3 classes' }).click()
+  await expect(page.getByText('Next: CSE 130 Lecture at 9:20 AM in 30 min.')).toBeVisible()
+  expect(uploads).toEqual([])
+})
+
+test('a picture with no schedule in it says so', async ({ page, browser }) => {
+  test.setTimeout(120_000)
+  const shot = await browser.newPage({ viewport: { width: 800, height: 600 } })
+  await shot.setContent('<body style="margin:0;background:#4a7"><h1 style="font:bold 60px Arial;color:#fff;padding:60px">Beach day</h1></body>')
+  const png = await shot.screenshot()
+  await shot.close()
+  await ready(page, '#/schedule')
+  await page.getByLabel('Picture of your schedule').setInputFiles({ name: 'beach.png', mimeType: 'image/png', buffer: png })
+  await expect(page.getByRole('alert')).toContainText(/no classes in it|any text/, { timeout: 90_000 })
+})
