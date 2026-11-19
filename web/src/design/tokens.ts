@@ -13,6 +13,7 @@ export const CATEGORY_COLOR = {
   landmark: '#c2923a',
   transit: '#2a8fa8',
   parking: '#6f7d92',
+  room: '#1f5fae',
 } as const
 export type Category = keyof typeof CATEGORY_COLOR
 
@@ -24,6 +25,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   landmark: 'Landmarks',
   transit: 'Transit',
   parking: 'Parking',
+  room: 'Rooms',
 }
 
 export const MOBILE_QUERY = '(max-width: 720px)'

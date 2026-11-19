@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { MapView, type MapHandle } from './map/MapView'
+import { MapView, type MapFocus, type MapHandle } from './map/MapView'
 import { GlassBanner, GlassIconButton, GlassPanel, GlassSearch, GlassSheet, GlassToolbar, GlassTooltip, Spinner, type Detent } from './design/components'
 import { useMedia } from './design/motion'
 import { MOBILE_QUERY } from './design/tokens'
@@ -19,6 +19,9 @@ import { activity } from './state/activity'
 import { busOptions } from './transit/plan'
 import { loadTransit, useClock, useLive } from './transit/useTransit'
 import type { TransitData } from './transit/schedule'
+import { recentStore } from './data/rooms'
+
+const recents = recentStore()
 
 const FEATURED = ['mchenry-library', 'quarry-plaza', 'science-hill', 'baskin-engineering', 'science-engineering-library', 'kresge-college']
 
@@ -43,6 +46,7 @@ export function App() {
   const [bearing, setBearing] = useState(0)
   const [toast, setToast] = useState<string | null>(null)
   const [modal, setModal] = useState<'about' | 'transit' | null>(null)
+  const [recentIds, setRecentIds] = useState<string[]>(() => recents.get())
   const mapRef = useRef<MapHandle>(null)
   const searchRef = useRef<HTMLInputElement>(null)
 
@@ -71,6 +75,21 @@ export function App() {
   const showResults = q.trim().length > 0 || cat !== null
 
   const selected = route.name === 'place' ? byId.get(route.id) ?? null : null
+  const focus = useMemo((): MapFocus | null => {
+    if (!selected) return null
+    const building = selected.kind === 'room' && selected.room ? byId.get(selected.room.building) : selected
+    if (!building?.roomIds?.length) return null
+    const d = selected.room?.door
+    return {
+      rooms: building.roomIds.map((id) => byId.get(id)).filter((p): p is Place => !!p),
+      doors: building.entrances ?? [],
+      door: d ? [d.lat, d.lon] : null,
+    }
+  }, [selected, byId])
+  const roomOf = (id?: string) => {
+    const p = id ? byId.get(id) : undefined
+    return p?.kind === 'room' ? p : null
+  }
 
   /* ---- directions state from the URL */
   const resolve = useCallback(
@@ -101,7 +120,17 @@ export function App() {
     [graph, transit, plan, clock.secs, avoidStairs],
   )
 
-  const routeJson = useMemo(() => (plan && graph ? routeGeoJSON(graph, plan) : null), [plan, graph])
+  const toRoom = route.name === 'directions' ? roomOf(route.to) : null
+  const fromRoom = route.name === 'directions' ? roomOf(route.from) : null
+  const routeJson = useMemo(() => {
+    if (!plan || !graph) return null
+    const fc = routeGeoJSON(graph, plan)
+    const indoor = (a: [number, number], b: [number, number]): GeoJSON.Feature<GeoJSON.LineString> => ({ type: 'Feature', properties: { kind: 'indoor' }, geometry: { type: 'LineString', coordinates: [[a[1], a[0]], [b[1], b[0]]] } })
+    if (toRoom) fc.features.push(indoor(plan.destPoint, [toRoom.lat, toRoom.lon]))
+    if (fromRoom) fc.features.push(indoor([fromRoom.lat, fromRoom.lon], plan.originPoint))
+    return fc
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plan, graph, toRoom?.id, fromRoom?.id])
   const endpoints = useMemo((): GeoJSON.FeatureCollection | null => {
     if (!plan) return null
     return {
@@ -109,12 +138,14 @@ export function App() {
       features: [
         { type: 'Feature', properties: { role: 'from' }, geometry: { type: 'Point', coordinates: [plan.originPoint[1], plan.originPoint[0]] } },
         { type: 'Feature', properties: { role: 'to' }, geometry: { type: 'Point', coordinates: [plan.destPoint[1], plan.destPoint[0]] } },
+        ...[toRoom, fromRoom].filter((r): r is Place => !!r).map((r) => ({ type: 'Feature' as const, properties: { role: 'room' }, geometry: { type: 'Point' as const, coordinates: [r.lon, r.lat] } })),
         ...(bus?.options[0] && transit
           ? ([['board', bus.options[0].board], ['alight', bus.options[0].alight]] as const).map(([role, i]) => ({ type: 'Feature' as const, properties: { role }, geometry: { type: 'Point' as const, coordinates: [transit.stops[i].lon, transit.stops[i].lat] } }))
           : []),
       ],
     }
-  }, [plan, bus, transit])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plan, bus, transit, toRoom?.id, fromRoom?.id])
 
   /* ---- camera */
   const sheetPad = detent === 'peek' ? 160 : Math.round(window.innerHeight * (detent === 'half' ? 0.46 : 0.46))
@@ -123,14 +154,19 @@ export function App() {
   padRef.current = padding
 
   useEffect(() => {
-    if (selected) mapRef.current?.flyToPlace(selected)
-    if (selected) void activity.meaningfulAction()
+    if (!selected) return
+    const d = selected.room?.door
+    if (d) mapRef.current?.fitCoords([[selected.lon, selected.lat], [d.lon, d.lat]], 18.6)
+    else mapRef.current?.flyToPlace(selected, selected.roomIds?.length ? 17.8 : undefined)
+    void activity.meaningfulAction()
+    setRecentIds(recents.push(selected.id))
   }, [selected?.id])
   useEffect(() => void activity.flush(), [])
   useEffect(() => {
     if (!plan || !graph) return
     const coords = plan.route.nodes.map((n) => [graph.lon[n], graph.lat[n]] as [number, number])
     coords.push([plan.originPoint[1], plan.originPoint[0]], [plan.destPoint[1], plan.destPoint[0]])
+    for (const r of [toRoom, fromRoom]) if (r) coords.push([r.lon, r.lat])
     mapRef.current?.fitCoords(coords)
   }, [plan])
 
@@ -210,13 +246,14 @@ export function App() {
   }, [])
 
   const featured = useMemo(() => FEATURED.map((id) => byId.get(id)).filter((p): p is Place => !!p), [byId])
+  const recent = useMemo(() => recentIds.map((id) => byId.get(id)).filter((p): p is Place => !!p), [recentIds, byId])
 
   /* ---- panel content */
   let content
   if (loadError) content = <GlassBanner tone="danger" title="Campus data failed to load">{loadError}. Check your connection and reload.</GlassBanner>
   else if (!places || !index) content = <div className="center"><Spinner label="Loading campus data" /></div>
   else if (route.name === 'place' && selected)
-    content = <PlaceDetail place={selected} transit={transit} now={clock} live={live} nearGraph={nearGraph(selected)} onBack={home} onDirections={() => directionsFor(selected.id)} onShare={share} onTransit={() => setModal('transit')} />
+    content = <PlaceDetail place={selected} byId={byId} onOpen={openPlace} transit={transit} now={clock} live={live} nearGraph={nearGraph(selected)} onBack={home} onDirections={() => directionsFor(selected.id)} onShare={share} onTransit={() => setModal('transit')} />
   else if (route.name === 'place')
     content = <GlassBanner tone="warning" title="Place not found" action={<GlassIconButton icon="close" label="Back" size="s" onClick={home} />}>No place has the id "{route.id}".</GlassBanner>
   else if (route.name === 'directions')
@@ -240,6 +277,7 @@ export function App() {
         straightMeters={dFrom.ep && dTo.ep ? straightMeters(dFrom.ep, dTo.ep) : null}
         bus={bus}
         transit={transit}
+        toRoom={toRoom}
       />
     )
   else if (showResults)
@@ -253,14 +291,14 @@ export function App() {
         <PlaceRows places={results} activeId={results[active]?.id} onPick={openPlace} listId="results" label="Search results" />
       </>
     )
-  else content = <Featured places={featured} onPick={openPlace} onTransit={() => setModal('transit')} />
+  else content = <Featured places={featured} recent={recent} onPick={openPlace} onTransit={() => setModal('transit')} />
 
   const searchBar = (
     <div className="searchbar">
       <GlassSearch
         inputRef={searchRef}
         label="Search UCSC"
-        placeholder="Search buildings, dining, parking…"
+        placeholder="Search a room like BE 152, or a building…"
         value={q}
         onChange={(v) => {
           setQ(v)
@@ -274,7 +312,7 @@ export function App() {
         activeId={results[active] ? `opt-${results[active].id}` : undefined}
         expanded={showResults}
       />
-      <CategoryChips value={cat} onChange={(c) => (setCat(c), route.name !== 'home' && go({ name: 'home' }, undefined, true))} />
+      {route.name !== 'place' && <CategoryChips value={cat} onChange={(c) => (setCat(c), route.name !== 'home' && go({ name: 'home' }, undefined, true))} />}
     </div>
   )
 
@@ -292,6 +330,7 @@ export function App() {
         theme={theme}
         places={places ?? []}
         selected={selected}
+        focus={focus}
         route={routeJson}
         endpoints={endpoints}
         you={you}

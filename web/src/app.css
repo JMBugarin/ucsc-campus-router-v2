@@ -445,3 +445,102 @@ ul.plain.note li {
   display: grid;
   gap: 6px;
 }
+
+/* rooms */
+.detail__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.arrive {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: var(--r-card);
+  background: var(--fill);
+}
+.arrive p {
+  margin: 0;
+}
+.arrive__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--t-headline);
+  font-weight: 650;
+}
+.arrive__ok {
+  margin-left: auto;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgb(var(--success-rgb) / 0.18);
+  color: var(--text);
+  font-size: var(--t-caption);
+  font-weight: 600;
+}
+.arrive__note {
+  font-size: var(--t-body);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.arrive__line {
+  font-size: var(--t-body);
+  line-height: 1.4;
+}
+.arrive__steps {
+  margin: 0;
+  padding-left: 1.3em;
+  font-size: var(--t-body);
+  line-height: 1.45;
+}
+.more summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: var(--t-footnote);
+  padding: 4px 0;
+}
+.more[open] {
+  display: grid;
+  gap: 8px;
+}
+.roomgroups {
+  display: grid;
+  gap: 8px;
+}
+.roomgroup__title {
+  color: var(--text-2);
+  font-size: var(--t-caption);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.roomgroup__rooms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.roomchip {
+  min-width: 3.2em;
+  min-height: var(--hit);
+  padding: 4px 10px;
+  border: 1px solid var(--divider);
+  border-radius: var(--r-control);
+  background: var(--fill);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.roomgroups + .linkbtn {
+  justify-self: start;
+  margin-top: 2px;
+}
+.roomchip:hover {
+  background: var(--fill-hover);
+}
+.roomchip[aria-current='true'] {
+  background: rgb(var(--accent-rgb) / 0.22);
+  border-color: rgb(var(--accent-rgb) / 0.6);
+}

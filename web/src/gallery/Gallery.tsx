@@ -191,7 +191,15 @@ export function Gallery() {
         <Cell id="place" title="Place details">
           {byId.get('mchenry-library') && (
             <GlassPanel style={{ padding: 12 }}>
-              <PlaceDetail place={byId.get('mchenry-library')!} nearGraph onBack={noop} onDirections={noop} onShare={noop} onTransit={noop} />
+              <PlaceDetail place={byId.get('mchenry-library')!} byId={byId} onOpen={noop} nearGraph onBack={noop} onDirections={noop} onShare={noop} onTransit={noop} />
+            </GlassPanel>
+          )}
+        </Cell>
+
+        <Cell id="room" title="Room details">
+          {byId.get('baskin-engineering-152') && (
+            <GlassPanel style={{ padding: 12 }}>
+              <PlaceDetail place={byId.get('baskin-engineering-152')!} byId={byId} onOpen={noop} nearGraph onBack={noop} onDirections={noop} onShare={noop} onTransit={noop} />
             </GlassPanel>
           )}
         </Cell>
