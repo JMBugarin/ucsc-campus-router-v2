@@ -32,6 +32,9 @@ import { activity } from './state/activity'
 import { busOptions } from './transit/plan'
 import { loadTransit, useClock, useLive } from './transit/useTransit'
 import { useLiveBuses } from './transit/useLiveBuses'
+import { prepareNetwork, type MetroFile, type Network } from './transit/raptor'
+import { planTrips, tripGeoJSON, type TripOption } from './transit/trip'
+import { parsePointId, pointId } from './data/geocode'
 import { recent as recentVehicle } from './transit/liveClient'
 import { haversine } from './routing/graph'
 import type { TransitData } from './transit/schedule'
@@ -86,6 +89,10 @@ export function App() {
   const [recentIds, setRecentIds] = useState<string[]>(() => recents.get())
   const [auditMode] = useState(auditRequested)
   const [classes, setClasses] = useState<ClassesData | null>(null)
+  const [metro, setMetro] = useState<Network | null>(null)
+  const [pointNames, setPointNames] = useState<Map<string, string>>(() => new Map())
+  const [pickPoint, setPickPoint] = useState<'from' | 'to' | null>(null)
+  const [tripIndex, setTripIndex] = useState(0)
   const meetings = useSchedule()
   const reminderPrefs = useReminderPrefs()
   const now = useNow()
@@ -141,10 +148,15 @@ export function App() {
     (id?: string): { pick: Pick; ep: Endpoint | null } => {
       if (!id) return { pick: null, ep: null }
       if (id === 'me') return { pick: { id, name: 'My location' }, ep: you ? { id: 'me', name: 'My location', lat: you.lat, lon: you.lon, isLocation: true } : null }
+      const pt = parsePointId(id)
+      if (pt) {
+        const name = pointNames.get(id) ?? 'Dropped pin'
+        return { pick: { id, name }, ep: { id, name, lat: pt[0], lon: pt[1] } }
+      }
       const p = byId.get(id)
       return p ? { pick: { id, name: p.name }, ep: endpointOf(p) } : { pick: null, ep: null }
     },
-    [byId, you],
+    [byId, you, pointNames],
   )
   const dFrom = route.name === 'directions' ? resolve(route.from) : { pick: null, ep: null }
   const dTo = route.name === 'directions' ? resolve(route.to) : { pick: null, ep: null }
@@ -167,18 +179,43 @@ export function App() {
 
   const toRoom = route.name === 'directions' ? roomOf(route.to) : null
   const fromRoom = route.name === 'directions' ? roomOf(route.from) : null
+  const arriveBy = useMemo(() => {
+    if (route.name !== 'directions') return null
+    const p = hashParams()
+    const at = Number(p.get('arrive'))
+    return at > 0 ? { at, label: p.get('cls') ?? 'class' } : null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route])
+  // trips by bus: whenever one end is off the campus paths, or walking would take more than half an hour
+  const wantTrips = route.name === 'directions' && !!dFrom.ep && !!dTo.ep && (planError === 'no-path-near-origin' || planError === 'no-path-near-destination' || planError === 'no-route' || (!!plan && plan.seconds > 30 * 60))
+  useEffect(() => {
+    if (!wantTrips || metro) return
+    fetch(`${import.meta.env.BASE_URL}data/metro.json`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((f: MetroFile) => setMetro(prepareNetwork(f)))
+      .catch(() => undefined)
+  }, [wantTrips, metro])
+  const minute = Math.floor(now / 60000)
+  const trips = useMemo((): TripOption[] | null => {
+    if (!wantTrips || !metro || !graph || !dFrom.ep || !dTo.ep) return null
+    return planTrips(metro, graph, dFrom.ep, dTo.ep, arriveBy ? { kind: 'arrive', by: arriveBy.at } : { kind: 'leave', at: minute * 60000 }, avoidStairs)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wantTrips, metro, graph, dFrom.ep?.id, dFrom.ep?.lat, dTo.ep?.id, arriveBy?.at, minute, avoidStairs])
+  useEffect(() => setTripIndex(0), [dFrom.ep?.id, dTo.ep?.id, arriveBy?.at])
+  const trip = trips?.length ? trips[Math.min(tripIndex, trips.length - 1)] : null
   const stopPlace = route.name === 'place' && selected?.stops ? selected : null
-  const liveBuses = useLiveBuses(!!stopPlace || (route.name === 'directions' && !!bus?.options.length))
+  const liveBuses = useLiveBuses(!!stopPlace || (route.name === 'directions' && (!!bus?.options.length || !!trip)))
   const busPins = useMemo(() => {
     const nowSecs = Math.floor(now / 1000)
-    const trips = new Set(route.name === 'directions' ? (bus?.options ?? []).map((o) => o.tripId) : [])
+    const trips = new Set(route.name === 'directions' ? [...(bus?.options ?? []).map((o) => o.tripId), ...(trip?.parts ?? []).flatMap((p) => (p.kind === 'bus' ? [p.tripId] : []))] : [])
     const label = (v: { route?: string }) => (v.route && transit?.routes[v.route]?.n) || v.route || '•'
     return liveBuses.vehicles
       .filter((v) => recentVehicle(v, nowSecs) && (trips.has(v.trip ?? '') || (stopPlace && haversine(stopPlace.lat, stopPlace.lon, v.lat, v.lon) < 1500)))
       .map((v) => ({ id: v.id, lat: v.lat, lon: v.lon, label: label(v), bearing: v.bearing, highlight: trips.has(v.trip ?? '') }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [liveBuses.vehicles, bus, stopPlace?.id, now, transit, route.name])
+  }, [liveBuses.vehicles, bus, trip, stopPlace?.id, now, transit, route.name])
   const routeJson = useMemo(() => {
+    if (trip && graph) return tripGeoJSON(graph, trip)
     if (!plan || !graph) return null
     const fc = routeGeoJSON(graph, plan)
     const indoor = (a: [number, number], b: [number, number]): GeoJSON.Feature<GeoJSON.LineString> => ({ type: 'Feature', properties: { kind: 'indoor' }, geometry: { type: 'LineString', coordinates: [[a[1], a[0]], [b[1], b[0]]] } })
@@ -186,8 +223,20 @@ export function App() {
     if (fromRoom) fc.features.push(indoor([fromRoom.lat, fromRoom.lon], plan.originPoint))
     return fc
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan, graph, toRoom?.id, fromRoom?.id])
+  }, [plan, graph, toRoom?.id, fromRoom?.id, trip])
   const endpoints = useMemo((): GeoJSON.FeatureCollection | null => {
+    if (trip && dFrom.ep && dTo.ep) {
+      const pt = (role: string, lat: number, lon: number) => ({ type: 'Feature' as const, properties: { role }, geometry: { type: 'Point' as const, coordinates: [lon, lat] } })
+      return {
+        type: 'FeatureCollection',
+        features: [
+          pt('from', dFrom.ep.lat, dFrom.ep.lon),
+          pt('to', dTo.ep.lat, dTo.ep.lon),
+          ...trip.parts.flatMap((p) => (p.kind === 'bus' ? [pt('board', ...p.stops[0]), pt('alight', ...p.stops[p.stops.length - 1])] : [])),
+          ...[toRoom].filter((r): r is Place => !!r).map((r) => pt('room', r.lat, r.lon)),
+        ],
+      }
+    }
     if (!plan) return null
     return {
       type: 'FeatureCollection',
@@ -201,7 +250,7 @@ export function App() {
       ],
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan, bus, transit, toRoom?.id, fromRoom?.id])
+  }, [plan, bus, transit, toRoom?.id, fromRoom?.id, trip])
 
   /* ---- camera */
   const sheetPad = detent === 'peek' ? 160 : Math.round(window.innerHeight * (detent === 'half' ? 0.46 : 0.46))
@@ -219,11 +268,16 @@ export function App() {
   }, [selected?.id])
   useEffect(() => void activity.flush(), [])
   useEffect(() => {
+    if (trip && dFrom.ep && dTo.ep) {
+      mapRef.current?.fitCoords([[dFrom.ep.lon, dFrom.ep.lat], [dTo.ep.lon, dTo.ep.lat], ...trip.parts.flatMap((p) => (p.kind === 'bus' ? p.stops.map(([la, lo]) => [lo, la] as [number, number]) : []))])
+      return
+    }
     if (!plan || !graph) return
     const coords = planCoords(plan)
     for (const r of [toRoom, fromRoom]) if (r) coords.push([r.lon, r.lat])
     mapRef.current?.fitCoords(coords)
-  }, [plan])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plan, trip?.leave, trip?.arrive])
 
   useEffect(() => {
     setDetent(route.name === 'home' ? (mobile ? 'peek' : 'half') : route.name === 'schedule' ? 'full' : 'half')
@@ -234,13 +288,6 @@ export function App() {
   }, [])
   useClassReminders(meetings, classes?.holidays ?? null, reminderPrefs.lead, (t) => flash(t))
   const walk = useMemo(() => (classes ? makeWalk(graph, classes.campus, byId, you, avoidStairs) : () => null), [graph, classes, byId, you, avoidStairs])
-  const arriveBy = useMemo(() => {
-    if (route.name !== 'directions') return null
-    const p = hashParams()
-    const at = Number(p.get('arrive'))
-    return at > 0 ? { at, label: p.get('cls') ?? 'class' } : null
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route])
   const classPins = useMemo(() => {
     if (route.name !== 'today' || !classes) return []
     const plan = planDay(meetings, now, classes.holidays, route.day && route.day !== pacificDate(now) ? route.day : null)
@@ -407,6 +454,17 @@ export function App() {
         now={now}
         vehicles={liveBuses.vehicles}
         live={live}
+        trips={wantTrips ? trips : null}
+        tripsLoading={wantTrips && !trips}
+        tripIndex={tripIndex}
+        onTrip={setTripIndex}
+        picking={pickPoint}
+        onPickOnMap={(field) => setPickPoint(field)}
+        onPickAddress={(field, a) => {
+          const id = pointId(a.lat, a.lon)
+          setPointNames((m) => new Map(m).set(id, a.label))
+          go({ name: 'directions', from: field === 'from' ? id : route.name === 'directions' ? route.from : undefined, to: field === 'to' ? id : route.name === 'directions' ? route.to : undefined }, hashParams().get('arrive') ? Object.fromEntries(hashParams()) : undefined, true)
+        }}
       />
     )
   else if (showResults)
@@ -485,7 +543,15 @@ export function App() {
         you={you}
         padding={padding}
         onSelect={(id) => go({ name: 'place', id })}
-        onMapClick={(lat, lon) => audit.tap(lat, lon)}
+        onMapClick={(lat, lon) => {
+          if (pickPoint && route.name === 'directions') {
+            const id = pointId(lat, lon)
+            setPickPoint(null)
+            go({ name: 'directions', from: pickPoint === 'from' ? id : route.from, to: pickPoint === 'to' ? id : route.to }, hashParams().get('arrive') ? Object.fromEntries(hashParams()) : undefined, true)
+            return true
+          }
+          return audit.tap(lat, lon)
+        }}
         onBearing={setBearing}
       />
 

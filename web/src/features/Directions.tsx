@@ -10,6 +10,9 @@ import { useServiceDepartures } from '../transit/useServiceDepartures'
 import { freshPredictions, predictedDelay } from '../transit/serviceState'
 import { OCCUPANCY_TEXT, recent, type Vehicle } from '../transit/liveClient'
 import type { LiveState } from '../transit/useTransit'
+import type { TripOption } from '../transit/trip'
+import { TripList } from './TripList'
+import { searchAddresses, type Address } from '../data/geocode'
 import type { BusPlan } from '../transit/plan'
 import { ACCESS_LABEL, checkedText, doorSentence, relation } from '../data/rooms'
 import { GlassSegmentedControl, StatusPill } from '../design/components'
@@ -200,7 +203,21 @@ export function Directions({
   now = Date.now(),
   vehicles = [],
   live,
+  trips = null,
+  tripsLoading = false,
+  tripIndex = 0,
+  onTrip = () => {},
+  picking = null,
+  onPickOnMap = () => {},
+  onPickAddress = () => {},
 }: {
+  trips?: TripOption[] | null
+  tripsLoading?: boolean
+  tripIndex?: number
+  onTrip?: (i: number) => void
+  picking?: 'from' | 'to' | null
+  onPickOnMap?: (field: 'from' | 'to') => void
+  onPickAddress?: (field: 'from' | 'to', a: Address) => void
   vehicles?: Vehicle[]
   live?: LiveState
   arriveBy?: { at: number; label: string } | null
@@ -229,6 +246,19 @@ export function Directions({
   const [q, setQ] = useState('')
   const inputRef = useRef<HTMLDivElement>(null)
   const suggestions = useMemo(() => (editing ? index.search(q, 8) : []), [editing, q, index])
+  const [addresses, setAddresses] = useState<Address[] | null>(null)
+  const [addressError, setAddressError] = useState<string | null>(null)
+  const findAddresses = async () => {
+    setAddressError(null)
+    try {
+      const found = await searchAddresses(q)
+      setAddresses(found)
+      if (!found.length) setAddressError('No address found in the Santa Cruz area.')
+    } catch {
+      setAddressError('Address search is unavailable right now.')
+    }
+  }
+  const showTrips = !!trips?.length && !editing
 
   const choose = (p: Place) => {
     const v = { id: p.id, name: p.name }
@@ -239,14 +269,14 @@ export function Directions({
   }
 
   return (
-    <section aria-label="Walking directions" className="directions" ref={inputRef}>
+    <section aria-label="Directions" className="directions" ref={inputRef}>
       <div className="detail__head">
         <GlassIconButton icon="back" label="Close directions" onClick={onClose} />
         <h1 className="detail__title" style={{ flex: 1 }}>
-          Walking directions
+          Directions
         </h1>
       </div>
-      {arriveBy && plan && !editing && <ArriveBy plan={plan} at={arriveBy.at} label={arriveBy.label} now={now} bus={bus} transit={transit} />}
+      {arriveBy && plan && !editing && !showTrips && <ArriveBy plan={plan} at={arriveBy.at} label={arriveBy.label} now={now} bus={bus} transit={transit} />}
       <div className="dfields">
         <div className="dfields__col">
           <Field label="From" value={from?.name ?? ''} placeholder="Choose starting point" query={q} onQuery={setQ} active={editing === 'from'} onFocus={() => (setEditing('from'), setQ(''))} />
@@ -262,7 +292,31 @@ export function Directions({
               {locating ? 'Locating…' : hasLocation ? 'Use my location' : 'Use my location'}
             </GlassButton>
           )}
-          <PlaceRows places={suggestions} onPick={choose} label={`Choose ${editing === 'from' ? 'starting point' : 'destination'}`} />
+          <div className="audit__row" style={{ margin: '4px 0 6px' }}>
+            <GlassButton size="s" icon="pin" aria-pressed={picking === editing} onClick={() => (onPickOnMap(editing), setEditing(null))}>
+              Pick on the map
+            </GlassButton>
+            {q.trim().length >= 3 && (
+              <GlassButton size="s" icon="search" onClick={findAddresses}>
+                Search addresses for “{q.trim()}”
+              </GlassButton>
+            )}
+          </div>
+          {addresses && addresses.length > 0 && (
+            <ul className="glist" role="listbox" aria-label="Addresses">
+              {addresses.map((a) => (
+                <li key={`${a.lat},${a.lon}`}>
+                  <button className="roompicker__row" role="option" aria-selected="false" onClick={() => (onPickAddress(editing, a), setEditing(null), setQ(''), setAddresses(null))}>
+                    <Icon name="pin" size={15} />
+                    <span>{a.label}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {addressError && <p className="note">{addressError}</p>}
+          <PlaceRows places={suggestions} onPick={choose} label={`Choose ${editing === 'from' ? 'starting point' : 'destination'}`} empty="No campus place matches. Search addresses for somewhere off campus." />
+          {q.trim().length >= 3 && <p className="note">Address search sends what you typed to Photon, an OpenStreetMap geocoder. Campus places are searched on this device.</p>}
         </div>
       ) : (
         <>
@@ -274,13 +328,17 @@ export function Directions({
             <GlassSwitch checked={avoidStairs} onChange={onAvoidStairs} label="Avoid stairs" />
           </div>
           {locationError && <GlassBanner tone="warning" title="Location unavailable">{locationError}</GlassBanner>}
-          {error && (
+          {picking && <GlassBanner title="Tap the map">Tap where the trip {picking === 'from' ? 'starts' : 'ends'}.</GlassBanner>}
+          {tripsLoading && <p className="note" role="status">Finding buses…</p>}
+          {showTrips && trips && <TripList trips={trips} index={tripIndex} onIndex={onTrip} deadline={arriveBy?.at ?? null} now={now} vehicles={vehicles} live={live} />}
+          {showTrips && plan && <p className="note">Walking the whole way takes {formatDuration(plan.seconds)}.</p>}
+          {error && !showTrips && !tripsLoading && (
             <GlassBanner tone={error === 'same-place' ? 'accent' : 'warning'} title={error === 'same-place' ? undefined : 'No walking route'}>
               {ERROR_TEXT[error]}
               {straightMeters != null && error !== 'same-place' && <> Straight-line distance: {formatDistance(straightMeters)}.</>}
             </GlassBanner>
           )}
-          {plan && (
+          {plan && !showTrips && (
             <>
               <div className="summary" aria-live="polite">
                 <div className="summary__time">{formatDuration(plan.seconds)}</div>
