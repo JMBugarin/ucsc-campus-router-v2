@@ -37,6 +37,7 @@ import { prepareNetwork, type MetroFile, type Network } from './transit/raptor'
 import { planTrips, tripGeoJSON, type TripOption } from './transit/trip'
 import { parsePointId, pointId } from './data/geocode'
 import { getPosition, type Help } from './state/location'
+import { Tracker, metres as fixMetres, replan } from './state/tracking'
 import { LocationHelp } from './features/LocationHelp'
 import { recent as recentVehicle } from './transit/liveClient'
 import { haversine } from './routing/graph'
@@ -77,7 +78,12 @@ export function App() {
   const [avoidStairs, setAvoidStairs] = usePref('avoidStairs', false)
   const [reduce, setReduce] = usePref('reduceMotion', false)
   const [solid, setSolid] = usePref('solid', false)
-  const [you, setYou] = useState<{ lat: number; lon: number; accuracy: number } | null>(null)
+  const [you, setYou] = useState<{ lat: number; lon: number; accuracy: number; heading?: number | null; at?: number } | null>(null)
+  const [locationOn, setLocationOn] = usePref('locationOn', false)
+  const [follow, setFollow] = useState(true)
+  const [origin, setOrigin] = useState<{ lat: number; lon: number; at: number } | null>(null)
+  const [reroutedAt, setReroutedAt] = useState(0)
+  const tracker = useRef<Tracker | null>(null)
   const [locating, setLocating] = useState(false)
   const [locError, setLocError] = useState<string | null>(null)
   const [locHelp, setLocHelp] = useState<Help | null>(null)
@@ -146,7 +152,10 @@ export function App() {
   const resolve = useCallback(
     (id?: string): { pick: Pick; ep: Endpoint | null } => {
       if (!id) return { pick: null, ep: null }
-      if (id === 'me') return { pick: { id, name: 'My location' }, ep: you ? { id: 'me', name: 'My location', lat: you.lat, lon: you.lon, isLocation: true } : null }
+      if (id === 'me') {
+        const at = origin ?? you
+        return { pick: { id, name: 'My location' }, ep: at ? { id: 'me', name: 'My location', lat: at.lat, lon: at.lon, isLocation: true } : null }
+      }
       const pt = parsePointId(id)
       if (pt) {
         const name = pointNames.get(id) ?? 'Dropped pin'
@@ -155,7 +164,7 @@ export function App() {
       const p = byId.get(id)
       return p ? { pick: { id, name: p.name }, ep: endpointOf(p) } : { pick: null, ep: null }
     },
-    [byId, you, pointNames],
+    [byId, you, origin, pointNames],
   )
   const dFrom = route.name === 'directions' ? resolve(route.from) : { pick: null, ep: null }
   const dTo = route.name === 'directions' ? resolve(route.to) : { pick: null, ep: null }
@@ -165,7 +174,7 @@ export function App() {
     const r = planRoute(graph, dFrom.ep, dTo.ep, { avoidStairs })
     return 'error' in r ? { plan: null, planError: r.error } : { plan: r, planError: null }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route, graph, avoidStairs, dFrom.ep?.id, dFrom.ep?.lat, dTo.ep?.id])
+  }, [route, graph, avoidStairs, dFrom.ep?.id, dFrom.ep?.lat, dFrom.ep?.lon, dTo.ep?.id, dTo.ep?.lat, dTo.ep?.lon])
 
   const showsTimes = route.name === 'directions' || (route.name === 'place' && !!byId.get(route.id)?.stops)
   const clock = useClock(showsTimes)
@@ -208,7 +217,7 @@ export function App() {
     if (!wantTrips || !metro || !graph || !dFrom.ep || !dTo.ep) return null
     return planTrips(metro, graph, dFrom.ep, dTo.ep, arriveBy ? { kind: 'arrive', by: arriveBy.at, now: minute * 60000 } : { kind: 'leave', at: minute * 60000 }, avoidStairs, town)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wantTrips, metro, graph, town, dFrom.ep?.id, dFrom.ep?.lat, dTo.ep?.id, arriveBy?.at, minute, avoidStairs])
+  }, [wantTrips, metro, graph, town, dFrom.ep?.id, dFrom.ep?.lat, dFrom.ep?.lon, dTo.ep?.id, dTo.ep?.lat, dTo.ep?.lon, arriveBy?.at, minute, avoidStairs])
   useEffect(() => setTripIndex(0), [dFrom.ep?.id, dTo.ep?.id, arriveBy?.at])
   const trip = trips?.length ? trips[Math.min(tripIndex, trips.length - 1)] : null
   const stopPlace = route.name === 'place' && selected?.stops ? selected : null
@@ -275,7 +284,15 @@ export function App() {
     setRecentIds(recents.push(selected.id))
   }, [selected?.id])
   useEffect(() => void activity.flush(), [])
+  const fitted = useRef('')
+  const followedAt = useRef<{ lat: number; lon: number } | null>(null)
   useEffect(() => {
+    const key = route.name === 'directions' ? `${route.from}>${route.to}|${tripIndex}|${trip ? 'bus' : 'walk'}` : ''
+    // once a live trip is framed, later redraws leave the camera to the follow mode
+    if (key && fitted.current === key && route.name === 'directions' && route.from === 'me') return
+    if (!plan && !trip) return
+    fitted.current = key
+    followedAt.current = you ? { lat: you.lat, lon: you.lon } : null
     if (trip && dFrom.ep && dTo.ep) {
       mapRef.current?.fitCoords([[dFrom.ep.lon, dFrom.ep.lat], [dTo.ep.lon, dTo.ep.lat], ...trip.parts.flatMap((p) => (p.kind === 'bus' ? p.stops.map(([la, lo]) => [lo, la] as [number, number]) : []))])
       return
@@ -286,6 +303,70 @@ export function App() {
     mapRef.current?.fitCoords(coords)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plan, trip?.leave, trip?.arrive])
+
+  /* ---- live location: follow the walker, and redraw the route from where they are */
+  const liveTrip = route.name === 'directions' && route.from === 'me'
+  const startTracking = useCallback(() => {
+    if (!tracker.current)
+      tracker.current = new Tracker(
+        (f) => setYou({ lat: f.lat, lon: f.lon, accuracy: f.accuracy, heading: f.heading, at: f.at }),
+        (code) => {
+          if (code !== 1) return
+          void getPosition().then((r) => 'help' in r && setLocHelp(r.help))
+        },
+      )
+    tracker.current.start()
+  }, [])
+  const wantsTracking = locationOn && route.name !== 'schedule' && route.name !== 'gallery'
+  useEffect(() => {
+    if (!wantsTracking) {
+      tracker.current?.stop()
+      return
+    }
+    let cancelled = false
+    void (async () => {
+      let state: PermissionState | 'unknown' = 'unknown'
+      try {
+        state = (await navigator.permissions?.query({ name: 'geolocation' }))?.state ?? 'unknown'
+      } catch {
+        /* not supported */
+      }
+      // never prompt just for opening the site; a live trip is something the person asked for
+      if (!cancelled && state !== 'denied' && (state !== 'prompt' || liveTrip)) startTracking()
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [wantsTracking, liveTrip, startTracking])
+  useEffect(() => () => tracker.current?.stop(), [])
+  useEffect(() => {
+    setOrigin(null)
+    setFollow(true)
+  }, [route.name === 'directions' ? route.from : '', route.name === 'directions' ? route.to : ''])
+  const routeLine = useMemo((): [number, number][] => (routeJson ? routeJson.features.flatMap((f) => f.geometry.coordinates as [number, number][]) : []), [routeJson])
+  useEffect(() => {
+    if (!liveTrip || !you) return
+    const r = replan(origin, { lat: you.lat, lon: you.lon, accuracy: you.accuracy, heading: you.heading ?? null, at: you.at ?? Date.now() }, origin ? routeLine : [])
+    if (r.again) {
+      setOrigin({ lat: you.lat, lon: you.lon, at: you.at ?? Date.now() })
+      if (r.offRoute) setReroutedAt(Date.now())
+    }
+    if (follow && fitted.current && followedAt.current && fixMetres(followedAt.current, you) >= 8) {
+      followedAt.current = { lat: you.lat, lon: you.lon }
+      mapRef.current?.follow(you.lon, you.lat)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [you, liveTrip, routeLine])
+  // with location on, directions start from here unless another start was chosen
+  useEffect(() => {
+    if (route.name === 'directions' && !route.from && locationOn) go({ ...route, from: 'me' }, hashParams().get('arrive') ? Object.fromEntries(hashParams()) : undefined, true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route, locationOn])
+  const arrivedAt = useMemo(() => {
+    if (!liveTrip || !you || !dTo.ep) return null
+    const dest = trip ? { lat: dTo.ep.lat, lon: dTo.ep.lon } : plan ? { lat: plan.destPoint[0], lon: plan.destPoint[1] } : null
+    return dest && fixMetres(you, dest) <= Math.max(20, Math.min(you.accuracy, 40)) ? dTo.ep.name : null
+  }, [liveTrip, you, dTo.ep, plan, trip])
 
   useEffect(() => {
     setDetent(route.name === 'home' ? (mobile ? 'peek' : 'half') : route.name === 'schedule' ? 'full' : 'half')
@@ -351,15 +432,18 @@ export function App() {
       return
     }
     const pos = r.pos
-    const y = { lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy: pos.coords.accuracy }
+    const y = { lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy: pos.coords.accuracy, heading: null, at: Date.now() }
     setYou(y)
+    setLocationOn(true)
+    setFollow(true)
+    startTracking()
     const near = graph ? nearestNode(graph, y.lat, y.lon).dist <= MAX_SNAP_M : false
     const params = route.name === 'directions' && hashParams().get('arrive') ? Object.fromEntries(hashParams()) : undefined
     if (route.name === 'directions') go({ ...route, from: 'me' }, params, true)
     else if (!near) flash("You're off campus: Get me there plans the bus from here.")
     else mapRef.current?.flyToLngLat(y.lon, y.lat, 17)
   }
-  const directionsFor = (to?: string) => go({ name: 'directions', from: you ? 'me' : undefined, to })
+  const directionsFor = (to?: string) => go({ name: 'directions', from: you || locationOn ? 'me' : undefined, to })
 
   const nearGraph = (p: Place) => (graph ? nearestNode(graph, p.lat, p.lon).dist <= MAX_SNAP_M : true)
 
@@ -403,7 +487,7 @@ export function App() {
         onOpen={openPlace}
         onGetThere={(o, p) => {
           void activity.meaningfulAction()
-          go({ name: 'directions', from: you ? 'me' : undefined, to: p.id }, { arrive: String(o.start), cls: classLabel(o) })
+          go({ name: 'directions', from: you || locationOn ? 'me' : undefined, to: p.id }, { arrive: String(o.start), cls: classLabel(o) })
         }}
         onSchedule={() => go({ name: 'schedule' })}
       />
@@ -465,6 +549,7 @@ export function App() {
         tripIndex={tripIndex}
         onTrip={setTripIndex}
         picking={pickPoint}
+        following={liveTrip ? { finding: !you, rerouted: Date.now() - reroutedAt < 15_000, arrived: arrivedAt, updated: you?.at ?? null } : null}
         onPickOnMap={(field) => setPickPoint(field)}
         onPickAddress={(field, a) => {
           const id = pointId(a.lat, a.lon)
@@ -549,6 +634,7 @@ export function App() {
         you={you}
         padding={padding}
         onSelect={(id) => go({ name: 'place', id })}
+        onUserPan={() => setFollow(false)}
         onMapClick={(lat, lon) => {
           if (pickPoint && route.name === 'directions') {
             const id = pointId(lat, lon)
@@ -576,6 +662,19 @@ export function App() {
         <GlassTooltip text="Zoom out"><GlassIconButton icon="minus" label="Zoom out" onClick={() => mapRef.current?.zoomBy(-1)} /></GlassTooltip>
         {Math.abs(bearing) > 1 && <GlassTooltip text="Reset north"><GlassIconButton icon="compass" label="Reset north" onClick={() => mapRef.current?.resetNorth()} /></GlassTooltip>}
         <GlassTooltip text="My location"><GlassIconButton icon="locate" label="Show my location" onClick={locate} aria-busy={locating} /></GlassTooltip>
+        {liveTrip && you && !follow && (
+          <GlassTooltip text="Follow me">
+            <GlassIconButton
+              icon="walk"
+              label="Follow my location"
+              onClick={() => {
+                setFollow(true)
+                followedAt.current = { lat: you.lat, lon: you.lon }
+                mapRef.current?.follow(you.lon, you.lat)
+              }}
+            />
+          </GlassTooltip>
+        )}
         <GlassTooltip text="Settings and about"><GlassIconButton icon="info" label="Settings and about" onClick={() => setModal('about')} /></GlassTooltip>
       </GlassToolbar>
 
@@ -634,7 +733,25 @@ export function App() {
           }}
         />
       )}
-      <AboutModal open={modal === 'about'} onClose={() => setModal(null)} mode={mode} onMode={setMode} reduceMotion={reduce} onReduceMotion={setReduce} solid={solid} onSolid={setSolid} />
+      <AboutModal
+        open={modal === 'about'}
+        onClose={() => setModal(null)}
+        mode={mode}
+        onMode={setMode}
+        reduceMotion={reduce}
+        onReduceMotion={setReduce}
+        solid={solid}
+        onSolid={setSolid}
+        locationOn={locationOn}
+        onLocationOn={(v) => {
+          setLocationOn(v)
+          if (!v) {
+            tracker.current?.stop()
+            setYou(null)
+            setOrigin(null)
+          }
+        }}
+      />
     </div>
   )
 }

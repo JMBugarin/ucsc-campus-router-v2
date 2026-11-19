@@ -22,6 +22,8 @@ export interface MapHandle {
   zoomBy(d: number): void
   getMap(): MLMap | null
   setCamera(c: { lng: number; lat: number; zoom: number; bearing?: number; pitch?: number }): void
+  /** keeps the walker in view while following them */
+  follow(lng: number, lat: number): void
 }
 
 /** A building's classrooms and doors, drawn when it or one of its rooms is open. */
@@ -46,6 +48,8 @@ export interface MapViewProps {
   you: { lat: number; lon: number; accuracy: number } | null
   padding: PaddingOptions
   onSelect: (id: string) => void
+  /** the person moved the map themselves (so stop following them) */
+  onUserPan?: () => void
   /** a tap on the map itself; return true to keep it from also opening a place */
   onMapClick?: (lat: number, lon: number) => boolean
   onBearing?: (b: number) => void
@@ -170,6 +174,9 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
       t = window.setTimeout(notifyBackdrop, 140)
     })
     map.on('rotate', () => propsRef.current.onBearing?.(map.getBearing()))
+    map.on('dragstart', (e) => {
+      if ((e as { originalEvent?: Event }).originalEvent) propsRef.current.onUserPan?.()
+    })
 
     let consumed: Event | null = null
     map.on('click', (e) => {
@@ -244,6 +251,11 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
       mapRef.current?.easeTo({ zoom: mapRef.current.getZoom() + d, duration: prefersReducedMotion() ? 0 : 220 })
     },
     getMap: () => mapRef.current,
+    follow(lng, lat) {
+      const map = mapRef.current
+      if (!map) return
+      map.easeTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), 16.8), padding: propsRef.current.padding, duration: prefersReducedMotion() ? 0 : 700 })
+    },
     setCamera(c) {
       mapRef.current?.jumpTo({ center: [c.lng, c.lat], zoom: c.zoom, bearing: c.bearing ?? 0, pitch: c.pitch ?? 0 })
     },
