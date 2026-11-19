@@ -994,3 +994,11 @@ ul.plain.note li {
   background: rgb(42 143 168 / 0.18);
   color: #2a8fa8;
 }
+
+.lochelp {
+  display: grid;
+  gap: 10px;
+}
+.lochelp p {
+  margin: 0;
+}

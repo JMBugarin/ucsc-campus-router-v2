@@ -35,6 +35,8 @@ import { useLiveBuses } from './transit/useLiveBuses'
 import { prepareNetwork, type MetroFile, type Network } from './transit/raptor'
 import { planTrips, tripGeoJSON, type TripOption } from './transit/trip'
 import { parsePointId, pointId } from './data/geocode'
+import { getPosition, type Help } from './state/location'
+import { LocationHelp } from './features/LocationHelp'
 import { recent as recentVehicle } from './transit/liveClient'
 import { haversine } from './routing/graph'
 import type { TransitData } from './transit/schedule'
@@ -52,15 +54,9 @@ function auditRequested(): boolean {
   }
 }
 
-function currentFix(): Promise<[number, number] | null> {
-  return new Promise((done) => {
-    if (!navigator.geolocation) return done(null)
-    navigator.geolocation.getCurrentPosition(
-      (p) => done([p.coords.latitude, p.coords.longitude]),
-      () => done(null),
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
-    )
-  })
+async function currentFix(): Promise<[number, number] | null> {
+  const r = await getPosition()
+  return 'pos' in r ? [r.pos.coords.latitude, r.pos.coords.longitude] : null
 }
 
 const FEATURED = ['mchenry-library', 'quarry-plaza', 'science-hill', 'baskin-engineering', 'science-engineering-library', 'kresge-college']
@@ -83,6 +79,7 @@ export function App() {
   const [you, setYou] = useState<{ lat: number; lon: number; accuracy: number } | null>(null)
   const [locating, setLocating] = useState(false)
   const [locError, setLocError] = useState<string | null>(null)
+  const [locHelp, setLocHelp] = useState<Help | null>(null)
   const [bearing, setBearing] = useState(0)
   const [toast, setToast] = useState<string | null>(null)
   const [modal, setModal] = useState<'about' | 'transit' | null>(null)
@@ -331,27 +328,25 @@ export function App() {
       flash('Could not copy the link')
     }
   }
-  const locate = () => {
-    if (!navigator.geolocation) return setLocError('This browser does not support location.')
+  const locate = async () => {
     setLocating(true)
     setLocError(null)
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const y = { lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy: pos.coords.accuracy }
-        setYou(y)
-        setLocating(false)
-        const near = graph ? nearestNode(graph, y.lat, y.lon).dist <= MAX_SNAP_M : false
-        if (route.name === 'directions') go({ ...route, from: 'me' }, undefined, true)
-        else if (!near) flash("You're not on the mapped campus paths")
-        else mapRef.current?.flyToLngLat(y.lon, y.lat, 17)
-      },
-      (err) => {
-        setLocating(false)
-        setLocError(err.code === err.PERMISSION_DENIED ? 'Location permission was denied. Enable it in your browser settings to use it here.' : 'Your location could not be determined.')
-        if (route.name !== 'directions') flash('Location unavailable')
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
-    )
+    setLocHelp(null)
+    const r = await getPosition()
+    setLocating(false)
+    if (!('pos' in r)) {
+      setLocError(`${r.help.title}. ${r.help.body}`)
+      setLocHelp(r.help)
+      return
+    }
+    const pos = r.pos
+    const y = { lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy: pos.coords.accuracy }
+    setYou(y)
+    const near = graph ? nearestNode(graph, y.lat, y.lon).dist <= MAX_SNAP_M : false
+    const params = route.name === 'directions' && hashParams().get('arrive') ? Object.fromEntries(hashParams()) : undefined
+    if (route.name === 'directions') go({ ...route, from: 'me' }, params, true)
+    else if (!near) flash("You're off campus: Get me there plans the bus from here.")
+    else mapRef.current?.flyToLngLat(y.lon, y.lat, 17)
   }
   const directionsFor = (to?: string) => go({ name: 'directions', from: you ? 'me' : undefined, to })
 
@@ -579,6 +574,21 @@ export function App() {
         </div>
       )}
       <TransitModal open={modal === 'transit'} onClose={() => setModal(null)} />
+      {locHelp && (
+        <LocationHelp
+          help={locHelp}
+          onClose={() => setLocHelp(null)}
+          onRetry={() => void locate()}
+          onPickOnMap={
+            route.name === 'directions'
+              ? () => {
+                  setLocHelp(null)
+                  setPickPoint('from')
+                }
+              : undefined
+          }
+        />
+      )}
       {classes && index && sheet?.kind === 'paste' && <PasteImport campus={classes.campus} onClose={() => setSheet(null)} onRead={(drafts, notes) => setSheet({ kind: 'review', drafts: drafts.map((d) => ({ ...d, ...(d.startDate ? {} : termDates()) })), notes })} />}
       {classes && sheet?.kind === 'picture' && <PictureImport file={sheet.file} onClose={() => setSheet(null)} onRead={(drafts, notes) => setSheet({ kind: 'review', drafts: drafts.map((d) => ({ ...d, ...(d.startDate ? {} : termDates()) })), notes })} />}
       {classes && index && sheet?.kind === 'review' && (
