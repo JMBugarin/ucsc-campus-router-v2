@@ -264,7 +264,7 @@ export function Directions({
   onPickAddress = () => {},
 }: {
   /** set while the trip starts from the walker's live location */
-  following?: { finding: boolean; rerouted: boolean; arrived: string | null; updated: number | null } | null
+  following?: { finding: boolean; arrived: string | null } | null
   trips?: TripOption[] | null
   tripsLoading?: boolean
   tripIndex?: number
@@ -387,10 +387,9 @@ export function Directions({
               {toRoom?.room ? 'Check the room number by the door.' : 'Enjoy your class.'}
             </GlassBanner>
           )}
-          {following && !following.arrived && (
-            <p className="live-status" role="status" aria-live="polite">
-              <StatusPill tone={following.finding ? 'warning' : 'success'}>{following.finding ? 'Finding you…' : 'Live'}</StatusPill>
-              {following.finding ? 'Waiting for your location.' : following.rerouted ? 'Off the route, so it was redrawn from where you are.' : 'Following your location: the route updates as you move.'}
+          {following?.finding && (
+            <p className="note" role="status">
+              Finding your location…
             </p>
           )}
           {picking && <GlassBanner title="Tap the map">Tap where the trip {picking === 'from' ? 'starts' : 'ends'}.</GlassBanner>}

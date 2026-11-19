@@ -82,7 +82,6 @@ export function App() {
   const [locationOn, setLocationOn] = usePref('locationOn', false)
   const [follow, setFollow] = useState(true)
   const [origin, setOrigin] = useState<{ lat: number; lon: number; at: number } | null>(null)
-  const [reroutedAt, setReroutedAt] = useState(0)
   const tracker = useRef<Tracker | null>(null)
   const [locating, setLocating] = useState(false)
   const [locError, setLocError] = useState<string | null>(null)
@@ -349,7 +348,7 @@ export function App() {
     const r = replan(origin, { lat: you.lat, lon: you.lon, accuracy: you.accuracy, heading: you.heading ?? null, at: you.at ?? Date.now() }, origin ? routeLine : [])
     if (r.again) {
       setOrigin({ lat: you.lat, lon: you.lon, at: you.at ?? Date.now() })
-      if (r.offRoute) setReroutedAt(Date.now())
+      if (r.offRoute) flash('Rerouted from where you are')
     }
     if (follow && fitted.current && followedAt.current && fixMetres(followedAt.current, you) >= 8) {
       followedAt.current = { lat: you.lat, lon: you.lon }
@@ -549,7 +548,7 @@ export function App() {
         tripIndex={tripIndex}
         onTrip={setTripIndex}
         picking={pickPoint}
-        following={liveTrip ? { finding: !you, rerouted: Date.now() - reroutedAt < 15_000, arrived: arrivedAt, updated: you?.at ?? null } : null}
+        following={liveTrip ? { finding: !you, arrived: arrivedAt } : null}
         onPickOnMap={(field) => setPickPoint(field)}
         onPickAddress={(field, a) => {
           const id = pointId(a.lat, a.lon)

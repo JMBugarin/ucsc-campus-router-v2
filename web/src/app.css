@@ -974,12 +974,3 @@ ul.plain.note li {
 .lochelp p {
   margin: 0;
 }
-
-.live-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  font-size: var(--t-footnote);
-  color: var(--text-2);
-}
