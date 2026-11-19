@@ -12,7 +12,7 @@ import { prefersReducedMotion } from '../design/motion'
 
 maplibregl.setWorkerUrl(new URL(`${import.meta.env.BASE_URL}maplibre/maplibre-gl-worker.mjs`, location.href).href)
 
-const RANK: Record<string, number> = { college: 0, library: 1, landmark: 2, academic: 3, dining: 4, transit: 5, parking: 6, room: 7 }
+const RANK: Record<string, number> = { college: 0, library: 1, landmark: 2, academic: 3, dining: 4, transit: 5, parking: 6, room: 7, housing: 8 }
 
 export interface MapHandle {
   flyToPlace(p: Place, zoom?: number): void
@@ -86,7 +86,7 @@ function placeFeatures(places: Place[]): GeoJSON.FeatureCollection {
     features: places.map((p) => ({
       type: 'Feature',
       id: undefined,
-      properties: { id: p.id, name: p.name, kind: p.kind, rank: RANK[p.kind] ?? 9 },
+      properties: { id: p.id, name: p.name, label: p.short ?? p.name, kind: p.kind, rank: RANK[p.kind] ?? 9 },
       geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
     })),
   }

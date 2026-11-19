@@ -25,6 +25,7 @@ export const ICON_PATHS = {
   warn: 'M12 3.5L2.5 20h19L12 3.5zM12 10v4.5M12 17.5h.01',
   check: 'M5 12.5l4.5 4.5L19 7.5',
   stairs: 'M3 20h5v-4h4v-4h4V8h5',
+  home: 'M4 11.2 12 4.5l8 6.7M6.3 9.6V19.5h11.4V9.6M10 19.5v-5.2h4v5.2',
   bridge: 'M2 17h20M5 17V9M19 17V9M5 9c3 5 11 5 14 0',
   layers: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',
   bike: 'M6 18a3.5 3.5 0 1 0 0-.01M18 18a3.5 3.5 0 1 0 0-.01M6 18l4-8h5l3 8M10 10l-1-3H7',

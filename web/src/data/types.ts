@@ -55,6 +55,8 @@ export interface Place {
   /** classroom place ids in this building, lowest floor first */
   roomIds?: string[]
   room?: RoomInfo
+  /** short map label, for housing: "Galileo House", "Casa Primera" */
+  short?: string
   source: string
   osm?: string
   /** GTFS stop ids served here (METRO) */

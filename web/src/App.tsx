@@ -12,7 +12,7 @@ import type { GraphFile } from './data/types'
 import { endpointOf, planCoords, planRoute, routeGeoJSON, straightMeters, MAX_SNAP_M, type Endpoint, type Plan, type PlanError, type RouteFeature } from './routing/plan'
 import { hashParams, useHashRoute } from './state/hashRoute'
 import { usePref, useTheme } from './state/prefs'
-import { CategoryChips, Featured, PlaceRows } from './features/Browse'
+import { CategoryChips, Featured, HousingList, PlaceRows } from './features/Browse'
 import { PlaceDetail } from './features/PlaceDetail'
 import { MissingRoom } from './features/Feedback'
 import { Today } from './features/classes/Today'
@@ -80,6 +80,7 @@ export function App() {
   const [solid, setSolid] = usePref('solid', false)
   const [you, setYou] = useState<{ lat: number; lon: number; accuracy: number; heading?: number | null; at?: number } | null>(null)
   const [locationOn, setLocationOn] = usePref('locationOn', false)
+  const [homeId, setHomeId] = usePref<string | null>('homePlace', null)
   const [follow, setFollow] = useState(true)
   const [origin, setOrigin] = useState<{ lat: number; lon: number; at: number } | null>(null)
   const tracker = useRef<Tracker | null>(null)
@@ -443,6 +444,18 @@ export function App() {
     else mapRef.current?.flyToLngLat(y.lon, y.lat, 17)
   }
   const directionsFor = (to?: string) => go({ name: 'directions', from: you || locationOn ? 'me' : undefined, to })
+  const homePlace = homeId ? (byId.get(homeId) ?? null) : null
+  const goHome = (from?: Place) => homePlace && go({ name: 'directions', from: from?.id ?? (you || locationOn ? 'me' : undefined), to: homePlace.id })
+  const pickHome = () => {
+    go({ name: 'home' })
+    setQ('')
+    setCat('housing')
+  }
+  const walkHome = (from: Place) => {
+    if (!graph || !homePlace) return null
+    const r = planRoute(graph, endpointOf(from), endpointOf(homePlace), { avoidStairs })
+    return 'error' in r ? null : Math.max(1, Math.round(r.seconds / 60))
+  }
 
   const nearGraph = (p: Place) => (graph ? nearestNode(graph, p.lat, p.lon).dist <= MAX_SNAP_M : true)
 
@@ -489,6 +502,10 @@ export function App() {
           go({ name: 'directions', from: you || locationOn ? 'me' : undefined, to: p.id }, { arrive: String(o.start), cls: classLabel(o) })
         }}
         onSchedule={() => go({ name: 'schedule' })}
+        home={homePlace}
+        walkHome={walkHome}
+        onGoHome={goHome}
+        onPickHome={pickHome}
       />
     )
   else if (route.name === 'schedule' && classes)
@@ -514,7 +531,28 @@ export function App() {
     )
   else if ((route.name === 'today' || route.name === 'schedule') && !classes) content = <div className="center"><Spinner label="Loading your classes" /></div>
   else if (route.name === 'place' && selected)
-    content = <PlaceDetail place={selected} byId={byId} onOpen={openPlace} auditMode={auditMode} onLocate={currentFix} transit={transit} now={clock} live={live} nearGraph={nearGraph(selected)} onBack={home} onDirections={() => directionsFor(selected.id)} onShare={share} onTransit={() => setModal('transit')} />
+    content = (
+      <PlaceDetail
+        place={selected}
+        byId={byId}
+        onOpen={openPlace}
+        auditMode={auditMode}
+        onLocate={currentFix}
+        transit={transit}
+        now={clock}
+        live={live}
+        nearGraph={nearGraph(selected)}
+        onBack={home}
+        onDirections={() => directionsFor(selected.id)}
+        onShare={share}
+        onTransit={() => setModal('transit')}
+        home={homeId}
+        onSetHome={(id) => {
+          setHomeId(id)
+          flash(id ? 'Saved as your home' : 'Home removed')
+        }}
+      />
+    )
   else if (route.name === 'place')
     content = <GlassBanner tone="warning" title="Place not found" action={<GlassIconButton icon="close" label="Back" size="s" onClick={home} />}>No place has the id "{route.id}".</GlassBanner>
   else if (route.name === 'directions')
@@ -550,6 +588,7 @@ export function App() {
         picking={pickPoint}
         following={liveTrip ? { finding: !you, arrived: arrivedAt } : null}
         onPickOnMap={(field) => setPickPoint(field)}
+        homePlace={homePlace}
         onPickAddress={(field, a) => {
           const id = pointId(a.lat, a.lon)
           setPointNames((m) => new Map(m).set(id, a.label))
@@ -565,11 +604,15 @@ export function App() {
             Campus shuttles and METRO →
           </button>
         )}
-        <PlaceRows places={results} activeId={results[active]?.id} onPick={openPlace} listId="results" label="Search results" />
+        {cat === 'housing' && !q.trim() ? (
+          <HousingList places={index.search('', 400, 'housing')} onPick={openPlace} />
+        ) : (
+          <PlaceRows places={results} activeId={results[active]?.id} onPick={openPlace} listId="results" label="Search results" />
+        )}
         {q.trim() && (/\d/.test(q) ? !results.some((p) => p.kind === 'room') : !results.length) && <MissingRoom query={q.trim()} />}
       </>
     )
-  else content = <Featured places={featured} recent={recent} onPick={openPlace} onTransit={() => setModal('transit')} />
+  else content = <Featured places={featured} recent={recent} onPick={openPlace} onTransit={() => setModal('transit')} home={homePlace} onGoHome={() => goHome()} onPickHome={pickHome} />
 
   const searchBar = (
     <div className="searchbar">
@@ -741,6 +784,12 @@ export function App() {
         onReduceMotion={setReduce}
         solid={solid}
         onSolid={setSolid}
+        homeName={homePlace?.name ?? null}
+        onClearHome={() => setHomeId(null)}
+        onPickHome={() => {
+          setModal(null)
+          pickHome()
+        }}
         locationOn={locationOn}
         onLocationOn={(v) => {
           setLocationOn(v)

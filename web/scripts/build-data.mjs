@@ -130,8 +130,8 @@ const OK_NAMED = /(student union|bay tree|cowell student health|wellness|field h
 
 const COLLEGE_NAMES = {
   'Cowell College': ['Cowell'], 'Stevenson College': ['Stevenson'], 'Crown College': ['Crown'], 'Merrill College': ['Merrill'],
-  'Porter College': ['Porter'], 'Kresge College': ['Kresge'], 'Oakes College': ['Oakes'], 'Rachel Carson College': ['Carson', 'Rachel Carson'],
-  'College Nine': ['College 9', 'Nine'], 'John R. Lewis College': ['College Ten', 'College 10', 'Lewis', 'Ten'],
+  'Porter College': ['Porter'], 'Kresge College': ['Kresge'], 'Oakes College': ['Oakes'], 'Rachel Carson College': ['Carson', 'Rachel Carson', 'RCC', 'College Eight', 'College 8', 'C8'],
+  'College Nine': ['College 9', 'Nine', 'C9'], 'John R. Lewis College': ['College Ten', 'College 10', 'Lewis', 'Ten', 'JRL', 'C10'],
 }
 
 const SKIP = /dressing|toilet|\bshed\b|storage|transmitter|offices|press bldg|core west parking|dining hall\b.*\(|\(f4\)|building b$|kzsc-fm|studio$|east remote parking interior|west remote parking interior/i
@@ -246,10 +246,27 @@ for (const p of places) {
   final.push(p)
 }
 
+// residence halls and apartments from the campus map's residential layer (data/housing.json)
+const housing = JSON.parse(readFileSync(join(root, 'data', 'housing.json'), 'utf8')).buildings
+for (const h of housing) {
+  final.push({
+    id: h.id,
+    name: h.name,
+    kind: 'housing',
+    lat: round(h.lat),
+    lon: round(h.lon),
+    aliases: h.aliases,
+    subtitle: h.known_as ? `${h.area} · ${h.known_as}` : h.area,
+    short: h.short,
+    entrances: h.approach.map(([la, lo]) => [round(la), round(lo)]),
+    source: 'ucsc-facilities',
+  })
+}
+
 // dining halls and cafés that OSM lists as nodes; keep college nodes unique
-const order = { college: 0, academic: 1, library: 2, dining: 3, landmark: 4, transit: 5, parking: 6, room: 7 }
+const order = { college: 0, academic: 1, library: 2, dining: 3, landmark: 4, transit: 5, parking: 6, room: 7, housing: 8 }
 final.push(...roomData.rooms)
-final.sort((a, b) => order[a.kind] - order[b.kind] || a.name.localeCompare(b.name))
+final.sort((a, b) => order[a.kind] - order[b.kind] || a.name.localeCompare(b.name, 'en', { numeric: true }))
 const counts = {}
 for (const p of final) counts[p.kind] = (counts[p.kind] || 0) + 1
 writeFileSync(

@@ -13,8 +13,9 @@ export const KIND_ICON: Record<Category, IconName> = {
   transit: 'transit',
   parking: 'parking',
   room: 'door',
+  housing: 'home',
 }
-const KIND_NAME: Record<Category, string> = { academic: 'Academic building', college: 'College', library: 'Library', dining: 'Dining', landmark: 'Landmark', transit: 'Transit stop', parking: 'Parking', room: 'Classroom' }
+const KIND_NAME: Record<Category, string> = { academic: 'Academic building', college: 'College', library: 'Library', dining: 'Dining', landmark: 'Landmark', transit: 'Transit stop', parking: 'Parking', room: 'Classroom', housing: 'Housing' }
 export const kindName = (p: Place) => {
   if (p.kind === 'room') return [KIND_NAME.room, floorText(p.room)].filter(Boolean).join(' · ')
   return p.subtitle && p.kind !== 'academic' ? `${KIND_NAME[p.kind]} · ${p.subtitle}` : KIND_NAME[p.kind]
@@ -58,9 +59,59 @@ export function PlaceRows({
   )
 }
 
-export function Featured({ places, recent = [], onPick, onTransit }: { places: Place[]; recent?: Place[]; onPick: (p: Place) => void; onTransit: () => void }) {
+/** Your dorm or apartment, one tap from the map: or how to set one. */
+export function HomeShortcut({ home, onGoHome, onPickHome }: { home: Place | null; onGoHome: () => void; onPickHome: () => void }) {
+  return (
+    <GlassList label="Home">
+      {home ? (
+        <GlassListRow icon="home" iconColor={CATEGORY_COLOR.housing} title="Get me home" subtitle={home.name} onClick={onGoHome} />
+      ) : (
+        <GlassListRow icon="home" iconColor={CATEGORY_COLOR.housing} title="Set your home" subtitle="Pick your dorm or apartment to route back in one tap" onClick={onPickHome} />
+      )}
+    </GlassList>
+  )
+}
+
+/** Every residence hall and apartment building, grouped by college or housing area. */
+export function HousingList({ places, onPick }: { places: Place[]; onPick: (p: Place) => void }) {
+  const areas = new Map<string, Place[]>()
+  for (const p of places) {
+    const area = p.subtitle?.split(' · ')[0] ?? 'Other'
+    areas.set(area, [...(areas.get(area) ?? []), p])
+  }
   return (
     <div>
+      {[...areas].map(([area, ps]) => (
+        <section key={area} aria-label={area}>
+          <SectionLabel>{area}</SectionLabel>
+          <PlaceRows places={ps} onPick={onPick} label={area} />
+        </section>
+      ))}
+    </div>
+  )
+}
+
+export function Featured({
+  places,
+  recent = [],
+  onPick,
+  onTransit,
+  home = null,
+  onGoHome = () => {},
+  onPickHome = () => {},
+}: {
+  places: Place[]
+  recent?: Place[]
+  onPick: (p: Place) => void
+  onTransit: () => void
+  home?: Place | null
+  onGoHome?: () => void
+  onPickHome?: () => void
+}) {
+  return (
+    <div>
+      <SectionLabel>Home</SectionLabel>
+      <HomeShortcut home={home} onGoHome={onGoHome} onPickHome={onPickHome} />
       {recent.length > 0 && (
         <>
           <SectionLabel>Recent</SectionLabel>

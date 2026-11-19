@@ -11,6 +11,7 @@ const GLYPH: Record<Category, keyof typeof ICON_PATHS> = {
   transit: 'transit',
   parking: 'parking',
   room: 'door',
+  housing: 'home',
 }
 
 /** Round, flat category marker with a white rim: legible on forest, roads and buildings alike. */

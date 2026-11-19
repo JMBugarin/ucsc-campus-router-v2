@@ -1,4 +1,5 @@
-import { GlassBanner, GlassButton, GlassIconButton, StatusPill } from '../../design/components'
+import { GlassBanner, GlassButton, GlassIconButton, GlassList, GlassListRow, StatusPill } from '../../design/components'
+import { CATEGORY_COLOR } from '../../design/tokens'
 import { Icon } from '../../design/icons'
 import type { Place } from '../../data/types'
 import { floorName } from '../../data/rooms'
@@ -23,7 +24,15 @@ export function Today({
   onOpen,
   onGetThere,
   onSchedule,
+  home = null,
+  walkHome = () => null,
+  onGoHome = () => {},
+  onPickHome = () => {},
 }: {
+  home?: Place | null
+  walkHome?: (from: Place) => number | null
+  onGoHome?: (from: Place) => void
+  onPickHome?: () => void
   meetings: Meeting[]
   data: ClassesData
   byId: Map<string, Place>
@@ -129,6 +138,29 @@ export function Today({
           )
         })}
       </ol>
+      {(() => {
+        const last = [...plan.classes].reverse().find((o) => place(o))
+        const from = last ? place(last) : null
+        if (!from || (plan.isToday && last!.end + 60 * 60 * 1000 <= now)) return null
+        if (!home)
+          return (
+            <GlassList label="Home">
+              <GlassListRow icon="home" iconColor={CATEGORY_COLOR.housing} title="Set your home" subtitle="See the walk back after your last class" onClick={onPickHome} />
+            </GlassList>
+          )
+        const min = walkHome(from)
+        return (
+          <GlassList label="Head home">
+            <GlassListRow
+              icon="home"
+              iconColor={CATEGORY_COLOR.housing}
+              title={`Head home after ${label(last!)}`}
+              subtitle={`${min !== null ? `${min} min walk to ` : ''}${home.short ?? home.name} · ends ${clockAt(last!.end)}`}
+              onClick={() => onGoHome(from)}
+            />
+          </GlassList>
+        )
+      })()}
       {plan.isToday && !hasLocation && meetings.length > 0 && <p className="note">Turn on your location on the map for leave-by times from where you are.</p>}
     </section>
   )
