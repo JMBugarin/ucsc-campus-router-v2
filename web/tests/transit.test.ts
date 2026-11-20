@@ -69,33 +69,3 @@ describe('GTFS realtime decoding (feeds recorded from rt.scmetro.org)', () => {
     expect(f.alerts[0].header.length).toBeGreaterThan(3)
   })
 })
-
-import { buildGraph } from '../src/routing/graph'
-import { busOptions } from '../src/transit/plan'
-import { endpointOf } from '../src/routing/plan'
-import type { GraphFile, PlacesFile } from '../src/data/types'
-
-describe('bus options', () => {
-  const g = buildGraph(JSON.parse(readFileSync('public/data/graph.json', 'utf8')) as GraphFile)
-  const places = (JSON.parse(readFileSync('public/data/places.json', 'utf8')) as PlacesFile).places
-  const P = (id: string) => endpointOf(places.find((p) => p.id === id)!)
-  const wed10 = pacificClock(new Date('2026-11-04T18:00:00Z'))
-
-  it('offers a direct bus only when it arrives sooner than walking', () => {
-    const plan = busOptions(g, data, P('baskin-engineering'), P('oakes-college'), wed10)
-    expect(plan.walkOnlyArrives).not.toBeNull()
-    for (const o of plan.options) {
-      expect(o.arrives).toBeLessThan(plan.walkOnlyArrives! - 59)
-      expect(o.departs).toBeGreaterThanOrEqual(wed10.secs + o.walkToStop)
-      expect(o.rides).toBeGreaterThan(o.departs)
-    }
-  })
-  it('offers nothing for two places a minute apart', () => {
-    const plan = busOptions(g, data, P('baskin-engineering'), P('engineering-2'), wed10)
-    expect(plan.options).toEqual([])
-  })
-  it('offers nothing in the middle of the night', () => {
-    const plan = busOptions(g, data, P('baskin-engineering'), P('oakes-college'), pacificClock(new Date('2026-11-04T11:00:00Z')))
-    expect(plan.options.every((o) => o.departs >= 3 * 3600)).toBe(true)
-  })
-})

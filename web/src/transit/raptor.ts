@@ -82,8 +82,9 @@ interface TripRef {
 /**
  * Earliest arrival from `access` stops (seconds to walk to each) to `egress` stops (seconds to walk on from each),
  * leaving at `depart` seconds after midnight of `day`, with at most `maxTransfers` transfers (RAPTOR).
+ * With `mustRide`, walking the whole way never counts, so the best bus is found even when walking would be quicker.
  */
-export function earliest(net: Network, day: Day, depart: number, access: Map<number, number>, egress: Map<number, number>, maxTransfers = 2): Journey | null {
+export function earliest(net: Network, day: Day, depart: number, access: Map<number, number>, egress: Map<number, number>, maxTransfers = 2, mustRide = false): Journey | null {
   const f = net.file
   const n = f.stops.length
   const rounds = maxTransfers + 1
@@ -98,12 +99,12 @@ export function earliest(net: Network, day: Day, depart: number, access: Map<num
     const t = depart + w
     if (t < tau[0][s]) {
       tau[0][s] = t
-      best[s] = t
+      if (!mustRide) best[s] = t
       marked.add(s)
     }
   }
   let target = Infinity
-  for (const [s, w] of egress) target = Math.min(target, tau[0][s] + w)
+  if (!mustRide) for (const [s, w] of egress) target = Math.min(target, tau[0][s] + w)
 
   const time = (pi: number, ref: TripRef, pos: number) => {
     const p = f.patterns[pi]
@@ -170,7 +171,7 @@ export function earliest(net: Network, day: Day, depart: number, access: Map<num
         }
       }
     }
-    for (const [s, w] of egress) target = Math.min(target, tau[k][s] + w)
+    for (const [s, w] of egress) if (!mustRide || labels[k][s]) target = Math.min(target, tau[k][s] + w)
   }
 
   // the best arrival, with the fewest transfers on a tie
@@ -222,11 +223,11 @@ export function earliest(net: Network, day: Day, depart: number, access: Map<num
 }
 
 /** A few journeys leaving at or after `depart`, each catching a later first bus than the one before. */
-export function leaveAt(net: Network, day: Day, depart: number, access: Map<number, number>, egress: Map<number, number>, count = 3): Journey[] {
+export function leaveAt(net: Network, day: Day, depart: number, access: Map<number, number>, egress: Map<number, number>, count = 3, mustRide = false): Journey[] {
   const out: Journey[] = []
   let t = depart
   for (let i = 0; i < count; i++) {
-    const j = earliest(net, day, t, access, egress)
+    const j = earliest(net, day, t, access, egress, 2, mustRide)
     if (!j || out.some((o) => o.arrives === j.arrives && o.departs === j.departs)) break
     out.push(j)
     const firstBus = j.legs.find((l) => l.kind === 'bus')!
@@ -240,10 +241,10 @@ export function leaveAt(net: Network, day: Day, depart: number, access: Map<numb
  * Journeys that get there by `deadline`, latest departure first: one search per five minutes over the two hours before,
  * never leaving before `earliestStart` (now), so a bus that has already gone is never offered.
  */
-export function arriveBy(net: Network, day: Day, deadline: number, access: Map<number, number>, egress: Map<number, number>, count = 3, earliestStart = -Infinity): Journey[] {
+export function arriveBy(net: Network, day: Day, deadline: number, access: Map<number, number>, egress: Map<number, number>, count = 3, earliestStart = -Infinity, mustRide = false): Journey[] {
   const found = new Map<string, Journey>()
   for (let t = Math.max(deadline - 150 * 60, earliestStart); t <= deadline; t += 300) {
-    const j = earliest(net, day, t, access, egress)
+    const j = earliest(net, day, t, access, egress, 2, mustRide)
     if (!j || j.arrives > deadline) continue
     const key = j.legs.filter((l) => l.kind === 'bus').map((l) => `${(l as { pattern: number }).pattern}:${(l as { trip: number }).trip}`).join('>')
     const prev = found.get(key)

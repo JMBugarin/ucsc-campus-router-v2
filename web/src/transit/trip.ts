@@ -90,8 +90,16 @@ function walksToStops(net: Network, g: Graph, place: Endpoint, outbound: boolean
   return { secs, plans, campus, town: false }
 }
 
-/** Bus trips between two places, any distance within METRO's area: leaving at a time, or arriving by one. */
-export function planTrips(net: Network, g: Graph, from: Endpoint, to: Endpoint, when: When, avoidStairs = false, town: Graph | null = null): TripOption[] {
+const walking = (t: TripOption) => t.parts.reduce((s, p) => s + (p.kind === 'walk' ? p.seconds : 0), 0)
+
+/**
+ * Bus trips between two places, any distance within METRO's area: leaving at a time, or arriving by one.
+ * Given `ride` (seconds to walk the whole way), a bus is offered even when walking would get there sooner, for
+ * people who would rather ride, as long as it saves some walking: never a ride away from the destination.
+ */
+export function planTrips(net: Network, g: Graph, from: Endpoint, to: Endpoint, when: When, avoidStairs = false, town: Graph | null = null, ride: { walkOnly: number } | null = null): TripOption[] {
+  const mustRide = !!ride
+  const count = ride ? 6 : 3
   const access = walksToStops(net, g, from, true, avoidStairs, town)
   const egress = walksToStops(net, g, to, false, avoidStairs, town)
   if (!access.secs.size || !egress.secs.size) return []
@@ -100,16 +108,16 @@ export function planTrips(net: Network, g: Graph, from: Endpoint, to: Endpoint, 
   const day: Day = { date: clock.date, dow: clock.dow }
   const midnight = at - clock.secs * 1000
   let journeys: Journey[]
-  if (when.kind === 'leave') journeys = leaveAt(net, day, clock.secs, access.secs, egress.secs)
+  if (when.kind === 'leave') journeys = leaveAt(net, day, clock.secs, access.secs, egress.secs, count, mustRide)
   else {
     const nowSecs = Math.floor((when.now - midnight) / 1000)
-    journeys = arriveBy(net, day, clock.secs, access.secs, egress.secs, 3, nowSecs)
+    journeys = arriveBy(net, day, clock.secs, access.secs, egress.secs, count, nowSecs, mustRide)
     // nothing makes it in time any more: the soonest trips from now, which will be late
-    if (!journeys.length) journeys = leaveAt(net, day, Math.max(nowSecs, 0), access.secs, egress.secs)
+    if (!journeys.length) journeys = leaveAt(net, day, Math.max(nowSecs, 0), access.secs, egress.secs, count, mustRide)
   }
   const deadline = when.kind === 'arrive' ? when.by : Infinity
   const f = net.file
-  return journeys.map((j) => {
+  const options = journeys.map((j): TripOption => {
     const parts: (WalkPart | BusPart)[] = []
     for (let i = 0; i < j.legs.length; i++) {
       const l = j.legs[i]
@@ -154,6 +162,15 @@ export function planTrips(net: Network, g: Graph, from: Endpoint, to: Endpoint, 
     const arrive = midnight + j.arrives * 1000
     return { leave: midnight + j.departs * 1000, arrive, late: arrive > deadline, parts, transfers: j.transfers }
   })
+  if (!ride) return options
+  // the same bus caught from a nearer stop is the same trip: keep the one that leaves latest
+  const byBus = new Map<string, TripOption>()
+  for (const t of options.filter((o) => walking(o) < ride.walkOnly)) {
+    const key = t.parts.flatMap((p) => (p.kind === 'bus' ? [p.tripId] : [])).join('>')
+    const prev = byBus.get(key)
+    if (!prev || t.leave > prev.leave) byBus.set(key, t)
+  }
+  return [...byBus.values()].sort((a, b) => (when.kind === 'arrive' ? b.leave - a.leave : a.arrive - b.arrive || a.leave - b.leave)).slice(0, 3)
 }
 
 /** Walking estimate between two points where no mapped path joins them. */

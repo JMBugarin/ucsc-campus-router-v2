@@ -145,6 +145,7 @@ test('a trip shows its bus live with how full it is, and the alerts that touch i
   await page.route('**/svc/v1/alerts', (r) => r.fulfill({ json: { status, alerts: [{ id: 'a', header: 'Route 18 detour on Mission St', routes: ['18'] }, { id: 'b', header: 'Route 3 change', routes: ['3'] }] } }))
   await page.goto('/?e2e#/r/baskin-engineering/oakes-college')
   await page.waitForFunction(() => (window as any).__map?.loaded(), null, { timeout: 45_000 })
+  await page.getByRole('radio', { name: /^Bus/ }).click()
   await expect(page.getByText('Bus 2214 is on the map: few seats.')).toBeVisible({ timeout: 15_000 })
   await expect(page.getByText('Route 18 detour on Mission St')).toBeVisible()
   await expect(page.getByText('Route 3 change')).toHaveCount(0)

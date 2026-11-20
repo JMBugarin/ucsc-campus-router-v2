@@ -27,10 +27,9 @@ import { label as classLabel, planDay } from './schedule/dayPlan'
 import { termFor } from './schedule/terms'
 import { clockAt, pacificDate } from './schedule/time'
 import { GlassSegmentedControl } from './design/components'
-import { Directions, type Pick } from './features/Directions'
+import { Directions, type Mode, type Pick } from './features/Directions'
 import { AboutModal, TransitModal } from './features/Modals'
 import { activity } from './state/activity'
-import { busOptions } from './transit/plan'
 import { loadTransit, useClock, useLive } from './transit/useTransit'
 import { useLiveBuses } from './transit/useLiveBuses'
 import { prepareNetwork, type MetroFile, type Network } from './transit/raptor'
@@ -81,6 +80,7 @@ export function App() {
   const [you, setYou] = useState<{ lat: number; lon: number; accuracy: number; heading?: number | null; at?: number } | null>(null)
   const [locationOn, setLocationOn] = usePref('locationOn', false)
   const [homeId, setHomeId] = usePref<string | null>('homePlace', null)
+  const [modePref, setModePref] = usePref<Mode>('travelMode', 'walk')
   const [follow, setFollow] = useState(true)
   const [origin, setOrigin] = useState<{ lat: number; lon: number; at: number } | null>(null)
   const tracker = useRef<Tracker | null>(null)
@@ -179,11 +179,6 @@ export function App() {
   const showsTimes = route.name === 'directions' || (route.name === 'place' && !!byId.get(route.id)?.stops)
   const clock = useClock(showsTimes)
   const live = useLive(showsTimes)
-  const bus = useMemo(
-    () => (graph && transit && dFrom.ep && dTo.ep && !planError && plan ? busOptions(graph, transit, dFrom.ep, dTo.ep, clock, avoidStairs) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [graph, transit, plan, clock.secs, avoidStairs],
-  )
 
   const toRoom = route.name === 'directions' ? roomOf(route.to) : null
   const fromRoom = route.name === 'directions' ? roomOf(route.from) : null
@@ -194,8 +189,8 @@ export function App() {
     return at > 0 ? { at, label: p.get('cls') ?? 'class' } : null
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route])
-  // trips by bus: whenever one end is off the campus paths, or walking would take more than half an hour
-  const wantTrips = route.name === 'directions' && !!dFrom.ep && !!dTo.ep && (planError === 'no-path-near-origin' || planError === 'no-path-near-destination' || planError === 'no-route' || (!!plan && plan.seconds > 30 * 60))
+  // bus trips for every trip, so anyone who would rather ride can, even when walking is quicker
+  const wantTrips = route.name === 'directions' && !!dFrom.ep && !!dTo.ep && planError !== 'same-place'
   useEffect(() => {
     if (!wantTrips || metro) return
     fetch(`${import.meta.env.BASE_URL}data/metro.json`)
@@ -215,22 +210,31 @@ export function App() {
   const minute = Math.floor(now / 60000)
   const trips = useMemo((): TripOption[] | null => {
     if (!wantTrips || !metro || !graph || !dFrom.ep || !dTo.ep) return null
-    return planTrips(metro, graph, dFrom.ep, dTo.ep, arriveBy ? { kind: 'arrive', by: arriveBy.at, now: minute * 60000 } : { kind: 'leave', at: minute * 60000 }, avoidStairs, town)
+    return planTrips(metro, graph, dFrom.ep, dTo.ep, arriveBy ? { kind: 'arrive', by: arriveBy.at, now: minute * 60000 } : { kind: 'leave', at: minute * 60000 }, avoidStairs, town, plan ? { walkOnly: plan.seconds } : null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wantTrips, metro, graph, town, dFrom.ep?.id, dFrom.ep?.lat, dFrom.ep?.lon, dTo.ep?.id, dTo.ep?.lat, dTo.ep?.lon, arriveBy?.at, minute, avoidStairs])
+  }, [wantTrips, metro, graph, town, dFrom.ep?.id, dFrom.ep?.lat, dFrom.ep?.lon, dTo.ep?.id, dTo.ep?.lat, dTo.ep?.lon, arriveBy?.at, minute, avoidStairs, plan?.seconds])
   useEffect(() => setTripIndex(0), [dFrom.ep?.id, dTo.ep?.id, arriveBy?.at])
-  const trip = trips?.length ? trips[Math.min(tripIndex, trips.length - 1)] : null
+  // walk or ride: what this trip was set to, else what was chosen last time, else the bus for a long walk
+  const [modeChoice, setModeChoice] = useState<Mode | null>(null)
+  useEffect(() => setModeChoice(null), [route.name === 'directions' ? route.from : '', route.name === 'directions' ? route.to : ''])
+  const wanted: Mode = modeChoice ?? (modePref === 'bus' || (!!plan && plan.seconds > 30 * 60) ? 'bus' : 'walk')
+  const travel: Mode = !plan ? 'bus' : wanted === 'bus' && trips?.length !== 0 ? 'bus' : 'walk'
+  const chooseMode = (m: Mode) => {
+    setModeChoice(m)
+    setModePref(m)
+  }
+  const trip = travel === 'bus' && trips?.length ? trips[Math.min(tripIndex, trips.length - 1)] : null
   const stopPlace = route.name === 'place' && selected?.stops ? selected : null
-  const liveBuses = useLiveBuses(!!stopPlace || (route.name === 'directions' && (!!bus?.options.length || !!trip)))
+  const liveBuses = useLiveBuses(!!stopPlace || (route.name === 'directions' && !!trip))
   const busPins = useMemo(() => {
     const nowSecs = Math.floor(now / 1000)
-    const trips = new Set(route.name === 'directions' ? [...(bus?.options ?? []).map((o) => o.tripId), ...(trip?.parts ?? []).flatMap((p) => (p.kind === 'bus' ? [p.tripId] : []))] : [])
+    const trips = new Set(route.name === 'directions' ? (trip?.parts ?? []).flatMap((p) => (p.kind === 'bus' ? [p.tripId] : [])) : [])
     const label = (v: { route?: string }) => (v.route && transit?.routes[v.route]?.n) || v.route || '•'
     return liveBuses.vehicles
       .filter((v) => recentVehicle(v, nowSecs) && (trips.has(v.trip ?? '') || (stopPlace && haversine(stopPlace.lat, stopPlace.lon, v.lat, v.lon) < 1500)))
       .map((v) => ({ id: v.id, lat: v.lat, lon: v.lon, label: label(v), bearing: v.bearing, highlight: trips.has(v.trip ?? '') }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [liveBuses.vehicles, bus, trip, stopPlace?.id, now, transit, route.name])
+  }, [liveBuses.vehicles, trip, stopPlace?.id, now, transit, route.name])
   const routeJson = useMemo(() => {
     if (trip && graph) return tripGeoJSON(graph, trip)
     if (!plan || !graph) return null
@@ -261,13 +265,10 @@ export function App() {
         { type: 'Feature', properties: { role: 'from' }, geometry: { type: 'Point', coordinates: [plan.originPoint[1], plan.originPoint[0]] } },
         { type: 'Feature', properties: { role: 'to' }, geometry: { type: 'Point', coordinates: [plan.destPoint[1], plan.destPoint[0]] } },
         ...[toRoom, fromRoom].filter((r): r is Place => !!r).map((r) => ({ type: 'Feature' as const, properties: { role: 'room' }, geometry: { type: 'Point' as const, coordinates: [r.lon, r.lat] } })),
-        ...(bus?.options[0] && transit
-          ? ([['board', bus.options[0].board], ['alight', bus.options[0].alight]] as const).map(([role, i]) => ({ type: 'Feature' as const, properties: { role }, geometry: { type: 'Point' as const, coordinates: [transit.stops[i].lon, transit.stops[i].lat] } }))
-          : []),
       ],
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan, bus, transit, toRoom?.id, fromRoom?.id, trip])
+  }, [plan, toRoom?.id, fromRoom?.id, trip])
 
   /* ---- camera */
   const sheetPad = detent === 'peek' ? 160 : Math.round(window.innerHeight * (detent === 'half' ? 0.46 : 0.46))
@@ -574,8 +575,8 @@ export function App() {
         locating={locating}
         locationError={locError}
         straightMeters={dFrom.ep && dTo.ep ? straightMeters(dFrom.ep, dTo.ep) : null}
-        bus={bus}
-        transit={transit}
+        mode={travel}
+        onMode={chooseMode}
         toRoom={toRoom}
         arriveBy={arriveBy}
         now={now}
