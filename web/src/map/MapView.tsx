@@ -9,6 +9,7 @@ import type { Place } from '../data/types'
 import { notifyBackdrop, setBackdropSource } from '../design/adaptive'
 import { CameraMotion } from '../design/tokens'
 import { prefersReducedMotion } from '../design/motion'
+import { Glide } from './glide'
 
 maplibregl.setWorkerUrl(new URL(`${import.meta.env.BASE_URL}maplibre/maplibre-gl-worker.mjs`, location.href).href)
 
@@ -45,7 +46,9 @@ export interface MapViewProps {
   classPins?: { id: string; lat: number; lon: number; label: string; next: boolean }[]
   route: GeoJSON.FeatureCollection | null
   endpoints: GeoJSON.FeatureCollection | null
-  you: { lat: number; lon: number; accuracy: number } | null
+  you: { lat: number; lon: number; accuracy: number; at?: number; speed?: number | null } | null
+  /** keep the camera on the walker, frame by frame, once `follow` has brought them into view */
+  following?: boolean
   padding: PaddingOptions
   onSelect: (id: string) => void
   /** the person moved the map themselves (so stop following them) */
@@ -98,6 +101,35 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
   const propsRef = useRef(props)
   propsRef.current = props
   const themeApplied = useRef<Theme | null>(null)
+  const glide = useRef(new Glide())
+  const frame = useRef(0)
+  const tracking = useRef<{ settleAt: number } | null>(null)
+
+  const drawYou = (now: number) => {
+    const map = mapRef.current
+    const src = map?.getSource('you') as GeoJSONSource | undefined
+    if (!map || !src) return
+    const y = propsRef.current.you ? glide.current.at(now) : null
+    src.setData(
+      y
+        ? {
+            type: 'FeatureCollection',
+            features: [{ type: 'Feature', properties: { accuracy_px: Math.min(80, Math.max(10, y.accuracy / 1.2)) }, geometry: { type: 'Point', coordinates: [y.lon, y.lat] } }],
+          }
+        : EMPTY,
+    )
+    const t = tracking.current
+    if (y && t && propsRef.current.following && now >= t.settleAt && !map.isMoving()) map.jumpTo({ center: [y.lon, y.lat], padding: propsRef.current.padding })
+  }
+  const animate = () => {
+    if (frame.current) return
+    const step = (now: number) => {
+      frame.current = 0
+      drawYou(now)
+      if (glide.current.moving(now)) frame.current = requestAnimationFrame(step)
+    }
+    frame.current = requestAnimationFrame(step)
+  }
 
   const apply = () => {
     const map = mapRef.current
@@ -124,15 +156,7 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     set('route', p.route ?? EMPTY)
     set('endpoints', p.endpoints ?? EMPTY)
     set('selected', p.selected ? placeFeatures([p.selected]) : EMPTY)
-    set(
-      'you',
-      p.you
-        ? {
-            type: 'FeatureCollection',
-            features: [{ type: 'Feature', properties: { accuracy_px: Math.min(80, Math.max(10, p.you.accuracy / 1.2)) }, geometry: { type: 'Point', coordinates: [p.you.lon, p.you.lat] } }],
-          }
-        : EMPTY,
-    )
+    drawYou(performance.now())
   }
 
   useEffect(() => {
@@ -203,6 +227,8 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     map.on('mouseleave', 'parking-cluster', () => (map.getCanvas().style.cursor = ''))
 
     return () => {
+      cancelAnimationFrame(frame.current)
+      frame.current = 0
       setBackdropSource(null)
       map.remove()
       mapRef.current = null
@@ -218,7 +244,24 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     }
   }, [props.theme])
 
-  useEffect(apply, [props.places, props.route, props.endpoints, props.selected, props.you, props.focus, props.classPins, props.buses])
+  useEffect(apply, [props.places, props.route, props.endpoints, props.selected, props.focus, props.classPins, props.buses])
+
+  useEffect(() => {
+    const y = props.you
+    const now = performance.now()
+    if (!y) glide.current.clear()
+    else {
+      if (prefersReducedMotion()) glide.current.clear()
+      glide.current.push(y, now)
+    }
+    drawYou(now)
+    animate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.you])
+
+  useEffect(() => {
+    if (!props.following) tracking.current = null
+  }, [props.following])
 
   useImperativeHandle(ref, () => ({
     flyToPlace(p, zoom = 17.2) {
@@ -233,6 +276,7 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     fitCoords(coords, maxZoom = 18) {
       const map = mapRef.current
       if (!map || !coords.length) return
+      tracking.current = null
       const b = new maplibregl.LngLatBounds(coords[0], coords[0])
       coords.forEach((c) => b.extend(c))
       const pad = propsRef.current.padding
@@ -253,8 +297,12 @@ export const MapView = forwardRef<MapHandle, MapViewProps>(function MapView(prop
     getMap: () => mapRef.current,
     follow(lng, lat) {
       const map = mapRef.current
-      if (!map) return
-      map.easeTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), 16.8), padding: propsRef.current.padding, duration: prefersReducedMotion() ? 0 : 700 })
+      if (!map || tracking.current) return
+      const duration = prefersReducedMotion() ? 0 : 700
+      const y = glide.current.at(performance.now() + duration)
+      map.easeTo({ center: y ? [y.lon, y.lat] : [lng, lat], zoom: Math.max(map.getZoom(), 16.8), padding: propsRef.current.padding, duration })
+      tracking.current = { settleAt: performance.now() + duration + 50 }
+      animate()
     },
     setCamera(c) {
       mapRef.current?.jumpTo({ center: [c.lng, c.lat], zoom: c.zoom, bearing: c.bearing ?? 0, pitch: c.pitch ?? 0 })

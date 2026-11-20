@@ -74,3 +74,38 @@ test('dragging the map stops following, and the follow button brings it back', a
   await context.setGeolocation({ latitude: 36.99715, longitude: -122.05470 })
   await page.waitForFunction(() => Math.abs((window as any).__map.getCenter().lng - -122.0547) < 0.0015, null, { timeout: 15_000 })
 })
+
+test('the location dot glides between fixes instead of jumping, and the camera keeps up', async ({ page, context }) => {
+  await ready(page, '#/p/stevenson-academic')
+  await page.getByRole('button', { name: 'Show my location' }).click()
+  await page.getByRole('button', { name: 'Directions' }).click()
+  await page.waitForFunction(() => (window as any).__map.querySourceFeatures('route').some((f: any) => f.properties.kind === 'walk'), null, { timeout: 15_000 })
+  const dot = () =>
+    page.evaluate(() => {
+      const src = (window as any).__map.getSource('you')
+      const f = src?._data?.features?.[0] ?? src?.serialize?.().data?.features?.[0]
+      return f ? (f.geometry.coordinates[0] as number) : null
+    })
+  await page.waitForTimeout(1500)
+  const start = (await dot())!
+  await context.setGeolocation({ latitude: 36.99715, longitude: -122.05509 })
+  const seen = new Set<number>()
+  for (let i = 0; i < 20; i++) {
+    seen.add(Math.round(((await dot())! - start) * 1e7))
+    await page.waitForTimeout(40)
+  }
+  const between = [...seen].filter((d) => d > 50 && d < 1950)
+  expect(between.length).toBeGreaterThanOrEqual(3)
+  await expect.poll(async () => Math.abs((await dot())! - -122.05509), { timeout: 5000 }).toBeLessThan(0.0001)
+
+  // once following, the camera rides along with the dot rather than jumping every few metres
+  await context.setGeolocation({ latitude: 36.99715, longitude: -122.05440 })
+  await page.waitForFunction(() => Math.abs((window as any).__map.getCenter().lng - -122.0544) < 0.0004, null, { timeout: 15_000 })
+  await context.setGeolocation({ latitude: 36.99715, longitude: -122.05425 })
+  const centers: number[] = []
+  for (let i = 0; i < 15; i++) {
+    centers.push(await page.evaluate(() => (window as any).__map.getCenter().lng))
+    await page.waitForTimeout(40)
+  }
+  expect(new Set(centers.map((c) => c.toFixed(7))).size).toBeGreaterThanOrEqual(3)
+})

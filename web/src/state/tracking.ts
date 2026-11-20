@@ -8,6 +8,8 @@ export interface Fix {
   heading: number | null
   /** epoch ms */
   at: number
+  /** metres per second, when the device reports it */
+  speed?: number | null
 }
 
 const R = 6371008.8
@@ -56,10 +58,10 @@ export function replan(last: { lat: number; lon: number; at: number } | null, fi
   return { again: metres(last, fix) >= REPLAN_MOVED_M || fix.at - last.at >= REPLAN_AGE_MS, offRoute: false }
 }
 
-/** Keeps every fix that matters: a few metres of movement, a much better accuracy, or a few seconds passing. */
+/** Keeps every fix that says something new: any real movement, a better accuracy, or a second passing. */
 export function worthKeeping(prev: Fix | null, next: Fix): boolean {
   if (!prev) return true
-  return metres(prev, next) >= 3 || next.accuracy < prev.accuracy - 5 || next.at - prev.at >= 5000
+  return metres(prev, next) >= 0.5 || next.accuracy < prev.accuracy - 2 || next.at - prev.at >= 1000
 }
 
 /** watchPosition, paused while the page is hidden to save battery. */
@@ -95,7 +97,8 @@ export class Tracker {
     if (!this.running || this.id !== null) return
     this.id = navigator.geolocation.watchPosition(
       (p) => {
-        const fix: Fix = { lat: p.coords.latitude, lon: p.coords.longitude, accuracy: p.coords.accuracy, heading: Number.isFinite(p.coords.heading) && (p.coords.speed ?? 0) > 0.3 ? p.coords.heading : null, at: Date.now() }
+        const speed = Number.isFinite(p.coords.speed) ? p.coords.speed : null
+        const fix: Fix = { lat: p.coords.latitude, lon: p.coords.longitude, accuracy: p.coords.accuracy, heading: Number.isFinite(p.coords.heading) && (speed ?? 0) > 0.3 ? p.coords.heading : null, speed, at: Date.now() }
         if (!worthKeeping(this.last, fix)) return
         this.last = fix
         this.onFix(fix)
@@ -104,7 +107,7 @@ export class Tracker {
         this.onError(e.code)
         if (e.code === 1) this.stop()
       },
-      { enableHighAccuracy: true, maximumAge: 5000, timeout: 30_000 },
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 30_000 },
     )
   }
 

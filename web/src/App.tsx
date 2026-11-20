@@ -77,7 +77,7 @@ export function App() {
   const [avoidStairs, setAvoidStairs] = usePref('avoidStairs', false)
   const [reduce, setReduce] = usePref('reduceMotion', false)
   const [solid, setSolid] = usePref('solid', false)
-  const [you, setYou] = useState<{ lat: number; lon: number; accuracy: number; heading?: number | null; at?: number } | null>(null)
+  const [you, setYou] = useState<{ lat: number; lon: number; accuracy: number; heading?: number | null; speed?: number | null; at?: number } | null>(null)
   const [locationOn, setLocationOn] = usePref('locationOn', false)
   const [homeId, setHomeId] = usePref<string | null>('homePlace', null)
   const [modePref, setModePref] = usePref<Mode>('travelMode', 'walk')
@@ -310,7 +310,7 @@ export function App() {
   const startTracking = useCallback(() => {
     if (!tracker.current)
       tracker.current = new Tracker(
-        (f) => setYou({ lat: f.lat, lon: f.lon, accuracy: f.accuracy, heading: f.heading, at: f.at }),
+        (f) => setYou({ lat: f.lat, lon: f.lon, accuracy: f.accuracy, heading: f.heading, speed: f.speed, at: f.at }),
         (code) => {
           if (code !== 1) return
           void getPosition().then((r) => 'help' in r && setLocHelp(r.help))
@@ -675,6 +675,7 @@ export function App() {
         route={routeJson}
         endpoints={endpoints}
         you={you}
+        following={liveTrip && follow}
         padding={padding}
         onSelect={(id) => go({ name: 'place', id })}
         onUserPan={() => setFollow(false)}

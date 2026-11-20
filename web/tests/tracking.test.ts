@@ -25,12 +25,12 @@ describe('following the route', () => {
     const last = { lat: 37.0, lon: -122.06, at: 0 }
     expect(replan(last, fix(37.0001, -122.0596, 1000, 60), line).offRoute).toBe(false)
   })
-  it('keeps fixes that move, sharpen or age, and drops jitter', () => {
+  it('keeps every fix that moves, sharpens or is a second newer, and drops repeats', () => {
     const a = fix(37, -122.06, 0, 20)
-    expect(worthKeeping(a, fix(37.00001, -122.06, 1000, 20))).toBe(false)
-    expect(worthKeeping(a, fix(37.0001, -122.06, 1000, 20))).toBe(true)
-    expect(worthKeeping(a, fix(37, -122.06, 1000, 8))).toBe(true)
-    expect(worthKeeping(a, fix(37, -122.06, 6000, 20))).toBe(true)
+    expect(worthKeeping(a, fix(37.000001, -122.06, 400, 20))).toBe(false)
+    expect(worthKeeping(a, fix(37.00001, -122.06, 400, 20))).toBe(true)
+    expect(worthKeeping(a, fix(37, -122.06, 400, 17))).toBe(true)
+    expect(worthKeeping(a, fix(37, -122.06, 1000, 20))).toBe(true)
     expect(metres({ lat: 37, lon: -122.06 }, { lat: 37.001, lon: -122.06 })).toBeCloseTo(111.2, 0)
   })
 })
