@@ -74,3 +74,48 @@ test('dragging the map stops following, and the follow button brings it back', a
   await context.setGeolocation({ latitude: 36.99715, longitude: -122.05470 })
   await page.waitForFunction(() => Math.abs((window as any).__map.getCenter().lng - -122.0547) < 0.0015, null, { timeout: 15_000 })
 })
+
+test('the location dot glides between fixes instead of jumping, and the camera keeps up', async ({ page, context }) => {
+  await ready(page, '#/p/stevenson-academic')
+  await page.getByRole('button', { name: 'Show my location' }).click()
+  await page.getByRole('button', { name: 'Directions' }).click()
+  await page.waitForFunction(() => (window as any).__map.querySourceFeatures('route').some((f: any) => f.properties.kind === 'walk'), null, { timeout: 15_000 })
+  const dot = () =>
+    page.evaluate(() => {
+      const src = (window as any).__map.getSource('you')
+      const f = src?._data?.features?.[0] ?? src?.serialize?.().data?.features?.[0]
+      return f ? (f.geometry.coordinates[0] as number) : null
+    })
+  await page.waitForTimeout(1500)
+  const start = (await dot())!
+  await context.setGeolocation({ latitude: 36.99715, longitude: -122.05509 })
+  const between = new Set<number>()
+  await expect
+    .poll(
+      async () => {
+        const d = Math.round(((await dot())! - start) * 1e7)
+        if (d > 50 && d < 1950) between.add(d)
+        return between.size
+      },
+      { timeout: 10_000, intervals: [20] },
+    )
+    .toBeGreaterThanOrEqual(1)
+  await expect.poll(async () => Math.abs((await dot())! - -122.05509), { timeout: 5000 }).toBeLessThan(0.0001)
+
+  // once following, the camera rides along with the dot rather than jumping every few metres
+  await context.setGeolocation({ latitude: 36.99715, longitude: -122.05440 })
+  await page.waitForFunction(() => Math.abs((window as any).__map.getCenter().lng - -122.0544) < 0.0004, null, { timeout: 15_000 })
+  const from = await page.evaluate(() => (window as any).__map.getCenter().lng as number)
+  await context.setGeolocation({ latitude: 36.99715, longitude: -122.05400 })
+  const passing = new Set<string>()
+  await expect
+    .poll(
+      async () => {
+        const lng = await page.evaluate(() => (window as any).__map.getCenter().lng as number)
+        if (lng > from + 0.00001 && lng < -122.05401) passing.add(lng.toFixed(7))
+        return passing.size
+      },
+      { timeout: 10_000, intervals: [20] },
+    )
+    .toBeGreaterThanOrEqual(1)
+})
