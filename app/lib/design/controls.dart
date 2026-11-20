@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'glass.dart';
@@ -319,4 +322,159 @@ class GlassTabBar extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// [primary] and [secondary] on one line, the primary taking the room that is left; or one above the other at full
+/// width when the two would not fit on one line, as with large text on a small phone.
+class SideBySide extends MultiChildRenderObjectWidget {
+  SideBySide({
+    super.key,
+    required Widget primary,
+    required Widget secondary,
+    this.gap = Space.xs,
+  }) : super(children: [primary, secondary]);
+
+  final double gap;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderSideBySide(gap, Directionality.of(context));
+
+  @override
+  void updateRenderObject(BuildContext context, RenderObject renderObject) {
+    (renderObject as _RenderSideBySide)
+      ..gap = gap
+      ..textDirection = Directionality.of(context);
+  }
+}
+
+class _SideBySideData extends ContainerBoxParentData<RenderBox> {}
+
+class _RenderSideBySide extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _SideBySideData>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _SideBySideData> {
+  _RenderSideBySide(this._gap, this._textDirection);
+
+  double _gap;
+  set gap(double value) {
+    if (value == _gap) return;
+    _gap = value;
+    markNeedsLayout();
+  }
+
+  TextDirection _textDirection;
+  set textDirection(TextDirection value) {
+    if (value == _textDirection) return;
+    _textDirection = value;
+    markNeedsLayout();
+  }
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _SideBySideData) {
+      child.parentData = _SideBySideData();
+    }
+  }
+
+  RenderBox get _primary => firstChild!;
+  RenderBox get _secondary => lastChild!;
+
+  bool _fits(double width) =>
+      _primary.getMaxIntrinsicWidth(double.infinity) +
+          _gap +
+          _secondary.getMaxIntrinsicWidth(double.infinity) <=
+      width;
+
+  Size _arrange(
+    BoxConstraints constraints,
+    ChildLayouter lay, {
+    bool place = false,
+  }) {
+    final width = constraints.maxWidth;
+    if (!_fits(width)) {
+      final a = lay(_primary, BoxConstraints.tightFor(width: width));
+      final b = lay(_secondary, BoxConstraints.tightFor(width: width));
+      if (place) {
+        _at(_primary, Offset.zero);
+        _at(_secondary, Offset(0, a.height + _gap));
+      }
+      return constraints.constrain(Size(width, a.height + _gap + b.height));
+    }
+    final b = lay(_secondary, const BoxConstraints());
+    final a = lay(
+      _primary,
+      BoxConstraints.tightFor(
+        width: width.isFinite
+            ? width - _gap - b.width
+            : _primary.getMaxIntrinsicWidth(double.infinity),
+      ),
+    );
+    final height = math.max(a.height, b.height);
+    if (place) {
+      final ltr = _textDirection == TextDirection.ltr;
+      _at(_primary, Offset(ltr ? 0 : b.width + _gap, (height - a.height) / 2));
+      _at(
+        _secondary,
+        Offset(ltr ? a.width + _gap : 0, (height - b.height) / 2),
+      );
+    }
+    return constraints.constrain(Size(a.width + _gap + b.width, height));
+  }
+
+  void _at(RenderBox child, Offset offset) =>
+      (child.parentData! as _SideBySideData).offset = offset;
+
+  @override
+  void performLayout() {
+    size = _arrange(constraints, ChildLayoutHelper.layoutChild, place: true);
+  }
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) =>
+      _arrange(constraints, ChildLayoutHelper.dryLayoutChild);
+
+  @override
+  double computeMinIntrinsicWidth(double height) => math.max(
+    _primary.getMinIntrinsicWidth(height),
+    _secondary.getMinIntrinsicWidth(height),
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      _primary.getMaxIntrinsicWidth(height) +
+      _gap +
+      _secondary.getMaxIntrinsicWidth(height);
+
+  @override
+  double computeMinIntrinsicHeight(double width) => _fits(width)
+      ? math.max(
+          _primary.getMinIntrinsicHeight(width),
+          _secondary.getMinIntrinsicHeight(width),
+        )
+      : _primary.getMinIntrinsicHeight(width) +
+            _gap +
+            _secondary.getMinIntrinsicHeight(width);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) => _fits(width)
+      ? math.max(
+          _primary.getMaxIntrinsicHeight(width),
+          _secondary.getMaxIntrinsicHeight(width),
+        )
+      : _primary.getMaxIntrinsicHeight(width) +
+            _gap +
+            _secondary.getMaxIntrinsicHeight(width);
+
+  @override
+  double? computeDistanceToActualBaseline(TextBaseline baseline) =>
+      defaultComputeDistanceToHighestActualBaseline(baseline);
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
 }

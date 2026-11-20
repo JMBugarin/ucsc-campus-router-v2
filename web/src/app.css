@@ -929,6 +929,49 @@ ul.plain.note li {
   transition: width var(--m-base) var(--ease);
 }
 
+/* walk or bus */
+.modes {
+  display: grid;
+  gap: 6px;
+  margin: 2px 0 6px;
+}
+.mode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 10px;
+  border: 1px solid var(--divider);
+  border-radius: var(--r-card);
+  background: var(--fill);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.mode[aria-checked='true'] {
+  border-color: rgb(var(--accent-rgb) / 0.6);
+  background: rgb(var(--accent-rgb) / 0.14);
+}
+.mode:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+.mode__main {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+.mode__main small {
+  color: var(--text-2);
+  font-size: var(--t-footnote);
+}
+.mode__main .gpill {
+  justify-self: start;
+  margin-top: 2px;
+}
+
 /* trips by bus */
 .trips {
   display: grid;

@@ -315,4 +315,41 @@ void main() {
       });
     });
   }
+
+  group('two buttons side by side', () {
+    Future<void> pumpPair(WidgetTester tester, double width, [TextDirection direction = TextDirection.ltr]) => tester.pumpWidget(
+          Directionality(
+            textDirection: direction,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: width,
+                child: SideBySide(
+                  primary: const SizedBox(key: Key('walk'), width: 100, height: 50),
+                  secondary: const SizedBox(key: Key('bus'), width: 80, height: 40),
+                ),
+              ),
+            ),
+          ),
+        );
+    Rect at(WidgetTester tester, String key) => tester.getRect(find.byKey(Key(key)));
+
+    testWidgets('the first takes the room the second leaves', (tester) async {
+      await pumpPair(tester, 300);
+      expect(at(tester, 'walk'), const Rect.fromLTWH(0, 0, 212, 50));
+      expect(at(tester, 'bus'), const Rect.fromLTWH(220, 5, 80, 40));
+    });
+
+    testWidgets('when both would not fit on one line, they stack at full width', (tester) async {
+      await pumpPair(tester, 150);
+      expect(at(tester, 'walk'), const Rect.fromLTWH(0, 0, 150, 50));
+      expect(at(tester, 'bus'), const Rect.fromLTWH(0, 58, 150, 40));
+    });
+
+    testWidgets('right to left puts the second on the left', (tester) async {
+      await pumpPair(tester, 300, TextDirection.rtl);
+      expect(at(tester, 'walk'), const Rect.fromLTWH(88, 0, 212, 50));
+      expect(at(tester, 'bus'), const Rect.fromLTWH(0, 5, 80, 40));
+    });
+  });
 }

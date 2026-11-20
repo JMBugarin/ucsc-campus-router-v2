@@ -424,17 +424,9 @@ class _PlaceCard extends ConsumerWidget {
               ),
               if (target != null) ...[
                 const SizedBox(height: Space.sm),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: () => walkThere(context, ref, target),
-                    icon: const Icon(Icons.directions_walk),
-                    label: Text(
-                      place.isHousing && home == place.buildingId
-                          ? 'Walk home'
-                          : 'Walk there',
-                    ),
-                  ),
+                GoButtons(
+                  target: target,
+                  home: place.isHousing && home == place.buildingId,
                 ),
               ],
               if (place.isHousing)

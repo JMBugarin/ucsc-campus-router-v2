@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../campus/campus.dart';
 import '../../campus/geo_point.dart';
+import '../../design/controls.dart';
 import '../../design/floating_bar.dart';
 
 /// Where to send someone who wants to walk to a room: the point on the map and what to call it.
@@ -62,6 +63,19 @@ Uri walkingDirectionsUri(WalkTarget target, {required bool android}) {
       : Uri.https('maps.apple.com', '/', {'daddr': destination, 'dirflg': 'w'});
 }
 
+/// A link that opens bus and transit directions to [target] in the phone's maps app: its own times and the
+/// walking alternative side by side, for anyone who would rather ride even when walking is quicker.
+Uri transitDirectionsUri(WalkTarget target, {required bool android}) {
+  final destination = '${target.point.lat},${target.point.lon}';
+  return android
+      ? Uri.https('www.google.com', '/maps/dir/', {
+          'api': '1',
+          'destination': destination,
+          'travelmode': 'transit',
+        })
+      : Uri.https('maps.apple.com', '/', {'daddr': destination, 'dirflg': 'r'});
+}
+
 /// Opens a link outside the app. Tests replace it.
 final urlOpenerProvider = Provider<Future<bool> Function(Uri)>(
   (ref) =>
@@ -73,13 +87,33 @@ Future<void> walkThere(
   BuildContext context,
   WidgetRef ref,
   WalkTarget target,
+) => _openDirections(
+  context,
+  ref,
+  walkingDirectionsUri(
+    target,
+    android: defaultTargetPlatform == TargetPlatform.android,
+  ),
+);
+
+/// Opens bus directions to [target] in the maps app, or says why it could not.
+Future<void> busThere(BuildContext context, WidgetRef ref, WalkTarget target) =>
+    _openDirections(
+      context,
+      ref,
+      transitDirectionsUri(
+        target,
+        android: defaultTargetPlatform == TargetPlatform.android,
+      ),
+    );
+
+Future<void> _openDirections(
+  BuildContext context,
+  WidgetRef ref,
+  Uri uri,
 ) async {
   final messenger = ScaffoldMessenger.of(context);
   final inset = FloatingBarInset.of(context);
-  final uri = walkingDirectionsUri(
-    target,
-    android: defaultTargetPlatform == TargetPlatform.android,
-  );
   var opened = false;
   try {
     opened = await ref.read(urlOpenerProvider)(uri);
@@ -96,4 +130,34 @@ Future<void> walkThere(
         ),
       );
   }
+}
+
+/// Walk there, with the bus beside it for anyone who would rather ride.
+class GoButtons extends ConsumerWidget {
+  const GoButtons({
+    super.key,
+    required this.target,
+    this.home = false,
+    this.walkIcon = Icons.directions_walk,
+  });
+
+  final WalkTarget target;
+
+  /// Whether [target] is the place saved as home: "Walk home" rather than "Walk there".
+  final bool home;
+  final IconData walkIcon;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => SideBySide(
+    primary: FilledButton.icon(
+      onPressed: () => walkThere(context, ref, target),
+      icon: Icon(walkIcon),
+      label: Text(home ? 'Walk home' : 'Walk there'),
+    ),
+    secondary: OutlinedButton.icon(
+      onPressed: () => busThere(context, ref, target),
+      icon: const Icon(Icons.directions_bus_outlined),
+      label: Text('Bus', semanticsLabel: home ? 'Bus home' : 'Bus there'),
+    ),
+  );
 }

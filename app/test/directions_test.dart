@@ -148,9 +148,31 @@ void main() {
       });
     });
 
+    test('Apple Maps asks for transit directions for the bus', () {
+      final uri = transitDirectionsUri(target, android: false);
+      expect(
+        uri.toString(),
+        'https://maps.apple.com/?daddr=36.9998%2C-122.0628&dirflg=r',
+      );
+    });
+
+    test('Google Maps asks for transit directions for the bus', () {
+      final uri = transitDirectionsUri(target, android: true);
+      expect(uri.host, 'www.google.com');
+      expect(uri.queryParameters, {
+        'api': '1',
+        'destination': '36.9998,-122.0628',
+        'travelmode': 'transit',
+      });
+    });
+
     test('the link never carries where the phone is', () {
-      final uri = walkingDirectionsUri(target, android: false);
-      expect(uri.queryParameters.keys, unorderedEquals(['daddr', 'dirflg']));
+      for (final uri in [
+        walkingDirectionsUri(target, android: false),
+        transitDirectionsUri(target, android: false),
+      ]) {
+        expect(uri.queryParameters.keys, unorderedEquals(['daddr', 'dirflg']));
+      }
     });
   });
 }

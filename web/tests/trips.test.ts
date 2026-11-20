@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { buildGraph } from '../src/routing/graph'
-import { endpointOf } from '../src/routing/plan'
+import { endpointOf, planRoute, type Plan } from '../src/routing/plan'
 import { prepareNetwork, type MetroFile } from '../src/transit/raptor'
 import { planTrips, tripGeoJSON } from '../src/transit/trip'
 import { parsePointId, pointId, searchAddresses } from '../src/data/geocode'
@@ -106,5 +106,37 @@ describe('walking in town', () => {
       const near = (p: [number, number]) => Math.min(...part.line.map((q) => Math.hypot((p[0] - q[0]) * 110540, (p[1] - q[1]) * 88900)))
       for (const s of part.stops) expect(near(s)).toBeLessThan(80)
     }
+  })
+})
+
+describe('the bus for anyone who would rather ride', () => {
+  const P = (id: string) => endpointOf(places.find((p) => p.id === id)!)
+  const walked = (t: { parts: { kind: string; seconds?: number }[] }) => t.parts.reduce((s, p) => s + (p.kind === 'walk' ? p.seconds! : 0), 0)
+  const wed10 = at('2026-11-18T10:00:00-08:00')
+
+  it('offers a bus even when walking gets there sooner, but never one that adds walking', () => {
+    const [a, b] = [P('quarry-plaza'), P('baskin-engineering')]
+    const walk = planRoute(g, a, b) as Plan
+    expect(planTrips(net, g, a, b, { kind: 'leave', at: wed10 })).toEqual([])
+    const trips = planTrips(net, g, a, b, { kind: 'leave', at: wed10 }, false, null, { walkOnly: walk.seconds })
+    expect(trips.length).toBeGreaterThan(0)
+    expect(trips.some((t) => t.arrive > wed10 + walk.seconds * 1000)).toBe(true)
+    for (const t of trips) {
+      expect(walked(t)).toBeLessThan(walk.seconds)
+      expect(t.leave).toBeGreaterThanOrEqual(wed10)
+      expect(t.parts.some((p) => p.kind === 'bus')).toBe(true)
+    }
+  })
+  it('lists each bus once, from the stop that lets you leave latest', () => {
+    const [a, b] = [P('crown-college-galileo-house'), P('baskin-engineering-152')]
+    const walk = planRoute(g, a, b) as Plan
+    const trips = planTrips(net, g, a, b, { kind: 'leave', at: wed10 }, false, null, { walkOnly: walk.seconds })
+    const buses = trips.map((t) => t.parts.flatMap((p) => (p.kind === 'bus' ? [p.tripId] : [])).join('>'))
+    expect(new Set(buses).size).toBe(buses.length)
+  })
+  it('offers nothing when no bus saves any walking', () => {
+    const [a, b] = [P('stevenson-academic'), P('crown-college')]
+    const walk = planRoute(g, a, b) as Plan
+    expect(planTrips(net, g, a, b, { kind: 'leave', at: wed10 }, false, null, { walkOnly: walk.seconds })).toEqual([])
   })
 })

@@ -6,93 +6,68 @@ import { formatDistance, formatDuration, type Plan, type PlanError } from '../ro
 import type { Place } from '../data/types'
 import type { SearchIndex } from '../data/search'
 import { PlaceRows } from './Browse'
-import { clockText, pacificClock, type TransitData } from '../transit/schedule'
-import { useServiceDepartures } from '../transit/useServiceDepartures'
-import { freshPredictions, predictedDelay } from '../transit/serviceState'
-import { OCCUPANCY_TEXT, recent, type Vehicle } from '../transit/liveClient'
+import type { Vehicle } from '../transit/liveClient'
 import type { LiveState } from '../transit/useTransit'
 import type { TripOption } from '../transit/trip'
 import { TripList } from './TripList'
 import { searchAddresses, type Address } from '../data/geocode'
-import type { BusPlan } from '../transit/plan'
 import { ACCESS_LABEL, checkedText, doorSentence, relation } from '../data/rooms'
 import { GlassSegmentedControl, StatusPill } from '../design/components'
-import { clockAt, pacificDate, pacificInstant } from '../schedule/time'
+import { clockAt } from '../schedule/time'
 import { useFold } from '../state/prefs'
 
 export type Pick = { id: string; name: string } | null
 
-/** The direct buses, with live departure times, the bus itself and how full METRO says it is, when the service has them. */
-function BusOptions({ bus, transit, now, vehicles, live }: { bus: BusPlan; transit: TransitData; now: number; vehicles: Vehicle[]; live?: LiveState }) {
-  const stopIds = [...new Set(bus.options.map((o) => transit.stops[o.board].id))]
-  const service = useServiceDepartures(stopIds)
-  const predictions = freshPredictions(service.value)
-  const [open, toggle] = useFold('bus', bus.options.length > 0)
-  const clock = pacificClock(new Date(now))
-  const nowSecs = Math.floor(now / 1000)
-  const routes = bus.options.map((o) => o.route)
-  const stops = bus.options.flatMap((o) => [transit.stops[o.board].id, transit.stops[o.alight].id])
-  const alerts = (live?.alerts ?? []).filter((a) => (!a.routes.length && !a.stops.length) || a.routes.some((r) => routes.includes(r)) || a.stops.some((s) => stops.includes(s)))
-  const rows = bus.options.map((o) => {
-    const delay = predictedDelay(predictions, o.tripId, transit.stops[o.board].id, o.departs, clock.secs, nowSecs)
-    return { o, delay, leaves: delay === null ? o.departs : o.departs + delay, arrives: o.arrives + (delay ?? 0) }
-  })
-  const first = rows[0]
+export type Mode = 'walk' | 'bus'
+
+/** Walking and the best bus side by side: when each gets you there, and how far apart they are. */
+function ModeCompare({ plan, trip, loading, mode, onMode, now, arriveAt }: { plan: Plan; trip: TripOption | null; loading: boolean; mode: Mode; onMode: (m: Mode) => void; now: number; arriveAt: number | null }) {
+  const walkMs = plan.seconds * 1000
+  const walkLeave = arriveAt !== null ? Math.max(now, arriveAt - walkMs) : now
+  const walkArrive = walkLeave + walkMs
+  const routes = trip ? trip.parts.flatMap((p) => (p.kind === 'bus' ? [p.route] : [])).join(' → ') : ''
+  let delta: { text: string; tone: 'success' | 'accent' | 'danger' } | null = null
+  if (trip && arriveAt !== null && trip.late) delta = { text: `${Math.ceil((trip.arrive - arriveAt) / 60000)} min late`, tone: 'danger' }
+  else if (trip && arriveAt !== null) {
+    const d = Math.round((trip.leave - walkLeave) / 60000)
+    delta = Math.abs(d) < 1 ? { text: 'leave when you would walk', tone: 'accent' } : d > 0 ? { text: `leave ${d} min later`, tone: 'success' } : { text: `leave ${-d} min earlier`, tone: 'accent' }
+  } else if (trip) {
+    const d = Math.round((trip.arrive - walkArrive) / 60000)
+    delta = Math.abs(d) < 1 ? { text: 'same time as walking', tone: 'accent' } : d > 0 ? { text: `${d} min later than walking`, tone: 'accent' } : { text: `${-d} min sooner`, tone: 'success' }
+  }
   return (
-    <GlassDisclosure
-      title="By bus"
-      icon="transit"
-      tint="42 143 168"
-      open={open}
-      onToggle={toggle}
-      summary={
-        <>
-          {alerts.length > 0 && <StatusPill tone="warning">Alert</StatusPill>}
-          {first ? `Route ${first.o.route} at ${clockText(first.leaves)}, arrive ${clockText(first.arrives)}` : 'None faster than walking'}
-        </>
-      }
-    >
-      {alerts.map((a, i) => (
-        <GlassBanner key={i} tone="warning" title={a.header || 'Service alert'}>
-          {a.text}
-        </GlassBanner>
-      ))}
-      {rows.length ? (
-        <ul className="bus">
-          {rows.map(({ o, delay, leaves, arrives }) => {
-            const v = vehicles.find((x) => x.trip === o.tripId && recent(x, nowSecs))
-            const when = delay === null ? 'Scheduled' : Math.abs(delay) < 60 ? 'Live: on time' : delay > 0 ? `Live: ${Math.round(delay / 60)} min late` : `Live: ${Math.round(-delay / 60)} min early`
-            return (
-              <li key={o.tripId + o.departs}>
-                <span className="route">{o.route}</span>
-                <span className="bus__main">
-                  {transit.stops[o.board].name} {clockText(leaves)} to {transit.stops[o.alight].name}
-                  <small>
-                    Walk {Math.max(1, Math.round(o.walkToStop / 60))} min to the stop, ride, walk {Math.max(1, Math.round(o.walkFromStop / 60))} min. {when}.
-                    {v && ` Bus ${v.label || v.id} is on the map${v.occupancy ? `: ${OCCUPANCY_TEXT[v.occupancy].toLowerCase()}` : ''}.`}
-                  </small>
-                </span>
-                <span className="bus__eta tabular">{clockText(arrives)}</span>
-              </li>
-            )
-          })}
-        </ul>
-      ) : (
-        <p className="note">No direct METRO bus gets there sooner than walking{bus.walkOnlyArrives ? ` (arrive ${clockText(bus.walkOnlyArrives)})` : ''}.</p>
-      )}
-    </GlassDisclosure>
+    <div className="modes" role="radiogroup" aria-label="Walk or take the bus">
+      <button type="button" role="radio" aria-checked={mode === 'walk'} className="mode" onClick={() => onMode('walk')}>
+        <span className="steps__icon" data-kind={0}>
+          <Icon name="walk" size={16} />
+        </span>
+        <span className="mode__main">
+          <strong>Walk · {formatDuration(plan.seconds)}</strong>
+          <small className="tabular">
+            {arriveAt !== null || walkLeave > now ? `Leave by ${clockAt(walkLeave)} · ` : 'Leave now · '}arrive {clockAt(walkArrive)}
+          </small>
+        </span>
+      </button>
+      <button type="button" role="radio" aria-checked={mode === 'bus'} className="mode" disabled={!trip} onClick={() => onMode('bus')}>
+        <span className="steps__icon steps__icon--bus">
+          <Icon name="transit" size={16} />
+        </span>
+        <span className="mode__main">
+          <strong>Bus{routes ? ` · Route ${routes}` : ''}{trip ? ` · ${formatDuration((trip.arrive - trip.leave) / 1000)}` : ''}</strong>
+          <small className="tabular">{loading ? 'Finding buses…' : trip ? `Leave by ${clockAt(trip.leave)} · arrive ${clockAt(trip.arrive)}` : 'No bus saves you walking on this trip right now'}</small>
+          {delta && <StatusPill tone={delta.tone}>{delta.text}</StatusPill>}
+        </span>
+      </button>
+    </div>
   )
 }
 
-/** "Leave by" for a class: when to set off to make it, on foot or by one of the buses that gets there in time. */
-function ArriveBy({ plan, at, label, now, bus, transit }: { plan: Plan; at: number; label: string; now: number; bus?: BusPlan | null; transit?: TransitData | null }) {
+/** "Leave by" for a class: when to set off on foot to make it. */
+function ArriveBy({ plan, at, label, now }: { plan: Plan; at: number; label: string; now: number }) {
   const [mode, setMode] = useState<'arrive' | 'now'>('arrive')
   const walkMs = plan.seconds * 1000
   const leaveBy = at - walkMs
   const lateMin = Math.ceil((now + walkMs - at) / 60000)
-  const midnight = pacificInstant(pacificDate(now), '00:00')
-  const deadline = (at - midnight) / 1000
-  const buses = (bus?.options ?? []).filter((o) => o.arrives <= deadline && o.departs - o.walkToStop >= (now - midnight) / 1000)
   return (
     <section className="arrive arrive--plan" aria-label="When to leave">
       <GlassSegmentedControl<'arrive' | 'now'>
@@ -117,11 +92,6 @@ function ArriveBy({ plan, at, label, now, bus, transit }: { plan: Plan; at: numb
       ) : (
         <p className="arrive__note">
           Leave now · Arrive around {clockAt(now + walkMs)} for {label} at {clockAt(at)}
-        </p>
-      )}
-      {mode === 'arrive' && transit && buses.length > 0 && (
-        <p className="arrive__line">
-          Or by bus: leave by {clockText(buses[0].departs - buses[0].walkToStop)}, take route {buses[0].route} from {transit.stops[buses[0].board].name} at {clockText(buses[0].departs)}, arrive around {clockText(buses[0].arrives)}. Scheduled time.
         </p>
       )}
     </section>
@@ -248,8 +218,6 @@ export function Directions({
   locating,
   locationError,
   straightMeters,
-  bus,
-  transit,
   toRoom,
   arriveBy,
   now = Date.now(),
@@ -264,7 +232,12 @@ export function Directions({
   onPickOnMap = () => {},
   onPickAddress = () => {},
   homePlace = null,
+  mode = 'walk',
+  onMode = () => {},
 }: {
+  /** walk, or ride one of the bus trips: the map draws whichever is chosen */
+  mode?: Mode
+  onMode?: (m: Mode) => void
   /** the dorm or apartment saved as home, offered first when choosing a place */
   homePlace?: Place | null
   /** set while the trip starts from the walker's live location */
@@ -281,8 +254,6 @@ export function Directions({
   arriveBy?: { at: number; label: string } | null
   now?: number
   toRoom?: Place | null
-  bus?: BusPlan | null
-  transit?: TransitData | null
   from: Pick
   to: Pick
   plan: Plan | null
@@ -316,7 +287,10 @@ export function Directions({
       setAddressError('Address search is unavailable right now.')
     }
   }
-  const showTrips = !!trips?.length && !editing
+  // the bus trip is shown when chosen, and always when there is no walking route
+  const busView = !editing && (mode === 'bus' || !plan)
+  const showTrips = busView && !!trips?.length
+  const lastWalk = trips?.[tripIndex]?.parts.at(-1)
 
   const choose = (p: Place) => {
     const v = { id: p.id, name: p.name }
@@ -334,7 +308,7 @@ export function Directions({
           Directions
         </h1>
       </div>
-      {arriveBy && plan && !editing && !showTrips && <ArriveBy plan={plan} at={arriveBy.at} label={arriveBy.label} now={now} bus={bus} transit={transit} />}
+      {arriveBy && plan && !editing && !busView && <ArriveBy plan={plan} at={arriveBy.at} label={arriveBy.label} now={now} />}
       <div className="dfields">
         <div className="dfields__col">
           <Field label="From" value={from?.name ?? ''} placeholder="Choose starting point" query={q} onQuery={setQ} active={editing === 'from'} onFocus={() => (setEditing('from'), setQ(''))} />
@@ -402,16 +376,17 @@ export function Directions({
             </p>
           )}
           {picking && <GlassBanner title="Tap the map">Tap where the trip {picking === 'from' ? 'starts' : 'ends'}.</GlassBanner>}
-          {tripsLoading && <p className="note" role="status">Finding buses…</p>}
+          {tripsLoading && !plan && <p className="note" role="status">Finding buses…</p>}
+          {plan && <ModeCompare plan={plan} trip={trips?.[mode === 'bus' ? tripIndex : 0] ?? null} loading={tripsLoading} mode={mode} onMode={onMode} now={now} arriveAt={arriveBy?.at ?? null} />}
           {showTrips && trips && <TripList trips={trips} index={tripIndex} onIndex={onTrip} deadline={arriveBy?.at ?? null} now={now} vehicles={vehicles} live={live} />}
-          {showTrips && plan && <p className="note">Walking the whole way takes {formatDuration(plan.seconds)}.</p>}
+          {showTrips && plan && toRoom?.room && lastWalk?.kind === 'walk' && lastWalk.plan && <Arrival room={toRoom} end={lastWalk.plan.destPoint} />}
           {error && !showTrips && !tripsLoading && (
             <GlassBanner tone={error === 'same-place' ? 'accent' : 'warning'} title={error === 'same-place' ? undefined : 'No walking route'}>
               {ERROR_TEXT[error]}
               {straightMeters != null && error !== 'same-place' && <> Straight-line distance: {formatDistance(straightMeters)}.</>}
             </GlassBanner>
           )}
-          {plan && !showTrips && (
+          {plan && !busView && (
             <>
               <div className="summary" aria-live="polite">
                 <div className="summary__time">{formatDuration(plan.seconds)}</div>
@@ -424,7 +399,6 @@ export function Directions({
                   No route without mapped stairs exists between these places, so the shortest one is shown.
                 </GlassBanner>
               )}
-              {bus && transit && <BusOptions bus={bus} transit={transit} now={now} vehicles={vehicles} live={live} />}
               <OnFoot plan={plan} />
               {toRoom?.room && <Arrival room={toRoom} end={plan.destPoint} />}
             </>
