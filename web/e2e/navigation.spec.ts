@@ -89,23 +89,33 @@ test('the location dot glides between fixes instead of jumping, and the camera k
   await page.waitForTimeout(1500)
   const start = (await dot())!
   await context.setGeolocation({ latitude: 36.99715, longitude: -122.05509 })
-  const seen = new Set<number>()
-  for (let i = 0; i < 20; i++) {
-    seen.add(Math.round(((await dot())! - start) * 1e7))
-    await page.waitForTimeout(40)
-  }
-  const between = [...seen].filter((d) => d > 50 && d < 1950)
-  expect(between.length).toBeGreaterThanOrEqual(3)
+  const between = new Set<number>()
+  await expect
+    .poll(
+      async () => {
+        const d = Math.round(((await dot())! - start) * 1e7)
+        if (d > 50 && d < 1950) between.add(d)
+        return between.size
+      },
+      { timeout: 10_000, intervals: [30] },
+    )
+    .toBeGreaterThanOrEqual(3)
   await expect.poll(async () => Math.abs((await dot())! - -122.05509), { timeout: 5000 }).toBeLessThan(0.0001)
 
   // once following, the camera rides along with the dot rather than jumping every few metres
   await context.setGeolocation({ latitude: 36.99715, longitude: -122.05440 })
   await page.waitForFunction(() => Math.abs((window as any).__map.getCenter().lng - -122.0544) < 0.0004, null, { timeout: 15_000 })
-  await context.setGeolocation({ latitude: 36.99715, longitude: -122.05425 })
-  const centers: number[] = []
-  for (let i = 0; i < 15; i++) {
-    centers.push(await page.evaluate(() => (window as any).__map.getCenter().lng))
-    await page.waitForTimeout(40)
-  }
-  expect(new Set(centers.map((c) => c.toFixed(7))).size).toBeGreaterThanOrEqual(3)
+  const from = await page.evaluate(() => (window as any).__map.getCenter().lng as number)
+  await context.setGeolocation({ latitude: 36.99715, longitude: -122.05400 })
+  const passing = new Set<string>()
+  await expect
+    .poll(
+      async () => {
+        const lng = await page.evaluate(() => (window as any).__map.getCenter().lng as number)
+        if (lng > from + 0.00001 && lng < -122.05401) passing.add(lng.toFixed(7))
+        return passing.size
+      },
+      { timeout: 10_000, intervals: [30] },
+    )
+    .toBeGreaterThanOrEqual(3)
 })
