@@ -61,6 +61,7 @@ Recording O02: each consenting student reads their participant code from Setting
 | Airplane mode, cold restart → schedule and rooms still work | |
 | Persisted schedule after force quit | |
 | Walk there opens Apple Maps to the right door | |
+| Bus opens Apple Maps transit directions to the same door | |
 | Notification permission + one reminder delivered | |
 | Interrupt (call/app switch) and resume | |
 | Photo import on a printed synthetic schedule | |

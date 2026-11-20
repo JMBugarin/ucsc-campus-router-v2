@@ -14,7 +14,7 @@ _Captured on 2026-10-31 in the iOS Simulator (iPhone 17) with an invented schedu
 
 ## Campus map on the web
 
-[`web/`](web/README.md) is a separate, installable web version built on free, open-source parts (MapLibre, OpenFreeMap, OpenStreetMap). It has the app's class features (Today with when to leave, a weekly Schedule, paste from MyUCSC or add by hand, review before saving, skipped days, reminders while open, all stored only in the browser) and "Get me there" with arrive-by timing, plus search for buildings and each of the 87 general-assignment classrooms ("BE 152", "McHenry 1340"), room pages with the door nearest the room and the floor where a published UCSC plan or map confirms it, walking routes that end at that door, every on-campus residence hall and apartment building ("C9 Apt 2", "Casa Primera") with a saved Home you can route back to in one tap, place pages, scheduled METRO bus times at campus stops, and a glass interface ported from TileLens. It needs no key, account or server. See [docs/web-app.md](docs/web-app.md).
+[`web/`](web/README.md) is a separate, installable web version built on free, open-source parts (MapLibre, OpenFreeMap, OpenStreetMap). It has the app's class features (Today with when to leave, a weekly Schedule, paste from MyUCSC or add by hand, review before saving, skipped days, reminders while open, all stored only in the browser) and "Get me there" with arrive-by timing and a Walk or Bus choice that compares when each gets you there, plus search for buildings and each of the 87 general-assignment classrooms ("BE 152", "McHenry 1340"), room pages with the door nearest the room and the floor where a published UCSC plan or map confirms it, walking routes that end at that door, every on-campus residence hall and apartment building ("C9 Apt 2", "Casa Primera") with a saved Home you can route back to in one tap, place pages, scheduled METRO bus times at campus stops, and a glass interface ported from TileLens. It needs no key, account or server. See [docs/web-app.md](docs/web-app.md).
 
 | Place | Route (dark) | Mobile |
 |---|---|---|
@@ -24,7 +24,7 @@ _Captured on 2026-10-31 in the iOS Simulator (iPhone 17) with an invented schedu
 
 - **Today**: the classes of the day with their times, rooms and buildings, the break between them, and what is on now and next. Step to any other day, or open the week.
 - **Map**: search a room or building ("BE 152", "kresge 3201", "thimann 101"; typos and abbreviations are fine). Today's classes are pinned. No schedule needed.
-- **Walk there**: opens walking directions to the room's door in Apple Maps (Google Maps on Android). The app gives it only the destination; your maps app finds where you are.
+- **Walk there**: opens walking directions to the room's door in Apple Maps (Google Maps on Android). **Bus** beside it opens transit directions to the same door instead, for when you'd rather ride. The app gives the maps app only the destination; your maps app finds where you are.
 - **Schedule**: paste your MyUCSC class schedule, import a calendar (`.ics`) file, read a screenshot or photo of it (iOS, on the phone, with Apple's Vision framework), or add a class by hand. You can skip a single day, and it stays on your phone.
 - **Class reminders**: an optional notification a few minutes before each class over the next week.
 
