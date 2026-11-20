@@ -122,6 +122,9 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
           expect(find.text('Walk there'), findsOneWidget);
+          await tester.tap(find.text('Bus'));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
         });
 
         testWidgets(
@@ -411,6 +414,7 @@ void main() {
         'Show XYZ 10 Lecture on the map',
       );
       expect(find.bySemanticsLabel(RegExp('Walk there')), findsWidgets);
+      expect(find.bySemanticsLabel('Bus there'), findsWidgets);
       semantics.dispose();
     });
   });

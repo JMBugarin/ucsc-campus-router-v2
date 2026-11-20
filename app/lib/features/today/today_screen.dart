@@ -199,14 +199,10 @@ class _HeadHome extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: Space.sm),
-            FilledButton.icon(
-              onPressed: () => walkThere(
-                context,
-                ref,
-                WalkTarget(label: home.name, point: home.point),
-              ),
-              icon: const Icon(Icons.home_outlined),
-              label: const Text('Walk home'),
+            GoButtons(
+              target: WalkTarget(label: home.name, point: home.point),
+              home: true,
+              walkIcon: Icons.home_outlined,
             ),
           ],
         ),
@@ -374,11 +370,7 @@ class _ClassTile extends ConsumerWidget {
         ],
       ),
       action: target != null && role != ClassRole.later
-          ? FilledButton.icon(
-              onPressed: () => walkThere(context, ref, target),
-              icon: const Icon(Icons.directions_walk),
-              label: const Text('Walk there'),
-            )
+          ? GoButtons(target: target)
           : null,
     );
   }

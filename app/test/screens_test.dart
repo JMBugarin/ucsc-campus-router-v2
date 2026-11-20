@@ -119,6 +119,16 @@ void main() {
           rig.urls.opened.single.queryParameters.values,
           contains('${home.point.lat},${home.point.lon}'),
         );
+
+        await tester.tap(find.bySemanticsLabel('Bus home'));
+        await tester.pumpAndSettle();
+        expect(
+          rig.urls.opened.last,
+          transitDirectionsUri(
+            WalkTarget(label: home.name, point: home.point),
+            android: true,
+          ),
+        );
       },
     );
 
@@ -154,6 +164,23 @@ void main() {
       expect(rig.urls.opened.single.host, 'www.google.com');
       expect(rig.urls.opened.single.queryParameters['travelmode'], 'walking');
     });
+
+    testWidgets(
+      'Bus opens bus directions instead, for anyone who would rather ride',
+      (tester) async {
+        final rig = TestRig(stored: [meeting()], now: mondayNoon);
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        try {
+          await open(tester, rig);
+          await tester.tap(find.text('Bus'));
+          await tester.pumpAndSettle();
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+        final target = walkTarget(testCampus, 'Kresge Acad 3201')!;
+        expect(rig.urls.opened, [transitDirectionsUri(target, android: false)]);
+      },
+    );
 
     testWidgets('when the maps app cannot be opened it says so', (
       tester,

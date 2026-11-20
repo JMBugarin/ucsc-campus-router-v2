@@ -127,6 +127,14 @@ void main() {
           rig.urls.opened.single.queryParameters.values,
           contains('${target.point.lat},${target.point.lon}'),
         );
+
+        await tester.tap(find.text('Bus'));
+        await tester.pumpAndSettle();
+        expect(rig.urls.opened.last.queryParameters['travelmode'], 'transit');
+        expect(
+          rig.urls.opened.last.queryParameters.values,
+          contains('${target.point.lat},${target.point.lon}'),
+        );
       },
     );
 
