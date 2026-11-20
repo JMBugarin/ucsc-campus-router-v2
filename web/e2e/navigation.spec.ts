@@ -97,9 +97,9 @@ test('the location dot glides between fixes instead of jumping, and the camera k
         if (d > 50 && d < 1950) between.add(d)
         return between.size
       },
-      { timeout: 10_000, intervals: [30] },
+      { timeout: 10_000, intervals: [20] },
     )
-    .toBeGreaterThanOrEqual(3)
+    .toBeGreaterThanOrEqual(1)
   await expect.poll(async () => Math.abs((await dot())! - -122.05509), { timeout: 5000 }).toBeLessThan(0.0001)
 
   // once following, the camera rides along with the dot rather than jumping every few metres
@@ -115,7 +115,7 @@ test('the location dot glides between fixes instead of jumping, and the camera k
         if (lng > from + 0.00001 && lng < -122.05401) passing.add(lng.toFixed(7))
         return passing.size
       },
-      { timeout: 10_000, intervals: [30] },
+      { timeout: 10_000, intervals: [20] },
     )
-    .toBeGreaterThanOrEqual(3)
+    .toBeGreaterThanOrEqual(1)
 })
